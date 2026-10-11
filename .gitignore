@@ -1,0 +1,29 @@
+# Dependencies, builds, and the segmentation model cache
+node_modules/
+dist/
+.cache/
+
+# Media stays out of git
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.mp4
+*.mov
+*.webm
+
+# Written by garden/draw/draw.ts (npm run draw; dev and check run it first)
+garden/public/garden/
+garden/gallery/details/
+garden/src/garden/anchors.css
+garden/src/garden/fields.ts
+
+# Written by each portrait's build.ts
+portraits/pieces/*/*.svg
+portraits/pieces/*/index.html
+
+# System and tool litter
+.DS_Store
+.cc-writes/
+.claude/settings.local.json

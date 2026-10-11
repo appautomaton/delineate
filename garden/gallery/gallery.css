@@ -1,0 +1,324 @@
+/* The token gallery's own layout. Colors come from src/tokens.css, like the site. The page is
+   day paper; whatever is shown by night sits on a plate of night paper (.night, which also takes
+   the night set of tokens). */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3 {
+  font-family: ui-serif, "New York", Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.82em;
+}
+
+.night {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* The garden switcher (src/garden/switcher.css) sits in the top right corner. */
+.garden-switch {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+}
+
+.intro,
+main {
+  width: min(100% - 2.5rem, 72rem);
+  margin-inline: auto;
+}
+
+.intro {
+  padding: 3.5rem 0 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eyebrow a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.eyebrow a:hover {
+  color: var(--text);
+  border-color: currentColor;
+}
+
+.intro h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0 0 0.6rem;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+}
+
+.intro h1 .emblem {
+  width: 1em;
+  height: 1em;
+  color: var(--muted);
+}
+
+.intro h1 .emblem path {
+  stroke-width: 0.9;
+  animation: draw 1.1s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+}
+
+.intro h1 .emblem .leaf {
+  fill-opacity: 0.55;
+}
+
+.intro p {
+  max-width: 44rem;
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+}
+
+section {
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+}
+
+section h2 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+[data-palette] h3 {
+  margin: 1.5rem 0 0.75rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.lede {
+  margin: -0.5rem 0 1.25rem;
+  color: var(--muted);
+}
+
+/* A swatch: the token on day paper and on night paper, with its name and both values. */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.9rem 1.2rem;
+}
+
+.swatch {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.8rem;
+  align-items: center;
+  font-size: 0.78rem;
+}
+
+.pair {
+  grid-row: span 3;
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.pair .light {
+  padding: 0.3rem;
+}
+
+.chip {
+  display: block;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+.chip.value {
+  display: grid;
+  place-items: center;
+  box-shadow: none;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.swatch .name {
+  color: var(--text);
+}
+
+.swatch .value {
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+}
+
+/* Day and night, side by side. */
+.lights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.pen.light {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+}
+
+.stroke {
+  display: grid;
+  grid-template-columns: 180px 6.5rem 1fr;
+  align-items: center;
+  gap: 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.stroke svg {
+  width: 180px;
+  height: 24px;
+  overflow: visible;
+}
+
+.plants {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.plant-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 1.1rem;
+  background: var(--surface);
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.figures .light {
+  display: grid;
+  grid-template-rows: auto 16rem 8rem auto;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  border-radius: 0.8rem;
+}
+
+.figures .light:not(.night) {
+  background: var(--bg);
+}
+
+.label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.figures figure {
+  margin: 0;
+  min-height: 0;
+}
+
+.figures svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.plant-card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.latin {
+  margin: 0.1rem 0 0.6rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.note {
+  margin: 0 0 0.9rem;
+}
+
+.plant-card dl {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.3rem 0.8rem;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.plant-card dt {
+  color: var(--muted);
+}
+
+.plant-card dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.shifts {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.shifts span {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: oklch(from var(--leaf) calc(l + var(--dl)) calc(c * var(--dc)) calc(h + var(--dh)));
+}
+
+@media (max-width: 860px) {
+  .plant-card,
+  .lights {
+    grid-template-columns: 1fr;
+  }
+
+  .stroke {
+    grid-template-columns: 140px 1fr;
+  }
+
+  .stroke span {
+    grid-column: 1 / -1;
+  }
+
+  .stroke svg {
+    width: 140px;
+  }
+}

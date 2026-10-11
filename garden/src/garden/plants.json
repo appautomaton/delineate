@@ -1,0 +1,562 @@
+[
+  {
+    "name": "calathea",
+    "garden": "tropical",
+    "rank": 9,
+    "common": "Calathea",
+    "latin": "Goeppertia orbifolia",
+    "note": "Round leaves banded with silver along the veins.",
+    "enters": "Low in the bed, in front",
+    "grows": "The rosette opens leaf by leaf"
+  },
+  {
+    "name": "monstera",
+    "garden": "tropical",
+    "rank": 3,
+    "common": "Monstera",
+    "latin": "Monstera deliciosa",
+    "note": "A broad heart split from the margin and pierced along the midrib.",
+    "enters": "Rises from a bottom corner",
+    "grows": "Stalks rise, then leaves unfurl"
+  },
+  {
+    "name": "strelitzia",
+    "garden": "tropical",
+    "rank": 4,
+    "common": "Bird of paradise",
+    "latin": "Strelitzia reginae",
+    "note": "Long paddles in a fan, torn by the wind, and one crane flower on its own stalk.",
+    "enters": "Rises from a bottom corner",
+    "grows": "Paddles rise in turn, and the flower opens last"
+  },
+  {
+    "name": "palm",
+    "garden": "tropical",
+    "rank": 12,
+    "common": "Ruffled fan palm",
+    "latin": "Licuala grandis",
+    "note": "Pleated, nearly round fans on long toothed stalks.",
+    "enters": "Rises from the bottom",
+    "grows": "Stalks extend, then each fan opens"
+  },
+  {
+    "name": "alocasia",
+    "garden": "tropical",
+    "rank": 11,
+    "common": "Alocasia",
+    "latin": "Alocasia amazonica",
+    "note": "Dark arrowheads with scalloped edges and silver veins.",
+    "enters": "Rises from the bottom",
+    "grows": "Stalks rise, and leaves tilt open"
+  },
+  {
+    "name": "staghorn",
+    "garden": "tropical",
+    "rank": 8,
+    "common": "Staghorn fern",
+    "latin": "Platycerium bifurcatum",
+    "note": "Shield fronds over a hanging basket, and broad antler fronds that fork into rounded lobes.",
+    "enters": "Hangs from the top",
+    "grows": "Antler fronds unfold one by one"
+  },
+  {
+    "name": "philodendron",
+    "garden": "tropical",
+    "rank": 7,
+    "common": "Heart-leaf philodendron",
+    "latin": "Philodendron hederaceum",
+    "note": "Glossy hearts, some streaked with lime, on a trailing stem.",
+    "enters": "Trails down from the top",
+    "grows": "The stem lengthens downward, and hearts unfold"
+  },
+  {
+    "name": "adansonii",
+    "garden": "tropical",
+    "rank": 10,
+    "common": "Swiss cheese vine",
+    "latin": "Monstera adansonii",
+    "note": "Small leaves full of oval holes on a wandering stem.",
+    "enters": "Trails in from a side",
+    "grows": "The stem extends, and leaves unfold behind the tip"
+  },
+  {
+    "name": "bauhinia",
+    "garden": "tropical",
+    "rank": 6,
+    "common": "Orchid tree",
+    "latin": "Bauhinia variegata",
+    "note": "Two-lobed butterfly leaves on a slender branch, and orchid-like flowers with fine curving stamens.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends, leaves open, and flowers come last"
+  },
+  {
+    "name": "lychee",
+    "garden": "tropical",
+    "rank": 5,
+    "common": "Lychee",
+    "latin": "Litchi chinensis",
+    "note": "Drooping leaves of glossy leaflets and a hanging cluster of pebbled rose-red fruit.",
+    "enters": "Reaches in from a side",
+    "grows": "The limb extends, leaves unfold, and the fruit drops last"
+  },
+  {
+    "name": "mango",
+    "garden": "tropical",
+    "rank": 2,
+    "common": "Mango",
+    "latin": "Mangifera indica",
+    "note": "Loose clusters of smooth leathery leaves, and mangoes ripening from green to gold.",
+    "enters": "Reaches in from a side",
+    "grows": "The limb extends, clusters open, and the fruit swells last"
+  },
+  {
+    "name": "frangipani",
+    "garden": "tropical",
+    "rank": 1,
+    "common": "Frangipani",
+    "latin": "Plumeria rubra",
+    "note": "Thick, smooth limbs that end blunt, spiral rosettes of broad leaves, and pinwheel flowers warming to yellow at the heart.",
+    "enters": "Reaches in from a side",
+    "grows": "The limb extends and forks, rosettes open, and flowers come last"
+  },
+  {
+    "name": "cypress",
+    "garden": "mediterranean",
+    "rank": 3,
+    "common": "Italian cypress",
+    "latin": "Cupressus sempervirens",
+    "note": "Two dark flames of upward sprays, catching the moon along one side.",
+    "enters": "Rises from the bottom",
+    "grows": "Each column grows up from its base"
+  },
+  {
+    "name": "acanthus",
+    "garden": "mediterranean",
+    "rank": 11,
+    "common": "Acanthus",
+    "latin": "Acanthus mollis",
+    "note": "The glossy, deeply lobed leaf of the Corinthian capital, and a tall spike of pale flowers under purple hoods.",
+    "enters": "Rises from the bottom",
+    "grows": "Leaves open, the spike rises, and its flowers open from the bottom up"
+  },
+  {
+    "name": "agave",
+    "garden": "mediterranean",
+    "rank": 7,
+    "common": "Agave",
+    "latin": "Agave americana",
+    "note": "A rosette of thick blue-grey leaves with toothed edges, dark tips, and the pale prints of their neighbors.",
+    "enters": "Rises from a bottom corner",
+    "grows": "Leaves open from the center outward"
+  },
+  {
+    "name": "lavender",
+    "garden": "mediterranean",
+    "rank": 5,
+    "common": "Lavender",
+    "latin": "Lavandula angustifolia",
+    "note": "A grey-green mound and a fan of slender stems, each tipped with violet whorls.",
+    "enters": "Rises from the bottom",
+    "grows": "The mound fills in, then the stems lift their spikes"
+  },
+  {
+    "name": "rosemary",
+    "garden": "mediterranean",
+    "rank": 12,
+    "common": "Rosemary",
+    "latin": "Salvia rosmarinus",
+    "note": "Upright woody stems dense with needle leaves, dark above and silver below, and pale blue flowers.",
+    "enters": "Rises from the bottom",
+    "grows": "Stems rise one by one"
+  },
+  {
+    "name": "grapevine",
+    "garden": "mediterranean",
+    "rank": 8,
+    "common": "Grapevine",
+    "latin": "Vitis vinifera",
+    "note": "A woody cane from the pergola, serrated leaves, curling tendrils, and dusky bunches with a pale bloom.",
+    "enters": "Hangs from the top",
+    "grows": "The cane lengthens downward, leaves unfold, and the bunches hang last"
+  },
+  {
+    "name": "jasmine",
+    "garden": "mediterranean",
+    "rank": 9,
+    "common": "Star jasmine",
+    "latin": "Trachelospermum jasminoides",
+    "note": "Twining stems, small glossy leaves in pairs, and white pinwheel flowers that open at night.",
+    "enters": "Trails down from the top",
+    "grows": "Stems lengthen, leaves unfold, and flowers open last"
+  },
+  {
+    "name": "bougainvillea",
+    "garden": "mediterranean",
+    "rank": 4,
+    "common": "Bougainvillea",
+    "latin": "Bougainvillea spectabilis",
+    "note": "Thorny canes arching out and down, heavy with papery magenta bracts in threes.",
+    "enters": "Arches in from the top",
+    "grows": "Canes arch out, leaves unfold, and the bracts open last"
+  },
+  {
+    "name": "pine",
+    "garden": "mediterranean",
+    "rank": 10,
+    "common": "Stone pine",
+    "latin": "Pinus pinea",
+    "note": "Plated red-brown bark, long needles bursting in tufts, and broad scaled cones.",
+    "enters": "Reaches in from a side",
+    "grows": "The limb extends, tufts burst open, and cones come last"
+  },
+  {
+    "name": "fig",
+    "garden": "mediterranean",
+    "rank": 6,
+    "common": "Fig",
+    "latin": "Ficus carica",
+    "note": "A smooth grey branch, broad lobed leaves, and pear-shaped figs, violet with a green neck.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends, leaves open at the tips, and figs swell last"
+  },
+  {
+    "name": "lemon",
+    "garden": "mediterranean",
+    "rank": 2,
+    "common": "Lemon",
+    "latin": "Citrus limon",
+    "note": "A slender thorny branch, glossy leaves, lemons that glow in the dark, and waxy blossom flushed purple.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends, leaves unfold, lemons hang, and blossom opens last"
+  },
+  {
+    "name": "olive",
+    "garden": "mediterranean",
+    "rank": 1,
+    "common": "Olive",
+    "latin": "Olea europaea",
+    "note": "A gnarled silver branch, narrow leaves dark above and silver beneath, and olives ripening to violet-black.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends, twigs leaf out, and olives come last"
+  },
+  {
+    "name": "saguaro",
+    "garden": "desert",
+    "rank": 1,
+    "common": "Saguaro",
+    "latin": "Carnegiea gigantea",
+    "note": "A pleated column, arms lifting like raised hands, white flowers crowning every tip.",
+    "enters": "Rises from the bottom",
+    "grows": "The trunk rises, arms bend up from it at the knee, and the tips flower last"
+  },
+  {
+    "name": "opuntia",
+    "garden": "desert",
+    "rank": 2,
+    "common": "Engelmann prickly pear",
+    "latin": "Opuntia engelmannii",
+    "note": "Flat pads stacked into a sprawling clump, yellow cups and magenta fruit along their rims.",
+    "enters": "Low in the bed",
+    "grows": "Pads bud from pads, then flowers open and fruit swells"
+  },
+  {
+    "name": "ferocactus",
+    "garden": "desert",
+    "rank": 3,
+    "common": "Fishhook barrel",
+    "latin": "Ferocactus wislizeni",
+    "note": "Squat ribbed barrels leaning toward the sun, a red hook at the heart of every areole, a crown of flowers.",
+    "enters": "Low in the bed",
+    "grows": "Each barrel swells from its base, and the crown flowers last"
+  },
+  {
+    "name": "paloverde",
+    "garden": "desert",
+    "rank": 4,
+    "common": "Foothill palo verde",
+    "latin": "Parkinsonia microphylla",
+    "note": "A green-barked branch in a haze of tiny leaflets and yellow flowers, hung with clumps of desert mistletoe (Phoradendron californicum).",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends and forks, twigs leaf out, and flowers and mistletoe berries come last"
+  },
+  {
+    "name": "ocotillo",
+    "garden": "desert",
+    "rank": 5,
+    "common": "Ocotillo",
+    "latin": "Fouquieria splendens",
+    "note": "Bare thorned whips fanning from one crown, small leaves at the thorns, a scarlet spike at every tip.",
+    "enters": "Rises from the bottom",
+    "grows": "The canes rise from the crown, leaves come in flushes, and the spikes flower last"
+  },
+  {
+    "name": "organpipe",
+    "garden": "desert",
+    "rank": 6,
+    "common": "Organ pipe",
+    "latin": "Stenocereus thurberi",
+    "note": "Ribbed columns rising together from one base, leaning out and turning up, pale pink flowers at a few tips.",
+    "enters": "Rises from the bottom",
+    "grows": "The columns rise one after another, and the tips flower last"
+  },
+  {
+    "name": "brittlebush",
+    "garden": "desert",
+    "rank": 7,
+    "common": "Brittlebush",
+    "latin": "Encelia farinosa",
+    "note": "A mound of silver felted leaves, and long bare stalks holding yellow daisies above it.",
+    "enters": "Low in the bed",
+    "grows": "The leaves open into a mound, the stalks rise, and the daisies open last"
+  },
+  {
+    "name": "mesquite",
+    "garden": "desert",
+    "rank": 8,
+    "common": "Velvet mesquite",
+    "latin": "Prosopis velutina",
+    "note": "A dark twisting branch, feathery leaves of many tiny leaflets, paired thorns, yellow catkins, and hanging pods.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends and forks, leaves open at the nodes, then catkins and pods"
+  },
+  {
+    "name": "cholla",
+    "garden": "desert",
+    "rank": 9,
+    "common": "Chain-fruit cholla",
+    "latin": "Cylindropuntia fulgida",
+    "note": "Jointed arms wrapped in pale spines that catch the light, and chains of green fruit hanging from the older joints.",
+    "enters": "Low in the bed",
+    "grows": "The trunk rises, joints bud from joints, and the fruit chains hang last"
+  },
+  {
+    "name": "creosote",
+    "garden": "desert",
+    "rank": 10,
+    "common": "Creosote",
+    "latin": "Larrea tridentata",
+    "note": "An open vase of thin forking stems, tiny paired leaflets, small yellow flowers, and white seed balls.",
+    "enters": "Low in the bed",
+    "grows": "The stems rise and fork, leaflets follow, then flowers and seed balls"
+  },
+  {
+    "name": "ibervillea",
+    "garden": "desert",
+    "rank": 11,
+    "common": "Sonoran ibervillea",
+    "latin": "Ibervillea sonorae",
+    "note": "A gourd vine trailing in along the ground, deeply lobed leaves, coiled tendrils, and round red fruit.",
+    "enters": "Trails in from a side, along the ground",
+    "grows": "The vine runs in, leaves and tendrils follow it, and the fruit ripens last"
+  },
+  {
+    "name": "trimera",
+    "garden": "afroalpine",
+    "rank": 12,
+    "common": "Mount Kenya heath",
+    "latin": "Erica trimera subsp. keniensis",
+    "note": "A low shrub's grey twiggy branch, its tiny sticky light-green leaves packed into rounded clumps, and small bells that open white and age to brown.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends and forks, and the clumps leaf out along it"
+  },
+  {
+    "name": "groundsel",
+    "garden": "afroalpine",
+    "rank": 1,
+    "common": "Giant groundsel",
+    "latin": "Dendrosenecio keniodendron",
+    "note": "A trunk forked into a candelabra, every tip a metre-wide rosette over a skirt of its own dead leaves, the foot bared to cork and crusted with orange lichen; a spent panicle hangs from one rosette.",
+    "enters": "Rises from the bottom",
+    "grows": "The trunk rises in its skirt and forks, and each rosette opens leaf by leaf"
+  },
+  {
+    "name": "sapling",
+    "garden": "afroalpine",
+    "rank": 11,
+    "common": "Young giant groundsel",
+    "latin": "Dendrosenecio keniodendron",
+    "note": "Not yet flowered, so not yet branched: one rosette on a column in its skirt of dead leaves, leaning in from beyond the frame.",
+    "enters": "Leans in from a bottom corner",
+    "grows": "The column rises in its skirt, and the rosette opens leaf by leaf"
+  },
+  {
+    "name": "telekii",
+    "garden": "afroalpine",
+    "rank": 2,
+    "common": "Teleki's lobelia",
+    "latin": "Lobelia telekii",
+    "note": "One rosette of narrow blue-green leaves under a shaggy column of long hairy bracts that hide its blue-purple flowers.",
+    "enters": "Rises from the bottom",
+    "grows": "The rosette opens, the column rises, and its bracts unfold up it"
+  },
+  {
+    "name": "cabbage",
+    "garden": "afroalpine",
+    "rank": 3,
+    "common": "Cabbage groundsel",
+    "latin": "Dendrosenecio keniensis",
+    "note": "Rosettes at ground level, every leaf felted creamy white beneath, and a narrow cone of nodding yellow-rayed heads.",
+    "enters": "Low in the bed",
+    "grows": "The rosettes open leaf by leaf, then the cone rises and its heads nod open"
+  },
+  {
+    "name": "heath",
+    "garden": "afroalpine",
+    "rank": 4,
+    "common": "Tree heath",
+    "latin": "Erica arborea",
+    "note": "A red-brown branch in ascending plumes of needle leaves and white bells, draped with pale strands of beard lichen (Usnea articulata).",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends and forks, plumes rise along it, and the lichen hangs last"
+  },
+  {
+    "name": "thistle",
+    "garden": "afroalpine",
+    "rank": 5,
+    "common": "Mount Kenya thistle",
+    "latin": "Afrocarduus keniensis",
+    "note": "A rosette of lobed, spine-tipped leaves cobwebbed with white hair, a stem with interrupted spiny wings, and clusters of mauve heads.",
+    "enters": "Rises from the bottom",
+    "grows": "The rosette spreads, the winged stem rises, and the heads open last"
+  },
+  {
+    "name": "alchemilla",
+    "garden": "afroalpine",
+    "rank": 6,
+    "common": "Silver lady's mantle",
+    "latin": "Alchemilla argyrophylla",
+    "note": "A shrub of slender arching stems, silver all over, clothed in tiny three-lobed leaves.",
+    "enters": "Low in the bed",
+    "grows": "The stems arch out and leaf as they go"
+  },
+  {
+    "name": "gregoriana",
+    "garden": "afroalpine",
+    "rank": 7,
+    "common": "Water lobelia",
+    "latin": "Lobelia gregoriana",
+    "note": "Shiny rosettes on short stems mantled in dead leaves, a narrow spike whose flowers show between its bracts, and last year's spike standing dead.",
+    "enters": "Low in the bed",
+    "grows": "The rosettes open, then the spike rises and flowers up its length"
+  },
+  {
+    "name": "helichrysum",
+    "garden": "afroalpine",
+    "rank": 8,
+    "common": "Brown's everlasting",
+    "latin": "Helichrysum brownei",
+    "note": "A grey cushion of short woolly-leaved stems, and clusters of papery cream heads flushed pink at the base.",
+    "enters": "Low in the bed",
+    "grows": "The cushion fills out, and the heads open last"
+  },
+  {
+    "name": "tussock",
+    "garden": "afroalpine",
+    "rank": 9,
+    "common": "Tussock grass",
+    "latin": "Festuca pilgeri",
+    "note": "A dense fountain of fine blades, the old ones bleached to straw, and a few thin panicles above.",
+    "enters": "Low in the bed",
+    "grows": "The blades fountain up, and the panicles rise last"
+  },
+  {
+    "name": "haplocarpha",
+    "garden": "afroalpine",
+    "rank": 10,
+    "common": "Haplocarpha",
+    "latin": "Haplocarpha rueppellii",
+    "note": "A flat rosette pressed to the ground, glossy above and white-woolly beneath, and yellow daisies on short stalks.",
+    "enters": "Low in the bed",
+    "grows": "The rosette spreads flat, and the daisies open last"
+  },
+  {
+    "name": "marula",
+    "garden": "savanna",
+    "rank": 9,
+    "common": "Marula",
+    "latin": "Sclerocarya birrea subsp. caffra",
+    "note": "A grey trunk mottled where its bark flakes, leaning in, and a dense rounded crown of pinnate leaves.",
+    "enters": "Leans in from a bottom corner",
+    "grows": "The trunk rises and forks, and the leaves crowd the branch ends"
+  },
+  {
+    "name": "baobab",
+    "garden": "savanna",
+    "rank": 1,
+    "common": "Baobab",
+    "latin": "Adansonia digitata",
+    "note": "A swollen grey trunk, smooth and folded, thick limbs thrust up like roots, new palmate leaves at the twig tips, and big white flowers hanging on long stalks.",
+    "enters": "Rises from the bottom",
+    "grows": "The trunk swells up, the limbs thrust out and fork, leaves crowd the twig tips, and the flowers hang last"
+  },
+  {
+    "name": "kigelia",
+    "garden": "savanna",
+    "rank": 3,
+    "common": "Sausage tree",
+    "latin": "Kigelia africana",
+    "note": "A smooth grey branch, a rounded crown of pinnate leaves, and last season's long grey fruit hanging on rope-like stalks.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends and forks, the leaves cluster at its tips, and the fruit hangs last"
+  },
+  {
+    "name": "thorn",
+    "garden": "savanna",
+    "rank": 2,
+    "common": "Umbrella thorn",
+    "latin": "Vachellia tortilis subsp. heteracantha",
+    "note": "Dark zigzag limbs reaching out to one level under a flat crown of fine leaves, thorns in pairs, white ball flowers, and coiled pods.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends, its limbs zigzag out to the crown, the tiers leaf out, and the flowers open last"
+  },
+  {
+    "name": "thatchgrass",
+    "garden": "savanna",
+    "rank": 8,
+    "common": "Fine thatching grass",
+    "latin": "Hyparrhenia filipendula",
+    "note": "A leafy tuft under tall straight culms, each with a loose panicle of small golden racemes.",
+    "enters": "Low in the bed",
+    "grows": "The tuft fills out, and the culms rise last"
+  },
+  {
+    "name": "redgrass",
+    "garden": "savanna",
+    "rank": 6,
+    "common": "Red grass",
+    "latin": "Themeda triandra",
+    "note": "A tuft of narrow blades, and culms holding drooping clusters of rust-red spikelets with kinked awns.",
+    "enters": "Low in the bed",
+    "grows": "The tuft fills out, and the culms rise and nod last"
+  },
+  {
+    "name": "crinum",
+    "garden": "savanna",
+    "rank": 4,
+    "common": "Sabie crinum",
+    "latin": "Crinum macowanii",
+    "note": "Arching blue-green strap leaves, and on a stalk above them an umbel of white trumpets keeled with pink.",
+    "enters": "Low in the bed",
+    "grows": "The leaves arch out, the stalk rises, and the trumpets open last"
+  },
+  {
+    "name": "gloriosa",
+    "garden": "savanna",
+    "rank": 5,
+    "common": "Flame lily",
+    "latin": "Gloriosa superba",
+    "note": "Thin stems scrambling up through the grass on tendrils at their leaf tips, and nodding plum-red flowers whose wavy tepals sweep back like flames.",
+    "enters": "Low in the bed",
+    "grows": "The stems climb, the leaves reach out their tendrils, and the flowers open last"
+  },
+  {
+    "name": "hypoxis",
+    "garden": "savanna",
+    "rank": 7,
+    "common": "Star flower",
+    "latin": "Hypoxis hemerocallidea",
+    "note": "Hairy strap leaves arching out in three ranks, and erect stalks of bright yellow six-pointed stars.",
+    "enters": "Low in the bed",
+    "grows": "The leaves arch out, and the stalks rise with their stars last"
+  }
+]

@@ -1,0 +1,62 @@
+/* How the Paprika portrait moves (the motions themselves: portraits/harness/stage/motion.css). Origins and
+   distances are in the drawing's units. */
+
+/* The dreamer breathes; the head follows a beat later and settles. He blinks toward his lower
+   lids. */
+#dreamer-body {
+  --dy: -1.8px;
+}
+#dreamer-head {
+  transform-origin: 620px 720px;
+  --dy: -2.4px;
+  --turn: -0.4deg;
+  --blink: 5.8s;
+  --lash: #1d1210;
+  --lash-width: 4.6;
+}
+#dreamer-eyes {
+  transform-origin: 0 420px;
+}
+
+/* The carp streamer, tied at the mouth, swims on the wind. */
+#koi {
+  transform-origin: 1075px 205px;
+  --period: 7.2s;
+  --swing: -1.4deg;
+  --swing-back: 0.9deg;
+}
+
+/* Paper balloons bob on the air, each to its own beat. */
+.bob {
+  --dx: 1.5px;
+  --dy: -6px;
+  --turn: 2deg;
+}
+#balloon-high {
+  transform-origin: 552px 65px;
+  --period: 7.6s;
+}
+#balloon-low {
+  transform-origin: 297px 319px;
+  --period: 6.2s;
+}
+#balloon-near {
+  transform-origin: 865px 548px;
+  --period: 5.4s;
+}
+
+/* Birds glide and lift, each to its own beat, some the other way about. */
+#bird-crest {
+  --period: 5.2s;
+}
+#bird-cloud {
+  --period: 6.6s;
+  --direction: reverse;
+}
+#bird-small {
+  --period: 4.4s;
+}
+#bird-tower {
+  --period: 5.9s;
+  --direction: reverse;
+}

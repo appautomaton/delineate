@@ -1,0 +1,31 @@
+/* How Memories moves (the motions themselves: portraits/harness/stage/motion.css). Origins and distances
+   are in the drawing's units. */
+
+/* He breathes; his head follows a beat later and settles above the collar. He blinks toward his
+   lower lids. */
+#body {
+  --dy: -1.6px;
+}
+#head {
+  transform-origin: 614px 735px;
+  --dy: -2px;
+  --turn: -0.45deg;
+  --blink: 6.2s;
+}
+#eyes {
+  transform-origin: 0 574px;
+}
+
+/* The clouds drift on the high wind, a little, and come back. */
+#clouds {
+  --period: 140s;
+  --dx: 26px;
+}
+
+/* The branch sways from beyond the frame's corner. */
+#branch {
+  transform-origin: -80px -120px;
+  --period: 9s;
+  --swing: 0.7deg;
+  --swing-back: -0.4deg;
+}

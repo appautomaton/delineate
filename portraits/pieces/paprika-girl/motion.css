@@ -1,0 +1,71 @@
+/* How the paprika girl moves (the motions themselves: portraits/harness/stage/motion.css). Origins and
+   distances are in the drawing's units. */
+
+/* She breathes; her head follows a beat later, turning about the foot of the neck. Each eye
+   closes onto its lower lid, which the tilt of her head sets at its own slant. */
+#girl {
+  --dy: -1.8px;
+}
+#girl-head {
+  transform-origin: 648px 768px;
+  --dy: -2px;
+  --turn: -0.6deg;
+  --blink: 5.8s;
+  --lash: #24140f;
+  --lash-width: 3.2;
+}
+#girl-eye-l {
+  transform-origin: 578px 604px;
+  --slant: -10.3deg;
+}
+#girl-eye-r {
+  transform-origin: 662px 578px;
+  --slant: -22deg;
+}
+
+/* The carp streamer, tied at the mouth, swims on the wind. */
+#koi {
+  transform-origin: 1032px 214px;
+  --period: 7.2s;
+  --swing: -1.6deg;
+  --swing-back: 1deg;
+}
+
+/* Paper balloons bob on the air, each to its own beat. */
+.bob {
+  --dx: 1.5px;
+  --dy: -6px;
+  --turn: 2deg;
+}
+#balloon-top {
+  transform-origin: 552px 65px;
+  --period: 7.6s;
+}
+#balloon-mid {
+  transform-origin: 588px 193px;
+  --period: 6.8s;
+}
+#balloon-gate {
+  transform-origin: 298px 318px;
+  --period: 6.2s;
+}
+#balloon-city {
+  transform-origin: 866px 548px;
+  --period: 5.4s;
+}
+
+/* Birds glide and lift, each to its own beat, some the other way about. */
+#bird-gate {
+  --period: 5.2s;
+}
+#bird-cloud {
+  --period: 6.6s;
+  --direction: reverse;
+}
+#bird-small {
+  --period: 4.4s;
+}
+#bird-tower {
+  --period: 5.9s;
+  --direction: reverse;
+}

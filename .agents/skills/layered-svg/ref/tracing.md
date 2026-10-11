@@ -1,0 +1,125 @@
+# Segmenting and tracing
+
+## Regions
+
+A region is the backdrop, a thing, or a part of a thing; each becomes one group. The region map is
+a PNG with one flat color per region (color derived from the region's name, black for the
+backdrop), so it can be checked by eye and touched up by hand (`portraits/harness/trace/labels.ts`). The build
+reads maps; it never reruns a model. A piece's `segment.ts` writes them, composing what
+`portraits/harness/trace/mask.ts` offers: Segment Anything masks, boxes, polygons, lines across the frame
+(below a rail, above a ridge read by eye and settled onto its edge), and tone ranges in OKLab.
+
+Segment Anything (`portraits/harness/trace/sam.ts`):
+
+- ViT-B in **fp16**. The 8-bit build lost whole parts (a shirt, the hair, the koi) on the same
+  prompts; fp16 agreed with fp32 on 99.6% of pixels at half the size.
+- Prompt with **single points and take the union** of their masks. One prompt with many points
+  often returns a different, larger thing.
+- Some single points select the whole surrounding thing (a point on a lip returned the face). Probe
+  candidate points one by one and keep the ones whose masks are the right size.
+- Small parts get **clip boxes** so a wrong mask cannot spread.
+- After cutting: islands under about 24 px join their surroundings; backdrop holes enclosed by one
+  thing join that thing.
+- Use SAM only where outlines are complex and colors close to their neighbors. A flat piece is
+  found by its color; a regular solid by fitting its model.
+
+## Tracing a region (`portraits/harness/trace/layer.ts`, `stack.ts`)
+
+1. Flatten paint texture with a light bilateral filter (one pass, color 12, space 3).
+2. Palette in OKLab, sized per region to a mean error target (`paletteFor`).
+3. **Tones go down light to dark**, like glazes. Where two tones meet, the anti-aliased edge lets
+   the tones stacked between them show; in lightness order those read as the edge's own blend.
+   Ordering by area instead left dark seams.
+4. Each tone **reaches only about 3 px under the tones above it**. A full stack redraws every
+   boundary once per tone and, where its edge coincides with others, leaks hairlines.
+5. Outlines by sub-pixel marching squares on a softened margin field; Béziers by Schneider's
+   fitting, with corners kept sharp and straight runs drawn as lines. A ring that long straight
+   edges hold is drawn as a polygon (`straight`).
+6. Each separate piece is filled with a flat color or a one-direction gradient fitted to its own
+   pixels; near-flat ramps are drawn flat.
+
+Starting presets (a `TraceStyle` each, see `portraits/harness/trace/layer.ts`), as error / tones / tolerance /
+soften / flat / minArea; tune per picture:
+
+| Preset | Values | For |
+|---|---|---|
+| default | 0.009 / 64 / 0.4 / 0.5 / 3 / 1.5 | things in view |
+| skin | error 0.005, flat 1.5 | smooth faces |
+| backdrop | 0.016 / 64 / 0.6 / 0.9 / 6 / 10, straight 7 | busy distance |
+| geometric | 0.02 / 16 / 1.6 / 1.2 / 4 / 24, straight 0 | straight-membered structures |
+| hidden | 0.03 / 24 / 1 / 1.2 / 8 / 40, straight 6 | what only shows when layers move |
+
+## Making layers whole
+
+- Each region **continues under nearer regions** by a margin (24 px), and fully under loose pieces
+  that will move away (falling confetti).
+- The hidden part is **inpainted from the region's own clean pixels** (OpenCV Telea), never smeared
+  outward ring by ring (that drew streaks), and never from pixels within 2 px of a nearer region
+  (they carry its color in their anti-aliasing).
+- **Bleed**: trace from the reference extended 16 px past every edge (edges copied), in the
+  reference's own coordinates, so layers reach beyond the frame and parallax never bares it.
+
+## Depth plates
+
+Some pictures come with plates painted per depth (distance, middle ground, near ground, subject),
+each over black or over transparency. They agree with the picture in shape, not in tone or detail.
+See `portraits/harness/trace/plate.ts`.
+
+- Register first: plates may be painted larger or shifted (by 1.2 to 1.5 times, by hundreds of
+  pixels). Fit an affine map by features (`fitFeatures`), refine it by ECC over a box where the
+  plate's scene shows clearly (`refine`), store the numbers in the scene, and resample (`warp`). A
+  plate that only roughly matches serves for outlines, not paint.
+- Measure: which plate best explains each pixel of the picture, and how far each plate's
+  paint is from the picture where it has paint. Expect a few percent that no plate explains, and
+  plates repainted in different tones.
+- A plate's paint is what is brighter than black; close thin dark lines (outlines, folds) into it
+  (grow then shrink by a few pixels), or they become holes that show the layers behind.
+- Cut each plate into regions by claims, in order: the first region is the plate's paint; later
+  claims take pixels by Segment Anything points, clip boxes, polygons (for things with a straight
+  boundary, such as everything below a guardrail's top rail), and tone ranges in OKLab (clouds in
+  the sky, eyes within a face); a solid claim keeps one filled piece per box. The picture's map is
+  the plates composited, nearest in front; what no plate paints takes the region around it.
+- Wide hidden areas that no plate paints are filled by push-pull over a pyramid
+  (`portraits/harness/trace/fill.ts`): a quiet gradient from the colors around. Telea inpainting, right for
+  a band of a few pixels, draws streaks over hundreds.
+- Draw each region's hidden part from the plates, through a color transfer fitted where the
+  picture and the plate both show the region (`portraits/harness/trace/transfer.ts`), trusted only a seam
+  inside the nearer region's outline.
+- Loose things painted on a plate (petals) are fitted once as data and left out of its regions.
+
+## Busy texture
+
+A detailed middle distance (a town, foliage, a street of shops) costs the most bytes and holds the
+most error. Tried on a Shinkai-style town: looser curves (tolerance 1.2) with a finer palette
+(error 0.012), shapes of at least 5 px², and near-flat ramps drawn flat (8 levels) held the
+picture better than the default distant preset, in fewer bytes. Tightening further bought little
+for much.
+
+## Extra plates
+
+Ask for them when the picture hides what motion or separation would show. Both must be aligned
+with the reference; check the alignment per region before relying on one (generated plates often
+repaint textures elsewhere).
+
+- **Background plate**, the subject removed and the scene behind painted in. Cut it into its own
+  region map. Regions behind the subject are then traced in two passes: a coarse pass of what the
+  plate shows where the subject stands, and on top the fine pass of what the reference shows. Trust
+  the plate only a seam (12 px) inside the subject's outline: what shows through the subject's soft
+  edge is the reference's own scene, and a narrower seam left a light halo around the subject.
+- **Sharp plate**, nothing out of focus. Defocused pieces are drawn as shapes with their blur on
+  top, so what lies behind their smear must be drawn under them:
+  - Fit each piece's corners on the sharp plate, edge by edge (search along each edge's normal for
+    where its paper color gives way; keep edges hidden under nearer pieces as they were).
+  - Where the smear is thin, recover what is behind it from the reference itself: render the
+    pieces' coverage (shape blurred by its sigma, composited back to front) and solve
+    `picture = behind × through + added` for `behind`. This keeps the reference's own content.
+  - Where the smear is thick (less than about 30% of the background seen), take the sharp plate;
+    blend between.
+  - Regions in the smear: merge the reference's map and the sharp plate's by taking the nearer
+    region (segmentation drops parts next to confetti more often than it adds them), close gaps
+    narrower than the smear, give backdrop pixels the region around the smear, and give pixels
+    under each piece, and sharp-plate pixels of its own paper color, the region that surrounds
+    them.
+  - Tracing through the smear, or swapping the sharp plate's map in wholesale, left dark bulges
+    and torn edges.
+- Fit authored data (corners of flat pieces) on the clearest plate available.

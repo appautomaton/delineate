@@ -1,0 +1,37 @@
+/* How the girl on the hillside moves (the motions themselves: portraits/harness/stage/motion.css). Origins
+   and distances are in the drawing's units. */
+
+/* She breathes; her head, riding the breath, lifts a little toward the sky a beat later. She
+   blinks onto lower lids that fall 16 degrees to the left as her head tilts. */
+#body {
+  --period: 6.2s;
+  --dy: -1.6px;
+}
+#head {
+  transform-origin: 700px 650px;
+  --period: 6.2s;
+  --delay: 0.4s;
+  --dy: -0.8px;
+  --turn: -0.7deg;
+  --blink: 5.4s;
+  --lash: #2b1b18;
+  --lash-width: 2.6;
+}
+#eyes {
+  transform-origin: 641px 507px;
+  --slant: -16deg;
+}
+
+/* Clouds drift behind the hills, slowly enough to be noticed only on looking again. */
+#clouds {
+  --period: 90s;
+  --dx: 26px;
+}
+
+/* The branch over the sky sways from where it leaves the crown. */
+#branch {
+  transform-origin: 452px 118px;
+  --period: 8.4s;
+  --swing: 0.5deg;
+  --swing-back: -0.3deg;
+}

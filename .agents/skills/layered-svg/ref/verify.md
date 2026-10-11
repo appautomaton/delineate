@@ -1,0 +1,37 @@
+# Verifying, and showing the work
+
+## Tools
+
+| Command | Gives |
+|---|---|
+| `node portraits/harness/trace/compare.ts <drawing> <reference.png> [dir]` | render in Chrome at the reference's size; mean error per channel, share of pixels off by more than 12, PSNR; with a dir, the render, a side-by-side, and a difference map |
+| `node portraits/harness/trace/review.ts <drawing.svg> <reference.png> <dir> [regions.png]` | the review page: wipe, flip with Space, difference, region map, zoom 1:1 and 2:1, layer toggles with sizes, the numbers |
+| `node portraits/harness/trace/look.ts crop x y w h zoom out.png a.png b.png ...` | the same box from several images, enlarged, side by side |
+| `node portraits/harness/trace/look.ts grid x y w h zoom out.png image.png [shapes.json]` | a gridded crop for reading coordinates, with outlines drawn over it |
+| `ONLY=<regex> OUT=<file.svg> node portraits/pieces/<piece>/build.ts` | build only some regions, for quick trials |
+| `node portraits/harness/stage/pace.ts <page.html>` | frame rate and main-thread share of the page, together and apart |
+| `node portraits/harness/stage/reel.ts <page.html> [out.mp4\|.webp\|.gif ...]` | the page coming apart and back as a five-second loop (`reel.mp4` beside the page): the piece shown to someone who will not open it |
+
+## What to check
+
+- The whole frame side by side, then crops where the eye goes (eyes, mouth, hands) and where layers
+  meet (the subject's outline, where defocused pieces overlap things).
+- Each layer alone, and each layer with the layers in front of it turned off: hidden parts must be
+  continuous, with no streaks, holes, or stray pieces left in the wrong layer.
+- The standalone SVG and the page at rest. A screenshot of a page with a side panel, taken at the
+  page's corner, scores nonsense; size the art to the reference and clip to it.
+- After any change, which tiles got better or worse (a per-tile difference of two renders against
+  the reference finds regressions fast).
+- No raster in the file: no `<image>`, no `data:`.
+
+## What the numbers mean
+
+For a painted 1254 px portrait, a mean error near 5 of 255 with about 15% of pixels off by more
+than 12 looked like the same picture at normal size; the remaining error lived in texture and soft
+edges. Numbers rise when traced texture is replaced by clean models; that is expected, and the eye
+decides.
+
+## Reporting
+
+Open the piece or the review page for the user, then say in a few lines what changed, the numbers,
+and what is still off. Pictures first; numbers support them.

@@ -1,0 +1,164 @@
+/* The motions a layered drawing is given. A piece's own styles say which group moves how, by a
+   class here; about which point, by transform-origin; and by how much, by the custom properties the
+   class reads, each registered below with its default. Lengths are px: inside the drawing a px is a
+   drawing unit, and the page shows the drawing at its own size, scaled as a whole, so a motion runs
+   alike on a group in the drawing and on the sheet the page lifts the group onto.
+
+   Every motion starts from rest, so the first frame is the picture as painted, and every cycle
+   ends where it began, so no frame jumps. */
+
+/* How a pose, a swing, or a drift is timed and how far it goes; not inherited, so a head that nods
+   on a breathing body takes nothing of the breath. */
+@property --period { syntax: "<time>"; inherits: false; initial-value: 6.4s; }
+@property --delay { syntax: "<time>"; inherits: false; initial-value: 0s; }
+@property --dx { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --dy { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --turn { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@property --swing { syntax: "<angle>"; inherits: false; initial-value: 1deg; }
+@property --swing-back { syntax: "<angle>"; inherits: false; initial-value: -0.6deg; }
+@property --direction { syntax: "normal | reverse"; inherits: false; initial-value: normal; }
+
+/* A blink: one period for the eyes and their lash lines, so it is inherited from a group that holds
+   both; the slant of the lower lids, for a tilted head. */
+@property --blink { syntax: "<time>"; inherits: true; initial-value: 6s; }
+@property --lash { syntax: "<color>"; inherits: true; initial-value: #2b1a17; }
+@property --lash-width { syntax: "<number>"; inherits: true; initial-value: 3.6; }
+@property --slant { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+/* A falling piece: --t runs from 0 to 1 over a fall; its center, in drawing units; how far past the
+   frame it goes to vanish (--m), and the frame's height plus twice that (--span); and its sway,
+   spin, and tumble, each a whole number of times a fall. */
+@property --t { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --dur { syntax: "<time>"; inherits: false; initial-value: 12s; }
+@property --cx { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --cy { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --m { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --span { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --sway { syntax: "<length>"; inherits: false; initial-value: 10px; }
+@property --sways { syntax: "<number>"; inherits: false; initial-value: 2; }
+@property --phase { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --wind { syntax: "<number>"; inherits: false; initial-value: 0; }
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 35deg; }
+@property --spins { syntax: "<number>"; inherits: false; initial-value: 3; }
+@property --tumbles { syntax: "<number>"; inherits: false; initial-value: 0; }
+/* How far a piece has fallen, worked out once a frame from the above; registered, it costs the
+   page's styling a third less than as a bare variable. */
+@property --fallen { syntax: "<length>"; inherits: false; initial-value: 0px; }
+
+svg * {
+  transform-box: view-box;
+}
+
+/* Out to a pose and back, eased, once a period: a body breathing, a head nodding a beat after it,
+   a balloon bobbing on the air, clouds drifting on a high wind. The pose is a shift and a turn. */
+.breathe,
+.nod,
+.bob,
+.drift {
+  animation: pose var(--period) ease-in-out var(--delay) infinite;
+}
+.nod {
+  --delay: 0.35s;
+}
+.drift {
+  --period: 80s;
+}
+@keyframes pose {
+  50% {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--turn));
+  }
+}
+
+/* Swinging about the point a thing hangs or grows from: a streamer on the wind, a branch. Out to
+   one side, back past rest to the other, and home. */
+.sway {
+  animation: sway var(--period) ease-in-out var(--delay) infinite;
+}
+@keyframes sway {
+  30% {
+    transform: rotate(var(--swing));
+  }
+  70% {
+    transform: rotate(var(--swing-back));
+  }
+}
+
+/* Gliding: a bird lifts and settles. Birds of one sky vary by period and direction. */
+.glide {
+  animation: glide var(--period) ease-in-out var(--delay) infinite var(--direction);
+}
+@keyframes glide {
+  25% {
+    transform: translate(3px, -4px);
+  }
+  75% {
+    transform: translate(-2px, 2px);
+  }
+}
+
+/* A blink: the eyes close onto their lower lids, and the lash lines take their place. The lash
+   lines are drawn with no fill and no opacity of their own, so they stay unseen wherever these
+   styles do not run. */
+.blink {
+  animation: blink var(--blink) infinite;
+}
+.lid {
+  stroke: var(--lash);
+  stroke-width: var(--lash-width);
+  stroke-linecap: round;
+  animation: lid var(--blink) infinite;
+}
+@keyframes blink {
+  0%,
+  92%,
+  98%,
+  100% {
+    transform: rotate(var(--slant)) scaleY(1) rotate(calc(-1 * var(--slant)));
+    opacity: 1;
+  }
+  94.5%,
+  95.5% {
+    transform: rotate(var(--slant)) scaleY(0.12) rotate(calc(-1 * var(--slant)));
+    opacity: 0;
+  }
+}
+@keyframes lid {
+  0%,
+  93.2%,
+  96.8%,
+  100% {
+    opacity: 0;
+  }
+  94.2%,
+  95.8% {
+    opacity: 1;
+  }
+}
+
+/* Falling through the frame and round again from the top, swaying, spinning, and tumbling, as
+   paper and petals do. The wind carries a piece sideways in step with its fall and lets it go only
+   off the frame, when it comes round. */
+.fall {
+  --fallen: calc((mod(var(--cy) + var(--m) + var(--t) * var(--span), var(--span)) - var(--m) - var(--cy)) * 1px);
+  transform-origin: calc(var(--cx) * 1px) calc(var(--cy) * 1px);
+  transform: translate(calc((sin((var(--t) + var(--phase)) * var(--sways) * 6.28319) - sin(var(--phase) * var(--sways) * 6.28319)) * var(--sway) + var(--wind) * var(--fallen)), var(--fallen))
+    rotate(calc(sin(var(--t) * var(--spins) * 6.28319) * var(--spin))) scaleY(cos(var(--t) * var(--tumbles) * 6.28319));
+  animation: fall var(--dur) linear infinite;
+}
+/* Too near the lens to fall past the subject, a piece hangs in the air and drifts in place. */
+.hover {
+  transform-origin: calc(var(--cx) * 1px) calc(var(--cy) * 1px);
+  transform: translate(calc(sin(var(--t) * 6.28319) * 6px), calc(sin(var(--t) * 12.56637) * 4px)) rotate(calc(sin(var(--t) * 6.28319) * 4deg));
+  animation: fall var(--dur) linear infinite;
+}
+@keyframes fall {
+  to {
+    --t: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "d3lin3at3",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "draw": "node garden/draw/draw.ts",
+    "precheck": "npm run draw",
+    "check": "tsc -p garden && tsc -p garden/tsconfig.node.json && tsc -p portraits",
+    "predev": "npm run draw",
+    "dev": "vite garden",
+    "build": "npm run check && vite build garden",
+    "preview": "vite preview garden",
+    "paprika:segment": "node portraits/pieces/paprika/segment.ts",
+    "paprika": "node portraits/pieces/paprika/build.ts",
+    "paprika-girl:segment": "node portraits/pieces/paprika-girl/segment.ts",
+    "paprika-girl": "node portraits/pieces/paprika-girl/build.ts",
+    "memories:segment": "node portraits/pieces/memories/segment.ts",
+    "memories": "node portraits/pieces/memories/build.ts",
+    "memories-girl:segment": "node portraits/pieces/memories-girl/segment.ts",
+    "memories-girl": "node portraits/pieces/memories-girl/build.ts"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "4.3.0",
+    "@techstark/opencv-js": "4.12.0-release.1",
+    "@types/node": "24.19.1",
+    "@types/pngjs": "6.0.5",
+    "playwright-core": "1.63.0",
+    "pngjs": "7.0.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.2"
+  },
+  "dependencies": {
+    "animejs": "4.5.0"
+  }
+}

@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}" />
+    <style>
+      :root {
+        --ground: #0b0a09;
+        --ink: #f2ede5;
+        --mid: #b4aba0;
+        --dim: #7e766d;
+        --accent: #d4673f;
+        --line: color-mix(in srgb, var(--ink) 13%, transparent);
+        --settle: cubic-bezier(0.16, 0.84, 0.24, 1);
+        --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        --sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", sans-serif;
+        --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        color-scheme: dark;
+        {{theme}}
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font: 15px/1.55 var(--sans);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      h1,
+      p,
+      ol {
+        margin: 0;
+      }
+      button {
+        font: inherit;
+      }
+
+      .stage {
+        min-height: 100svh;
+        display: grid;
+        grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+        align-items: start;
+      }
+
+      /* The side panel: title, the one control, the planes, the wall label. */
+      .side {
+        min-height: 100svh;
+        padding: clamp(48px, 9vh, 88px) clamp(20px, 3vw, 36px) 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+        border-right: 1px solid var(--line);
+      }
+      .eyebrow,
+      .row,
+      .buttons button,
+      .planes b,
+      .tag b {
+        font-family: var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .eyebrow {
+        font-size: 10px;
+        color: var(--dim);
+        margin-bottom: 14px;
+      }
+      h1 {
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: clamp(40px, 4.4vw, 58px);
+        line-height: 0.98;
+        letter-spacing: -0.015em;
+      }
+      h1 em {
+        color: var(--accent);
+      }
+      .intro {
+        font-size: 14px;
+        line-height: 1.65;
+        color: var(--mid);
+        max-width: 40ch;
+        text-wrap: pretty;
+      }
+      .control {
+        display: grid;
+        gap: 12px;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 10px;
+        color: var(--dim);
+      }
+      .row output {
+        font-family: var(--mono);
+        font-size: 14px;
+        letter-spacing: 0;
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 2px;
+        margin: 8px 0;
+        background: color-mix(in srgb, var(--ink) 18%, transparent);
+        outline: none;
+        cursor: ew-resize;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      input[type="range"]:focus-visible::-webkit-slider-thumb {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 32%, transparent);
+      }
+      .buttons {
+        display: flex;
+        gap: 8px;
+      }
+      .buttons button {
+        font-size: 10px;
+        color: var(--mid);
+        background: transparent;
+        border: 1px solid var(--line);
+        padding: 8px 12px;
+        cursor: pointer;
+        transition:
+          color 0.35s var(--settle),
+          border-color 0.35s var(--settle);
+      }
+      .buttons button:hover,
+      .buttons button:focus-visible {
+        color: var(--ink);
+        border-color: color-mix(in srgb, var(--ink) 32%, transparent);
+        outline: none;
+      }
+      .planes {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 2px;
+      }
+      .planes li {
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        gap: 10px;
+        align-items: baseline;
+        padding: 5px 6px;
+        margin: 0 -6px;
+        font-size: 13px;
+        cursor: default;
+        border-radius: 3px;
+        transition: background 0.3s var(--settle);
+      }
+      .planes li:hover {
+        background: color-mix(in srgb, var(--ink) 6%, transparent);
+      }
+      .planes b {
+        font-weight: 400;
+        font-size: 9px;
+        color: var(--accent);
+      }
+      .planes span {
+        display: block;
+        color: var(--dim);
+        font-size: 11.5px;
+      }
+      .label {
+        margin-top: auto;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+        font-size: 12px;
+        line-height: 1.65;
+        color: var(--dim);
+        max-width: 42ch;
+      }
+
+      /* The picture: its planes in one 3D stack. Apart, they are cels on a multiplane camera: the
+         stack lies back and turns, and the planes spread along their depth. The pointer moves the
+         eye; once the planes are apart it turns the stack instead. The view stays in place while
+         the panel beside it scrolls. */
+      .view {
+        position: sticky;
+        top: 0;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        height: 100svh;
+        padding: clamp(32px, 6vh, 72px) 24px;
+        perspective: 2400px;
+      }
+      .orbit,
+      .stack {
+        transform-style: preserve-3d;
+      }
+      /* --size is the frame's width; --aspect, its width over its height, is the drawing's. */
+      .stack {
+        --size: min(84svh * var(--aspect), calc(100vw - 440px), 980px);
+        position: relative;
+        width: var(--size);
+        aspect-ratio: var(--aspect);
+        transition: transform 1s var(--settle);
+      }
+      /* A plane clips to the frame, so the drawing's bleed past the frame fills the edges as the
+         eye moves, and apart, each cel ends at its own edges. */
+      .plane {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        transition:
+          transform 1s var(--settle),
+          opacity 0.4s var(--settle);
+      }
+      /* A plane's drawing, at the drawing's own size, so a CSS pixel is a unit of the drawing;
+         scaled to the stack, and carried by the eye. Its box reaches --pad past the frame, as far
+         as the drawing's bleed and a little more, and contains its paint: so bounded, a plane that
+         moves with the pointer costs the page next to nothing to re-sort into layers, where
+         unbounded it cost a frame's worth. Sheets inside it move on their own, the same size; a
+         running animation gives each its own layer, so none asks for one in advance. --w and --h
+         are the drawing's size in its units. */
+      .content,
+      .sheet {
+        position: absolute;
+        left: calc(-1 * var(--pad));
+        top: calc(-1 * var(--pad));
+        width: calc(var(--w) * 1px + 2 * var(--pad));
+        height: calc(var(--h) * 1px + 2 * var(--pad));
+        contain: paint;
+      }
+      .content {
+        transform-origin: var(--pad) var(--pad);
+        will-change: transform;
+      }
+      .sheet {
+        left: 0;
+        top: 0;
+      }
+      .content svg {
+        position: absolute;
+        left: var(--pad);
+        top: var(--pad);
+        width: calc(var(--w) * 1px);
+        height: calc(var(--h) * 1px);
+        display: block;
+        overflow: visible;
+      }
+      .plane.dim {
+        opacity: 0.18;
+      }
+      /* Each plane is a cel: an acetate sheet with its number and its peg holes, seen only once
+         it is lifted off the others. */
+      .plate,
+      .tag,
+      .pegs {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.7s var(--settle);
+      }
+      .plate {
+        inset: 0;
+        border: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
+        border-radius: 1%;
+        background: color-mix(in srgb, var(--ink) 3%, transparent);
+      }
+      .tag {
+        top: 2.6%;
+        left: 3%;
+        display: flex;
+        align-items: baseline;
+        gap: 0.6em;
+        white-space: nowrap;
+        font-size: calc(var(--size) * 0.026);
+      }
+      .tag b {
+        font-weight: 400;
+        font-size: 0.8em;
+        color: var(--accent);
+      }
+      .tag i {
+        font-style: normal;
+        color: var(--ink);
+        text-shadow: 0 0 0.4em var(--ground);
+      }
+      .pegs {
+        bottom: 2.2%;
+        left: 50%;
+        width: 18%;
+        translate: -50% 0;
+        overflow: visible;
+        fill: none;
+        stroke: color-mix(in srgb, var(--ink) 38%, transparent);
+        stroke-width: 1.5;
+      }
+      /* The drawing's own styles and gradients stay in its first svg, out of sight. */
+      .source {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
+
+      @media (max-width: 900px) {
+        .stage {
+          grid-template-columns: 1fr;
+        }
+        .side {
+          display: contents;
+        }
+        .head {
+          order: 1;
+          padding: 56px 16px 16px;
+        }
+        .view {
+          order: 2;
+          position: relative;
+          height: auto;
+          padding: 24px 16px 40px;
+          perspective: 1400px;
+        }
+        .stack {
+          --size: calc(100vw - 32px);
+        }
+        .control {
+          order: 3;
+          margin: 0 16px;
+        }
+        .planes {
+          order: 4;
+          margin: 20px 16px 0;
+        }
+        .intro {
+          order: 5;
+          margin: 20px 16px 0;
+        }
+        .label {
+          order: 6;
+          margin: 20px 16px 40px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .stack,
+        .plane,
+        .plate,
+        .tag,
+        .pegs {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <aside class="side">
+        <div class="head">
+          <p class="eyebrow">{{eyebrow}}</p>
+          <h1>{{heading}}</h1>
+        </div>
+        <p class="intro">{{intro}}</p>
+        <div class="control">
+          <div class="row"><label for="apart">Separation</label><output id="apartOut" for="apart">0%</output></div>
+          <input id="apart" type="range" min="0" max="100" value="0" step="1" />
+          <div class="buttons"><button id="run" type="button" aria-pressed="true">Pause</button><button id="flush" type="button">Together</button></div>
+        </div>
+        <ol class="planes" id="planes"></ol>
+        <p class="label">{{label}}</p>
+      </aside>
+
+      <div class="view" id="view">
+        <div class="orbit" id="orbit">
+          <div class="stack" id="stack" role="img" aria-label="{{alt}}">
+            {{drawing}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        // The stage for a layered drawing (see portraits/harness/stage/drawing.ts for what the drawing
+        // carries). The piece's own settings, if any, override these.
+        const { reach, gap, lie, turn, shrink, orbit: swing, settle } = {
+          reach: 24, // drawing units a point moves at the pointer's edge, per m⁻¹ of inverse depth from the focus plane
+          gap: 0.105, // spacing between planes when fully apart, as a share of the frame's width
+          lie: 54, // degrees the stack lies back when fully apart
+          turn: -32, // degrees it turns in its own plane
+          shrink: 0.46, // how much the stack scales down to keep the spread in view
+          orbit: [8, 12], // degrees the pointer turns the stack, once apart
+          settle: 0.35, // seconds for the eye to close most of the way to the pointer
+          ...{{settings}},
+        };
+        const PAD = 48; // drawing units each plane's box reaches past the frame: the bleed, and more
+        const ROOM = 32; // drawing units a moving group's sheet reaches past the group, for its motion and its blur
+        const NS = "http://www.w3.org/2000/svg";
+
+        const stack = document.getElementById("stack");
+        const orbit = document.getElementById("orbit");
+        const view = document.getElementById("view");
+        const art = stack.querySelector("svg");
+        const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const viewBox = art.getAttribute("viewBox");
+        const [, , W, H] = viewBox.split(/[\s,]+/).map(Number);
+        const focus = Number(art.dataset.focus);
+        stack.style.setProperty("--aspect", W / H);
+        stack.style.setProperty("--w", W);
+        stack.style.setProperty("--h", H);
+        stack.style.setProperty("--pad", `${PAD}px`);
+        const svg = () => {
+          const el = document.createElementNS(NS, "svg");
+          el.setAttribute("class", "art");
+          el.setAttribute("viewBox", viewBox);
+          el.setAttribute("aria-hidden", "true");
+          return el;
+        };
+        const sheet = () => {
+          const box = document.createElement("div");
+          box.className = "sheet";
+          box.append(svg());
+          return box;
+        };
+
+        // Where each moving group turns, and the box it covers, read while it is still in the drawing.
+        const moving = [...art.querySelectorAll(".moving")];
+        const origins = new Map(moving.map((g) => [g, getComputedStyle(g).transformOrigin.split(" ").map(parseFloat)]));
+        const bounds = new Map(moving.map((g) => [g, g.getBBox()]));
+
+        // A group that moves as a whole goes onto a sheet of its own and takes its name and its
+        // motion along, so its motion moves the sheet: the compositor carries it, and nothing is
+        // repainted. The sheet covers only the group's box and room for its motion, so a bird
+        // costs the compositor what a bird does, not what the sky does. A moving group inside it
+        // rides on its sheet in turn, when it is the last thing in it, so lifting keeps the order
+        // things are drawn in; otherwise it moves in place. [px, py]: where the sheet's parent box
+        // begins, in drawing units.
+        function lift(group, [px, py] = [-PAD, -PAD]) {
+          const b = bounds.get(group);
+          const x0 = Math.max(-PAD, Math.floor(b.x - ROOM));
+          const y0 = Math.max(-PAD, Math.floor(b.y - ROOM));
+          const x1 = Math.min(W + PAD, Math.ceil(b.x + b.width + ROOM));
+          const y1 = Math.min(H + PAD, Math.ceil(b.y + b.height + ROOM));
+          const box = sheet();
+          Object.assign(box.style, { left: `${x0 - px}px`, top: `${y0 - py}px`, width: `${x1 - x0}px`, height: `${y1 - y0}px` });
+          Object.assign(box.firstChild.style, { left: `${-x0}px`, top: `${-y0}px` });
+          const [ox, oy] = origins.get(group);
+          box.style.transformOrigin = `${ox - x0}px ${oy - y0}px`;
+          box.id = group.id;
+          box.classList.add(...[...group.classList].filter((c) => c !== "moving"));
+          group.removeAttribute("id");
+          group.removeAttribute("class");
+          const trailing = [];
+          for (let el = group.lastElementChild; el?.matches(".moving"); el = el.previousElementSibling) trailing.unshift(el);
+          box.firstChild.append(group);
+          for (const el of trailing) box.append(lift(el, [x0, y0]));
+          return box;
+        }
+
+        // Every layer becomes a plane: its groups in drawing order on sheets, still ones sharing a
+        // sheet, loose pieces sharing another, and each moving group on its own. Styles,
+        // gradients, and filters stay in the first svg; ids resolve across the page, so the
+        // planes still find them.
+        const list = document.getElementById("planes");
+        const layers = [...art.querySelectorAll(":scope > .layer")];
+        const planes = layers.map((layer, i) => {
+          const plane = document.createElement("div");
+          plane.className = "plane";
+          const plate = document.createElement("i");
+          plate.className = "plate";
+          const content = document.createElement("div");
+          content.className = "content";
+          let current = null; // the group the last still or loose groups went into, and which kind
+          for (const child of [...layer.children]) {
+            if (child.matches(".moving")) {
+              content.append(lift(child));
+              current = null;
+              continue;
+            }
+            const kind = child.matches(".loose") ? "loose" : "still";
+            if (current?.kind !== kind) {
+              current = { kind, group: document.createElementNS(NS, "g") };
+              const box = kind === "loose" ? sheet() : null;
+              const host = box ? box.firstChild : svg();
+              host.append(current.group);
+              content.append(box ?? host);
+            }
+            current.group.append(child);
+          }
+          const tag = document.createElement("p");
+          tag.className = "tag";
+          tag.innerHTML = `<b>L${i}</b><i></i>`;
+          tag.lastChild.textContent = layer.dataset.title;
+          // Peg holes: round, slot, round, as on an animation peg bar.
+          const pegs = document.createElementNS(NS, "svg");
+          pegs.setAttribute("class", "pegs");
+          pegs.setAttribute("viewBox", "0 0 180 14");
+          pegs.innerHTML = '<circle cx="7" cy="7" r="6"/><rect x="62" y="1" width="56" height="12" rx="6"/><circle cx="173" cy="7" r="6"/>';
+          plane.append(plate, content, tag, pegs);
+          stack.append(plane);
+          const item = document.createElement("li");
+          item.dataset.plane = i;
+          item.innerHTML = `<b>L${i}</b><div><span></span></div>`;
+          item.lastChild.prepend(layer.dataset.title);
+          item.querySelector("span").textContent = layer.dataset.note;
+          list.append(item);
+          // How the plane moves with the eye: by d0 + dx·x + dy·y drawing units per unit of eye
+          // movement at each point (x, y), from its inverse depth 1/z = c + ax·x + ay·y.
+          const [c, ax, ay] = layer.dataset.plane.split(" ").map(Number);
+          return { plane, content, cel: [plate, tag, pegs], d0: 1 / focus - c, dx: -ax, dy: -ay };
+        });
+        for (const layer of layers) layer.remove();
+        art.classList.add("source");
+        art.setAttribute("aria-hidden", "true");
+
+        // Separation: one number, every plane its own distance. Fully apart, the stack rises by
+        // `rise` pixels, as far as centers the spread in the view.
+        let apart = 0;
+        let scale = 1;
+        let rise = 0;
+        let shown = "";
+        function place(apart) {
+          const size = stack.offsetWidth;
+          // Flush, nothing in 3D: a transform kept at zero would still cost every frame.
+          stack.style.transform = apart ? `translateY(${(rise * apart).toFixed(1)}px) rotateX(${lie * apart}deg) rotateZ(${turn * apart}deg) scale(${1 - shrink * apart})` : "none";
+          planes.forEach(({ plane }, i) => (plane.style.transform = apart ? `translateZ(${((i - (planes.length - 1) / 2) * apart * gap * size).toFixed(1)}px)` : "none"));
+        }
+        function separate() {
+          scale = stack.offsetWidth / W;
+          place(apart);
+          const seen = Math.max(0, Math.min(1, apart * 1.6 - 0.25));
+          for (const { cel } of planes) for (const el of cel) el.style.opacity = seen;
+          shown = "";
+        }
+        // Perspective makes the spread's middle no simple function of the stack's, so it is
+        // measured: the planes are set fully apart for a moment, never drawn, and read where they
+        // fall. A second reading takes up what the first rise moved in depth.
+        function center() {
+          const moved = [stack, ...planes.map(({ plane }) => plane)];
+          const tilt = orbit.style.transform;
+          for (const el of moved) el.style.transition = "none";
+          orbit.style.transform = "none";
+          const v = view.getBoundingClientRect();
+          rise = 0;
+          for (let reading = 0; reading < 2; reading++) {
+            place(1);
+            const boxes = planes.map(({ plane }) => plane.getBoundingClientRect());
+            rise += (v.top + v.bottom - Math.min(...boxes.map((b) => b.top)) - Math.max(...boxes.map((b) => b.bottom))) / 2;
+          }
+          place(apart);
+          orbit.style.transform = tilt;
+          stack.offsetWidth; // settles the return here, so no transition starts from the reading
+          for (const el of moved) el.style.transition = "";
+        }
+        const slider = document.getElementById("apart");
+        const out = document.getElementById("apartOut");
+        slider.addEventListener("input", () => {
+          apart = slider.value / 100;
+          out.value = `${slider.value}%`;
+          separate();
+        });
+        document.getElementById("flush").addEventListener("click", () => {
+          slider.value = 0;
+          slider.dispatchEvent(new Event("input"));
+        });
+        new ResizeObserver(() => {
+          center();
+          separate();
+        }).observe(stack);
+
+        // Point at a plane in the list to find it in the stack.
+        list.addEventListener("pointerover", (e) => {
+          const li = e.target.closest("li");
+          if (li && apart > 0) planes.forEach(({ plane }, i) => plane.classList.toggle("dim", i !== Number(li.dataset.plane)));
+        });
+        list.addEventListener("pointerleave", () => planes.forEach(({ plane }) => plane.classList.remove("dim")));
+
+        // Motion runs from the drawing's own styles, on groups and on the sheets they were lifted
+        // onto; this pauses and resumes all of it, and none of the page's own transitions.
+        const run = document.getElementById("run");
+        let running = !still;
+        const label = () => {
+          run.textContent = running ? "Pause" : "Play";
+          run.setAttribute("aria-pressed", running);
+        };
+        run.addEventListener("click", () => {
+          running = !running;
+          for (const a of document.getAnimations()) if (a instanceof CSSAnimation) running ? a.play() : a.pause();
+          label();
+        });
+        label();
+
+        // The pointer stands for the eye, from -1 to 1 across the view. Together, each plane moves
+        // as the eye sees it move, which across a receding plane is an affine map; apart, the eye
+        // turns the whole stack. Planes move by their own transform, so no property set here
+        // reaches the paths inside them.
+        let target = [0, 0];
+        let eye = [0, 0];
+        let last = 0;
+        if (!still) {
+          view.addEventListener("pointermove", (e) => {
+            const r = stack.getBoundingClientRect();
+            target = [((e.clientX - r.left) / r.width) * 2 - 1, ((e.clientY - r.top) / r.height) * 2 - 1].map((v) => Math.max(-1, Math.min(1, v)));
+          });
+          view.addEventListener("pointerleave", () => (target = [0, 0]));
+        }
+        requestAnimationFrame(function frame(now) {
+          const k = 1 - Math.exp(-(last ? now - last : 16) / 1000 / (settle / 3));
+          last = now;
+          eye = eye.map((v, i) => v + (target[i] - v) * k);
+          const key = eye.map((v) => v.toFixed(4)).join() + apart + scale;
+          if (key !== shown) {
+            shown = key;
+            const [ex, ey] = eye.map((v) => v * reach * (1 - apart));
+            for (const { content, d0, dx, dy } of planes) {
+              const m = [1 + ex * dx, ey * dx, ex * dy, 1 + ey * dy, ex * d0, ey * d0].map((v) => +v.toFixed(5));
+              content.style.transform = `scale(${scale.toFixed(5)}) matrix(${m.join(",")})`;
+            }
+            // Only when apart: any change to the orbit, a transform the compositor does not own,
+            // makes the page sort every plane into layers again, a frame's worth of work.
+            const tilt = apart ? `rotateX(${(-eye[1] * swing[0] * apart).toFixed(2)}deg) rotateY(${(eye[0] * swing[1] * apart).toFixed(2)}deg)` : "none";
+            if (tilt !== orbit.style.transform) orbit.style.transform = tilt;
+          }
+          requestAnimationFrame(frame);
+        });
+      })();
+    </script>
+  </body>
+</html>
