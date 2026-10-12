@@ -346,7 +346,8 @@ pond. Revised from the survey:
 - Japanese wisteria over Chinese: its racemes fall 20 to 50 cm, against 15 to 20, and read at
   garden size as the rain they are named for.
 - Moso bamboo moves from the bed to a side: its culms reach 20 m, so a few ringed culms rise
-  from below the frame and out of its top, the strongest upright in a winter of bare wood.
+  from below the frame and out of its top, the strongest upright in a winter of bare wood. They
+  stand on the left: on the right they would pass through the controls.
 
 | Plant | Latin | Role | Spring | Summer | Autumn | Winter |
 |---|---|---|---|---|---|---|
