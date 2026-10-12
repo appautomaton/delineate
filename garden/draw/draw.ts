@@ -542,7 +542,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 10017,
     draw: (o, r) => E.wisteria(o, r, [0, 0]),
     detail: (o, r) => E.wisteriaDetail(o, r),
+  },  akebia: {
+    seed: 10118,
+    draw: (o, r) => E.akebia(o, r, [0, 0]),
+    detail: (o, r) => E.akebiaDetail(o, r),
   },
+
 
 
 

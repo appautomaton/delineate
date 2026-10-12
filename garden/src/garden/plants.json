@@ -1002,5 +1002,15 @@
     "note": "Old twisted vines wound along a timber arbor beam, long violet racemes falling from it, pinnate leaves, and velvety pods hanging on into winter.",
     "enters": "Hangs from an arbor beam reaching in from a side",
     "grows": "The racemes fall from the beam and open from base to tip; the leaves follow, pods hang from summer, the leaves yellow and fall, and the bare vines hold their pods through winter"
+  },
+  {
+    "name": "akebia",
+    "garden": "eastasian",
+    "rank": 9,
+    "common": "Chocolate vine",
+    "latin": "Akebia quinata",
+    "note": "Thin stems twining along a bamboo pole, five-leaflet palms, dangling purple-brown flowers in early spring, and plump purple sausage pods in autumn.",
+    "enters": "Hangs from a bamboo pole reaching in from a side",
+    "grows": "Purple-brown flowers dangle before the leaves; the five-leaflet palms follow; purple pods hang in autumn; about half the leaves fall and the rest thin through winter"
   }
 ]

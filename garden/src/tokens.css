@@ -291,6 +291,10 @@
   --bark-wisteria: oklch(0.52 0.025 60);
   --flower-wisteria: oklch(0.7 0.12 295);
   --pod-wisteria: oklch(0.62 0.05 110);
+  --pole-bamboo: oklch(0.74 0.06 85);
+  --bark-akebia: oklch(0.45 0.05 20);
+  --flower-akebia: oklch(0.45 0.09 340);
+  --pod-akebia: oklch(0.55 0.11 320);
 
   /* Species: the East Asian garden */
   --pl-ginkgo: oklch(0.7 0.12 130);
@@ -306,6 +310,7 @@
   --pl-moso: oklch(0.6 0.12 130);
   --pl-wisteria: oklch(0.66 0.12 128);
   --pl-wisteria-autumn: oklch(0.8 0.13 92);
+  --pl-akebia: oklch(0.58 0.11 138);
 
   color-scheme: light;
 }
@@ -580,6 +585,10 @@
   --bark-wisteria: oklch(0.47 0.02 60);
   --flower-wisteria: oklch(0.65 0.094 295);
   --pod-wisteria: oklch(0.57 0.039 110);
+  --pole-bamboo: oklch(0.69 0.047 85);
+  --bark-akebia: oklch(0.4 0.039 20);
+  --flower-akebia: oklch(0.4 0.07 340);
+  --pod-akebia: oklch(0.5 0.086 320);
 
   /* Species: the East Asian garden, by moonlight */
   --pl-ginkgo: oklch(0.66 0.086 138);
@@ -595,6 +604,7 @@
   --pl-moso: oklch(0.56 0.086 138);
   --pl-wisteria: oklch(0.62 0.086 136);
   --pl-wisteria-autumn: oklch(0.76 0.094 100);
+  --pl-akebia: oklch(0.54 0.079 146);
 
   color-scheme: dark;
 }

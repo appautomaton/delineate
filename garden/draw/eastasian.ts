@@ -700,3 +700,79 @@ export function wisteriaDetail(out: Out, r: Rng) {
   wisteriaLeaf(out, r, [70, -154], rad(80), 220);
 }
 
+// ---------------------------------------------------------------------------
+// Chocolate vine on a bamboo pole: thin stems twining along a pole that reaches in from the edge,
+// some hanging free below it. Small purple-brown flowers dangle in early spring before the
+// leaves; five-leaflet palms follow; purple sausage pods hang in September and October. Semi-
+// evergreen: about half its leaves fall, the rest thin out over winter on the twining stems.
+
+const AKEBIA = { pc: "--bark-akebia" };
+const akebiaShed = fallsAt(0.8, 0.1);
+const akebiaFlowersFall = fallsAt(0.2, 0.06);
+
+// A bamboo pole: a straight, pale, dry rod with its nodes, the host the vine twines on.
+function bambooPole(out: Out, r: Rng, A: Pt, len: number, w: number) {
+  const pts: Pt[] = [add(A, [-30, -w / 2]), add(A, [len, -w / 2 + 2]), add(A, [len, w / 2 + 2]), add(A, [-30, w / 2])];
+  shape(out, r, pts, tone(r, { pc: "--pole-bamboo", spread: 0.02 }), { deep: 0.25 });
+  let nodes = "";
+  for (let x = 60; x < len; x += 110) nodes += `M${P1(add(A, [x, -w / 2]))}L${P1(add(A, [x + 1, w / 2]))}`;
+  out.push(`<path class="ink thin" d="${nodes}"/>`);
+}
+
+// A five-leaflet palm: obovate leaflets, notched at the tip, spread from the end of the stalk.
+export function akebiaLeaf(out: Out, r: Rng, T: Pt, a: number, L: number) {
+  const E = add(T, polar(L * 0.7, a));
+  out.push(`<path class="ink hair" d="M${P1(T)}L${P1(E)}"/>`);
+  for (const k of [-2, -1, 0, 1, 2]) blade(out, r, E, a + k * rad(34), L * (1 - Math.abs(k) * 0.08), { W: 0.48, prof: (q) => Math.sin(Math.PI * Math.min(1, q) ** 1.35) ** 0.75 * (q > 0.9 ? 0.8 : 1), v: tone(r, { spread: 0.06, hue: 8 }), deep: 0.3, rib: "ink hair", hairline: true });
+}
+
+// A short raceme of purple-brown cups: one or two larger flowers at its base, small ones beyond.
+export function akebiaFlowers(out: Out, r: Rng, T: Pt, L: number) {
+  const axis = sample((t) => add(T, [Math.sin(t * 2) * 6, t * L]), 5);
+  let cups = "";
+  axis.forEach((p, i) => {
+    const R = i < 1 ? 9 : 5 - i * 0.4;
+    for (let k = 0; k < 3; k++) cups += closed(roundPts(add(p, polar(R * 0.6, rad(90 + k * 120))), R * 0.55, R * 0.4, rad(90 + k * 120), 7));
+  });
+  out.push(`<path class="ink hair" d="${line(axis)}"/><path class="wash petal"${vars(tone(r, { pc: "--flower-akebia", spread: 0.04 }))} d="${cups}"/><path class="ink hair petal-edge" d="${cups}"/>`);
+}
+
+// A pair of sausage pods, purple and plump, hanging from the stem.
+function akebiaPods(out: Out, r: Rng, T: Pt) {
+  let pods = "";
+  for (const side of [-1, 1]) {
+    const C = add(T, [side * 10, 34]);
+    pods += closed(roundPts(C, 11, 30, side * 0.2, 12));
+  }
+  out.push(`<path class="ink hair" d="M${P1(T)}L${P1(add(T, [-10, 6]))}M${P1(T)}L${P1(add(T, [10, 6]))}"/>`);
+  out.push(`<path class="wash fruit"${vars(tone(r, { pc: "--pod-akebia", spread: 0.04 }))} d="${pods}"/><path class="ink hair" d="${pods}"/>`);
+}
+
+export function akebia(out: Out, r: Rng, base: Pt) {
+  const at = (p: Pt) => add(base, p);
+  bambooPole(out, r, at([0, 0]), 520, 14);
+  // Stems twining along the pole, and a few hanging free below it.
+  const gv = [0, 0.05];
+  const twine = grow(out, gv[0], gv[1], () => limb(out, r, sample((t) => at([-30 + t * 500, Math.sin(t * 22) * 9]), 24), { w0: 5, w1: 2, cap: "taper", ...AKEBIA }));
+  const strands = [0.3, 0.55, 0.8].map((t) => branch(out, r, { res: twine, g: gv }, t, [[10, 50], [-10, 110], [6, 150 + r() * 60]], 0.04, { w0: 3, w1: 1.2, cap: "taper", ...AKEBIA }));
+  for (const [j, l] of [{ res: twine, g: gv }, ...strands].entries()) {
+    const n = l.res.n;
+    // The twining stem samples densely; leaves sit at a spacing that reads, not at every turn.
+    for (let i = Math.round(n * 0.15), k = 0; i <= n; i += Math.round(n / (j ? 4 : 12)), k++) {
+      const T = l.res.pts[Math.min(i, n)];
+      const g = gate(l.res, l.g, Math.min(i, n));
+      if (k % 3 === 0 && j === 0) part(out, g + 0.005, T, () => akebiaFlowers(out, r, T, 40 + r() * 16), akebiaFlowersFall(T));
+      const a = rad(60 + r() * 60);
+      // About half the leaves stay through winter.
+      part(out, Math.max(g + 0.02, 0.14 + r() * 0.1), T, () => akebiaLeaf(out, r, T, a, 30 + r() * 8), k % 2 ? akebiaShed(T) : undefined);
+      if (k % 5 === 2 && j === 0) part(out, 0.64, T, () => akebiaPods(out, r, T), 0.86 + r() * 0.04);
+    }
+  }
+}
+
+export function akebiaDetail(out: Out, r: Rng) {
+  bambooPole(out, r, [-160, -120], 320, 18);
+  akebiaFlowers(out, r, [-60, -112], 140);
+  akebiaLeaf(out, r, [60, -112], rad(80), 90);
+}
+

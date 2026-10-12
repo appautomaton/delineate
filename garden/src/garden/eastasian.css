@@ -16,7 +16,7 @@
   .plant.g-willow { display: block; --x: 0%; --y: 6%; --h: 54; --enter: -0.3 -0.2; }
   .plant.g-ginkgo { display: block; --x: 0%; --y: 92%; --h: 80; --enter: -0.4 0; }
   .plant.g-wisteria { display: block; --x: 100%; --y: 16%; --h: 30; --flip: -1; --enter: 0.3 -0.3; }
-  .plant.g-paulownia { display: block; --x: 0%; --y: 46%; --h: 28; --enter: -0.4 0; }
+  .plant.g-akebia { display: block; --x: 0%; --y: 30%; --h: 22; --enter: -0.4 0; }
   .plant.g-maple { display: block; --x: 100%; --y: 62%; --h: 30; --flip: -1; --enter: 0.4 0; }
   .plant.g-plum { display: block; --x: 100%; --y: calc(100svh + var(--u) * 2); --h: 64; --flip: -1; --enter: 0.3 0.1; }
 }
