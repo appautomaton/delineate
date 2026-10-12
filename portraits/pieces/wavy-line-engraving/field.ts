@@ -67,8 +67,6 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; ma
   const wide = blur(inked, alpha, w, h, 2.5 * SPACING);
   const { hair, face, neck } = headFields(w, h);
   const light = Float32Array.from(wide, (v, p) => Math.max(face[p], hair[p], neck[p], smoothstep(0.4, 0.2, v)));
-  // Where the lines are a tint: wherever he is light, his neck included.
-  const tint = light;
   // The neck's shadow is the plate's waves, not line art: the neck is light only in register.
   const { line, depth } = lineField(L, w, h, REACH, CONTRAST, true);
   const art = Float32Array.from(L, (v, p) => (light[p] > 0.5 && neck[p] < 0.5 && alpha[p] > 0.5 ? Math.max(line[p], MASS - v) : -1));
@@ -80,6 +78,9 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; ma
   // along a fold's light to model it. His face keeps the faint hairlines the plate gives it.
   const broad = blur(near, alpha, w, h, 2 * SPACING);
   const dark = near.map((v, p) => (Math.max(clean[p], SKIN * face[p]) * light[p] + Math.max(0, v + FOLDS * (v - broad[p])) * (1 - light[p])) * (1 - hair[p]));
+  // Where the lines are a tint: wherever he is light, but not in a shadow deeper than a tint can
+  // hold (the band under his jaw, the shirt's folds into the collar), where they are the ink's own.
+  const tint = Float32Array.from(light, (v, p) => v * smoothstep(1.3, 0.9, dark[p] / (FINE * TINT)));
   const field = (d: Float32Array) => ({ width: w, height: h, data: d });
   return { dark: field(dark), alpha: field(alpha), art: field(art), mass: field(mass), light: field(light), tint: field(tint) };
 }
@@ -208,7 +209,7 @@ const GAIN = 0.48;
 // Where he is light, the plate's lines are a pale tint of its ink, not the ink itself: there ours
 // are drawn at TINT opacity (see build.ts), and widened by as much, so the tone stays the same.
 export function width_(dark: number, light: number, tinted: boolean): number {
-  const most = tinted ? FINE : FULLEST + (FINE * TINT - FULLEST) * light;
+  const most = tinted ? FINE : FULLEST + (FINE - FULLEST) * light;
   const width = Math.min(most, Math.max(0, tinted ? dark / TINT : dark)) * SPACING - GAIN;
   return width < FINEST / 2 ? 0 : width;
 }
