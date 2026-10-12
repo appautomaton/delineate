@@ -11,6 +11,9 @@
 //
 // The panes move together: scroll to zoom about the pointer, drag to pan, G toggles the grid,
 // 0 fits the whole picture. A new build redraws `latest` and `previous` where they are shown.
+// `bench.measure` (see the end) compares tone from the console.
+
+import { measure } from "./measure.ts";
 
 type Build = { piece: string; version?: string; ok: boolean; seconds: number; log: string };
 type Piece = { references: string[]; versions: string[]; build: Build | null };
@@ -175,3 +178,12 @@ import.meta.hot?.on("bench:built", async (b: Build) => {
 await load();
 header();
 panes();
+
+// For the console and for agents: tone against a reference, by pane names.
+//   await bench.measure("wav-subject.png", ["previous", "latest"])
+Object.assign(globalThis, {
+  bench: {
+    measure: (reference: string, keys: string[]) =>
+      measure(source(reference)!, keys.map((k) => source(k)!), { size: Math.max(frame.width, frame.height) }),
+  },
+});

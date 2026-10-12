@@ -61,36 +61,80 @@ export function zipMarkup(zips: Zip[], ink: string, paper: string): string {
   return `<g id="zips">${out.join("")}</g>`;
 }
 
-// The woven patch: square cells along the shoulder's slope, each with three strips of paper running
-// one way, the next cell's running across them, so the strips pass over and under. Each strip
-// tapers at both ends, and the cells darken toward the patch's edges as the leather turns away.
-export function weaveMarkup(outline: Point[], ink: string, paper: string, { cell = 8.5, angle = 24 } = {}): string {
+// The woven patch, as the plate engraves it: not strips but a lattice of small diamonds, each a
+// fine paper outline drawn as two chevrons, < and >, open at its top and bottom corners, in
+// staggered rows along the shoulder's slope, on an ink ground.
+export function weaveMarkup(outline: Point[], ink: string, paper: string, { cell = 12, angle = 18 } = {}): string {
   const xs = outline.map((p) => p[0]);
   const ys = outline.map((p) => p[1]);
   const [cx, cy] = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2];
   const reach = Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) / 2 + cell;
   const t = (angle * Math.PI) / 180;
   const [ux, uy, vx, vy] = [Math.cos(t), Math.sin(t), -Math.sin(t), Math.cos(t)];
-  let strips = "";
+  const r = cell * 0.3; // a diamond's half-diagonal
+  const open = 0.3; // how far short of the top and bottom corners each chevron stops
+  let marks = "";
   const n = Math.ceil(reach / cell);
   for (let i = -n; i <= n; i++)
     for (let j = -n; j <= n; j++) {
-      const [mx, my] = [cx + (i + 0.5) * cell * ux + (j + 0.5) * cell * vx, cy + (i + 0.5) * cell * uy + (j + 0.5) * cell * vy];
-      const along = (i + j) % 2 === 0;
-      const [ax, ay, bx, by] = along ? [ux, uy, vx, vy] : [vx, vy, ux, uy];
-      for (const k of [-1, 0, 1]) {
-        const off = k * cell * 0.27;
-        const half = cell * 0.36;
-        const [sx, sy] = [mx + bx * off, my + by * off];
-        strips += `M${f(sx - ax * half)} ${f(sy - ay * half)}L${f(sx + ax * half)} ${f(sy + ay * half)}`;
-      }
+      const [a, b] = [(i + (Math.abs(j) % 2) / 2) * cell, j * cell * 0.62];
+      const at = (da: number, db: number): string => `${f(cx + (a + da) * ux + (b + db) * vx)} ${f(cy + (a + da) * uy + (b + db) * vy)}`;
+      for (const s of [-1, 1]) marks += `M${at(s * r * open, -r * (1 - open))}L${at(s * r, 0)}L${at(s * r * open, r * (1 - open))}`;
     }
   return (
     `<clipPath id="patch"><path d="${pathOf(outline)}"/></clipPath>` +
     `<path fill="${ink}" d="${pathOf(outline)}"/>` +
-    `<path clip-path="url(#patch)" fill="none" stroke="${paper}" stroke-width="1.15" stroke-linecap="round" d="${strips}"/>` +
+    `<path clip-path="url(#patch)" fill="none" stroke="${paper}" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" d="${marks}"/>` +
     `<path fill="none" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round" d="${pathOf(outline)}"/>`
   );
+}
+
+// Studs and snaps: a disc of paper edged in ink, seen at a slant (an ellipse turned by `angle`
+// degrees), shaded by a crescent of ink on its lower side.
+export type Stud = { at: Point; size: [number, number]; angle: number };
+export function studMarkup(studs: Stud[], ink: string, paper: string): string {
+  return (
+    `<g id="studs">` +
+    studs
+      .map(({ at: [x, y], size: [w, h], angle }) => {
+        const [rx, ry] = [w / 2, h / 2];
+        return (
+          `<g transform="translate(${f(x)} ${f(y)}) rotate(${f(angle)})">` +
+          `<ellipse rx="${f(rx + 0.9)}" ry="${f(ry + 0.9)}" fill="${ink}"/>` +
+          `<ellipse rx="${f(rx)}" ry="${f(ry)}" fill="${paper}"/>` +
+          `<path fill="${ink}" d="M${f(-rx * 0.8)} ${f(ry * 0.1)}A${f(rx * 0.8)} ${f(ry * 0.75)} 0 0 0 ${f(rx * 0.8)} ${f(ry * 0.1)}A${f(rx)} ${f(ry)} 0 0 1 ${f(-rx * 0.8)} ${f(ry * 0.1)}Z" fill-opacity="0.75"/>` +
+          `</g>`
+        );
+      })
+      .join("") +
+    `</g>`
+  );
+}
+
+// The adjuster tabs at his waist: each a strap of leather (an Edge, drawn with the collars), a
+// roller buckle seen edge on (a bar of metal from `buckle[0]` to `buckle[1]`, capped at both ends
+// and crossed in its middle, with its prong's point at `buckle[2]` if shown), and an eyelet.
+export type Tab = { buckle: Point[]; eyelet: { at: Point; size: [number, number] } };
+export function tabMarkup(tabs: Tab[], ink: string, paper: string): string {
+  const out: string[] = [];
+  const bar = (d: string, width: number) =>
+    `<path fill="none" stroke="${ink}" stroke-width="${f(width + 2)}" stroke-linecap="round" d="${d}"/>` +
+    `<path fill="none" stroke="${paper}" stroke-width="${f(width)}" stroke-linecap="round" d="${d}"/>`;
+  for (const { buckle, eyelet } of tabs) {
+    const [[ax, ay], [bx, by]] = buckle;
+    const len = Math.hypot(bx - ax, by - ay);
+    const [nx, ny] = [-(by - ay) / len, (bx - ax) / len];
+    const across = [0, 0.5, 1]
+      .map((t) => [ax + (bx - ax) * t, ay + (by - ay) * t])
+      .map(([x, y]) => `M${f(x - nx * 4.5)} ${f(y - ny * 4.5)}L${f(x + nx * 4.5)} ${f(y + ny * 4.5)}`)
+      .join("");
+    const tip = buckle[2] ? `<path fill="${paper}" stroke="${ink}" stroke-width="1" stroke-linejoin="round" d="M${f(bx - nx * 1.6)} ${f(by - ny * 1.6)}L${f(buckle[2][0])} ${f(buckle[2][1])}L${f(bx + nx * 1.6)} ${f(by + ny * 1.6)}Z"/>` : "";
+    out.push(tip + bar(`M${f(ax)} ${f(ay)}L${f(bx)} ${f(by)}`, 2.8) + bar(across, 1.8));
+    const { at: [ex, ey], size: [ew, eh] } = eyelet;
+    out.push(`<ellipse cx="${f(ex)}" cy="${f(ey)}" rx="${f(ew / 2 - 1)}" ry="${f(eh / 2 - 1)}" fill="${ink}" stroke="${ink}" stroke-width="4"/>`);
+    out.push(`<ellipse cx="${f(ex)}" cy="${f(ey)}" rx="${f(ew / 2 - 1)}" ry="${f(eh / 2 - 1)}" fill="none" stroke="${paper}" stroke-width="1.8"/>`);
+  }
+  return `<g id="tabs">${out.join("")}</g>`;
 }
 
 // An edge of a piece of leather, as the plate engraves it: the waves stop short of it, a bright rim

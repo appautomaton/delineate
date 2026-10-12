@@ -8,20 +8,20 @@
 // generated anew.
 //
 // The grammar, read from close crops of the plate and the full engraving:
-// - Marks: one family of near-level wavy lines, about 6.8 px apart, everywhere he is drawn.
-// - Tone: line width alone. Lines swell toward touching in the jacket's shadows and thin to
-//   breaking in its light; the face and shirt carry only faint, sparse lines.
-// - Form: clean contour lines over the waves (collar, lapels, seams, pockets, the zips' edges,
-//   the features); his hair is strokes of its own, cream between dark strands.
-// - Ink: indigo on cream for him; the street is green-black.
-// Kept: line width as tone, the near-level waves, contours over them, the two inks.
-// Kept above all: every wave runs level, as the plate's do. Dropped: the plate's deep shadows, where its lines melt
-// into noise; there they only swell. Dropped also: wave fragments inside the zips and buckles.
+// - Marks: one family of near-level wavy lines, about 6.8 px apart, everywhere he is drawn. On
+//   the leather they merge into a navy ground, and the paper between them shows as long, thin
+//   slivers that taper at both ends; the face and shirt carry only faint, sparse lines.
+// - Tone: the slivers' length and width, the lines' width.
+// - Form: lit edges over the waves (collar, lapels, epaulettes, tabs, his silhouette), each with a
+//   row of stitches; hardware in paper edged with ink; his hair is strokes of its own.
+// - Ink: navy on cream for him; the street is green-black.
+// Kept: all of it. Kept above all: every wave runs level, as the plate's do. Dropped: the plate's
+// deep shadows, where its lines melt into noise; there they only swell.
 // The eye goes to his face, then the zip and the hands.
 
 import type { Affine } from "../../harness/trace/plate.ts";
 import type { Point } from "../../harness/trace/polygon.ts";
-import type { Edge, Zip } from "./hardware.ts";
+import type { Edge, Stud, Tab, Zip } from "./hardware.ts";
 
 const DIR = new URL("../../references/wavy-line-engraving/", import.meta.url);
 export const HERE = new URL("./", import.meta.url);
@@ -62,6 +62,30 @@ export const EDGES: Edge[] = [
   { line: [[356, 520], [378, 493], [422, 471], [474, 455], [479, 463], [449, 477], [395, 504], [367, 523], [356, 520]], side: 1 },
   { line: [[795, 463], [812, 466], [849, 481], [888, 500], [909, 512], [915, 521], [907, 525], [878, 514], [840, 498], [811, 488], [797, 476], [795, 463]], side: 1 },
   { line: [[711, 633], [706, 829], [716, 844], [727, 829], [731, 633], [711, 633]], side: -1 },
+  // The adjuster tabs at his waist, two a side, each strap from its buckle to its rounded end.
+  { line: [[423, 945], [487, 948], [486, 980], [421, 979], [423, 945]], side: 1 },
+  { line: [[419, 990], [481, 992], [479, 1024], [416, 1022], [419, 990]], side: 1 },
+  { line: [[778, 956], [834, 956], [834, 987], [780, 987], [778, 956]], side: 1 },
+  { line: [[783, 1002], [838, 1002], [838, 1027], [785, 1027], [783, 1002]], side: 1 },
+];
+
+// Their buckles (a bar seen edge on, top end first, and the prong's point) and eyelets, and the
+// studs and snaps: on the epaulettes, the lapels, and down the strap on his chest. Read off the
+// plate at 3x to 3.5x.
+export const TABS: Tab[] = [
+  { buckle: [[434, 944], [431, 977]], eyelet: { at: [455, 962], size: [8, 11] } },
+  { buckle: [[430, 986], [424, 1027], [423, 1033]], eyelet: { at: [448, 1005], size: [8, 11] } },
+  { buckle: [[826, 953], [831, 988]], eyelet: { at: [807, 971], size: [8, 11] } },
+  { buckle: [[829, 995], [836, 1031], [834, 1036]], eyelet: { at: [811, 1013], size: [8, 11] } },
+];
+export const STUDS: Stud[] = [
+  { at: [452, 466], size: [19, 8], angle: -15 },
+  { at: [815, 471], size: [15, 8], angle: 22 },
+  { at: [583, 531], size: [8, 8], angle: 0 },
+  { at: [736, 579], size: [14, 14], angle: 0 },
+  { at: [720, 663], size: [7, 10], angle: 0 },
+  { at: [721, 715], size: [7, 10], angle: 0 },
+  { at: [715, 788], size: [7, 10], angle: 0 },
 ];
 
 // The woven leather on his left shoulder, drawn as a basket weave of its own.
@@ -81,7 +105,7 @@ export const ZIPS: Zip[] = [
 ];
 
 export const PAPER = "#f3e8cc";
-export const INK = "#031731"; // the plate's own ink, measured on its darkest tenth
+export const INK = "#06203b"; // the plate's ink as its jacket shows it, between its darkest tenth and its median
 
 // The line family: spacing in pixels, and the waves laid over a level line, each an amplitude and
 // a wavelength in pixels. The first is the engraver's ripple, the rest a slower wander, so no two
@@ -94,13 +118,15 @@ export const WANDER = [
 ];
 // Ink covers a line's share of the spacing in proportion to darkness, up to this share, so even the
 // deepest shadow keeps a thread of paper between its lines.
-export const FULLEST = 0.9;
+export const FULLEST = 0.94;
 // Where he is light (skin, shirt), the most a tinted line may cover: the plate keeps shadow there in
 // fine, pale lines.
 export const FINE = 0.4;
 // Where he is light, the opacity of the lines: the plate's there are pale gray-blue, fine, and
 // unbroken across the skin.
 export const TINT = 0.55;
+// The most a tinted line may cover in a shadow on his skin: soft, as the plate's under his jaw.
+export const SHADE = 0.75;
 // The opacity of the strands and folds in his hair, face and shirt: the plate's are mid gray-blue.
 export const LINE_TINT = 0.6;
 // The least darkness his face takes, so it keeps the faint hairlines the plate draws across it.

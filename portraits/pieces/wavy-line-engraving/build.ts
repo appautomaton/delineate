@@ -13,12 +13,10 @@ import { fileURLToPath } from "node:url";
 import { contours } from "../../harness/trace/contour.ts";
 import { fitRing, pathData } from "../../harness/trace/bezier.ts";
 import { readPng } from "../../harness/trace/image.ts";
-import { type Affine, warp } from "../../harness/trace/plate.ts";
-import { type Point, distance } from "../../harness/trace/polygon.ts";
-import { type Field, ink, sample, structure, tone } from "./field.ts";
+import { type Field, ink, sample, tone } from "./field.ts";
 import { drawn, strokeData } from "./lines.ts";
-import { ANIME, CONTOURS, EDGES, HERE, INK, LINE_TINT, MAP, PAPER, PATCH, PLATE, TINT, ZIPS } from "./scene.ts";
-import { edgeMarkup, weaveMarkup, zipMarkup } from "./hardware.ts";
+import { CONTOURS, EDGES, HERE, INK, LINE_TINT, PAPER, PATCH, PLATE, STUDS, TABS, TINT, ZIPS } from "./scene.ts";
+import { edgeMarkup, studMarkup, tabMarkup, weaveMarkup, zipMarkup } from "./hardware.ts";
 
 const STAGE = Number(process.env.STAGE ?? 3);
 const OUT = process.env.OUT ?? fileURLToPath(new URL("wavy-line-engraving.svg", HERE));
@@ -79,40 +77,13 @@ if (STAGE >= 3) {
   const masses = over(K, (x, y) => Math.min(sample(mass, x, y), (sample(alpha, x, y) - 0.5) * 0.4));
   body.push(placed(shapes(masses, K, 0.25, 3), K, INK));
 
-  // Where he is dark, his structure comes from the colored original, brought into the plate's
-  // frame. Seams and edges are ink, cut free of the waves by a thread of paper either side, as an
-  // engraver leaves one; hardware is paper cut out of the waves, edged in fine ink.
-  const [a, b, c, d, e, f] = MAP;
-  const det = a * e - b * d;
-  const back: Affine = [e / det, -b / det, (b * f - c * e) / det, -d / det, a / det, (c * d - a * f) / det];
-  const anime = await warp(readPng(fileURLToPath(ANIME)), back, W, H);
-  const { shine, seams } = structure(anime, light, alpha);
-  const seam = shapes(over(K, (x, y) => sample(seams, x, y)), K, 0.3, 4);
-  body.push(placed(seam, K, INK, ` stroke="${PAPER}" stroke-width="${1.6 * K}" paint-order="stroke"`));
-  // Hardware the zips do not cover (snaps, buckles) still comes from the original's shine; near a
-  // zip, and on the patch, the models draw it instead.
-  const segment = (x: number, y: number, [ax, ay]: Point, [bx, by]: Point) => {
-    const [ex, ey] = [bx - ax, by - ay];
-    const t = Math.max(0, Math.min(1, ((x - ax) * ex + (y - ay) * ey) / (ex * ex + ey * ey)));
-    return Math.hypot(x - ax - t * ex, y - ay - t * ey);
-  };
-  // How near a zip, its slider and tab taken as a segment from where it sits to its tab's end.
-  const nearZip = (x: number, y: number) => {
-    let d = Infinity;
-    for (const { line, pull } of ZIPS) {
-      for (let i = 0; i < line.length - 1; i++) d = Math.min(d, segment(x, y, line[i], line[i + 1]));
-      if (pull) {
-        const a = (pull.angle * Math.PI) / 180;
-        d = Math.min(d, segment(x, y, pull.at, [pull.at[0] - Math.sin(a) * pull.length, pull.at[1] + Math.cos(a) * pull.length]));
-      }
-    }
-    return d;
-  };
-  const metal = shapes(over(K, (x, y) => (nearZip(x, y) < 9 || distance(PATCH, x, y) > -3 ? -1 : sample(shine, x, y))), K, 0.3, 8);
-  body.push(placed(metal, K, PAPER, ` stroke="${INK}" stroke-width="${1.1 * K}" paint-order="stroke"`));
+  // Where he is dark, his structure is drawn as models (see hardware.ts), each placed by eye off
+  // the plate: the woven patch, the leather's edges and stitching, the zips, tabs and studs.
   body.push(weaveMarkup(PATCH, INK, PAPER));
   body.push(edgeMarkup(EDGES, INK, PAPER));
   body.push(zipMarkup(ZIPS, INK, PAPER));
+  body.push(tabMarkup(TABS, INK, PAPER));
+  body.push(studMarkup(STUDS, INK, PAPER));
 
   // The jacket's big lines, drawn by hand (see scene.ts), each cut free of the waves by paper.
   const big = Object.values(CONTOURS);
@@ -120,8 +91,10 @@ if (STAGE >= 3) {
   body.push(`<path fill="${INK}" d="${strokeData(big.map((pts) => drawn(pts, 1.8)))}"/>`);
 }
 if (STAGE >= 2) {
-  // His outline: a fine ink line round the silhouette, over the ends of the waves.
+  // His outline: a fine ink line round the silhouette, over the ends of the waves, with a rim of
+  // paper inside it, as the plate lights every edge of the jacket.
   const outline = shapes(over(1, (x, y) => sample(alpha, x, y) - 0.5), 1, 0.5, 20);
+  body.push(placed(outline, 1, "none", ` stroke="${PAPER}" stroke-width="4.4"`));
   body.push(placed(outline, 1, "none", ` stroke="${INK}" stroke-width="1.3"`));
 }
 
