@@ -8,6 +8,8 @@ import { rad, P1, add, sub, mul, rot, polar, lerp, wobble, closed, line, sample,
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, angleOf, branch } from "./woody.ts";
 import { bladeBunch } from "./mediterranean.ts";
+import { rosette } from "./rosette.ts";
+import type { Habit } from "./rosette.ts";
 
 // ---------------------------------------------------------------------------
 // 1. Quiver tree / kokerboom (Aloidendron dichotomum): stout tapering trunk plated with golden-brown
@@ -15,94 +17,56 @@ import { bladeBunch } from "./mediterranean.ts";
 // terminal rosettes of blue-glaucous boat-shaped leaves over a short dry leaf skirt, and erect
 // branched panicles of canary-yellow winter/spring racemes.
 
-export function quiverRosette(out: Out, r: Rng, C: Pt, lean: number, R: number, hasRaceme = true) {
-  const toW = (p: Pt) => add(C, rot(p, lean));
-  // 1. Short reflexed skirt of dry brown persistent old leaves immediately below the rosette.
-  let skirt = "";
-  for (let k = 0; k < 7; k++) {
-    const u = k / 6 - 0.5;
-    const a = lean + Math.PI / 2 + u * rad(110);
-    const L = R * (0.48 + (1 - Math.abs(u)) * 0.14);
-    const p0 = toW([u * R * 0.24, R * 0.08]);
-    const tip = add(p0, polar(L, a + u * 0.2));
-    const nrm = polar(L * 0.14, a + Math.PI / 2);
-    const mid = lerp(p0, tip, 0.48);
-    skirt += closed([add(p0, mul(nrm, 0.7)), add(mid, nrm), tip, sub(mid, nrm), sub(p0, mul(nrm, 0.7))]);
-  }
-  out.push(`<path class="wash"${vars(tone(r, { pc: "--strap-welwitschia", dl: -0.04, spread: 0.03 }))} d="${skirt}"/><path class="ink thin" d="${skirt}"/>`);
+// How a quiver tree holds its leaves: a ball of stiff, glaucous aloe leaves, broad where they
+// clasp the stem and tapering to a point, a few dry ones bent down beneath, the spread ones
+// arching out and turning up, the young ones standing in a cone at the heart.
+const aloe = (s: number) => Math.min(1, 0.62 + s * 5) * (1 - s) ** 1.1;
+const QUIVER: Habit = {
+  dying: 0.12,
+  young: 0.26,
+  el: { dying: [-1.05, -0.75], spread: [-0.3, 0.85], young: [1.05, 1.4] },
+  len: { dying: 0.62, spread: [1, 0.86], young: [0.72, 0.46] },
+  W: { dying: 0.16, spread: 0.3, young: 0.26 },
+  curl: { dying: -0.25, spread: [0.12, 0.3], young: 0.04 },
+  shine: false,
+  shape: aloe,
+};
 
-  // 2. Erect branched panicle of canary-yellow cylindrical racemes rising from the rosette axils
-  // (drawn behind the front-most inner rosette blades so the leaves clasp the peduncle base).
-  if (hasRaceme) {
-    const spikes: [number, number, number][] = [
-      [-0.32, 1.18, 0.84],
-      [0.02, 1.38, 1.0],
-      [0.34, 1.14, 0.82],
-    ];
-    for (const [da, hMul, sMul] of spikes) {
-      const a = lean - Math.PI / 2 + da;
-      const baseP = toW([da * R * 0.25, -R * 0.18]);
-      const racStart = add(baseP, polar(R * 0.52 * hMul, a));
-      const racTip = add(baseP, polar(R * 1.32 * hMul, a));
-      stalk(out, quad(baseP, lerp(baseP, racTip, 0.5), racTip), 5.5 * sMul, 2.5 * sMul, tone(r, { pc: "--bark-butter", dl: -0.06, spread: 0.03 }), 8);
-      // Cylindrical bottle-brush raceme of plump canary-yellow tubular flowers and orange stamens.
-      let florets = "";
-      let stamens = "";
-      const rows = 10;
-      for (let i = 0; i < rows; i++) {
-        const u = i / (rows - 1);
-        const ax = lerp(racStart, racTip, u);
-        const w = R * 0.22 * sMul * Math.sin(Math.PI * (0.15 + u * 0.78));
-        for (const sg of [-1, 0, 1]) {
-          const fDir = a + sg * (0.65 - u * 0.25);
-          const fC = add(ax, polar(sg * w * 0.55, a + Math.PI / 2));
-          florets += closed(roundPts(fC, 8.5 * sMul, 4.2 * sMul, fDir, 6));
-          if (u < 0.78 && sg !== 0) {
-            const stTip = add(fC, polar(11 * sMul, fDir));
-            stamens += `M${P1(fC)}L${P1(stTip)}`;
+// A rosette at a branch tip C, opening from g, with its canary-yellow racemes rising from the
+// heart toward `lean`, drawn first so the leaves clasp their stalks.
+export function quiverRosette(out: Out, r: Rng, C: Pt, lean: number, R: number, g: number, hasRaceme = true) {
+  if (hasRaceme)
+    part(out, g + 0.1, C, () => {
+      for (const [da, hMul, sMul] of [
+        [-0.32, 1.18, 0.84],
+        [0.02, 1.38, 1.0],
+        [0.34, 1.14, 0.82],
+      ] as const) {
+        const a = lean - Math.PI / 2 + da;
+        const baseP = add(C, rot([da * R * 0.25, -R * 0.12], lean));
+        const racStart = add(baseP, polar(R * 0.72 * hMul, a));
+        const racTip = add(baseP, polar(R * 1.2 * hMul, a));
+        stalk(out, quad(baseP, lerp(baseP, racTip, 0.5), racTip), 5.5 * sMul, 2.5 * sMul, tone(r, { pc: "--bark-butter", dl: -0.06, spread: 0.03 }), 8);
+        // A bottle-brush of plump tubular flowers with their stamens out.
+        let florets = "";
+        let stamens = "";
+        const rows = 8;
+        for (let i = 0; i < rows; i++) {
+          const u = i / (rows - 1);
+          const ax = lerp(racStart, racTip, u);
+          const w = R * 0.17 * sMul * Math.sin(Math.PI * (0.15 + u * 0.78));
+          for (const sg of [-1, 0, 1]) {
+            const fDir = a + sg * (0.65 - u * 0.25);
+            const fC = add(ax, polar(sg * w * 0.55, a + Math.PI / 2));
+            florets += closed(roundPts(fC, 7 * sMul, 3.6 * sMul, fDir, 6));
+            if (u < 0.78 && sg !== 0) stamens += `M${P1(fC)}L${P1(add(fC, polar(11 * sMul, fDir)))}`;
           }
         }
+        out.push(`<path class="wash filament"${vars(tone(r, { pc: "--flower-quiver", spread: 0.04, hue: 6 }))} d="${florets}"/><path class="ink hair" d="${florets}"/>`);
+        out.push(`<path class="ink hair" style="stroke:var(--cone-welwitschia)" d="${stamens}"/>`);
       }
-      out.push(`<path class="wash filament"${vars(tone(r, { pc: "--flower-quiver", spread: 0.04, hue: 6 }))} d="${florets}"/><path class="ink hair" d="${florets}"/>`);
-      if (stamens) out.push(`<path class="ink hair" style="stroke:var(--cone-welwitschia)" d="${stamens}"/>`);
-    }
-  }
-
-  // 3. Compact hemispherical rosette of thick blue-glaucous boat-shaped lance leaves with cream-yellow margins.
-  const tiers: [number, number, number, number, number, number][] = [
-    // [count, minDeg, maxDeg, lenMul, dl, deep]
-    [5, -148, -32, 0.92, -0.04, 0],
-    [6, -162, -18, 1.0, 0.01, 0],
-    [4, -125, -55, 0.78, 0.05, 0.35],
-  ];
-  let margins = "";
-  for (const [count, d0, d1, lMul, dl, deep] of tiers) {
-    for (let k = 0; k < count; k++) {
-      const u = k / (count - 1);
-      const deg = d0 + u * (d1 - d0) + (r() - 0.5) * 4;
-      const a = lean + rad(deg);
-      const L = R * lMul * (0.88 + Math.sin(u * Math.PI) * 0.16);
-      const W = L * 0.26;
-      const p0 = toW([(u - 0.5) * R * 0.32, (0.5 - Math.abs(u - 0.5)) * R * 0.08]);
-      const curve = (u - 0.5) * 0.22;
-      const mid = add(p0, polar(L * 0.46, a - curve * 0.4));
-      const tip = add(p0, polar(L, a + curve));
-      const nrm = polar(W * 0.5, a + Math.PI / 2);
-      const pts: Pt[] = [
-        add(p0, mul(nrm, 0.65)),
-        add(mid, nrm),
-        tip,
-        sub(mid, nrm),
-        sub(p0, mul(nrm, 0.65)),
-      ];
-      shape(out, r, pts, tone(r, { dl: dl + (k % 2 ? 0.02 : -0.02), spread: 0.04, hue: 6 }), {
-        deep,
-        deepAbout: sub(mid, mul(nrm, 0.4)),
-      });
-      margins += `M${P1(pts[0])}L${P1(pts[1])}L${P1(pts[2])}`;
-    }
-  }
-  out.push(`<path class="wash band" d="${margins}"/>`);
+    });
+  rosette(out, r, C, R * 1.25, g, 20, QUIVER);
 }
 
 export function quivertreeDetail(out: Out, r: Rng) {
@@ -121,7 +85,7 @@ export function quivertreeDetail(out: Out, r: Rng) {
     rings += `M${P1([p[0] - hw, p[1]])}Q${P1([p[0], p[1] + 3])} ${P1([p[0] + hw, p[1]])}`;
   }
   out.push(`<path class="ink hair bark-tex" d="${rings}"/>`);
-  quiverRosette(out, r, [0, 28], 0, 82, true);
+  quiverRosette(out, r, [0, 28], 0, 82, 0, true);
 }
 
 export function quivertree(out: Out, r: Rng, base: Pt) {
@@ -221,7 +185,7 @@ export function quivertree(out: Out, r: Rng, base: Pt) {
   // Attach each blue-glaucous rosette and canary-yellow raceme cluster at its exact branch tip node.
   for (const { br, lean, R, rac } of tips) {
     const tip = br.res.pts[br.res.n];
-    part(out, gate(br.res, br.g, br.res.n) + 0.03, tip, () => quiverRosette(out, r, tip, lean, R, rac));
+    quiverRosette(out, r, tip, lean, R, gate(br.res, br.g, br.res.n) + 0.03, rac);
   }
 }
 

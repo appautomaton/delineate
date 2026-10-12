@@ -12,11 +12,14 @@ const VIEW = rad(12);
 const onPage = (C: Pt, p: number[]): Pt => [C[0] + p[0], C[1] - (p[1] * Math.cos(VIEW) - p[2] * Math.sin(VIEW))];
 const nearness = (p: number[]) => p[2] * Math.cos(VIEW) + p[1] * Math.sin(VIEW);
 
-// One leaf of a giant rosette, in space: it leaves the crown at azimuth `az` and elevation `el`,
-// its midrib bending up by `curl` toward the tip. Oblanceolate: it clasps the crown narrowly,
-// widens past the middle, and tapers to a point. A leaf seen edge-on keeps some width, as a
-// cupped blade does.
-export function leafInSpace(C: Pt, az: number, el: number, L: number, W: number, curl: number) {
+// A leaf's half width along its length (0 at the crown, 1 at the tip), at most about 1.
+// Oblanceolate: it clasps the crown narrowly, widens past the middle, and tapers to a point.
+const oblanceolate = (s: number) => Math.max(0.16 * (1 - s), (s ** 0.9 * (1 - s) ** 0.6) / 0.364);
+
+// One leaf of a rosette, in space: it leaves the crown at azimuth `az` and elevation `el`, its
+// midrib bending up by `curl` toward the tip, its outline following `shape`. A leaf seen edge-on
+// keeps some width, as a cupped blade does.
+export function leafInSpace(C: Pt, az: number, el: number, L: number, W: number, curl: number, shape = oblanceolate) {
   const N = 10;
   const mid: number[][] = [[0, 0, 0]];
   for (let i = 1; i <= N; i++) {
@@ -26,7 +29,7 @@ export function leafInSpace(C: Pt, az: number, el: number, L: number, W: number,
   }
   const page = mid.map((p) => onPage(C, p));
   const face = Math.max(0.4, Math.hypot(Math.sin(az), Math.cos(az) * Math.sin(VIEW)));
-  const half = (s: number) => ((W * L) / 2) * face * Math.max(0.16 * (1 - s), (s ** 0.9 * (1 - s) ** 0.6) / 0.364);
+  const half = (s: number) => ((W * L) / 2) * face * shape(s);
   const A: Pt[] = [];
   const B: Pt[] = [];
   page.forEach((p, i) => {
@@ -41,7 +44,7 @@ export function leafInSpace(C: Pt, az: number, el: number, L: number, W: number,
 // How a rosette holds its leaves, oldest to youngest: the shares of dying and young leaves, and
 // for each kind its elevation, length (a share of the rosette's reach), width, and curl. A
 // rosette with an `under` token shows that underside wherever a leaf turns its back to the
-// viewer.
+// viewer; one with a `shape` draws its leaves to that outline instead of oblanceolate.
 type Range = [number, number];
 export type Habit = {
   dying: number;
@@ -52,6 +55,7 @@ export type Habit = {
   curl: { dying: number; spread: Range; young: number };
   shine: boolean;
   under?: string;
+  shape?: (s: number) => number;
 };
 const at = ([a, b]: Range, t: number) => a + (b - a) * t;
 
@@ -68,7 +72,7 @@ export function rosette(out: Out, r: Rng, C: Pt, R: number, g: number, count: nu
     const el = at(h.el[kind], u);
     const L = R * (kind === "dying" ? h.len.dying : at(h.len[kind], u)) * (0.92 + r() * 0.16);
     const curl = kind === "spread" ? at(h.curl.spread, r()) : h.curl[kind];
-    const leaf = leafInSpace(C, az, el, L, h.W[kind], curl);
+    const leaf = leafInSpace(C, az, el, L, h.W[kind], curl, h.shape);
     const depth = leaf.near / R;
     // The upper face looks away from the viewer when a near leaf rises toward them.
     const e = el + curl / 2;
