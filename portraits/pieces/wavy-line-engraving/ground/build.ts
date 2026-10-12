@@ -12,7 +12,7 @@
 // Kept: all of it. Dropped: the stone's cracks, which do not read at the whole's scale.
 
 import { type Box, GAIN, type Field, blur, ink, luminance, placed, rgb, sample, shapes, smoothstep, waves } from "../engrave.ts";
-import { PAPER, REFERENCES, SIZE, SPACING, STREET_INK, run, source } from "../sheet.ts";
+import { PAPER, SIZE, SPACING, STREET_INK, run, source } from "../sheet.ts";
 import { HORIZON, JOINTS, structures } from "./scene.ts";
 
 const K = 3;

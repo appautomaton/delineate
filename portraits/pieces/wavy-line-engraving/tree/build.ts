@@ -14,8 +14,8 @@
 // shrubs' shadows, and the bricks' joints, which read only as the blocks' wavy hatching.
 
 import { type Point, distance, pathOf } from "../../../harness/trace/polygon.ts";
-import { type Box, type Field, blur, ink, luminance, over, placed, rgb, sample, shapes, smoothstep, waves } from "../engrave.ts";
-import { PAPER, REFERENCES, SPACING, STREET_INK, run, source } from "../sheet.ts";
+import { type Box, type Field, blur, ink, luminance, over, placed, rgb, sample, shapes, waves } from "../engrave.ts";
+import { PAPER, SPACING, STREET_INK, run, source } from "../sheet.ts";
 import { drawn, strokeData } from "../subject/lines.ts";
 import { BACK_LAMPS, BLOCKS, FRONT_LAMPS, HANDRAIL, HANDRAIL_POSTS, LAMP_BASES, type Lamp, POSTS, RAILS, TRUNKS } from "./scene.ts";
 
@@ -57,21 +57,16 @@ function structure(x: number, y: number): number {
 
 // The foliage, as the plate engraves it: a mass of ink wherever the canopy is (the plate's tone
 // blurred past its leaves), its edge broken into star-shaped leaf clusters where that tone fades;
-// and inside it, the light cut out as leaves: star-shaped leaves of paper where the sun falls,
-// short curved ticks in the shade, as many as the plate's local tone asks, so the canopy reads
-// mid-dark and leafy rather than black. Returns the mass (for a paper ground) and the inked mass.
+// and inside it, the light cut out as whole leaves: five-lobed stars of paper, eight to fourteen
+// px across as the whole's are, as many as the plate's local tone asks, so the canopy reads as
+// lit leaves against shade rather than as speckle. Returns the mass (for a paper ground) and the
+// inked mass.
 const CANOPY = 0.48; // the broad tone above which the canopy is
-const STAR = 3.6; // px: a fleck cell's side
+const STAR = 7; // px: a lit leaf's cell
 // A star-shaped leaf: five pointed lobes of radius r, turned by phi; signed distance, + inside.
 const star = (r: number, phi: number) => (dx: number, dy: number) => {
   const lobes = 0.42 + 0.58 * Math.abs(Math.cos(2.5 * (Math.atan2(dy, dx) - phi))) ** 2.2;
   return r * lobes - Math.hypot(dx, dy);
-};
-// A tick: a thin crescent, `a` long and `b` across, bent by `bend`, turned by phi.
-const tick = (a: number, b: number, bend: number, phi: number) => (dx: number, dy: number) => {
-  const [u, v] = [dx * Math.cos(phi) + dy * Math.sin(phi), -dx * Math.sin(phi) + dy * Math.cos(phi)];
-  const w = v - (bend * (u * u)) / (a * a);
-  return (1 - Math.hypot(u / a, w / b)) * b;
 };
 function foliage(tone: Field, broad: Field, alpha: Field, solid: Field): { mass: Field; inked: Field } {
   const [x0, y0, x1, y1] = BOX;
@@ -106,26 +101,17 @@ function foliage(tone: Field, broad: Field, alpha: Field, solid: Field): { mass:
     }
   const mass = Float32Array.from(G);
   // The light inside: each cell asks for the paper the plate shows there, 1 - t, and gets a leaf
-  // of paper often enough to give it on average; a star where the leaves are lit (the plate's
-  // tone lighter), a tick in the shade.
+  // of paper often enough to give it on average.
   for (let j = Math.floor(y0 / STAR); j * STAR < y1; j++)
     for (let i = 0; i * STAR < x1; i++) {
       const [cx, cy] = [(i + hash(i, j, 11)) * STAR, (j + hash(i, j, 12)) * STAR];
       const gi = Math.floor((cy - y0) * K) * w + Math.floor((cx - x0) * K);
       if (gi < 0 || gi >= G.length || mass[gi] < 1) continue;
       const t = sample(tone, cx, cy);
-      const paper = Math.max(0, Math.min(1, 1.08 - t));
-      const lit = smoothstep(0.85, 0.6, t);
-      const phi = hash(i, j, 14) * 2 * Math.PI;
-      if (hash(i, j, 16) < lit) {
-        const r = 2.6 + 2.2 * hash(i, j, 15);
-        if (hash(i, j, 13) > (paper * STAR * STAR) / (1.25 * r * r)) continue;
-        splat(cx, cy, r + 1, star(r, phi), true);
-      } else {
-        const a = 1.8 + 1.6 * hash(i, j, 15);
-        if (hash(i, j, 13) > (paper * STAR * STAR) / (Math.PI * a * 0.6)) continue;
-        splat(cx, cy, a + 1, tick(a, 0.6, 0.7 * (hash(i, j, 17) - 0.5), phi), true);
-      }
+      const paper = Math.max(0, Math.min(1, 1 - t));
+      const r = 4 + 3 * hash(i, j, 15);
+      if (hash(i, j, 13) > (paper * STAR * STAR) / (1.64 * r * r)) continue; // a star's area: 1.64 r^2
+      splat(cx, cy, r + 1, star(r, hash(i, j, 14) * 2 * Math.PI), true);
     }
   return { mass: { width: w, height: h, data: mass }, inked: { width: w, height: h, data: G } };
 }
