@@ -15,8 +15,7 @@
 //   the features); his hair is strokes of its own, cream between dark strands.
 // - Ink: indigo on cream for him; the street is green-black.
 // Kept: line width as tone, the near-level waves, contours over them, the two inks.
-// Reinterpreted: the plate's waves run flat across his face and sleeves; here they turn a little
-// with the form, as an engraver's would. Dropped: the plate's deep shadows, where its lines melt
+// Kept above all: every wave runs level, as the plate's do. Dropped: the plate's deep shadows, where its lines melt
 // into noise; there they only swell. Dropped also: wave fragments inside the zips and buckles.
 // The eye goes to his face, then the zip and the hands.
 
@@ -85,10 +84,13 @@ export const WANDER = [
 // Ink covers a line's share of the spacing in proportion to darkness, up to this share, so even the
 // deepest shadow keeps a thread of paper between its lines.
 export const FULLEST = 0.9;
-// Where he is light (skin, shirt), the most a line may cover: the plate keeps shadow there in fine
-// lines.
-export const FINE = 0.3;
+// Where he is light (skin, shirt), the most a tinted line may cover: the plate keeps shadow there in
+// fine, pale lines.
+export const FINE = 0.5;
+// Where he is light, the opacity of the lines: the plate's there are pale gray-blue, fine, and
+// unbroken across the skin.
+export const TINT = 0.35;
 // The least darkness his face takes, so it keeps the faint hairlines the plate draws across it.
-export const SKIN = 0.12;
+export const SKIN = 0;
 // Lines thinner than this, in pixels, are not drawn: the light breaks them.
 export const FINEST = 0.45;

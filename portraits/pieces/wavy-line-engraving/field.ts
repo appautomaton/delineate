@@ -5,7 +5,7 @@
 import { rgbToLab } from "../../harness/trace/color.ts";
 import type { Raster } from "../../harness/trace/image.ts";
 import { type Point, distance } from "../../harness/trace/polygon.ts";
-import { FACE, FINE, FINEST, FULLEST, HEAD, INK, NECK, PAPER, RIPPLE, SKIN, SPACING, WANDER } from "./scene.ts";
+import { FACE, FINE, TINT, FINEST, FULLEST, HEAD, INK, NECK, PAPER, RIPPLE, SKIN, SPACING, WANDER } from "./scene.ts";
 
 export type Field = { width: number; height: number; data: Float32Array };
 
@@ -58,7 +58,7 @@ const REACH = 3; // pixels; lines up to twice this wide are found by their contr
 const CONTRAST = 0.085; // OKLab lightness a line lies below its surroundings
 const MASS = 0.38; // OKLab lightness below which ink is line art however wide
 const FOLDS = 0.3; // how far a fold's tone is pushed from its surroundings
-export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; light: Field } {
+export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; light: Field; tint: Field } {
   const { width: w, height: h, data } = plate;
   const [paper, ink] = [luminance(...rgb(PAPER)), luminance(...rgb(INK))];
   const alpha = Float32Array.from({ length: w * h }, (_, p) => data[p * 4 + 3] / 255);
@@ -67,6 +67,8 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; li
   const wide = blur(inked, alpha, w, h, 2.5 * SPACING);
   const { hair, face, neck } = headFields(w, h);
   const light = Float32Array.from(wide, (v, p) => Math.max(face[p], hair[p], neck[p], smoothstep(0.4, 0.2, v)));
+  // Where the lines are a tint: where he is light, but not his neck, whose shadow is the ink's own.
+  const tint = Float32Array.from(wide, (v, p) => Math.max(face[p], hair[p], smoothstep(0.4, 0.2, v)) * (1 - neck[p]));
   // The neck's shadow is the plate's waves, not line art: the neck is light only in register.
   const { line, depth } = lineField(L, w, h, REACH, CONTRAST, true);
   const art = Float32Array.from(L, (v, p) => (light[p] > 0.5 && neck[p] < 0.5 && alpha[p] > 0.5 ? Math.max(line[p], MASS - v) : -1));
@@ -77,7 +79,7 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; li
   const broad = blur(near, alpha, w, h, 2 * SPACING);
   const dark = near.map((v, p) => (Math.max(clean[p], SKIN * face[p]) * light[p] + Math.max(0, v + FOLDS * (v - broad[p])) * (1 - light[p])) * (1 - hair[p]));
   const field = (d: Float32Array) => ({ width: w, height: h, data: d });
-  return { dark: field(dark), alpha: field(alpha), art: field(art), light: field(light) };
+  return { dark: field(dark), alpha: field(alpha), art: field(art), light: field(light), tint: field(tint) };
 }
 
 // The lines in a lightness field, as a field positive on a line: dark lines (a black top-hat), or
@@ -158,76 +160,9 @@ export function sample({ width: w, height: h, data }: Field, x: number, y: numbe
   return (data[y0 * w + x0] * (1 - tx) + data[y0 * w + x1] * tx) * (1 - ty) + (data[y1 * w + x0] * (1 - tx) + data[y1 * w + x1] * tx) * ty;
 }
 
-// How the lines run: the plate's engraver turned them with his sleeves and over his folds, so their
-// direction is read off the plate, as a field, where he is dark and they run clearly one way; where
-// he is light, or the plate's lines are unclear, they lie level. The plate's local direction comes
-// from its structure tensor; how clearly the lines run one way, from its coherence; neither strays
-// more than TILT from level.
-//
-// Lines that follow a direction field and stay evenly spaced are the level sets of a function whose
-// gradient is the field's normal: found as the least-squares fit, by solving Poisson's equation
-// (successive over-relaxation, on a grid STEP pixels apart, starting from the level lines). The
-// result is returned on that grid, in pixels, as the base the ripple and wander are laid over.
-const STEP = 4;
-const TILT = (35 * Math.PI) / 180;
-export function flow(plate: Raster, alpha: Field, light: Field): Field {
-  const { width: w, height: h, data } = plate;
-  const one = new Float32Array(w * h).fill(1);
-  const L = blur(Float32Array.from({ length: w * h }, (_, p) => rgbToLab(data[p * 4], data[p * 4 + 1], data[p * 4 + 2])[0]), one, w, h, 1.2);
-  const [xx, xy, yy] = [new Float32Array(w * h), new Float32Array(w * h), new Float32Array(w * h)];
-  for (let y = 1; y < h - 1; y++)
-    for (let x = 1; x < w - 1; x++) {
-      const p = y * w + x;
-      const gx = (L[p + 1] - L[p - 1]) / 2;
-      const gy = (L[p + w] - L[p - w]) / 2;
-      [xx[p], xy[p], yy[p]] = [gx * gx, gx * gy, gy * gy];
-    }
-  const weight = Float32Array.from(alpha.data, (a, p) => a * (1 - light.data[p]));
-  const [Jxx, Jxy, Jyy] = [xx, xy, yy].map((m) => blur(m, weight, w, h, 1.8 * SPACING));
-  // The normal at each pixel, eased toward level by how light he is and how unclear the lines are.
-  const gw = Math.ceil(w / STEP) + 1;
-  const gh = Math.ceil(h / STEP) + 1;
-  const nx = new Float32Array(gw * gh);
-  const ny = new Float32Array(gw * gh).fill(1);
-  for (let j = 0; j < gh; j++)
-    for (let i = 0; i < gw; i++) {
-      const p = Math.min(h - 1, j * STEP) * w + Math.min(w - 1, i * STEP);
-      const [a, b, c] = [Jxx[p], Jxy[p], Jyy[p]];
-      const coherence = Math.hypot(a - c, 2 * b) / (a + c + 1e-9);
-      const trust = Math.min(1, coherence * 1.5) * weight[p];
-      // The normal's angle from straight down, wrapped into (-90°, 90°].
-      let phi = 0.5 * Math.atan2(2 * b, a - c) - Math.PI / 2;
-      while (phi <= -Math.PI / 2) phi += Math.PI;
-      while (phi > Math.PI / 2) phi -= Math.PI;
-      const tilt = Math.max(-TILT, Math.min(TILT, phi)) * trust;
-      [nx[j * gw + i], ny[j * gw + i]] = [-Math.sin(tilt), Math.cos(tilt)];
-    }
-  // Poisson: the level's Laplacian equals the normal's divergence (held here times the grid's
-  // spacing squared, as the update wants it).
-  const div = new Float32Array(gw * gh);
-  for (let j = 1; j < gh - 1; j++)
-    for (let i = 1; i < gw - 1; i++) {
-      const q = j * gw + i;
-      div[q] = ((nx[q + 1] - nx[q - 1]) / 2 + (ny[q + gw] - ny[q - gw]) / 2) * STEP;
-    }
-  const F = Float32Array.from({ length: gw * gh }, (_, q) => Math.floor(q / gw) * STEP);
-  for (let it = 0; it < 1200; it++)
-    for (let j = 1; j < gh - 1; j++)
-      for (let i = 1; i < gw - 1; i++) {
-        const q = j * gw + i;
-        const target = (F[q - 1] + F[q + 1] + F[q - gw] + F[q + gw] - div[q]) / 4;
-        F[q] += 1.9 * (target - F[q]);
-      }
-  return { width: gw, height: gh, data: F };
-}
-// The base level at a point, from the grid.
-export function base(F: Field, x: number, y: number): number {
-  return sample(F, x / STEP + 0.5, y / STEP + 0.5);
-}
-
-// The line family's level: lines lie where it is a whole number of spacings. The base level,
-// rippled, and wandering by a few slow waves in fixed directions (seeded, so every build lays the
-// same lines).
+// The line family's level: lines lie where it is a whole number of spacings. Level lines, every
+// one, as the plate has them: rippled, and wandering by a few slow waves (seeded, so every build
+// lays the same lines). Form is carried by width and edges, never by turning lines.
 function seeded(seed: number) {
   return () => {
     seed = (seed + 0x6d2b79f5) | 0;
@@ -248,8 +183,8 @@ const ripple = (2 * Math.PI) / RIPPLE.wavelength;
 // Slow fields that vary the ripple: its phase, so crests neither stand in columns nor repeat along
 // a line, and its height, so some stretches run nearly flat, as a graver's hand does.
 const drift = [0, 1, 2].map(() => ({ kx: (random() - 0.5) * 0.08, ky: (random() - 0.5) * 0.05, phase: random() * 2 * Math.PI }));
-export function level(x: number, y: number, base: number): number {
-  let v = base;
+export function level(x: number, y: number): number {
+  let v = y;
   for (const { a, kx, ky, phase } of waves) v += a * Math.sin(kx * x + ky * y + phase);
   let turn = 0;
   for (const d of drift) turn += 1.4 * Math.sin(d.kx * x + d.ky * y + d.phase);
@@ -267,8 +202,12 @@ export function level(x: number, y: number, base: number): number {
 // A line drawn comes out GAIN wider than it is set, as a printed dot does: measured on a dark
 // stretch, gaps set at 0.82 px rendered at 0.34. The gain is taken off every line, so tone is true.
 const GAIN = 0.48;
-export function width_(dark: number, light = 0): number {
-  const width = Math.min(FULLEST + (FINE - FULLEST) * light, Math.max(0, dark)) * SPACING - GAIN;
+//
+// Where he is light, the plate's lines are a pale tint of its ink, not the ink itself: there ours
+// are drawn at TINT opacity (see build.ts), and widened by as much, so the tone stays the same.
+export function width_(dark: number, light: number, tinted: boolean): number {
+  const most = tinted ? FINE : FULLEST + (FINE * TINT - FULLEST) * light;
+  const width = Math.min(most, Math.max(0, tinted ? dark / TINT : dark)) * SPACING - GAIN;
   return width < FINEST / 2 ? 0 : width;
 }
 
@@ -289,7 +228,7 @@ function dashes(n: number, x: number): number {
 // A line's ink reaches half its width either side of it, the width set by the darkness there; the
 // distance to the line is measured across it, so a sloping stretch is no thicker than a level one.
 // `inside` cuts the lines cleanly along a smooth edge (his silhouette).
-export function ink(dark: Field, light: Field, inside: Field, run: Field, [x0, y0, x1, y1]: number[], k: number): Field {
+export function ink(dark: Field, light: Field, tint: Field, inside: Field, [x0, y0, x1, y1]: number[], k: number): Field {
   const width = (x1 - x0) * k;
   const height = (y1 - y0) * k;
   const at = (gx: number, gy: number) => [x0 + (gx + 0.5) / k, y0 + (gy + 0.5) / k];
@@ -297,7 +236,7 @@ export function ink(dark: Field, light: Field, inside: Field, run: Field, [x0, y
   for (let gy = -1; gy <= height; gy++)
     for (let gx = -1; gx <= width; gx++) {
       const [x, y] = at(gx, gy);
-      F[(gy + 1) * (width + 2) + gx + 1] = level(x, y, base(run, x, y));
+      F[(gy + 1) * (width + 2) + gx + 1] = level(x, y);
     }
   const out = new Float32Array(width * height);
   for (let gy = 0; gy < height; gy++)
@@ -309,7 +248,7 @@ export function ink(dark: Field, light: Field, inside: Field, run: Field, [x0, y
       // Where the lines draw together or apart, their width follows, so the tone stays even.
       const u = F[i] / SPACING;
       const g = Math.hypot(fx, fy);
-      const w = width_(sample(dark, x, y), sample(light, x, y));
+      const w = width_(sample(dark, x, y), sample(light, x, y), sample(tint, x, y) > 0.5);
       // In the dark, the paper between two lines is cut as the plate cuts it: short strokes that
       // taper at both ends, not one unbroken thread. Its width swells and pinches along the gap
       // by a noise of the gap's own (so neighbors do not break together), wider where open, so
