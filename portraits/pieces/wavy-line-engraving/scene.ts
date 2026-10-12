@@ -97,10 +97,10 @@ export const WANDER = [
 export const FULLEST = 0.9;
 // Where he is light (skin, shirt), the most a tinted line may cover: the plate keeps shadow there in
 // fine, pale lines.
-export const FINE = 0.5;
+export const FINE = 0.4;
 // Where he is light, the opacity of the lines: the plate's there are pale gray-blue, fine, and
 // unbroken across the skin.
-export const TINT = 0.35;
+export const TINT = 0.55;
 // The opacity of the strands and folds in his hair, face and shirt: the plate's are mid gray-blue.
 export const LINE_TINT = 0.6;
 // The least darkness his face takes, so it keeps the faint hairlines the plate draws across it.
