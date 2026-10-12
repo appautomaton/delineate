@@ -70,9 +70,10 @@ The page grows a garden by one progress value, 0 to 1: half on load, the rest wi
 
 Each garden adds two groups to both sets in `src/tokens.css`: "Materials: the <garden>" (bark,
 flowers, fruit, lichen; reuse an existing material when it fits) and "Species: the <garden>" (one
-`--pl-<key>` per plant; every leaf shifts around it). Write the night values out from the day ones:
-materials take lightness −0.05 and chroma ×0.78; species take lightness −0.04, chroma ×0.72, hue
-+8. Dim large pale areas further, so night paper still reads as night. A new pen (a stroke in a
+`--pl-<key>` per plant; every leaf shifts around it). A species token colors its own plant only:
+a color another plant borrows becomes a material, named by what it is, or retuning one plant
+recolors the other. Write the night values out from the day ones: materials take lightness −0.05
+and chroma ×0.78; species take lightness −0.04, chroma ×0.72, hue +8. Dim large pale areas further, so night paper still reads as night. A new pen (a stroke in a
 material's color) gets a class in `src/garden/paint.css`, as `.ink.wool` and `.ink.spine` do.
 
 ## The emblem

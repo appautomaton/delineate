@@ -219,6 +219,9 @@
   --flower-hoodia: oklch(0.66 0.105 22);
   --flower-candle: oklch(0.88 0.145 98);
   --fruit-nara: oklch(0.74 0.145 72);
+  --bark-green: oklch(0.48 0.085 138);
+  --flower-green: oklch(0.62 0.075 136);
+  --leaf-glaucous: oklch(0.58 0.07 168);
 
   /* Species: the Namib */
   --pl-quivertree: oklch(0.58 0.07 168);
@@ -249,6 +252,7 @@
   --spore-rust: oklch(0.52 0.125 54);
   --flower-ipomoea: oklch(0.64 0.185 336);
   --stem-sesuvium: oklch(0.56 0.155 14);
+  --leaf-salt: oklch(0.76 0.025 142);
 
   /* Species: the mangrove */
   --pl-redmangrove: oklch(0.48 0.095 146);
@@ -465,6 +469,9 @@
   --flower-hoodia: oklch(0.61 0.082 22);
   --flower-candle: oklch(0.82 0.115 98);
   --fruit-nara: oklch(0.68 0.115 72);
+  --bark-green: oklch(0.44 0.062 146);
+  --flower-green: oklch(0.58 0.055 144);
+  --leaf-glaucous: oklch(0.54 0.052 174);
 
   /* Species: the Namib, by moonlight */
   --pl-quivertree: oklch(0.54 0.052 174);
@@ -495,6 +502,7 @@
   --spore-rust: oklch(0.47 0.098 54);
   --flower-ipomoea: oklch(0.59 0.145 336);
   --stem-sesuvium: oklch(0.51 0.12 14);
+  --leaf-salt: oklch(0.69 0.018 150);
 
   /* Species: the mangrove, by moonlight */
   --pl-redmangrove: oklch(0.44 0.068 154);

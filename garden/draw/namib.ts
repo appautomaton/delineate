@@ -262,7 +262,7 @@ export function halfmensFlower(out: Out, r: Rng, O: Pt, dir: number, L: number) 
     [L * 0.45, W * 0.24],
     [0, W * 0.16],
   ].map(toW);
-  shape(out, r, tube, tone(r, { pc: "--pl-damara", dl: 0.08, spread: 0.04 }), { deep: 0.3 });
+  shape(out, r, tube, tone(r, { pc: "--flower-green", dl: 0.08, spread: 0.04 }), { deep: 0.3 });
   // Deep velvety crimson-maroon inner mouth and 5 spreading rim lobes.
   const mouthC = toW([L * 0.9, 0]);
   shape(out, r, roundPts(mouthC, W * 0.28, W * 0.46, dir, 10), tone(r, { pc: "--flower-mistletoe", dl: -0.06, spread: 0.03 }), { deep: 0.35 });
@@ -451,7 +451,7 @@ export function buttertree(out: Out, r: Rng, base: Pt) {
       const a = angleOf(res.pts, i);
       windows += closed(roundPts(add(p, polar(u * res.width(i / res.n), a + Math.PI / 2)), rx, ry, a, 8));
     }
-    out.push(`<path class="wash"${vars(tone(r, { pc: "--pl-gifboom", dl: 0.04, spread: 0.03 }))} d="${windows}"/>`);
+    out.push(`<path class="wash"${vars(tone(r, { pc: "--bark-green", dl: 0.04, spread: 0.03 }))} d="${windows}"/>`);
     // Curling translucent papery golden-ochre bark ribbons peeling across the trunk face.
     for (const [i, sg, wCurl] of [
       [4, -1, 24],
@@ -579,7 +579,7 @@ export function mistletoeTube(out: Out, r: Rng, O: Pt, dir: number, L: number) {
     lobes += `M${P1(add(mouth, nrm))}L${P1(lTip)}L${P1(sub(mouth, nrm))}Z`;
     blackTips += closed(roundPts(lTip, 2, 1.4, dir, 5));
   }
-  out.push(`<path class="wash"${vars(tone(r, { pc: "--pl-damara", dl: 0.12, spread: 0.03 }))} d="${lobes}"/><path class="ink hair" d="${lobes}"/>`);
+  out.push(`<path class="wash"${vars(tone(r, { pc: "--flower-green", dl: 0.12, spread: 0.03 }))} d="${lobes}"/><path class="ink hair" d="${lobes}"/>`);
   out.push(`<path class="wash"${vars({ pc: "--bark-thorn" })} d="${blackTips}"/>`);
   // Exserted crimson style and coiled stamen filaments from the unilateral split.
   const stTip = toW([L * 1.06, -L * 0.04]);
@@ -613,7 +613,7 @@ export function mistletoeClump(out: Out, r: Rng, P: Pt, s: number) {
       const lp = lerp(P, m2, f);
       const la = a + sg * rad(48);
       const lC = add(lp, polar(18 * s, la));
-      shape(out, r, roundPts(lC, 18 * s, 7.5 * s, la, 9), tone(r, { pc: "--pl-quivertree", dl: sg > 0 ? 0.03 : -0.03, spread: 0.04 }), { deep: 0.3 });
+      shape(out, r, roundPts(lC, 18 * s, 7.5 * s, la, 9), tone(r, { pc: "--leaf-glaucous", dl: sg > 0 ? 0.03 : -0.03, spread: 0.04 }), { deep: 0.3 });
     }
     // Axillary umbel of 3–4 crimson-red split-tube flowers + sticky red berries.
     for (const da of [-0.45, -0.12, 0.22, 0.52]) {
@@ -868,8 +868,8 @@ export function welwitschiaPanicle(out: Out, r: Rng, O: Pt, side: number, s: num
   const pMid = add(O, [side * 28 * s, -54 * s]);
   const pL = add(pMid, [side * 8 * s - 22 * s, -42 * s]);
   const pR = add(pMid, [side * 34 * s + 14 * s, -36 * s]);
-  stalk(out, quad(O, add(O, [side * 12 * s, -28 * s]), pMid), 6 * s, 4 * s, tone(r, { pc: "--pl-quivertree", spread: 0.03 }), 6);
-  out.push(`<path class="ink mid" style="stroke:var(--pl-quivertree)" d="M${P1(pMid)}L${P1(pL)}M${P1(pMid)}L${P1(pR)}"/>`);
+  stalk(out, quad(O, add(O, [side * 12 * s, -28 * s]), pMid), 6 * s, 4 * s, tone(r, { pc: "--leaf-glaucous", spread: 0.03 }), 6);
+  out.push(`<path class="ink mid" style="stroke:var(--leaf-glaucous)" d="M${P1(pMid)}L${P1(pL)}M${P1(pMid)}L${P1(pR)}"/>`);
   for (const [baseC, deg, H] of [
     [pL, -104, 42 * s],
     [add(pL, [-14 * s, 6 * s]), -122, 34 * s],
@@ -1339,7 +1339,7 @@ export function halfmensDetail(out: Out, r: Rng) {
 
 export function buttertreeDetail(out: Out, r: Rng) {
   limb(out, r, [[-12, 148], [0, 92], [6, 44]], { w0: 52, w1: 30, pc: "--bark-butter", cap: "blunt" });
-  out.push(`<path class="wash"${vars(tone(r, { pc: "--pl-gifboom", dl: 0.04, spread: 0.03 }))} d="${closed(roundPts([0, 96], 10, 18, rad(6), 8))}"/>`);
+  out.push(`<path class="wash"${vars(tone(r, { pc: "--bark-green", dl: 0.04, spread: 0.03 }))} d="${closed(roundPts([0, 96], 10, 18, rad(6), 8))}"/>`);
   for (const [x, y, sg] of [
     [-20, 112, -1],
     [20, 88, 1],

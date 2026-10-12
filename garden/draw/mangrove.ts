@@ -413,7 +413,7 @@ export function redmangroveDetail(out: Out, r: Rng) {
 
 function avicenniaFlowerSpike(out: Out, r: Rng, base: Pt, dir: number, size: number) {
   const tip = add(base, polar(size * 0.55, dir));
-  stalk(out, quad(base, lerp(base, tip, 0.5), tip), 2.4, 1.8, tone(r, { pc: "--pl-spanishmoss", dl: -0.06 }), 3);
+  stalk(out, quad(base, lerp(base, tip, 0.5), tip), 2.4, 1.8, tone(r, { pc: "--leaf-salt", dl: -0.06 }), 3);
   for (const [u, da] of [
     [0.55, -0.45],
     [0.62, 0.45],
@@ -550,7 +550,7 @@ export function blackmangrove(out: Out, r: Rng, base: Pt = [0, 0]) {
     limb(out, r, [trunk.pts[b4Idx], at(156, -W * 2.08), at(274, -W * 2.42)], { w0: 13, w1: 5.5, pc: "--bark-black", inkFrom: 0.06 }),
   );
 
-  // Opposite lance-elliptic leaves (dark green above, silvery-white salt-crusted `--pl-spanishmoss`
+  // Opposite lance-elliptic leaves (dark green above, silvery-white salt-crusted `--leaf-salt`
   // beneath), white 4-lobed flower spikes, and lima-bean viviparous propagules.
   for (const [res, g] of [
     [bough1, b1G],
@@ -569,11 +569,11 @@ export function blackmangrove(out: Out, r: Rng, base: Pt = [0, 0]) {
       const arrives = gate(res, g, idx);
       part(out, Math.min(0.91, arrives + 0.02), p, () => {
         // Opposite lance-elliptic pair, one tilted to show the silvery-grey underside.
-        mangroveLeaf(out, r, p, dir - rad(44), len, { acute: true, under: true, pc: "--pl-spanishmoss", tilt: 0.76 });
+        mangroveLeaf(out, r, p, dir - rad(44), len, { acute: true, under: true, pc: "--leaf-salt", tilt: 0.76 });
         mangroveLeaf(out, r, p, dir + rad(42), len, { acute: true });
         if (frac > 0.9) {
           mangroveLeaf(out, r, p, dir - rad(18), len * 0.88, { acute: true });
-          mangroveLeaf(out, r, p, dir + rad(18), len * 0.88, { acute: true, under: true, pc: "--pl-spanishmoss", tilt: 0.78 });
+          mangroveLeaf(out, r, p, dir + rad(18), len * 0.88, { acute: true, under: true, pc: "--leaf-salt", tilt: 0.78 });
         }
         if (hasProp) avicenniaPropagule(out, r, p, dir + rad(58), 32);
         if (hasFl) avicenniaFlowerSpike(out, r, p, dir, 38);
@@ -592,7 +592,7 @@ export function blackmangroveDetail(out: Out, r: Rng) {
     const idx = Math.round(twig.n * frac);
     const p = twig.pts[idx];
     const d = angleOf(twig.pts, idx);
-    mangroveLeaf(out, r, p, d - rad(44), len, { acute: true, under: true, pc: "--pl-spanishmoss", tilt: 0.78 });
+    mangroveLeaf(out, r, p, d - rad(44), len, { acute: true, under: true, pc: "--leaf-salt", tilt: 0.78 });
     mangroveLeaf(out, r, p, d + rad(40), len, { acute: true });
     if (prop) avicenniaPropagule(out, r, p, d + rad(62), 56);
   }
@@ -786,7 +786,7 @@ export function buttonwood(out: Out, r: Rng, base: Pt = [0, 0]) {
       part(out, Math.min(0.92, arrives + 0.02), p, () => {
         mangroveLeaf(out, r, p, d + side * rad(44), 56, {
           acute: true,
-          pc: silver && k % 2 ? "--pl-spanishmoss" : undefined,
+          pc: silver && k % 2 ? "--leaf-salt" : undefined,
           petPc: "--cone-buttonwood",
         });
         if (k >= 4) buttonConeCluster(out, r, p, d - side * rad(28), 52);
@@ -806,7 +806,7 @@ export function buttonwoodDetail(out: Out, r: Rng) {
     const idx = Math.round(twig.n * frac);
     const p = twig.pts[idx];
     const d = angleOf(twig.pts, idx);
-    mangroveLeaf(out, r, p, d + sg * rad(46), len, { acute: true, pc: silv ? "--pl-spanishmoss" : undefined, petPc: "--cone-buttonwood" });
+    mangroveLeaf(out, r, p, d + sg * rad(46), len, { acute: true, pc: silv ? "--leaf-salt" : undefined, petPc: "--cone-buttonwood" });
   }
   buttonConeCluster(out, r, twig.pts[twig.n], angleOf(twig.pts, twig.n), 92);
 }
