@@ -6,6 +6,10 @@
 // Saving any file of a piece rebuilds it (its build.ts, with OUT set) into a new version under
 // .cache/bench/<piece>/, and every open bench redraws. References are the PNGs in
 // portraits/references/<piece>/; anything the bench should show beside them goes there too.
+//
+// A piece drawn in layers keeps each layer in a folder of its own with its own build.ts, a piece
+// named <piece>/<layer> on the bench that shares the piece's references. Saving a layer's file
+// rebuilds that layer; saving a file of the piece itself rebuilds the piece and every layer.
 
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -20,6 +24,8 @@ const TYPES: Record<string, string> = { ".png": "image/png", ".svg": "image/svg+
 type Build = { piece: string; version?: string; ok: boolean; seconds: number; log: string };
 const last = new Map<string, Build>();
 
+// A layer shares its piece's references: the first part of its name.
+const referencesOf = (piece: string) => join(PORTRAITS, "references", piece.split("/")[0]);
 const versionsOf = (piece: string) =>
   existsSync(join(VERSIONS, piece)) ? readdirSync(join(VERSIONS, piece)).filter((f) => f.endsWith(".svg")).sort() : [];
 
@@ -60,11 +66,12 @@ export default defineConfig({
         // What a piece has to show: its references and its versions, and how its last build went.
         server.middlewares.use("/api/piece", (req, res) => {
           const piece = new URL(req.url!, "http://bench").searchParams.get("name") ?? "";
-          const refs = join(PORTRAITS, "references", piece);
+          const refs = referencesOf(piece);
           res.setHeader("content-type", "application/json");
           res.end(
             JSON.stringify({
               references: existsSync(refs) ? readdirSync(refs).filter((f) => /\.(png|svg)$/.test(f)).sort() : [],
+              referencesFrom: piece.split("/")[0],
               versions: versionsOf(piece),
               build: last.get(piece) ?? null,
             }),
@@ -86,16 +93,22 @@ export default defineConfig({
         // fs.watch can run out of file handles. A piece has a few files; reading their times is cheap.
         const pieces = join(PORTRAITS, "pieces");
         const seen = new Map<string, number>();
+        const changed = (dir: string, first: boolean) => {
+          let any = false;
+          for (const file of readdirSync(dir).filter((f) => extname(f) === ".ts")) {
+            const time = statSync(join(dir, file)).mtimeMs;
+            if (seen.get(join(dir, file)) !== time) (any = !first), seen.set(join(dir, file), time);
+          }
+          return any;
+        };
         const scan = (first: boolean) => {
           for (const piece of readdirSync(pieces)) {
             const dir = join(pieces, piece);
             if (!statSync(dir).isDirectory()) continue;
-            let changed = false;
-            for (const file of readdirSync(dir).filter((f) => extname(f) === ".ts")) {
-              const time = statSync(join(dir, file)).mtimeMs;
-              if (seen.get(join(dir, file)) !== time) (changed = !first), seen.set(join(dir, file), time);
-            }
-            if (changed) build(server, piece);
+            const layers = readdirSync(dir).filter((d) => existsSync(join(dir, d, "build.ts")));
+            const own = changed(dir, first);
+            if (own && existsSync(join(dir, "build.ts"))) build(server, piece);
+            for (const layer of layers) if (changed(join(dir, layer), first) || own) build(server, `${piece}/${layer}`);
           }
         };
         scan(true);

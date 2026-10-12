@@ -19,12 +19,11 @@
 // deep shadows, where its lines melt into noise; there they only swell.
 // The eye goes to his face, then the zip and the hands.
 
-import type { Affine } from "../../harness/trace/plate.ts";
-import type { Point } from "../../harness/trace/polygon.ts";
+import type { Affine } from "../../../harness/trace/plate.ts";
+import type { Point } from "../../../harness/trace/polygon.ts";
 import type { Edge, Stud, Tab, Zip } from "./hardware.ts";
 
-const DIR = new URL("../../references/wavy-line-engraving/", import.meta.url);
-export const HERE = new URL("./", import.meta.url);
+const DIR = new URL("../../../references/wavy-line-engraving/", import.meta.url);
 export const PLATE = new URL("wav-subject.png", DIR);
 export const ANIME = new URL("anime.png", DIR);
 // From his plate to anime.png, fitted once by ORB features and RANSAC (trace/plate.ts).

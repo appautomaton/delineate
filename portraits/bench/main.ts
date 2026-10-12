@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 // The bench page. Everything it shows is in its address, so a view can be handed to someone:
 //
-//   ?piece=<piece>                 which piece
+//   ?piece=<piece>                 which piece, or <piece>/<layer> for one layer of it
 //   &panes=anime.png,latest        what to show, left to right: a reference by file name, a version
 //                                  (v003.svg), `latest`, or `previous` (default: every reference, then latest)
 //   &at=<x>,<y>,<zoom>             the picture point at the panes' center, and screen pixels per picture pixel
@@ -16,7 +16,7 @@
 import { measure } from "./measure.ts";
 
 type Build = { piece: string; version?: string; ok: boolean; seconds: number; log: string };
-type Piece = { references: string[]; versions: string[]; build: Build | null };
+type Piece = { references: string[]; referencesFrom: string; versions: string[]; build: Build | null };
 
 const q = new URLSearchParams(location.search);
 const piece = q.get("piece") ?? "";
@@ -27,7 +27,7 @@ if (at?.length === 3) [view.x, view.y, view.zoom] = at;
 const bar = document.getElementById("bar")!;
 const log = document.getElementById("log")!;
 const main = document.getElementById("panes")!;
-let state: Piece = { references: [], versions: [], build: null };
+let state: Piece = { references: [], referencesFrom: piece, versions: [], build: null };
 let frame = { width: 1254, height: 1254 };
 
 const source = (key: string): string | undefined => {
@@ -35,7 +35,7 @@ const source = (key: string): string | undefined => {
   if (key === "latest") return v.length ? `/files/versions/${piece}/${v[v.length - 1]}` : undefined;
   if (key === "previous") return v.length > 1 ? `/files/versions/${piece}/${v[v.length - 2]}` : undefined;
   if (v.includes(key)) return `/files/versions/${piece}/${key}`;
-  if (state.references.includes(key)) return `/files/references/${piece}/${key}`;
+  if (state.references.includes(key)) return `/files/references/${state.referencesFrom}/${key}`;
   return undefined;
 };
 const named = (key: string) => (key === "latest" ? state.versions.at(-1) ?? "latest" : key === "previous" ? state.versions.at(-2) ?? "previous" : key);

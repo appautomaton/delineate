@@ -3,8 +3,8 @@
 // zip is a band of paper along its line, edged in ink and crossed by its teeth, with a pull; the
 // patch is a basket weave, as the colored original shows it, cut in paper out of an ink ground.
 
-import type { Point } from "../../harness/trace/polygon.ts";
-import { pathOf } from "../../harness/trace/polygon.ts";
+import type { Point } from "../../../harness/trace/polygon.ts";
+import { pathOf } from "../../../harness/trace/polygon.ts";
 
 export type Zip = { line: Point[]; pull?: { at: Point; angle: number; length: number; width: number } };
 
