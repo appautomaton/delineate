@@ -32,3 +32,5 @@ For what still screenshots cannot show (the growth as the page scrolls, a garden
 the switcher, the tide), use the chrome-devtools tools on the dev server. Open
 `http://localhost:5199/?garden=<key>`, reload with the cache ignored after each change, and scroll
 in an evaluated script. The theme toggle saves its choice in the browser; click it back afterwards.
+Performance is what this shows: if the growth stutters as the page scrolls in Chrome, report it;
+nothing is measured beyond that.
