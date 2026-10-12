@@ -52,6 +52,9 @@ export const closed = (pts: Pt[]) => `M${P1(pts[0])}` + through([...pts, pts[0]]
 export const poly = (pts: Pt[]) => `M${pts.map(P1).join("L")}Z`;
 export const quad = (a: Pt, c: Pt, b: Pt) => (t: number) => add(add(mul(a, (1 - t) ** 2), mul(c, 2 * (1 - t) * t)), mul(b, t * t));
 export const sample = <T>(fn: (t: number) => T, n: number) => Array.from({ length: n + 1 }, (_, i) => fn(i / n));
+
+// A round outline: fruit, berries, stones.
+export const roundPts = (c: Pt, rx: number, ry: number, lean = 0, n = 16) => sample((t) => add(c, rot([rx * Math.cos(t * TAU), ry * Math.sin(t * TAU)], lean)), n).slice(0, -1);
 export const centroid = (pts: Pt[]) => mul(pts.reduce(add, [0, 0]), 1 / pts.length);
 
 // Light comes from the upper left: edges facing away from it get the heavy line.
@@ -161,6 +164,20 @@ export function part<T>(out: Out, g: number, origin: Pt, fn: () => T): T {
   out.push(`<g class="gp" data-g="${num(+Math.max(0, g).toFixed(3))}" data-o="${P1(origin)}">${inner}</g>`);
   return res;
 }
+
+// The gate at which a limb growing from g0 to g1 reaches the share t of its length, so whatever
+// sits there appears just as the growing tip passes it.
+export const along = (g0: number, g1: number, t: number) => g0 + (g1 - g0) * t + 0.015;
+// The share of a limb's length up to its point i, measured along the curve as its growth is.
+export function share(res: { pts: Pt[]; cum?: number[] }, i: number) {
+  if (!res.cum) {
+    let len = 0;
+    res.cum = res.pts.map((p, k) => (k ? (len += Math.hypot(p[0] - res.pts[k - 1][0], p[1] - res.pts[k - 1][1])) : 0));
+  }
+  return res.cum[i] / res.cum[res.cum.length - 1];
+}
+// The gate at which whatever sits at a limb's point i appears, for a limb growing from g[0] to g[1].
+export const gate = (res: { pts: Pt[] }, g: number[], i: number) => along(g[0], g[1], share(res, i));
 
 // Path data, rewritten as relative commands with the shortest numbers: half-unit steps need
 // few digits and compress well. A curve that leaves a smooth join (its first control point

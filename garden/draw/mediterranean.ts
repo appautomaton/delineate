@@ -3,7 +3,7 @@
 // bougainvillea hang from above, and Italian cypress, lavender, rosemary, agave, and acanthus
 // rise from the bed. Drawn with the same kit as the tropical garden.
 
-import { TAU, rad, P1, add, mul, rot, polar, lerp, wobble, line, closed, sample, vars, tone, shape, stalk, quad, grow, part } from "./lib.ts";
+import { TAU, rad, P1, add, mul, rot, polar, lerp, wobble, line, closed, sample, vars, tone, shape, stalk, quad, grow, part, along, share, roundPts } from "./lib.ts";
 import type { Out, Pt, Rng, Tone } from "./lib.ts";
 import { limb, angleOf } from "./woody.ts";
 
@@ -78,20 +78,6 @@ export function bladeBunch(out: Out, blades: { O: Pt; dir: number; L: number; W:
   out.push(`<path class="${cls}"${vars(v)} d="${fill}"/><path class="ink hair" d="${ink}"/>`);
 }
 
-// The gate at which a limb growing from g0 to g1 reaches the share t of its length, so whatever
-// sits there appears just as the growing tip passes it.
-export const along = (g0: number, g1: number, t: number) => g0 + (g1 - g0) * t + 0.015;
-// The share of a limb's length up to its point i, measured along the curve as its growth is.
-export function share(res: { pts: Pt[]; cum?: number[] }, i: number) {
-  if (!res.cum) {
-    let len = 0;
-    res.cum = res.pts.map((p, k) => (k ? (len += Math.hypot(p[0] - res.pts[k - 1][0], p[1] - res.pts[k - 1][1])) : 0));
-  }
-  return res.cum[i] / res.cum[res.cum.length - 1];
-}
-
-// A round fruit or berry outline.
-export const roundPts = (c: Pt, rx: number, ry: number, lean = 0, n = 16) => sample((t) => add(c, rot([rx * Math.cos(t * TAU), ry * Math.sin(t * TAU)], lean)), n).slice(0, -1);
 const glint = (c: Pt, rx: number, ry: number) => `<path class="wash shine" d="${closed(roundPts(c, rx, ry, 0, 8))}"/>`;
 
 // ---------------------------------------------------------------------------

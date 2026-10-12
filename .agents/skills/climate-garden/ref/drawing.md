@@ -9,11 +9,12 @@ pixels.
 - `draw/lib.ts`: points and curves (`sample`, `quad`, `line`, `closed`, `wobble`); `shape` (a wash
   glaze, an optional deep glaze, and ink light on the lit edge, heavy on the shadow side);
   `stalk` (a tapered stem); `tone` (per-shape shifts of lightness, hue, and chroma around the
-  species tone, or a material via `pc`); `grow` and `part` (growth markup, below).
+  species tone, or a material via `pc`); `roundPts` (a round outline); `grow` and `part` (growth
+  markup, below), and `gate` (when whatever sits at a limb's point appears).
 - `draw/woody.ts`: `limb` (a barked branch with shade, light, and texture; forks drawn over their
   parent with `inkFrom`), `spineThrough`, `angleOf`.
 - `draw/mediterranean.ts`: `blade`, `palmate`, `bladeBunch` (many blades in one path), `tendril`,
-  `roundPts`, `agaveLeaf`, `along` and `share` (gates along a limb).
+  `agaveLeaf`.
 - `draw/desert.ts`: ribbed columns with areoles (`saguaroColumn`), pads, joints, bipinnate leaves
   (`mesquiteLeaf`), fine twigs (`verdeTwig`), a host-drawn hanger (`mistletoe`).
 - `draw/afroalpine.ts`: rosettes in space (`rosette` with a `Habit`: `GIANT`, `NARROW`, `CABBAGE`,

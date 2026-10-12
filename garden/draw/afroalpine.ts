@@ -3,13 +3,10 @@
 // the beard lichen is draped over the tree heath, and the groundsel's spent panicles hang from its
 // rosettes, each drawn with its host. Drawn with the same kit as the other gardens.
 
-import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part } from "./lib.ts";
+import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, share, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, spineThrough, angleOf } from "./woody.ts";
-import { along, share, roundPts, bladeBunch } from "./mediterranean.ts";
-
-// The share of `res`'s length at its point i, as the gate its growth reaches it at.
-const gate = (res: { pts: Pt[] }, g: number[], i: number) => along(g[0], g[1], share(res, i));
+import { bladeBunch } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
 // Giant groundsel: a trunk that forks once after each flowering into a candelabra, every tip a

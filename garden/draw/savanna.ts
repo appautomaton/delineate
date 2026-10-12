@@ -3,14 +3,11 @@
 // what hangs (the baobab's flowers, the sausage tree's fruit, the thorn's pods) hangs from its own
 // plant. Drawn with the same kit as the other gardens.
 
-import { TAU, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, glaze, vars, tone, shape, stalk, quad, grow, part, rad } from "./lib.ts";
+import { TAU, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, glaze, vars, tone, shape, stalk, quad, grow, part, rad, along, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng, Tone } from "./lib.ts";
 import { limb, angleOf, spineThrough } from "./woody.ts";
 import type { Limb } from "./woody.ts";
-import { blade, bladeBunch, tendril, along, share, roundPts } from "./mediterranean.ts";
-
-// The share of `res`'s length at its point i, as the gate its growth reaches it at.
-const gate = (res: { pts: Pt[] }, g: number[], i: number) => along(g[0], g[1], share(res, i));
+import { blade, bladeBunch, tendril } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
 // Baobab: a swollen grey trunk, smooth and folded, flared into buttresses at the foot; heavy

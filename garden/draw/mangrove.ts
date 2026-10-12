@@ -8,10 +8,9 @@
 // rises across the stilt roots and pneumatophores while branches, epiphytes, ferns, grasses, and
 // shore runners reach in from every direction and angle.
 
-import { rad, P1, add, sub, mul, polar, lerp, closed, sample, vars, tone, shape, stalk, quad, grow, part } from "./lib.ts";
+import { rad, P1, add, sub, mul, polar, lerp, closed, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng, Tone } from "./lib.ts";
 import { limb, angleOf } from "./woody.ts";
-import { along, share, roundPts } from "./mediterranean.ts";
 import { GARDENS } from "../src/garden/gardens.ts";
 
 // Where high water stands, in drawing units above a plant's base: the garden's depth from
@@ -19,9 +18,6 @@ import { GARDENS } from "../src/garden/gardens.ts";
 // mangrove.css sets the --water that lands the surface on this line for the black mangrove,
 // whose breathing pegs are sized to it.
 export const waterOf = (key: string) => (GARDENS.find((g) => g.key === key)?.water ?? 0) * 10;
-
-// The share of `res`'s length at its point i, as the gate its growth reaches it at.
-const gate = (res: { pts: Pt[] }, g: number[], i: number) => along(g[0], g[1], share(res, i));
 
 // ---------------------------------------------------------------------------
 // 1. Red mangrove (Rhizophora mangle): multi-order catenary prop-root arcade and plumb-vertical

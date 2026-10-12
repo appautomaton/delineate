@@ -3,13 +3,10 @@
 // sky. Nothing hangs from the top: dodder laurel (Cassytha ciliolata) twines through and cascades
 // from the sugarbush's limbs, drawn with its host.
 
-import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part } from "./lib.ts";
+import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, spineThrough, angleOf } from "./woody.ts";
-import { along, share, roundPts, bladeBunch } from "./mediterranean.ts";
-
-// The share of `res`'s length at its point i, as the gate its growth reaches it at.
-const gate = (res: { pts: Pt[] }, g: number[], i: number) => along(g[0], g[1], share(res, i));
+import { bladeBunch } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
 // 1. King protea (Protea cynaroides): thick unbranched red stems clothed in a spiral of glossy

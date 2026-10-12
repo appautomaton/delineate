@@ -5,10 +5,10 @@
 // are their own pen (.ink.spine, and .ink.hook for the barrel's red hooks), and areoles are dots
 // of felt in the spine's color.
 
-import { TAU, rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part } from "./lib.ts";
+import { TAU, rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, share, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, angleOf } from "./woody.ts";
-import { blade, palmate, bladeBunch, tendril, along, share, roundPts } from "./mediterranean.ts";
+import { blade, palmate, bladeBunch, tendril } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
 // Shared shapes
@@ -280,9 +280,6 @@ function rays(out: Out, r: Rng, c: Pt, s: number, { count = 5, width = 0.4, peta
   out.push(`<path class="wash"${vars(tone(r, { pc: petal, spread: 0.05, hue: 8 }))} d="${d}"/><path class="ink hair" d="${d}"/>`);
   shape(out, r, roundPts(c, s * 0.24, s * 0.24 * squash, 0, 8), tone(r, { pc: heart, dl: -0.08, spread: 0.03 }), { deep: 0 });
 }
-
-// The share of `res`'s length at its point i, as the gate its growth reaches it at.
-const gate = (res: { pts: Pt[] }, g: number[], i: number) => along(g[0], g[1], share(res, i));
 
 // ---------------------------------------------------------------------------
 // Organ pipe: many ribbed columns rising together from one base, leaning out and turning up,

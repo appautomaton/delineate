@@ -4,13 +4,10 @@
 // hangs from the top: hemiparasitic mistletoe (Tapinanthus oleifolius) grows as a dense haustorial
 // bush directly on the ribbed candelabra stems of the gifboom (Euphorbia virosa).
 
-import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part } from "./lib.ts";
+import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, angleOf } from "./woody.ts";
-import { along, share, roundPts, bladeBunch } from "./mediterranean.ts";
-
-// The share of `res`'s length at its point i, as the gate its growth reaches it at.
-const gate = (res: { pts: Pt[] }, g: number[], i: number) => along(g[0], g[1], share(res, i));
+import { bladeBunch } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
 // 1. Quiver tree / kokerboom (Aloidendron dichotomum): stout tapering trunk plated with golden-brown
