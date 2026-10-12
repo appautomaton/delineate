@@ -9,28 +9,40 @@
 /* Portrait screens. */
 @media (max-aspect-ratio: 1/1) {
   .garden { --u: min(0.8svh, 1.15vw); }
-  .plant.g-thorn { display: block; --x: 100%; --y: 22%; --h: 26; --flip: -1; --enter: 0.4 0; }
-  .plant.g-baobab { display: block; --x: 34%; --y: calc(100svh + var(--u) * 3); --h: 60; --enter: -0.3 0.12; }
-  .plant.g-crinum { display: block; --x: 76%; --y: calc(100svh + var(--u) * 2); --h: 18; --enter: 0.1 0.3; }
-  .plant.g-redgrass { display: block; --x: 92%; --y: calc(100svh + var(--u) * 2); --h: 20; --enter: 0.2 0.3; }
+  .plant.g-thorn { display: block; --x: 100%; --y: 32%; --h: 28; --flip: -1; --enter: 0.4 0; }
+  .plant.g-baobab { display: block; --x: 32%; --y: calc(100svh + var(--u) * 3); --h: 62; --enter: -0.3 0.12; }
+  .plant.g-crinum { display: block; --x: 68%; --y: calc(100svh + var(--u) * 2); --h: 19; --enter: 0.1 0.3; }
+  .plant.g-redgrass { display: block; --x: 88%; --y: calc(100svh + var(--u) * 2); --h: 22; --enter: 0.2 0.3; }
+}
+
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-kigelia { display: block; --x: 0%; --y: 12%; --h: 24; --enter: -0.4 0; }
+  .plant.g-redgrass { --x: 10%; --enter: -0.15 0.3; }
+  .plant.g-baobab { --x: 34%; --h: 64; }
+  .plant.g-crinum { --x: 58%; --h: 19; }
+  .plant.g-gloriosa { display: block; --x: 76%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: 0.1 0.35; }
+  .plant.g-hypoxis { display: block; --x: 90%; --y: calc(100svh + var(--u) * 2); --h: 13; --enter: 0.15 0.4; }
 }
 
 /* Landscape screens. */
 @media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
   .garden { --u: min(1svh, 0.6vw); }
-  .plant.g-kigelia { display: block; --x: 0%; --y: 14%; --h: 30; --enter: -0.4 0; }
-  .plant.g-baobab { display: block; --x: 22%; --y: calc(100svh + var(--u) * 3); --h: 76; --enter: -0.32 0.14; }
-  .plant.g-thorn { display: block; --x: 100%; --y: 56%; --h: 42; --flip: -1; --enter: 0.4 -0.04; }
-  .plant.g-crinum { display: block; --x: 42%; --y: calc(100svh + var(--u) * 2); --h: 20; --enter: 0 0.3; }
-  .plant.g-redgrass { display: block; --x: 56%; --y: calc(100svh + var(--u) * 2); --h: 22; --enter: 0 0.3; }
-  .plant.g-gloriosa { display: block; --x: 59%; --y: calc(100svh + var(--u) * 2); --h: 26; --enter: 0 0.35; }
-  .plant.g-hypoxis { display: block; --x: 70%; --y: calc(100svh + var(--u) * 2); --h: 13; --enter: 0 0.4; }
-  .plant.g-thatchgrass { display: block; --x: 84%; --y: calc(100svh + var(--u) * 2); --h: 28; --enter: 0.1 0.3; }
+  .plant.g-kigelia { display: block; --x: 0%; --y: 10%; --h: 28; --enter: -0.4 0; }
+  .plant.g-redgrass { display: block; --x: 9%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: -0.15 0.3; }
+  .plant.g-baobab { display: block; --x: 26%; --y: calc(100svh + var(--u) * 3); --h: 76; --enter: -0.28 0.14; }
+  .plant.g-crinum { display: block; --x: 45%; --y: calc(100svh + var(--u) * 2); --h: 21; --enter: 0 0.3; }
+  .plant.g-gloriosa { display: block; --x: 63%; --y: calc(100svh + var(--u) * 2); --h: 28; --enter: 0 0.35; }
+  .plant.g-thatchgrass { display: block; --x: 74%; --y: calc(100svh + var(--u) * 2); --h: 32; --enter: 0.08 0.3; }
+  .plant.g-hypoxis { display: block; --x: 86%; --y: calc(100svh + var(--u) * 2); --h: 14; --enter: 0.12 0.4; }
+  .plant.g-thorn { display: block; --x: 100%; --y: 52%; --h: 44; --flip: -1; --enter: 0.4 -0.04; }
 }
 
 /* Large screens: the marula leans in from the bottom right corner. */
-@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1600px) {
-  .plant.g-marula { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 46; --flip: -1; --enter: 0.35 0.1; }
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1500px) {
+  .plant.g-thorn { --y: 36%; }
+  .plant.g-thatchgrass { --x: 71%; }
+  .plant.g-hypoxis { --x: 81%; }
+  .plant.g-marula { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 44; --flip: -1; --enter: 0.35 0.1; }
 }
 
 /* Short landscape phones: the baobab, the umbrella thorn, and the crinum. */
