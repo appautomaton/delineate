@@ -18,8 +18,9 @@
 garden fully grown on five screens, one per layout tier (phone, tablet, laptop, wide, short), by
 day and by night. It writes the screenshots to `garden/look/<key>/<screen>-<light>.png` and prints
 what a screenshot hides: how many plants each layout shows, the ones the solver left out, and any
-whose paint reaches the controls. It drives the system Chrome, which a sandboxed session cannot
-launch: run it outside the sandbox.
+whose paint reaches the controls. A phone is Chrome at a phone's width: no device emulation, no
+throttling. It drives the system Chrome, which a sandboxed session cannot launch: run it outside
+the sandbox.
 
 Read the screenshots, not only the printout: a garden can pass every check and still look wrong.
 Then judge each plant close up in the gallery, `/gallery/?garden=<key>`, which shows it by day and
