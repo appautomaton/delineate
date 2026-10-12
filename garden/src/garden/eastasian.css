@@ -14,6 +14,7 @@
   .garden { --u: min(1svh, 0.6vw); }
   .plant.g-ginkgo { display: block; --x: 0%; --y: 92%; --h: 80; --enter: -0.4 0; }
   .plant.g-maple { display: block; --x: 100%; --y: 42%; --h: 36; --flip: -1; --enter: 0.4 0; }
+  .plant.g-paulownia { display: block; --x: 0%; --y: 30%; --h: 36; --enter: -0.4 0; }
   .plant.g-plum { display: block; --x: 100%; --y: calc(100svh + var(--u) * 2); --h: 64; --flip: -1; --enter: 0.3 0.1; }
 }
 

@@ -49,7 +49,8 @@ and by moonlight.
 - `garden/src/garden/<garden>.css` places the plants per screen; `garden/src/garden/arrange.ts`
   then slides them apart.
 - The garden is at `/?garden=<key>`; the token gallery, every plant by day and night beside its
-  close study, at `/gallery/?garden=<key>`.
+  close study, at `/gallery/?garden=<key>`. It shows a seasonal garden's plants in full leaf, at
+  late spring, without the parts of other seasons.
 
 A new garden touches eight places: `plants.json`; `draw/<garden>.ts` and its registry entries in
 `draw/draw.ts`; a materials and a species group in both sets of `tokens.css`; an entry with an

@@ -526,7 +526,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9613,
     draw: (o, r) => E.plum(o, r, [0, 0]),
     detail: (o, r) => E.plumDetail(o, r),
+  },  paulownia: {
+    seed: 9714,
+    draw: (o, r) => E.paulownia(o, r, [0, 0]),
+    detail: (o, r) => E.paulowniaDetail(o, r),
   },
+
 
 
 };

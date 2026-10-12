@@ -6,6 +6,10 @@
 
 export type Garden = { key: string; name: string; tone: string; water?: number; year?: boolean; leaves: string[]; lines: string[] };
 
+// Where a garden that shows a year is fullest: late spring, every leaf open. Reduced motion and
+// the token gallery show it there.
+export const SPRING = 0.42;
+
 export const GARDENS: Garden[] = [
   {
     key: "tropical",

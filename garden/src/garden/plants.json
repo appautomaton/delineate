@@ -950,5 +950,19 @@
     "note": "A bent, knotted trunk leaning in from the corner, zigzag twigs, white five-petaled flowers on bare wood, oval leaves after them, and green plums that yellow in the June rain.",
     "enters": "Leans in from the bottom right corner",
     "grows": "Still in flower as spring opens, the petals falling as the leaves come; plums swell and yellow in summer; the leaves yellow and fall; and the flowers open again on bare wood at the year's end"
+  },
+  {
+    "name": "paulownia",
+    "garden": "eastasian",
+    "rank": 4,
+    "turn": [
+      0.7,
+      0.76
+    ],
+    "common": "Paulownia",
+    "latin": "Paulownia tomentosa",
+    "note": "Coarse stout limbs, upright panicles of pale violet trumpets on bare wood, plate-sized velvety hearts in opposite pairs, and brown capsules hanging on through winter beside next year's furred buds.",
+    "enters": "Reaches in from a side",
+    "grows": "Violet panicles open on bare wood and drop as the great hearts unfold; the leaves fall dull in autumn, and the capsules and furred buds stand through winter"
   }
 ]

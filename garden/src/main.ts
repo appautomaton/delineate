@@ -14,7 +14,7 @@ import "./garden/eastasian.css";
 import "./garden/anchors.css";
 import { animate } from "animejs";
 import { arrange } from "./garden/arrange";
-import { GARDENS } from "./garden/gardens";
+import { GARDENS, SPRING } from "./garden/gardens";
 import PLANTS from "./garden/plants.json";
 import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
 
@@ -30,7 +30,6 @@ const INTRO = 0.5; // how far a garden grows before the visitor scrolls
 // the scroll leafs it; it is full by late spring, where reduced motion shows it and entering
 // plants settle; touch autoplay stops in full summer.
 const BUD = 0.12;
-const SPRING = 0.42;
 const SUMMER = 0.6;
 const FALL = 0.08; // the span a leaf or petal takes to fall
 const LOW_TIDE = 0.22; // the share of a water garden's depth shown before scrolling begins

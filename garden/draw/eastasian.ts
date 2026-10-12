@@ -5,7 +5,7 @@
 // stalks, and each long shoot carries single fans along its length. Every fan has its apex at its
 // stalk, a notch cut in its outer margin, and veins that fork dichotomously out to the margin.
 
-import { rad, P1, add, mul, lerp, polar, rot, quad, closed, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
+import { rad, P1, add, mul, lerp, polar, rot, quad, closed, line, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
@@ -336,5 +336,122 @@ export function plumDetail(out: Out, r: Rng) {
     const i = Math.round(twig.n * u);
     plumFlower(out, r, add(twig.pts[i], [0, -6]), 26);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Paulownia: coarse, stout limbs with few twigs. Upright lilac panicles open on bare wood in early
+// spring and drop as plate-sized velvety hearts unfold in opposite pairs. The leaves fall dull in
+// autumn, and the tree stands through winter hung with brown capsules, next year's furred buds
+// already at its tips.
+
+const PAULOWNIA = { pc: "--bark-paulownia" };
+const paulowniaShed = fallsAt(0.74, 0.08);
+const bellsFall = fallsAt(0.22, 0.08);
+
+// A broad heart: two rounded lobes behind the stalk, widest a third along, tapering to a point;
+// matte and velvety, so no shine, with main veins fanning from the base.
+export function paulowniaLeaf(out: Out, r: Rng, O: Pt, dir: number, L: number) {
+  const toW = (p: Pt) => add(O, rot(p, dir));
+  const k = 0.92 + r() * 0.16;
+  const upper: Pt[] = [[0, 0], [-0.1, -0.12], [-0.06, -0.32 * k], [0.12, -0.44 * k], [0.36, -0.44 * k], [0.6, -0.33 * k], [0.82, -0.15 * k], [1, 0]].map(([x, y]) => [x * L, y * L]);
+  const lower = upper.map(([x, y]) => [x, -y * (0.94 + r() * 0.1)] as Pt);
+  const outline = [...upper, ...lower.slice(1, -1).reverse()].map(toW);
+  shape(out, r, outline, tone(r, { spread: 0.05, hue: 8 }), { deep: 0.4, deepAbout: toW([0.3 * L, 0]), ink: false });
+  let veins = "";
+  for (const a of [-0.9, -0.45, 0, 0.45, 0.9]) veins += line([[0, 0], [0.3 * L, a * 0.12 * L], [(0.75 - Math.abs(a) * 0.25) * L, a * 0.3 * L]].map((p) => toW(p as Pt)));
+  out.push(`<path class="ink hair" d="${closed(outline)}"/><path class="ink hair vein" d="${veins}"/>`);
+}
+
+// An upright pyramid of pale violet trumpets, each a fifth as long as the panicle is tall, flared
+// at the mouth; the lower branches longest, so it reads at garden size as a lilac spire.
+export function paulowniaPanicle(out: Out, r: Rng, B: Pt, a: number, H: number) {
+  const tip = add(B, polar(H, a));
+  let stalks = `M${P1(B)}L${P1(tip)}`;
+  let bells = "";
+  const Lb = H * 0.2;
+  // A tube that swells toward a rounded, lobed mouth, nodding a little outward.
+  const trumpet = (q: Pt, d: number, L: number) => {
+    const at = (u: number, w: number): Pt => add(add(q, polar(L * u, d)), polar(L * w, d + rad(90)));
+    bells += closed([at(0, 0.05), at(0.45, 0.1), at(0.75, 0.2), at(0.92, 0.28), at(1.04, 0.14), at(1.08, 0), at(1.04, -0.14), at(0.92, -0.28), at(0.75, -0.2), at(0.45, -0.1), at(0, -0.05)]);
+  };
+  for (let k = 0; k < 4; k++) {
+    const u = 0.15 + k * 0.21;
+    const p = lerp(B, tip, u);
+    for (const side of [-1, 1]) {
+      const reach = H * 0.2 * (1 - u * 0.6);
+      const q = add(p, polar(reach, a + side * rad(60)));
+      stalks += `M${P1(p)}L${P1(q)}`;
+      const n = r() < 0.5 ? 1 : 2;
+      for (let j = 0; j < n; j++) trumpet(q, a + side * rad(70 + r() * 30) + (j ? 0.5 : -0.2) * side, Lb * (0.8 + r() * 0.35));
+    }
+  }
+  trumpet(tip, a, Lb);
+  out.push(`<path class="ink hair" d="${stalks}"/>`);
+  out.push(`<path class="wash petal"${vars(tone(r, { pc: "--flower-paulownia", spread: 0.04 }))} d="${bells}"/><path class="ink hair petal-edge" d="${bells}"/>`);
+}
+
+// Ripe capsules on the old panicle's stalks: brown, egg-shaped, beaked.
+function paulowniaCapsules(out: Out, r: Rng, B: Pt, a: number, H: number) {
+  let caps = "";
+  let stalks = "";
+  for (let k = 0; k < 5; k++) {
+    const p = add(B, polar(H * (0.2 + k * 0.17), a));
+    const C = add(p, polar(12, a + (k % 2 ? 1 : -1) * rad(70)));
+    stalks += `M${P1(lerp(B, p, 0))}L${P1(p)}L${P1(C)}`;
+    caps += closed(roundPts(C, 9, 6.5, a + rad(90), 9));
+  }
+  out.push(`<path class="ink hair" d="${stalks}"/><path class="wash"${vars(tone(r, { pc: "--capsule-paulownia", spread: 0.04 }))} d="${caps}"/><path class="ink hair" d="${caps}"/>`);
+}
+
+// Next year's flower buds, furred and light brown, gathered at a twig's tip.
+function paulowniaBuds(out: Out, r: Rng, T: Pt, a: number) {
+  let buds = "";
+  for (let k = 0; k < 5; k++) buds += closed(roundPts(add(T, polar(8 + k * 4, a + (k % 2 ? 1 : -1) * 0.5)), 5, 4, a, 7));
+  out.push(`<path class="wash felt"${vars(tone(r, { pc: "--bud-paulownia", spread: 0.04 }))} d="${buds}"/><path class="ink hair" d="${buds}"/>`);
+}
+
+function paulowniaTwig(out: Out, r: Rng, parent: { res: Limb; g: number[] }, t: number, a: number, len: number) {
+  const twig = branch(out, r, parent, t, [polar(len * 0.5, a), polar(len, a - 0.15)], 0.03, { w0: 9, w1: 5, cap: "blunt", ...PAULOWNIA });
+  const n = twig.res.n;
+  const tip = twig.res.pts[n];
+  const up = rad(-90);
+  part(out, gate(twig.res, twig.g, n) + 0.005, tip, () => paulowniaPanicle(out, r, tip, up + (a - up) * 0.25, 90 + r() * 30), bellsFall(tip));
+  part(out, 0.62, tip, () => paulowniaCapsules(out, r, tip, up + (a - up) * 0.4, 70));
+  part(out, 0.7, tip, () => paulowniaBuds(out, r, tip, up));
+  for (const [k, u] of [[0, 0.55], [1, 0.95]] as const) {
+    const T = twig.res.pts[Math.round(n * u)];
+    for (const side of [-1, 1]) {
+      const d = a + side * rad(70) + rad(25);
+      const E = add(T, polar(34, d));
+      part(out, 0.22 + k * 0.04 + r() * 0.04, T, () => {
+        stalk(out, quad(T, add(lerp(T, E, 0.5), [0, -4]), E), 3, 2, PAULOWNIA, 6);
+        paulowniaLeaf(out, r, E, d + rad(20), 86 + r() * 22);
+      }, paulowniaShed(T));
+    }
+  }
+}
+
+export function paulownia(out: Out, r: Rng, base: Pt) {
+  const at = (p: Pt) => add(base, p);
+  // The wood is up early: the panicles open on bare wood before the year's leaves.
+  const gm = [0, 0.05];
+  const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-30, 10]), at([80, -30]), at([200, -60]), at([320, -70]), at([420, -60])], { w0: 40, w1: 14, cap: "blunt", ...PAULOWNIA }));
+  const parent = { res: main, g: gm };
+  const limbs = [
+    branch(out, r, parent, 0.35, [[40, -60], [100, -130], [170, -170]], 0.03, { w0: 20, w1: 9, cap: "blunt", ...PAULOWNIA }),
+    branch(out, r, parent, 0.62, [[50, 30], [130, 50], [200, 40]], 0.03, { w0: 18, w1: 8, cap: "blunt", ...PAULOWNIA }),
+  ];
+  for (const [j, l] of [parent, ...limbs].entries()) {
+    const n = l.res.n;
+    for (let i = Math.round(n * 0.45), s = j % 2 ? 1 : -1; i <= n; i += 14 + Math.floor(r() * 4), s = -s) {
+      paulowniaTwig(out, r, l, Math.min(1, i / n), angleOf(l.res.pts, Math.min(i, n - 1)) + s * rad(35 + r() * 15), 40 + r() * 20);
+    }
+  }
+}
+
+export function paulowniaDetail(out: Out, r: Rng) {
+  const twig = limb(out, r, [[-120, 160], [-40, 80], [10, 0]], { w0: 18, w1: 10, cap: "blunt", ...PAULOWNIA });
+  paulowniaPanicle(out, r, twig.pts[twig.n], rad(-95), 200);
+  paulowniaLeaf(out, r, twig.pts[Math.round(twig.n * 0.5)], rad(160), 150);
 }
 
