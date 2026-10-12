@@ -17,8 +17,8 @@ import { type Affine, warp } from "../../harness/trace/plate.ts";
 import { type Point, distance } from "../../harness/trace/polygon.ts";
 import { type Field, ink, sample, structure, tone } from "./field.ts";
 import { drawn, strokeData } from "./lines.ts";
-import { ANIME, CONTOURS, HERE, INK, MAP, PAPER, PATCH, PLATE, TINT, ZIPS } from "./scene.ts";
-import { weaveMarkup, zipMarkup } from "./hardware.ts";
+import { ANIME, CONTOURS, EDGES, HERE, INK, MAP, PAPER, PATCH, PLATE, TINT, ZIPS } from "./scene.ts";
+import { edgeMarkup, weaveMarkup, zipMarkup } from "./hardware.ts";
 
 const STAGE = Number(process.env.STAGE ?? 3);
 const OUT = process.env.OUT ?? fileURLToPath(new URL("wavy-line-engraving.svg", HERE));
@@ -107,6 +107,7 @@ if (STAGE >= 3) {
   const metal = shapes(over(K, (x, y) => (nearZip(x, y) < 9 || distance(PATCH, x, y) > -3 ? -1 : sample(shine, x, y))), K, 0.3, 8);
   body.push(placed(metal, K, PAPER, ` stroke="${INK}" stroke-width="${1.1 * K}" paint-order="stroke"`));
   body.push(weaveMarkup(PATCH, INK, PAPER));
+  body.push(edgeMarkup(EDGES, INK, PAPER));
   body.push(zipMarkup(ZIPS, INK, PAPER));
 
   // The jacket's big lines, drawn by hand (see scene.ts), each cut free of the waves by paper.

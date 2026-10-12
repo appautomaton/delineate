@@ -92,3 +92,39 @@ export function weaveMarkup(outline: Point[], ink: string, paper: string, { cell
     `<path fill="none" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round" d="${pathOf(outline)}"/>`
   );
 }
+
+// An edge of a piece of leather, as the plate engraves it: the waves stop short of it, a bright rim
+// runs along the edge itself, and a row of stitches runs inside it on the piece's side (`side`:
+// +1 or -1, the hand of n = (-dy, dx) the piece lies on; 0, no stitches).
+export type Edge = { line: Point[]; side: -1 | 0 | 1 };
+
+const CLEAR = 3.2; // half the band of ink cleared of waves, so rim and stitches stand apart
+const RIM = 1.5;
+const STITCH = 4.2; // how far inside the rim the stitches run
+
+// A polyline moved sideways by `by`, to the hand of n = (-dy, dx).
+function offset(line: Point[], by: number): Point[] {
+  return line.map(([x, y], i) => {
+    const [ax, ay] = line[Math.max(0, i - 1)];
+    const [bx, bY] = line[Math.min(line.length - 1, i + 1)];
+    const len = Math.hypot(bx - ax, bY - ay) || 1;
+    return [x - ((bY - ay) / len) * by, y + ((bx - ax) / len) * by];
+  });
+}
+
+export function edgeMarkup(edges: Edge[], ink: string, paper: string): string {
+  const round = `fill="none" stroke-linecap="round" stroke-linejoin="round"`;
+  // Stitched edges clear a band wide enough for rim and stitches; bare edges, only the rim's own.
+  const clear = edges.filter((e) => e.side).map(({ line, side }) => polyline(offset(line, side * 1.6))).join("");
+  const bare = edges.filter((e) => !e.side).map(({ line }) => polyline(line)).join("");
+  const rims = edges.map(({ line }) => polyline(line)).join("");
+  const stitches = edges.filter((e) => e.side).map(({ line, side }) => polyline(offset(line, side * STITCH))).join("");
+  return (
+    `<g id="edges">` +
+    `<path ${round} stroke="${ink}" stroke-width="${2 * CLEAR + 3.2}" d="${clear}"/>` +
+    `<path ${round} stroke="${ink}" stroke-width="${RIM + 2.4}" d="${bare}"/>` +
+    `<path ${round} stroke="${paper}" stroke-width="${RIM}" d="${rims}"/>` +
+    `<path fill="none" stroke="${paper}" stroke-width="1.3" stroke-linecap="round" stroke-dasharray="1.6 2.6" d="${stitches}"/>` +
+    `</g>`
+  );
+}

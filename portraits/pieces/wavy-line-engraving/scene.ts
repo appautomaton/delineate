@@ -21,7 +21,7 @@
 
 import type { Affine } from "../../harness/trace/plate.ts";
 import type { Point } from "../../harness/trace/polygon.ts";
-import type { Zip } from "./hardware.ts";
+import type { Edge, Zip } from "./hardware.ts";
 
 const DIR = new URL("../../references/wavy-line-engraving/", import.meta.url);
 export const HERE = new URL("./", import.meta.url);
@@ -42,9 +42,6 @@ export const HEAD: Point[] = [[380, 60], [900, 60], [900, 330], [741, 355], [684
 // The jacket's big lines, which the colored original cannot give (black leather on black): read by
 // eye off gridded crops of the plate and drawn as strokes. Each runs in the order drawn.
 export const CONTOURS: Record<string, Point[]> = {
-  "collar-left": [[563, 382], [542, 415], [514, 458], [493, 497], [476, 537], [504, 532], [536, 516], [580, 506]],
-  "lapel-left": [[580, 513], [526, 540], [548, 589], [575, 638], [598, 679]],
-  "collar-right": [[700, 382], [716, 409], [738, 448], [765, 491], [790, 551], [765, 540], [738, 529], [700, 510], [689, 507]],
   "strap": [[711, 633], [706, 829], [716, 844], [727, 829], [731, 633]],
   "epaulette-left": [[356, 520], [378, 493], [422, 471], [474, 455], [479, 463], [449, 477], [395, 504], [367, 523]],
   "epaulette-right": [[797, 458], [841, 475], [884, 499], [911, 521]],
@@ -53,10 +50,23 @@ export const CONTOURS: Record<string, Point[]> = {
   "fly": [[617, 1080], [619, 1161], [620, 1254]],
   "crease-right": [[745, 1107], [753, 1161], [761, 1205], [769, 1254]],
 };
+// The collars' and lapels' edges, read off gridded crops of the plate at 3.4x: each a rim of
+// light along the edge and, on the piece's side, a row of stitches (see hardware.ts).
+export const EDGES: Edge[] = [
+  { line: [[549, 407], [531, 424], [518, 438], [507, 449], [500, 461], [495, 478], [490, 496], [485, 513], [479, 529], [477, 541]], side: -1 },
+  { line: [[477, 541], [492, 533], [512, 525], [531, 517], [550, 509]], side: -1 },
+  { line: [[526, 541], [560, 528], [599, 514]], side: 1 },
+  { line: [[526, 541], [535, 552], [547, 571], [558, 591], [568, 610], [576, 630], [583, 652], [589, 680]], side: -1 },
+  { line: [[600, 514], [607, 532], [608, 571], [610, 610]], side: 0 },
+  { line: [[752, 445], [766, 461], [776, 478], [783, 505], [790, 533], [793, 550]], side: 1 },
+  { line: [[793, 550], [772, 540], [749, 531], [721, 515], [706, 509]], side: 1 },
+  { line: [[690, 519], [714, 533], [733, 546], [752, 562], [762, 571]], side: 1 },
+];
+
 // The woven leather on his left shoulder, drawn as a basket weave of its own.
-// Read off the colored original and the plate side by side: from under the collar's edge, along the
-// shoulder seam, round its outer end, and back beneath the lapel's point.
-export const PATCH: Point[] = [[781, 498], [820, 500], [860, 506], [889, 520], [896, 545], [884, 577], [841, 594], [799, 600], [765, 596], [757, 576], [762, 557], [788, 549], [785, 522]];
+// Read off the plate at 3.4x: below the epaulette, along the right collar's outer edge, round the
+// shoulder, and back beneath the lapel's point.
+export const PATCH: Point[] = [[778, 482], [820, 488], [859, 505], [884, 529], [888, 552], [882, 575], [865, 589], [830, 599], [791, 606], [764, 612], [758, 595], [760, 567], [783, 552], [789, 533], [783, 505]];
 
 // The zips, each a line read off the plate (top or inner end first) and its pull: where the slider
 // sits, which way the tab hangs (degrees from straight down, clockwise), and how long it is.
