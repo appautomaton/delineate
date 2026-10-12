@@ -21,6 +21,7 @@ import * as S from "./savanna.ts";
 import * as F from "./fynbos.ts";
 import * as N from "./namib.ts";
 import * as MG from "./mangrove.ts";
+import * as E from "./eastasian.ts";
 
 const REGISTRY: { name: string }[] = JSON.parse(readFileSync(new URL("../src/garden/plants.json", import.meta.url), "utf8"));
 
@@ -513,6 +514,10 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9123,
     draw: (o, r) => MG.seapurslane(o, r, [0, 0]),
     detail: (o, r) => MG.seapurslaneDetail(o, r),
+  },  ginkgo: {
+    seed: 9411,
+    draw: (o, r) => E.ginkgo(o, r, [0, 0]),
+    detail: (o, r) => E.ginkgoSpurDetail(o, r),
   },
 };
 

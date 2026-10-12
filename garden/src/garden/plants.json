@@ -908,5 +908,15 @@
     "note": "A prostrate succulent mat of fleshy carmine-red stems hugging the tidal mud, opposite glossy jade-green spatulate blades, and solitary five-pointed rose-pink star calyces.",
     "enters": "Creeping low across the mud in the bed",
     "grows": "The carmine-red stems spread across the mud, fleshy spatulate leaf pairs open, and five-pointed pink star flowers bloom in the axils"
+  },
+  {
+    "name": "ginkgo",
+    "garden": "eastasian",
+    "rank": 1,
+    "common": "Ginkgo",
+    "latin": "Ginkgo biloba",
+    "note": "A stout grey-brown limb forking into ascending wood, knobbed with spur shoots, each bearing a cluster of long-stalked fresh green fans notched at the outer edge.",
+    "enters": "Reaches in from the left edge",
+    "grows": "The limb climbs and forks, spur shoots knuckle out along the wood, and the fans open on their stalks, a cluster at each spur, a single fan along each long shoot"
   }
 ]
