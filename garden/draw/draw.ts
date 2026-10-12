@@ -546,7 +546,32 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 10118,
     draw: (o, r) => E.akebia(o, r, [0, 0]),
     detail: (o, r) => E.akebiaDetail(o, r),
+  },  peony: {
+    seed: 10219,
+    draw: (o, r) => E.peony(o, r, [0, 0]),
+    detail: (o, r) => E.peonyDetail(o, r),
   },
+  hydrangea: {
+    seed: 10320,
+    draw: (o, r) => E.hydrangea(o, r, [0, 0]),
+    detail: (o, r) => E.hydrangeaDetail(o, r),
+  },
+  lycoris: {
+    seed: 10421,
+    draw: (o, r) => E.lycoris(o, r, [0, 0]),
+    detail: (o, r) => E.lycorisDetail(o, r),
+  },
+  iris: {
+    seed: 10522,
+    draw: (o, r) => E.iris(o, r, [0, 0]),
+    detail: (o, r) => E.irisDetail(o, r),
+  },
+  lotus: {
+    seed: 10623,
+    draw: (o, r) => E.lotus(o, r, [0, 0]),
+    detail: (o, r) => E.lotusDetail(o, r),
+  },
+
 
 
 

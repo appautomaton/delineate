@@ -1012,5 +1012,71 @@
     "note": "Thin stems twining along a bamboo pole, five-leaflet palms, dangling purple-brown flowers in early spring, and plump purple sausage pods in autumn.",
     "enters": "Hangs from a bamboo pole reaching in from a side",
     "grows": "Purple-brown flowers dangle before the leaves; the five-leaflet palms follow; purple pods hang in autumn; about half the leaves fall and the rest thin through winter"
+  },
+  {
+    "name": "lotus",
+    "garden": "eastasian",
+    "rank": 8,
+    "turn": [
+      0.72,
+      0.8
+    ],
+    "common": "Lotus",
+    "latin": "Nelumbo nucifera",
+    "note": "Shield leaves on tall stalks over the still water, pink flowers standing above them, flat-topped seed pods, and in winter dry pods on broken stalks bent to the water.",
+    "enters": "Rises from the pond",
+    "grows": "Rolled leaves rise from the water and open into shields; pink flowers stand above them and leave their pods; the leaves brown and the stalks bend over; dry pods stay on broken stalks through winter"
+  },
+  {
+    "name": "iris",
+    "garden": "eastasian",
+    "rank": 10,
+    "turn": [
+      0.72,
+      0.8
+    ],
+    "common": "Rabbit-ear iris",
+    "latin": "Iris laevigata",
+    "note": "A fan of grey-green swords in the pond's shallows, and violet flowers with white-marked falls standing on stems above them in May and June.",
+    "enters": "Rises from the pond's shallows",
+    "grows": "The swords rise from the water, violet flowers open and fall, capsules follow, and the swords yellow and fall over in autumn"
+  },
+  {
+    "name": "peony",
+    "garden": "eastasian",
+    "rank": 11,
+    "turn": [
+      0.7,
+      0.78
+    ],
+    "common": "Peony",
+    "latin": "Paeonia lactiflora",
+    "note": "A clump of stems with leaves twice divided in threes and great pink ball flowers late in spring, then green seed follicles.",
+    "enters": "Rises from the bed",
+    "grows": "Red shoots rise, the leaves unfold, ball flowers open and drop their petals, follicles form, and the stems redden, bend over, and die back"
+  },
+  {
+    "name": "hydrangea",
+    "garden": "eastasian",
+    "rank": 12,
+    "turn": [
+      0.7,
+      0.76
+    ],
+    "common": "Hydrangea",
+    "latin": "Hydrangea macrophylla",
+    "note": "A mound of woody stems with broad leaves in opposite pairs and mopheads of four-sepalled florets, blue-violet in the plum rain.",
+    "enters": "Rises from the bed",
+    "grows": "The leaves open in pairs, mopheads open blue-violet in the plum rain, fade on the stem to antique green and rose, and stay dry on the bare stems through winter"
+  },
+  {
+    "name": "lycoris",
+    "garden": "eastasian",
+    "rank": 13,
+    "common": "Red spider lily",
+    "latin": "Lycoris radiata",
+    "note": "Bare scapes crowned with scarlet flowers, their narrow tepals curled back and their stamens far out; narrow dark leaves only after the flowers.",
+    "enters": "Rises from the bed",
+    "grows": "Last autumn's leaves wither in spring; bare scapes rise late in summer and open scarlet umbels; after the flowers fade, the narrow dark leaves come and stay through winter"
   }
 ]

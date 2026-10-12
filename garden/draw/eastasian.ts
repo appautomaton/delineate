@@ -777,3 +777,286 @@ export function akebiaDetail(out: Out, r: Rng) {
   akebiaLeaf(out, r, [60, -112], rad(80), 90);
 }
 
+// ---------------------------------------------------------------------------
+// The bed and the pond. These are herbs: their stems die back, bending over and fading, and what
+// grows on a stem leaves before it does (npm run draw checks).
+
+// A double flower seen a little from the side: a cup of broad outer petals round a ruffled ball.
+function cupFlower(out: Out, r: Rng, C: Pt, R: number, pc: string) {
+  for (const [ring, n, reach, size, dl] of [[0, 8, 0.62, 0.48, -0.04], [1, 9, 0.38, 0.4, 0.02], [2, 7, 0.16, 0.3, 0.06]] as const) {
+    let petals = "";
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * 6.28 + ring * 0.4 + r() * 0.2;
+      const c = add(C, [Math.cos(a) * R * reach, Math.sin(a) * R * reach * 0.55 - R * ring * 0.12]);
+      petals += closed(roundPts(c, R * size, R * size * 0.7, a, 9));
+    }
+    out.push(`<path class="wash petal"${vars(tone(r, { pc, dl, spread: 0.03 }))} d="${petals}"/><path class="ink hair petal-edge" d="${petals}"/>`);
+  }
+}
+
+// Peony: a clump of stems rising red from the ground, leaves twice divided in threes, ball
+// flowers late in spring, then the seed follicles; the stems redden, bend over, and die back.
+const peonyDies = 0.84;
+const peonyShed = fallsAt(0.76, 0.05);
+
+function peonyLeaf(out: Out, r: Rng, T: Pt, a: number, L: number) {
+  const F = add(T, polar(L * 0.3, a));
+  out.push(`<path class="ink hair" d="M${P1(T)}L${P1(F)}"/>`);
+  for (const b of [-0.6, 0, 0.6]) {
+    const G = add(F, polar(L * 0.22, a + b));
+    out.push(`<path class="ink hair" d="M${P1(F)}L${P1(G)}"/>`);
+    for (const c of [-0.5, 0, 0.5]) blade(out, r, G, a + b + c, L * 0.36, { W: 0.3, v: tone(r, { spread: 0.05, hue: 8 }), deep: 0.3, rib: "ink hair", hairline: true });
+  }
+}
+
+export function peony(out: Out, r: Rng, base: Pt) {
+  for (let k = 0; k < 6; k++) {
+    const lean = rad(-90 + (k - 2.5) * 11 + (r() - 0.5) * 8);
+    const H = 260 + r() * 100;
+    const B = add(base, [(k - 2.5) * 8, 0]);
+    const spine = sample((t) => add(B, add(polar(H * t, lean), [Math.sin(t * 2.4) * 10 * (k % 2 ? 1 : -1), 0])), 12);
+    const g: [number, number] = [0.02 + k * 0.01, 0.18 + k * 0.01];
+    const stem = grow(out, g[0], g[1], () => ({ ...stalk(out, (t) => spine[Math.round(t * 12)], 6, 3.5, tone(r, { pc: "--stem-peony", spread: 0.04 }), 12), pts: spine, n: 12 }), peonyDies);
+    for (const u of [0.4, 0.68]) {
+      const i = Math.round(12 * u);
+      const T = spine[i];
+      part(out, gate(stem, g, i) + 0.02, T, () => peonyLeaf(out, r, T, angleOf(spine, i) + (i % 2 ? 1 : -1) * rad(55), 120 + r() * 30), peonyShed(T));
+    }
+    if (k % 3 === 2) continue;
+    const top = spine[12];
+    part(out, 0.27 + r() * 0.04, top, () => cupFlower(out, r, add(top, [0, -10]), 44 + r() * 10, "--flower-peony"), 0.42 + r() * 0.03);
+    part(out, 0.5, top, () => {
+      let f = "";
+      for (const d of [-0.5, 0, 0.5]) f += closed(roundPts(add(top, polar(12, lean + d)), 12, 7, lean + d, 8));
+      out.push(`<path class="wash"${vars(tone(r, { pc: "--follicle-peony", spread: 0.04 }))} d="${f}"/><path class="ink hair" d="${f}"/>`);
+    }, peonyDies - 0.01);
+  }
+}
+
+export function peonyDetail(out: Out, r: Rng) {
+  cupFlower(out, r, [0, -40], 130, "--flower-peony");
+  peonyLeaf(out, r, [-60, 160], rad(-150), 180);
+}
+
+// Hydrangea: a mound of woody stems with broad leaves in opposite pairs; mopheads of small
+// four-sepalled florets open blue-violet in the plum rain, fade on the stem to antique green and
+// rose in autumn, and stay dry on the bare stems through winter.
+const hydrangeaShed = fallsAt(0.74, 0.08);
+
+function mophead(out: Out, r: Rng, C: Pt, R: number, pc: string, dl: number) {
+  let florets = "";
+  for (let k = 0; k < 34; k++) {
+    // Florets round a dome seen a little from above: nearer ones lower and larger.
+    const a = k * rad(137.5);
+    const q = Math.sqrt((k + 0.5) / 34);
+    const c = add(C, [Math.cos(a) * R * q, Math.sin(a) * R * q * 0.62 - R * 0.25 * (1 - q)]);
+    const s = R * 0.17 * (0.85 + (Math.sin(a) + 1) * 0.12);
+    for (let j = 0; j < 4; j++) florets += closed(roundPts(add(c, polar(s * 0.55, a + j * rad(90))), s * 0.5, s * 0.38, a + j * rad(90), 6));
+  }
+  out.push(`<path class="wash petal"${vars(tone(r, { pc, dl, spread: 0.05, hue: 10 }))} d="${florets}"/><path class="ink hair petal-edge" d="${florets}"/>`);
+}
+
+export function hydrangea(out: Out, r: Rng, base: Pt) {
+  for (let k = 0; k < 7; k++) {
+    const lean = rad(-90 + (k - 3) * 15 + (r() - 0.5) * 8);
+    const L = 220 + r() * 80 - Math.abs(k - 3) * 20;
+    const g = [0.01 + k * 0.006, 0.1];
+    const stem = grow(out, g[0], g[1], () => limb(out, r, [add(base, [(k - 3) * 10, 4]), add(base, add(polar(L * 0.55, lean), [(k - 3) * 14, 0])), add(base, add(polar(L, lean + (k - 3) * 0.05), [(k - 3) * 20, 0]))], { w0: 8, w1: 5, cap: "blunt", pc: "--bark-hydrangea" }));
+    const n = stem.n;
+    for (const u of [0.45, 0.7, 0.92]) {
+      const i = Math.round(n * u);
+      const T = stem.pts[i];
+      for (const side of [-1, 1]) {
+        const d = angleOf(stem.pts, i) + side * rad(70);
+        part(out, Math.max(gate(stem, g, i) + 0.02, 0.12 + u * 0.12), T, () => blade(out, r, T, d, 66 + r() * 16, { W: 0.58, v: tone(r, { spread: 0.05, hue: 8 }), veins: 4, deep: 0.35, rib: "ink hair", hairline: true }), hydrangeaShed(T));
+      }
+    }
+    const top = add(stem.pts[n], [0, -26]);
+    // The dry head lies beneath the fresh one and shows when the fresh one fades in autumn.
+    part(out, 0.46, stem.pts[n], () => mophead(out, r, top, 56 + r() * 12, "--flower-hydrangea-dry", 0));
+    part(out, 0.46, stem.pts[n], () => mophead(out, r, top, 56 + r() * 12, "--flower-hydrangea", (k % 3) * 0.03), 0.66 + r() * 0.04, true);
+  }
+}
+
+export function hydrangeaDetail(out: Out, r: Rng) {
+  mophead(out, r, [0, -30], 150, "--flower-hydrangea", 0);
+  blade(out, r, [-40, 120], rad(-160), 160, { W: 0.58, v: tone(r, { spread: 0.05 }), veins: 5, deep: 0.35, rib: "ink hair", hairline: true });
+}
+
+// Red spider lily: bare scapes rise late in summer and open umbels of scarlet flowers, their
+// narrow tepals curled back and their stamens far out; only after they fade do the narrow dark
+// leaves come, and they stay through winter, withering late in spring.
+function lilyLeaves(out: Out, r: Rng, B: Pt) {
+  const blades: { O: Pt; dir: number; L: number; W: number }[] = [];
+  for (let k = 0; k < 12; k++) blades.push({ O: add(B, [(k - 6) * 3, 0]), dir: rad(-90 + (k - 5.5) * 13 + (r() - 0.5) * 6), L: 110 + r() * 40, W: 0.07 });
+  bladeBunch(out, blades, tone(r, { dl: -0.04, spread: 0.05 }));
+}
+
+function lilyUmbel(out: Out, r: Rng, C: Pt, R: number) {
+  let tepals = "";
+  let stamens = "";
+  for (let k = 0; k < 6; k++) {
+    const a = rad(-160 + k * 28 + (r() - 0.5) * 10);
+    const F = add(C, polar(R * 0.35, a));
+    for (let j = 0; j < 6; j++) {
+      const t = a + rad(-50 + j * 20);
+      const tip = add(F, polar(R * 0.38, t));
+      const curl = add(tip, polar(R * 0.14, t + rad(130)));
+      tepals += closed([F, add(lerp(F, tip, 0.5), polar(R * 0.035, t + rad(90))), tip, curl, lerp(F, tip, 0.55)]);
+    }
+    for (let j = 0; j < 6; j++) {
+      const t = a + rad(-25 + j * 10);
+      const E = add(F, polar(R * 0.75, t - 0.25));
+      stamens += `M${P1(F)}Q${P1(add(F, polar(R * 0.45, t + 0.1)))} ${P1(E)}`;
+    }
+    out.push(`<path class="ink hair" d="M${P1(C)}L${P1(F)}"/>`);
+  }
+  out.push(`<path class="wash petal"${vars(tone(r, { pc: "--flower-lycoris", spread: 0.04 }))} d="${tepals}"/><path class="ink hair petal-edge" d="${tepals}"/>`);
+  out.push(`<path class="ink hair" style="stroke:var(--flower-lycoris)" d="${stamens}"/>`);
+}
+
+export function lycoris(out: Out, r: Rng, base: Pt) {
+  // Last autumn's leaves, standing as the year opens, and withering late in spring.
+  part(out, 0, base, () => lilyLeaves(out, r, base), 0.32, true);
+  for (let k = 0; k < 4; k++) {
+    const B = add(base, [(k - 1.5) * 26, 0]);
+    const H = 240 + r() * 60;
+    const lean = rad(-90 + (k - 1.5) * 6);
+    const spine = sample((t) => add(B, polar(H * t, lean)), 8);
+    const g: [number, number] = [0.6 + k * 0.006, 0.66 + k * 0.006];
+    grow(out, g[0], g[1], () => ({ ...stalk(out, (t) => spine[Math.round(t * 8)], 4.5, 3.5, tone(r, { pc: "--stem-lycoris", spread: 0.03 }), 8), pts: spine, n: 8 }), 0.78);
+    const top = spine[8];
+    part(out, g[1], top, () => lilyUmbel(out, r, top, 80 + r() * 14), 0.74 + r() * 0.02);
+  }
+  // This year's leaves, after the flowers, through winter.
+  part(out, 0.76, base, () => lilyLeaves(out, r, base));
+}
+
+export function lycorisDetail(out: Out, r: Rng) {
+  lilyUmbel(out, r, [0, 0], 220);
+}
+
+// Rabbit-ear iris, in the pond's shallows: grey-green swords rising from the water, violet
+// flowers in May and June, their falls marked white, then capsules; the swords yellow in autumn
+// and fall over.
+function irisFlower(out: Out, r: Rng, C: Pt, R: number) {
+  let falls = "";
+  let standards = "";
+  let signal = "";
+  for (const a of [rad(-20), rad(90), rad(200)]) {
+    const tip = add(C, polar(R, a + rad(15)));
+    falls += closed([C, add(C, polar(R * 0.5, a - 0.35)), add(tip, polar(R * 0.25, a - rad(60))), tip, add(tip, polar(R * 0.2, a + rad(80))), add(C, polar(R * 0.45, a + 0.45))]);
+    signal += closed([add(C, polar(R * 0.2, a + 0.1)), add(C, polar(R * 0.55, a + 0.12)), add(C, polar(R * 0.3, a + 0.25))]);
+    standards += closed([C, add(C, polar(R * 0.5, a + rad(55))), add(C, polar(R * 0.25, a + rad(70)))]);
+  }
+  out.push(`<path class="wash petal"${vars(tone(r, { pc: "--flower-iris", spread: 0.04 }))} d="${falls}${standards}"/><path class="ink hair petal-edge" d="${falls}${standards}"/>`);
+  out.push(`<path class="wash"${vars({ pc: "--signal-iris" })} d="${signal}"/>`);
+}
+
+export function iris(out: Out, r: Rng, base: Pt) {
+  for (let k = 0; k < 9; k++) {
+    const B = add(base, [(k - 4) * 9, 0]);
+    const H = 240 + r() * 140 - Math.abs(k - 4) * 22;
+    const lean = rad(-90 + (k - 4) * 6);
+    const spine = sample((t) => add(B, add(polar(H * t, lean), [t * t * (k - 4) * 8, 0])), 10);
+    // A sword: a stem's growth, broad at the base and tapering to a point.
+    grow(out, 0.06 + k * 0.008, 0.2 + k * 0.008, () => ({ ...stalk(out, (t) => spine[Math.round(t * 10)], 13, 1.5, tone(r, { spread: 0.04 }), 10), pts: spine, n: 10 }), 0.82 + r() * 0.03);
+  }
+  for (let k = 0; k < 3; k++) {
+    const B = add(base, [(k - 1) * 22, 0]);
+    const spine = sample((t) => add(B, polar(300 * t, rad(-90 + (k - 1) * 5))), 8);
+    const g: [number, number] = [0.26 + k * 0.01, 0.32 + k * 0.01];
+    grow(out, g[0], g[1], () => ({ ...stalk(out, (t) => spine[Math.round(t * 8)], 4, 3, tone(r, { spread: 0.03 }), 8), pts: spine, n: 8 }), 0.62);
+    const top = spine[8];
+    part(out, g[1] + 0.01, top, () => irisFlower(out, r, add(top, [0, -6]), 46 + r() * 8), 0.5 + r() * 0.03);
+    part(out, 0.52, top, () => shape(out, r, roundPts(add(top, [0, -18]), 9, 20, 0, 9), tone(r, { pc: "--capsule-iris", spread: 0.04 }), { deep: 0.3 }), 0.61);
+  }
+}
+
+export function irisDetail(out: Out, r: Rng) {
+  irisFlower(out, r, [0, 0], 150);
+}
+
+// Lotus, in the pond: leaves rise rolled from the water in May and open into shield leaves on tall
+// stalks; pink flowers stand above them through summer and leave their seed pods. In autumn the
+// leaves brown and tatter and the stalks bend over; in winter the dry pods are left on broken
+// stalks bent down to the water.
+function lotusLeaf(out: Out, r: Rng, C: Pt, R: number, tilt: number) {
+  const rim: Pt[] = [];
+  for (let k = 0; k < 24; k++) {
+    const a = (k / 24) * 6.28;
+    const w = 1 + Math.sin(a * 5 + r()) * 0.04;
+    rim.push(add(C, [Math.cos(a) * R * w, Math.sin(a) * R * w * tilt]));
+  }
+  shape(out, r, rim, tone(r, { spread: 0.05, hue: 8 }), { deep: 0.35, deepAbout: add(C, [0, R * tilt * 0.3]), ink: false });
+  let veins = "";
+  for (let k = 0; k < 12; k++) {
+    const a = (k / 12) * 6.28;
+    veins += `M${P1(C)}L${P1(add(C, [Math.cos(a) * R * 0.92, Math.sin(a) * R * 0.92 * tilt]))}`;
+  }
+  out.push(`<path class="ink hair" d="${closed(rim)}"/><path class="ink hair vein" d="${veins}"/>`);
+}
+
+function lotusFlower(out: Out, r: Rng, C: Pt, R: number) {
+  for (const [ring, n, spread, dl] of [[0, 7, 0.9, -0.02], [1, 5, 0.5, 0.04]] as const) {
+    let petals = "";
+    for (let k = 0; k < n; k++) {
+      const a = rad(-90) + (k / (n - 1) - 0.5) * 2 * spread * (ring ? 0.8 : 1);
+      const tip = add(C, polar(R * (ring ? 0.85 : 1), a));
+      const n2 = polar(R * 0.22, a + rad(90));
+      petals += closed([C, add(lerp(C, tip, 0.55), n2), tip, sub(lerp(C, tip, 0.55), n2)]);
+    }
+    out.push(`<path class="wash petal"${vars(tone(r, { pc: "--flower-lotus", dl, spread: 0.03 }))} d="${petals}"/><path class="ink hair petal-edge" d="${petals}"/>`);
+  }
+  shape(out, r, roundPts(add(C, [0, -R * 0.25]), R * 0.22, R * 0.14, 0, 8), tone(r, { pc: "--pod-lotus", spread: 0.03 }), { deep: 0 });
+}
+
+function lotusPod(out: Out, r: Rng, C: Pt, R: number, pc: string, a = 0) {
+  const toW = (p: Pt) => add(C, rot(p, a));
+  const pts: Pt[] = [[-R, -R * 0.5], [R, -R * 0.5], [R * 0.45, R * 0.6], [-R * 0.45, R * 0.6]].map(toW);
+  shape(out, r, pts, tone(r, { pc, spread: 0.04 }), { deep: 0.3 });
+  let holes = "";
+  for (const x of [-0.5, 0, 0.5]) holes += closed(roundPts(toW([x * R, -R * 0.42]), R * 0.12, R * 0.06, a, 6));
+  out.push(`<path class="ink hair" d="${holes}"/>`);
+}
+
+export function lotus(out: Out, r: Rng, base: Pt) {
+  const stalkDies = 0.84;
+  const leafFalls = fallsAt(0.79, 0.04);
+  // Leaf stalks rise from the pond floor, the shields opening at their tops.
+  for (let k = 0; k < 5; k++) {
+    const B = add(base, [(k - 2) * 46, 0]);
+    const H = 280 + r() * 160;
+    const spine = sample((t) => add(B, [Math.sin(t * 2) * (k - 2) * 14, -H * t]), 10);
+    const g: [number, number] = [0.28 + k * 0.012, 0.38 + k * 0.012];
+    grow(out, g[0], g[1], () => ({ ...stalk(out, (t) => spine[Math.round(t * 10)], 5, 4, tone(r, { pc: "--stem-lotus", spread: 0.03 }), 10), pts: spine, n: 10 }), stalkDies);
+    const top = spine[10];
+    part(out, g[1], top, () => lotusLeaf(out, r, add(top, [0, -4]), 90 + r() * 30, 0.32 + r() * 0.12), leafFalls(top));
+  }
+  // Flowers on their own stalks, standing above the leaves, leaving their pods.
+  for (let k = 0; k < 2; k++) {
+    const B = add(base, [(k - 0.5) * 70, 0]);
+    const spine = sample((t) => add(B, [0, -480 * t]), 10);
+    const g: [number, number] = [0.44 + k * 0.03, 0.5 + k * 0.03];
+    grow(out, g[0], g[1], () => ({ ...stalk(out, (t) => spine[Math.round(t * 10)], 4.5, 3.5, tone(r, { pc: "--stem-lotus", spread: 0.03 }), 10), pts: spine, n: 10 }), stalkDies);
+    const top = spine[10];
+    part(out, g[1] + 0.01, top, () => lotusFlower(out, r, add(top, [0, -4]), 70), 0.6 + k * 0.03);
+    part(out, 0.6 + k * 0.03, top, () => lotusPod(out, r, add(top, [0, -10]), 22, "--pod-lotus"), stalkDies - 0.01);
+  }
+  // Winter: dry pods on stalks broken over, bent down to the water.
+  for (let k = 0; k < 3; k++) {
+    const B = add(base, [(k - 1) * 80 + 30, -20]);
+    const knee = add(B, [(k - 1) * 10, -220 - k * 40]);
+    const tip = add(knee, polar(120, rad(60 + k * 30)));
+    part(out, stalkDies + 0.01, B, () => {
+      out.push(`<path class="ink thin" style="stroke:var(--pod-lotus-dry)" d="M${P1(B)}L${P1(knee)}L${P1(tip)}"/>`);
+      lotusPod(out, r, tip, 18, "--pod-lotus-dry", rad(150 + k * 20));
+    });
+  }
+}
+
+export function lotusDetail(out: Out, r: Rng) {
+  lotusLeaf(out, r, [-80, 60], 160, 0.4);
+  lotusFlower(out, r, [80, -40], 130);
+}
+

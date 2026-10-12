@@ -55,12 +55,15 @@ type Limb = {
   s: number[];
   g0: number;
   g1: number;
+  // A stem that dies back in a garden that shows a year: when, and how it last bent.
+  d: number;
   last: number;
+  fell: number;
   clipped: boolean;
 };
 // A part opens at g and, if it leaves, falls at d: dropping `drop` drawing units to the foot of
 // its plant, drifting `drift` aside and tilting `tilt` degrees as it goes.
-type Part = { el: SVGGElement; g: number; d: number; o: string; back: string; turn: number; drop: number; drift: number; tilt: number; last: number; fell: number };
+type Part = { el: SVGGElement; g: number; d: number; fade: boolean; o: string; back: string; turn: number; drop: number; drift: number; tilt: number; last: number; fell: number };
 type Water = { body: SVGGElement; maskId: string; grad: SVGLinearGradientElement; edge: SVGPathElement; line: SVGPathElement; masked: boolean; wy: number };
 // boost scales a plant's growth: 1 normally, and rising from 0 while its garden grows in.
 // enter is how far, in CSS pixels, a plant starts from its place (null if it starts there), and
@@ -251,7 +254,8 @@ function collect(bed: HTMLElement, lag: number): Plant {
     tip.setAttribute("class", "ink mid");
     el.before(clipPath);
     el.after(tip);
-    return { el, id, clip, tip, x, y, w, nx, ny, s, g0: +el.dataset.g0!, g1: +el.dataset.g1!, last: -1, clipped: false };
+    const d = el.dataset.d === undefined ? Infinity : +el.dataset.d;
+    return { el, id, clip, tip, x, y, w, nx, ny, s, g0: +el.dataset.g0!, g1: +el.dataset.g1!, d, last: -1, fell: -1, clipped: false };
   });
   const box = svg.viewBox.baseVal;
   const parts = [...bed.querySelectorAll<SVGGElement>(".gp")].map((el, i): Part => {
@@ -259,7 +263,7 @@ function collect(bed: HTMLElement, lag: number): Plant {
     const drop = box.y + box.height - +y;
     const side = i % 2 ? 1 : -1;
     const d = el.dataset.d === undefined ? Infinity : +el.dataset.d;
-    return { el, g: +el.dataset.g!, d, o: `${x} ${y}`, back: `${-x} ${-y}`, turn: side * 22, drop, drift: side * drop * (0.1 + ((i * 7) % 10) / 50), tilt: side * (50 + ((i * 37) % 70)), last: -1, fell: -1 };
+    return { el, g: +el.dataset.g!, d, fade: el.hasAttribute("data-fade"), o: `${x} ${y}`, back: `${-x} ${-y}`, turn: side * 22, drop, drift: side * drop * (0.1 + ((i * 7) % 10) / 50), tilt: side * (50 + ((i * 37) % 70)), last: -1, fell: -1 };
   });
   let water: Water | null = null;
   if (GARDENS.find((g) => g.key === bed.dataset.garden)?.water) {
@@ -396,7 +400,9 @@ function renderGarden() {
   const all = progress();
   const year = seasonal();
   const rest = year ? BUD : INTRO;
-  const tide = waterFull ? tideIn.k * (all <= rest ? (all / rest) * LOW_TIDE : LOW_TIDE + ((all - rest) / (1 - rest)) * (1 - LOW_TIDE)) : 0;
+  // A pond stands full; a tide rests low and rises with the scroll.
+  const pond = GARDENS.find((g) => g.key === garden)?.still;
+  const tide = !waterFull ? 0 : pond ? tideIn.k : tideIn.k * (all <= rest ? (all / rest) * LOW_TIDE : LOW_TIDE + ((all - rest) / (1 - rest)) * (1 - LOW_TIDE));
   let key = `${garden} ${all} ${tide}`;
   for (const plant of plants) if (plant.garden === garden) key += ` ${plant.boost}`;
   if (key === frame) return;
@@ -425,10 +431,20 @@ function renderGarden() {
     let moved = false;
     for (const limb of plant.limbs) {
       const t = clamp((p - limb.g0) / (limb.g1 - limb.g0));
-      if (t === limb.last) continue;
+      const f = clamp((p - limb.d) / FALL);
+      if (t === limb.last && f === limb.fell) continue;
       limb.last = t;
       moved = true;
-      limb.el.style.visibility = t ? "" : "hidden";
+      limb.el.style.visibility = t && f < 1 ? "" : "hidden";
+      if (f !== limb.fell) {
+        // Dying back: the stem bends over from its base the way it leans, and fades.
+        const n = limb.x.length - 1;
+        const bend = (limb.x[n] >= limb.x[0] ? 1 : -1) * 40 * f;
+        if (f > 0) limb.el.setAttribute("transform", `rotate(${bend.toFixed(1)} ${limb.x[0]} ${limb.y[0]})`);
+        else limb.el.removeAttribute("transform");
+        limb.el.style.opacity = f > 0 ? String(1 - f) : "";
+        limb.fell = f;
+      }
       // Only a growing limb is clipped.
       const growing = t > 0 && t < 1;
       if (growing) {
@@ -447,6 +463,11 @@ function renderGarden() {
       part.last = t;
       part.fell = f;
       part.el.style.visibility = t && f < 1 ? "" : "hidden";
+      if (f > 0 && part.fade) {
+        part.el.style.opacity = String(1 - f);
+        part.el.removeAttribute("transform");
+        continue;
+      }
       if (f > 0) {
         // Falling, not arrival run backward: it lets go at once and drops faster as it goes,
         // swaying side to side as a leaf does, and fades over the second half.
