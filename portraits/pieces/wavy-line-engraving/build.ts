@@ -14,10 +14,11 @@ import { contours } from "../../harness/trace/contour.ts";
 import { fitRing, pathData } from "../../harness/trace/bezier.ts";
 import { readPng } from "../../harness/trace/image.ts";
 import { type Affine, warp } from "../../harness/trace/plate.ts";
-import { pathOf } from "../../harness/trace/polygon.ts";
+import { type Point, distance } from "../../harness/trace/polygon.ts";
 import { type Field, flow, ink, sample, structure, tone } from "./field.ts";
 import { drawn, strokeData } from "./lines.ts";
-import { ANIME, CONTOURS, HERE, INK, MAP, PAPER, PATCH, PLATE } from "./scene.ts";
+import { ANIME, CONTOURS, HERE, INK, MAP, PAPER, PATCH, PLATE, ZIPS } from "./scene.ts";
+import { weaveMarkup, zipMarkup } from "./hardware.ts";
 
 const STAGE = Number(process.env.STAGE ?? 3);
 const OUT = process.env.OUT ?? fileURLToPath(new URL("wavy-line-engraving.svg", HERE));
@@ -81,21 +82,29 @@ if (STAGE >= 3) {
   const { shine, seams } = structure(anime, light, alpha);
   const seam = shapes(over(K, (x, y) => sample(seams, x, y)), K, 0.3, 4);
   body.push(placed(seam, K, INK, ` stroke="${PAPER}" stroke-width="${1.6 * K}" paint-order="stroke"`));
-  const metal = shapes(over(K, (x, y) => sample(shine, x, y)), K, 0.3, 8);
-  body.push(placed(metal, K, PAPER, ` stroke="${INK}" stroke-width="${1.1 * K}" paint-order="stroke"`));
-
-  // The woven patch: an ink ground crossed by two families of broken paper lines, offset so their
-  // breaks alternate like strips passing over and under.
-  const [px0, py0, px1, py1] = [Math.min(...PATCH.map((p) => p[0])), Math.min(...PATCH.map((p) => p[1])), Math.max(...PATCH.map((p) => p[0])), Math.max(...PATCH.map((p) => p[1]))];
-  const reach = px1 - px0 + py1 - py0;
-  const hatch = (sign: number) => {
-    let d = "";
-    for (let t = -reach; t < reach; t += 6.5) d += `M${(px0 + t).toFixed(1)} ${sign > 0 ? py0 : py1}l${reach} ${sign * reach}`;
+  // Hardware the zips do not cover (snaps, buckles) still comes from the original's shine; near a
+  // zip, and on the patch, the models draw it instead.
+  const segment = (x: number, y: number, [ax, ay]: Point, [bx, by]: Point) => {
+    const [ex, ey] = [bx - ax, by - ay];
+    const t = Math.max(0, Math.min(1, ((x - ax) * ex + (y - ay) * ey) / (ex * ex + ey * ey)));
+    return Math.hypot(x - ax - t * ex, y - ay - t * ey);
+  };
+  // How near a zip, its slider and tab taken as a segment from where it sits to its tab's end.
+  const nearZip = (x: number, y: number) => {
+    let d = Infinity;
+    for (const { line, pull } of ZIPS) {
+      for (let i = 0; i < line.length - 1; i++) d = Math.min(d, segment(x, y, line[i], line[i + 1]));
+      if (pull) {
+        const a = (pull.angle * Math.PI) / 180;
+        d = Math.min(d, segment(x, y, pull.at, [pull.at[0] - Math.sin(a) * pull.length, pull.at[1] + Math.cos(a) * pull.length]));
+      }
+    }
     return d;
   };
-  body.push(`<clipPath id="patch"><path d="${pathOf(PATCH)}"/></clipPath>`);
-  body.push(`<path fill="${INK}" stroke="${INK}" stroke-width="1.2" d="${pathOf(PATCH)}"/>`);
-  body.push(`<g clip-path="url(#patch)" fill="none" stroke="${PAPER}" stroke-width="1.1" stroke-dasharray="5 4"><path d="${hatch(1)}"/><path stroke-dashoffset="4.5" d="${hatch(-1)}"/></g>`);
+  const metal = shapes(over(K, (x, y) => (nearZip(x, y) < 9 || distance(PATCH, x, y) > -3 ? -1 : sample(shine, x, y))), K, 0.3, 8);
+  body.push(placed(metal, K, PAPER, ` stroke="${INK}" stroke-width="${1.1 * K}" paint-order="stroke"`));
+  body.push(weaveMarkup(PATCH, INK, PAPER));
+  body.push(zipMarkup(ZIPS, INK, PAPER));
 
   // The jacket's big lines, drawn by hand (see scene.ts), each cut free of the waves by paper.
   const big = Object.values(CONTOURS);

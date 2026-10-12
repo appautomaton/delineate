@@ -22,6 +22,7 @@
 
 import type { Affine } from "../../harness/trace/plate.ts";
 import type { Point } from "../../harness/trace/polygon.ts";
+import type { Zip } from "./hardware.ts";
 
 const DIR = new URL("../../references/wavy-line-engraving/", import.meta.url);
 export const HERE = new URL("./", import.meta.url);
@@ -54,7 +55,20 @@ export const CONTOURS: Record<string, Point[]> = {
   "crease-right": [[745, 1107], [753, 1161], [761, 1205], [769, 1254]],
 };
 // The woven leather on his left shoulder, drawn as a basket weave of its own.
-export const PATCH: Point[] = [[760, 513], [792, 502], [841, 510], [882, 527], [890, 546], [874, 578], [830, 597], [792, 608], [765, 600], [757, 578]];
+// Read off the colored original and the plate side by side: from under the collar's edge, along the
+// shoulder seam, round its outer end, and back beneath the lapel's point.
+export const PATCH: Point[] = [[781, 498], [820, 500], [860, 506], [889, 520], [896, 545], [884, 577], [841, 594], [799, 600], [765, 596], [757, 576], [762, 557], [788, 549], [785, 522]];
+
+// The zips, each a line read off the plate (top or inner end first) and its pull: where the slider
+// sits, which way the tab hangs (degrees from straight down, clockwise), and how long it is.
+export const ZIPS: Zip[] = [
+  { line: [[589, 731], [591, 900], [593, 1075]], pull: { at: [589, 684], angle: 0, length: 48, width: 15 } },
+  { line: [[597, 682], [672, 640], [747, 601]] },
+  { line: [[449, 627], [487, 769]], pull: { at: [445, 614], angle: -8, length: 46, width: 10 } },
+  { line: [[821, 624], [784, 778]], pull: { at: [823, 618], angle: 6, length: 46, width: 10 } },
+  { line: [[444, 892], [505, 895]], pull: { at: [506, 895], angle: -84, length: 42, width: 13 } },
+  { line: [[818, 902], [760, 904]], pull: { at: [759, 904], angle: 86, length: 42, width: 13 } },
+];
 
 export const PAPER = "#f3e8cc";
 export const INK = "#031731"; // the plate's own ink, measured on its darkest tenth
