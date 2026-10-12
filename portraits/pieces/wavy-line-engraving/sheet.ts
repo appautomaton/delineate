@@ -5,6 +5,7 @@
 
 import { writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import type { Affine } from "../../harness/trace/plate.ts";
 
 export const REFERENCES = new URL("../../references/wavy-line-engraving/", import.meta.url);
 export const SIZE = 1254; // the full engraving's frame, and every plate's
@@ -16,6 +17,16 @@ export const STREET_INK = "#0b261a";
 export const SPACING = 6.2;
 
 export type Layer = { title: string; draw: () => Promise<string> };
+
+// Each plate's frame in the whole's, where it is not the whole's own: x' = a x + b y + c,
+// y' = d x + e y + f. His plate shows him a tenth larger, fitted by ORB features and RANSAC
+// (trace/plate.ts) against the whole; the sky, buildings, trees and ground fit it within a pixel.
+// The leaves' plate is a branch engraved apart, at two and a half times the whole's sprig in its
+// top left corner: fitted by eye, overlaid at 2x.
+export const FRAMES: Record<string, Affine> = {
+  subject: [0.9116, 0.0001, 53.969, 0.0008, 0.9155, 133.8677],
+  leaves: [0.4, 0, 0, 0, 0.4, 0],
+};
 
 export const svgOf = (title: string, body: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}">

@@ -17,7 +17,7 @@ export const FRONT_LAMPS: Lamp[] = [
   { top: [479, 755], foot: [479, 925], width: 7, head: [497, 755], span: 50 },
 ];
 // The bases of the front lamps, where they meet the ground.
-export const LAMP_BASES: Point[][] = [[[133, 868], [162, 868], [162, 1032], [133, 1032]]];
+export const LAMP_BASES: Point[][] = [[[126, 862], [160, 862], [160, 1024], [126, 1026]]];
 
 // Trunks and their main limbs, each a stroke from the ground up and its width; the canopy hides
 // the rest.

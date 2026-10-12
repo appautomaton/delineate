@@ -179,35 +179,50 @@ export async function draw(): Promise<string> {
   out.push(placed(BOX, shapes(inked, K, 0.25, 0.5), K, STREET_INK));
   for (const l of BACK_LAMPS) out.push(lampMarkup(l));
 
-  // The railing on the left, behind the planters; and the posts of the right's handrail.
-  out.push(postMarkup(POSTS, 3.2));
-  for (const r of RAILS) out.push(railMarkup(r, 4.6));
-
-  // The blocks: a paper ground, the level lines at the plate's tone, an ink outline, a lit top.
+  // The blocks, back to front: a paper ground, the level lines at the plate's tone, an ink
+  // outline, a lit top; each outline hidden where a block in front covers it.
   const inside: Field = over([0, 0, W, H], 1, () => 0);
+  const front = new Int8Array(W * H).fill(-1); // the block in front at each pixel
   const blockBox: Box = [0, 790, 1254, 1065];
   for (let y = blockBox[1]; y < blockBox[3]; y++)
     for (let x = blockBox[0]; x < blockBox[2]; x++) {
       let d = -Infinity;
-      for (const b of BLOCKS) d = Math.max(d, distance(b, x + 0.5, y + 0.5));
+      BLOCKS.forEach((b, k) => {
+        const e = distance(b, x + 0.5, y + 0.5);
+        d = Math.max(d, e);
+        if (e > 0) front[y * W + x] = k;
+      });
       inside.data[y * W + x] = Math.min(1, Math.max(0, d / 2 + 0.5));
     }
   out.push(`<path fill="${PAPER}" d="${BLOCKS.map(pathOf).join("")}"/>`);
-  // The slatted fence behind the railing is light: its posts are drawn, its slats are thin.
+  // The slatted fence behind the railing is light, where nothing stands in front of it.
   const width = (x: number, y: number) => {
-    const most = distance(BLOCKS[0], x, y) > 0 ? 0.35 : 0.85;
+    const most = front[Math.floor(y) * W + Math.floor(x)] === 0 ? 0.35 : 0.85;
     const w = Math.min(most, Math.max(0, sample(hatchTone, x, y))) * SPACING - 0.48;
     return w < 0.3 ? 0 : w;
   };
   out.push(placed(blockBox, shapes(ink(width, { level, spacing: SPACING }, inside, blockBox, 3), 3, 0.2, 0.3), 3, STREET_INK));
-  out.push(`<path fill="none" stroke="${STREET_INK}" stroke-width="1.1" stroke-linejoin="round" d="${BLOCKS.map(pathOf).join("")}"/>`);
-  out.push(`<path fill="none" stroke="${PAPER}" stroke-width="1.4" stroke-linecap="round" d="${BLOCKS.map((b) => line([[b[0][0] + 1, b[0][1] + 1.6], [b[1][0] - 1, b[1][1] + 1.6]])).join("")}"/>`);
-  out.push(`<path fill="${STREET_INK}" d="${LAMP_BASES.map(pathOf).join("")}"/>`);
+  BLOCKS.forEach((b, k) => {
+    const ahead = BLOCKS.slice(k + 1).map(pathOf).join("");
+    const mask = ahead ? ` mask="url(#block-${k})"` : "";
+    if (ahead) out.push(`<mask id="block-${k}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="white"/><path fill="black" d="${ahead}"/></mask>`);
+    out.push(
+      `<g${mask}><path fill="none" stroke="${STREET_INK}" stroke-width="1.1" stroke-linejoin="round" d="${pathOf(b)}"/>` +
+        `<path fill="none" stroke="${PAPER}" stroke-width="1.4" stroke-linecap="round" d="${line([[b[0][0] + 1, b[0][1] + 1.6], [b[1][0] - 1, b[1][1] + 1.6]])}"/></g>`,
+    );
+  });
+
+  // The railing on the left, in front of the fence and behind the planters.
+  const planters = BLOCKS.slice(1, 8).map(pathOf).join("");
+  out.push(`<mask id="railing" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="white"/><path fill="black" d="${planters}"/></mask>`);
+  out.push(`<g mask="url(#railing)">${postMarkup(POSTS, 5)}${RAILS.map((r) => railMarkup(r, 4.6)).join("")}</g>`);
 
   // In front: the handrail and its posts, and the lamps along the left.
   out.push(postMarkup(HANDRAIL_POSTS, 4));
   out.push(railMarkup(HANDRAIL, 4.4));
   for (const l of FRONT_LAMPS) out.push(lampMarkup(l));
+  // The pillar the nearest lamp stands on, over its pole's foot.
+  out.push(`<path fill="${STREET_INK}" d="${LAMP_BASES.map(pathOf).join("")}"/>`);
   return out.join("\n");
 }
 

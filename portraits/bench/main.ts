@@ -13,7 +13,7 @@
 // 0 fits the whole picture. A new build redraws `latest` and `previous` where they are shown.
 // `bench.measure` (see the end) compares tone from the console.
 
-import { measure } from "./measure.ts";
+import { cells, measure } from "./measure.ts";
 
 type Build = { piece: string; version?: string; ok: boolean; seconds: number; log: string };
 type Piece = { references: string[]; referencesFrom: string; versions: string[]; build: Build | null };
@@ -181,9 +181,11 @@ panes();
 
 // For the console and for agents: tone against a reference, by pane names.
 //   await bench.measure("wav-subject.png", ["previous", "latest"], [x0, y0, x1, y1]?)
+//   await bench.cells("wavy-eng-full.png", "latest")   where it is most off, worst first
 Object.assign(globalThis, {
   bench: {
     measure: (reference: string, keys: string[], region?: number[]) =>
       measure(source(reference)!, keys.map((k) => source(k)!), { size: Math.max(frame.width, frame.height), region }),
+    cells: (reference: string, key: string, cell?: number) => cells(source(reference)!, source(key)!, { size: Math.max(frame.width, frame.height), cell }),
   },
 });

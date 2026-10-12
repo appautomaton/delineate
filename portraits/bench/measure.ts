@@ -45,3 +45,19 @@ export async function measure(reference: string, srcs: string[], { size = 1280, 
   }
   return out;
 }
+
+// Where an image is most off its reference: the frame cut into cells `cell` px square, each cell's
+// mean signed difference in blurred linear light (ours less the reference: + too light, - too
+// dark), worst first.
+export async function cells(reference: string, src: string, { size = 1280, blur = 6, paper = "#f3e8cc", cell = 96, worst = 12 } = {}): Promise<{ at: [number, number]; off: number }[]> {
+  const [plate, ours] = [await luminance(reference, size, blur, paper), await luminance(src, size, blur, paper)];
+  const out: { at: [number, number]; off: number }[] = [];
+  for (let y0 = 0; y0 < size; y0 += cell)
+    for (let x0 = 0; x0 < size; x0 += cell) {
+      let [sum, n] = [0, 0];
+      for (let y = y0; y < Math.min(size, y0 + cell); y++)
+        for (let x = x0; x < Math.min(size, x0 + cell); x++) (sum += ours[y * size + x] - plate[y * size + x]), n++;
+      out.push({ at: [x0 + cell / 2, y0 + cell / 2], off: Math.round((sum / n) * 1e3) / 1e3 });
+    }
+  return out.sort((a, b) => Math.abs(b.off) - Math.abs(a.off)).slice(0, worst);
+}

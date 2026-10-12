@@ -7,20 +7,10 @@
 
 import { existsSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { svgOf } from "./sheet.ts";
-import type { Affine } from "../../harness/trace/plate.ts";
+import { FRAMES, svgOf } from "./sheet.ts";
 
 // Back to front. The ground lies under the trees' layer, whose railing, planters and steps stand on it.
 const LAYERS = ["sky", "building", "ground", "tree", "subject", "leaves"];
-// Each plate's frame in the whole's, where it is not the whole's own: x' = a x + b y + c,
-// y' = d x + e y + f. His plate shows him a tenth larger, fitted by ORB features and RANSAC
-// (trace/plate.ts) against the whole; the sky, buildings, trees and ground fit it within a pixel.
-// The leaves' plate is a branch engraved apart, at two and a half times the whole's sprig in its
-// top left corner: fitted by eye, overlaid at 2x.
-const FRAMES: Record<string, Affine> = {
-  subject: [0.9116, 0.0001, 53.969, 0.0008, 0.9155, 133.8677],
-  leaves: [0.4, 0, 0, 0, 0.4, 0],
-};
 
 const started = Date.now();
 const body: string[] = [];
