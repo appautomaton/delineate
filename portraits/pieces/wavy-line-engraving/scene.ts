@@ -42,9 +42,6 @@ export const HEAD: Point[] = [[380, 60], [900, 60], [900, 330], [741, 355], [684
 // The jacket's big lines, which the colored original cannot give (black leather on black): read by
 // eye off gridded crops of the plate and drawn as strokes. Each runs in the order drawn.
 export const CONTOURS: Record<string, Point[]> = {
-  "strap": [[711, 633], [706, 829], [716, 844], [727, 829], [731, 633]],
-  "epaulette-left": [[356, 520], [378, 493], [422, 471], [474, 455], [479, 463], [449, 477], [395, 504], [367, 523]],
-  "epaulette-right": [[797, 458], [841, 475], [884, 499], [911, 521]],
   "hem": [[429, 1050], [500, 1066], [592, 1079], [701, 1077], [826, 1047]],
   "crease-left": [[500, 1080], [495, 1140], [481, 1205], [473, 1254]],
   "fly": [[617, 1080], [619, 1161], [620, 1254]],
@@ -61,6 +58,10 @@ export const EDGES: Edge[] = [
   { line: [[752, 445], [766, 461], [776, 478], [783, 505], [790, 533], [793, 550]], side: 1 },
   { line: [[793, 550], [772, 540], [749, 531], [721, 515], [706, 509]], side: 1 },
   { line: [[690, 519], [714, 533], [733, 546], [752, 562], [762, 571]], side: 1 },
+  // The epaulettes and the strap on his chest, each all round.
+  { line: [[356, 520], [378, 493], [422, 471], [474, 455], [479, 463], [449, 477], [395, 504], [367, 523], [356, 520]], side: 1 },
+  { line: [[795, 463], [812, 466], [849, 481], [888, 500], [909, 512], [915, 521], [907, 525], [878, 514], [840, 498], [811, 488], [797, 476], [795, 463]], side: 1 },
+  { line: [[711, 633], [706, 829], [716, 844], [727, 829], [731, 633], [711, 633]], side: -1 },
 ];
 
 // The woven leather on his left shoulder, drawn as a basket weave of its own.
