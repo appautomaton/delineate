@@ -2,7 +2,7 @@
 // Each branch is drawn left to right from its base at the edge, and the page mirrors the
 // ones that enter from the right.
 
-import { TAU, rad, P1, add, sub, mul, rot, polar, lerp, wobble, line, closed, sample, glaze, vars, tone, shape, inkEdges, grow, part } from "./lib.ts";
+import { TAU, rad, P1, add, sub, mul, rot, polar, lerp, wobble, line, closed, sample, glaze, vars, tone, shape, inkEdges, grow, part, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 
 // Smooth spine through control points (Catmull-Rom), sampled evenly per segment.
@@ -80,6 +80,17 @@ export function limb(out: Out, r: Rng, ctrl: Pt[], { w0, w1, cap = "taper", pc =
 }
 // A drawn limb: its spine, its two edges, its width along the spine, and its last index.
 export type Limb = ReturnType<typeof limb>;
+
+// A branch forking from a growing limb at the share t of its points: it starts just behind that
+// point, runs through ctrl (offsets from it), and grows over span from the moment the parent's
+// tip passes.
+export function branch(out: Out, r: Rng, parent: { res: Limb; g: number[] }, t: number, ctrl: Pt[], span: number, opts: Parameters<typeof limb>[3]) {
+  const { res: main, g: gm } = parent;
+  const i = Math.round(main.n * t);
+  const g: [number, number] = [gate(main, gm, i), gate(main, gm, i) + span];
+  const res = grow(out, g[0], g[1], () => limb(out, r, [main.pts[i - 2], ...ctrl.map((p) => add(main.pts[i], p))], { inkFrom: 0.12, ...opts }));
+  return { res, g };
+}
 
 // ---------------------------------------------------------------------------
 // Frangipani: thick, smooth, upturned limbs ending blunt, spiral rosettes of broad leaves

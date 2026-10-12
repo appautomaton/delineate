@@ -5,7 +5,7 @@
 
 import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, share, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
-import { limb, spineThrough, angleOf } from "./woody.ts";
+import { limb, spineThrough, angleOf, branch } from "./woody.ts";
 import { bladeBunch } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
@@ -496,12 +496,8 @@ export function heath(out: Out, r: Rng, base: Pt) {
   const at = (p: Pt) => add(base, p);
   const gm = [0, 0.5];
   const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-24, 6]), at([120, -46]), at([250, -40]), at([380, -92]), at([520, -120])], { w0: 34, w1: 8, pc: "--bark-heath", cap: "taper" }));
-  const fork = (t: number, ctrl: Pt[], w0: number, span: number) => {
-    const i = Math.round(main.n * t);
-    const g = [gate(main, gm, i), gate(main, gm, i) + span];
-    const res = grow(out, g[0], g[1], () => limb(out, r, [main.pts[i - 2], ...ctrl.map((p) => add(main.pts[i], p))], { w0, w1: 5, pc: "--bark-heath", cap: "taper", inkFrom: 0.12 }));
-    return { res, g };
-  };
+  const fork = (t: number, ctrl: Pt[], w0: number, span: number) =>
+    branch(out, r, { res: main, g: gm }, t, ctrl, span, { w0, w1: 5, pc: "--bark-heath", cap: "taper" });
   const up1 = fork(0.3, [[30, -70], [50, -150], [90, -230]], 16, 0.28);
   const up2 = fork(0.62, [[40, -60], [90, -120], [120, -190]], 13, 0.26);
   const down = fork(0.48, [[70, 30], [150, 50], [220, 40]], 12, 0.26);
@@ -929,12 +925,8 @@ export function trimera(out: Out, r: Rng, base: Pt) {
   const at = (p: Pt) => add(base, p);
   const gm = [0, 0.5];
   const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-24, 8]), at([100, -26]), at([210, -14]), at([310, -56]), at([400, -60])], { w0: 26, w1: 7, pc: "--bark-pale", cap: "taper" }));
-  const fork = (t: number, ctrl: Pt[], w0: number, span: number) => {
-    const i = Math.round(main.n * t);
-    const g = [gate(main, gm, i), gate(main, gm, i) + span];
-    const res = grow(out, g[0], g[1], () => limb(out, r, [main.pts[i - 2], ...ctrl.map((p) => add(main.pts[i], p))], { w0, w1: 4, pc: "--bark-pale", cap: "taper", inkFrom: 0.12 }));
-    return { res, g };
-  };
+  const fork = (t: number, ctrl: Pt[], w0: number, span: number) =>
+    branch(out, r, { res: main, g: gm }, t, ctrl, span, { w0, w1: 4, pc: "--bark-pale", cap: "taper" });
   const limbs = [{ res: main, g: gm }, fork(0.28, [[24, -50], [40, -110], [70, -160]], 13, 0.26), fork(0.58, [[40, -40], [80, -90], [96, -140]], 11, 0.24), fork(0.44, [[60, 20], [120, 34], [170, 24]], 10, 0.24)];
   // Short twigs along every limb, each ending in a clump; one clump on every tip.
   for (const { res, g } of limbs) {

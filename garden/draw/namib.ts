@@ -6,7 +6,7 @@
 
 import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
-import { limb, angleOf } from "./woody.ts";
+import { limb, angleOf, branch } from "./woody.ts";
 import { bladeBunch } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
@@ -474,20 +474,8 @@ export function buttertree(out: Out, r: Rng, base: Pt) {
     return res;
   });
 
-  const fork = (t: number, ctrl: Pt[], w0: number, w1: number, span: number) => {
-    const i = Math.round(main.n * t);
-    const g: [number, number] = [gate(main, gm, i), gate(main, gm, i) + span];
-    const res = grow(out, g[0], g[1], () =>
-      limb(out, r, [main.pts[i - 2], ...ctrl.map((d) => add(main.pts[i], d))], {
-        w0,
-        w1,
-        pc: "--bark-butter",
-        cap: "blunt",
-        inkFrom: 0.14,
-      }),
-    );
-    return { res, g };
-  };
+  const fork = (t: number, ctrl: Pt[], w0: number, w1: number, span: number) =>
+    branch(out, r, { res: main, g: gm }, t, ctrl, span, { w0, w1, pc: "--bark-butter", cap: "blunt", inkFrom: 0.14 });
 
   // Four thick stubby candelabrum arms branching from the swollen bottle trunk.
   const leftUp = fork(0.55, [[-34, -56], [-62, -118]], 46, 26, 0.2);

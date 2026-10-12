@@ -5,7 +5,7 @@
 
 import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
-import { limb, spineThrough, angleOf } from "./woody.ts";
+import { limb, spineThrough, angleOf, branch } from "./woody.ts";
 import { bladeBunch } from "./mediterranean.ts";
 
 // ---------------------------------------------------------------------------
@@ -366,20 +366,8 @@ export function silvertree(out: Out, r: Rng, base: Pt) {
     return res;
   });
 
-  const fork = (t: number, ctrl: Pt[], w0: number, span: number) => {
-    const i = Math.round(main.n * t);
-    const g: [number, number] = [gate(main, gm, i), gate(main, gm, i) + span];
-    const res = grow(out, g[0], g[1], () =>
-      limb(out, r, [main.pts[i - 2], ...ctrl.map((p) => add(main.pts[i], p))], {
-        w0,
-        w1: 14,
-        pc: "--bark-silver",
-        cap: "blunt",
-        inkFrom: 0.12,
-      }),
-    );
-    return { res, g };
-  };
+  const fork = (t: number, ctrl: Pt[], w0: number, span: number) =>
+    branch(out, r, { res: main, g: gm }, t, ctrl, span, { w0, w1: 14, pc: "--bark-silver", cap: "blunt" });
 
   const up1 = fork(0.34, [[45, -68], [105, -148], [160, -235]], 26, 0.24);
   const up2 = fork(0.64, [[55, -58], [118, -124], [172, -195]], 22, 0.22);
@@ -525,20 +513,8 @@ export function sugarbush(out: Out, r: Rng, base: Pt) {
       cap: "taper",
     }),
   );
-  const fork = (t: number, ctrl: Pt[], w0: number, span: number) => {
-    const i = Math.round(main.n * t);
-    const g: [number, number] = [gate(main, gm, i), gate(main, gm, i) + span];
-    const res = grow(out, g[0], g[1], () =>
-      limb(out, r, [main.pts[i - 2], ...ctrl.map((p) => add(main.pts[i], p))], {
-        w0,
-        w1: 7,
-        pc: "--bark-heath",
-        cap: "taper",
-        inkFrom: 0.12,
-      }),
-    );
-    return { res, g };
-  };
+  const fork = (t: number, ctrl: Pt[], w0: number, span: number) =>
+    branch(out, r, { res: main, g: gm }, t, ctrl, span, { w0, w1: 7, pc: "--bark-heath", cap: "taper" });
   const up1 = fork(0.32, [[38, -62], [88, -134], [138, -205]], 18, 0.24);
   const up2 = fork(0.64, [[46, -54], [98, -112], [145, -172]], 15, 0.22);
   const low = fork(0.48, [[68, 22], [148, 34], [228, 18]], 15, 0.24);
@@ -679,20 +655,8 @@ export function pincushion(out: Out, r: Rng, base: Pt) {
       cap: "blunt",
     }),
   );
-  const fork = (t: number, ctrl: Pt[], w0: number, span: number) => {
-    const i = Math.round(main.n * t);
-    const g: [number, number] = [gate(main, gm, i), gate(main, gm, i) + span];
-    const res = grow(out, g[0], g[1], () =>
-      limb(out, r, [main.pts[i - 2], ...ctrl.map((p) => add(main.pts[i], p))], {
-        w0,
-        w1: 15,
-        pc: "--bark-cork",
-        cap: "blunt",
-        inkFrom: 0.12,
-      }),
-    );
-    return { res, g };
-  };
+  const fork = (t: number, ctrl: Pt[], w0: number, span: number) =>
+    branch(out, r, { res: main, g: gm }, t, ctrl, span, { w0, w1: 15, pc: "--bark-cork", cap: "blunt" });
   const left = fork(0.42, [[-18, -75], [-28, -162], [-22, -245]], 28, 0.24);
   const right = fork(0.56, [[68, -22], [142, -55], [210, -108]], 26, 0.24);
   const mid = fork(0.74, [[12, -68], [28, -138], [48, -198]], 20, 0.22);

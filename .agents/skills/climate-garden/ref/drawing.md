@@ -12,7 +12,8 @@ pixels.
   species tone, or a material via `pc`); `roundPts` (a round outline); `grow` and `part` (growth
   markup, below), and `gate` (when whatever sits at a limb's point appears).
 - `draw/woody.ts`: `limb` (a barked branch with shade, light, and texture; forks drawn over their
-  parent with `inkFrom`), `spineThrough`, `angleOf`.
+  parent with `inkFrom`), `branch` (a limb forking from a growing one, timed to its tip),
+  `spineThrough`, `angleOf`.
 - `draw/mediterranean.ts`: `blade`, `palmate`, `bladeBunch` (many blades in one path), `tendril`,
   `agaveLeaf`.
 - `draw/desert.ts`: ribbed columns with areoles (`saguaroColumn`), pads, joints, bipinnate leaves
