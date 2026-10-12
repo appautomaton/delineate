@@ -1,12 +1,12 @@
 ---
 name: climate-garden
 description: >
-  Build or extend a climate garden on this project's garden site (garden/): verify a roster of
-  real plants, draw each plant with the garden/draw kit as growing watercolor-and-ink SVG, give the
+  Build or extend a climate garden on this project's garden site (garden/): research how a roster
+  of real plants looks, draw each plant with the garden/draw kit as growing watercolor-and-ink SVG, give the
   garden its day and night tokens, compose its layouts, and check it in Chrome. Use whenever the
   user wants a new garden or climate (savanna, fynbos, taiga, a water garden), a new plant in an
   existing garden, a plant redrawn or refined, a garden's composition changed (sides feel empty,
-  plants crowd, the sky fills up), or a garden's botany checked, even if they never say "skill"
+  plants crowd, the sky fills up), or a plant's look researched, even if they never say "skill"
   or name the files.
 ---
 
@@ -23,8 +23,8 @@ A garden a visitor can tell from every other by silhouette alone, before color: 
 plants of one climate, drawn as one hand would draw them, growing in as the page scrolls, by day
 and by moonlight.
 
-- **Real plants.** Every plant exists and belongs to the climate. A garden need not keep to one
-  place, but every name is checked against a flora before it is drawn.
+- **Real plants.** Every plant exists and is grown in the climate, wild or cultivated alike. How
+  it looks is researched before it is drawn; where it is native is not our question.
 - **One moment.** The system grows a garden once; it has no seasons yet. Pick the moment the
   climate looks most itself (the desert after rain, the alpine at any hour). Four-season climates
   wait for the seasons system designed in `climates.md`. Water is built: a garden can have a tide
@@ -58,9 +58,10 @@ emblem in `src/garden/gardens.ts`; its line in the garden-hiding rule of `src/ga
 
 ## Workflow
 
-1. **Verify the roster.** Send a research agent the brief in `ref/botany.md`, in the background.
-   It returns accepted names, where each plant grows, drawing facts, corrections, and gaps. Decide
-   the roster from it: roles, the moment, honest hangers, about twelve plants.
+1. **Research the roster.** Send one or two research agents the brief in `ref/botany.md`, in the
+   background. They return what each plant looks like (through the year, for a seasonal garden)
+   and which would repeat a plant already drawn. Decide the roster from it: roles, the moment,
+   hangers on their hosts, about twelve plants.
 2. **Record it** in the garden's section of `climates.md`: the table, the corrections, what stays
    unresolved, the sources.
 3. **Scaffold the garden with its signature plant only**: the eight places above, one plant, one
@@ -94,7 +95,7 @@ emblem in `src/garden/gardens.ts`; its line in the garden-hiding rule of `src/ga
 
 | Step | Load |
 |---|---|
-| Verifying a roster, briefing the research agent | `ref/botany.md` |
+| Researching a roster, briefing the research agents | `ref/botany.md` |
 | Drawing a plant, growth markup, tokens, the emblem, a drawing that looks wrong | `ref/drawing.md` |
 | Placing plants, breakpoints, sides, crowding | `ref/layout.md` |
 | Running the site, looking in Chrome, sizes, the build | `ref/verify.md` |

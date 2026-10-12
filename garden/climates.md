@@ -261,7 +261,7 @@ marks the water still, and `--tide` stays at 1.
 `npm run look` shows a seasonal garden in each season (late spring, summer, autumn, winter), so
 a layout is judged across the year, not at one moment.
 
-**Build order.** Verify the East Asian roster against a flora (the skill's step 1). Build the
+**Build order.** Research how the East Asian roster looks (done; see §2). Build the
 system with one plant, the ginkgo, which crosses every part of it: fans unfolding, green
 deepening, gold all at once, then bare limbs with spur shoots. Show it, then grow the roster.
 
@@ -334,10 +334,9 @@ Monsoon summers, plum-rain haze, a clear gold autumn, bare trunks under a low wi
 Palette: bamboo olive, ginkgo butter, paulownia lilac, wisteria violet, lotus pink, lycoris
 vermilion.
 
-The first seasonal garden, and the second with water: a still pond in the bed. Verified in
-October 2026 (below). A garden's plants are cultivated: one long grown in these gardens is as
-honest as one native to them, so the roster chooses by how a plant reads, and the check records
-which is which.
+The first seasonal garden, and the second with water: a still pond in the bed. Researched in
+October 2026 (below). The roster chooses each plant by how it reads; where it is native does not
+matter, since a garden's plants are grown there.
 
 **The roster through the year.** Thirteen plants: five sides, two hangers, six in the bed and the
 pond. Revised from the survey:
