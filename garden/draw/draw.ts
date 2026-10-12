@@ -538,7 +538,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9916,
     draw: (o, r) => E.moso(o, r, [0, 0]),
     detail: (o, r) => E.mosoDetail(o, r),
+  },  wisteria: {
+    seed: 10017,
+    draw: (o, r) => E.wisteria(o, r, [0, 0]),
+    detail: (o, r) => E.wisteriaDetail(o, r),
   },
+
 
 
 

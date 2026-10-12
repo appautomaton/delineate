@@ -602,3 +602,101 @@ export function mosoDetail(out: Out, r: Rng) {
   bambooSpray(out, r, [0, 0], rad(-140), 0);
 }
 
+// ---------------------------------------------------------------------------
+// Japanese wisteria on an arbor beam: an East Asian timber beam reaching in from the edge, old
+// twisted vines wound along it, and long violet racemes falling from it in April, each opening
+// from its base to its tip. Pinnate leaves follow; velvety pods hang from summer through winter,
+// when the bare twisted vines and the pods are all that is left on the beam.
+
+const VINE = { pc: "--bark-wisteria" };
+const wisteriaShed = fallsAt(0.78, 0.08);
+const racemesFall = fallsAt(0.38, 0.06);
+
+// The arbor's beam: squared timber with its grain, the host the vines hang from. It is there
+// before anything grows.
+export function arborBeam(out: Out, r: Rng, A: Pt, len: number, depth: number) {
+  const pts: Pt[] = [add(A, [-30, -depth / 2]), add(A, [len, -depth / 2]), add(A, [len + 6, depth / 2]), add(A, [-30, depth / 2])];
+  shape(out, r, pts, tone(r, { pc: "--timber", spread: 0.02 }), { deep: 0.3 });
+  let grain = "";
+  for (const f of [-0.2, 0.15]) grain += `M${P1(add(A, [0, depth * f]))}Q${P1(add(A, [len * 0.5, depth * f + 2]))} ${P1(add(A, [len - 10, depth * f]))}`;
+  out.push(`<path class="ink hair bark-tex" d="${grain}"/>`);
+}
+
+// A raceme hanging from T, L long: pea flowers crowded along a curving axis, widest at the top,
+// opening from the base to the tip as g runs on.
+export function raceme(out: Out, r: Rng, T: Pt, L: number, g: number, leave?: (p: Pt) => number) {
+  const bend = (r() - 0.5) * 0.3;
+  const axis = sample((t) => add(T, [Math.sin(t * 1.6) * L * bend * 0.4, t * L]), 12);
+  out.push(`<path class="ink hair" d="${line(axis)}"/>`);
+  for (let seg = 0; seg < 4; seg++) {
+    const P = axis[seg * 3];
+    part(out, g + seg * 0.02, P, () => {
+      let flowers = "";
+      for (let i = seg * 3; i < seg * 3 + 3; i++) {
+        const t = i / 12;
+        const w = L * 0.12 * (1 - t * 0.7);
+        for (const side of [-1, 1]) {
+          const c = add(axis[i], [side * w * (0.4 + r() * 0.3), 4]);
+          flowers += closed(roundPts(c, w * 0.42, w * 0.32, side * 0.4, 8));
+        }
+      }
+      out.push(`<path class="wash petal"${vars(tone(r, { pc: "--flower-wisteria", dl: seg * 0.03, spread: 0.04 }))} d="${flowers}"/><path class="ink hair petal-edge" d="${flowers}"/>`);
+    }, leave?.(P));
+  }
+}
+
+// A pinnate leaf hanging from T: a drooping rachis with paired leaflets and one at its tip.
+function wisteriaLeaf(out: Out, r: Rng, T: Pt, a: number, L: number) {
+  const tip = add(T, polar(L, a));
+  const blades: { O: Pt; dir: number; L: number; W: number }[] = [];
+  for (let k = 1; k <= 6; k++) {
+    const O = lerp(T, tip, k / 6.5);
+    for (const side of [-1, 1]) blades.push({ O, dir: a + side * rad(55), L: L * 0.22, W: 0.42 });
+  }
+  blades.push({ O: tip, dir: a, L: L * 0.24, W: 0.42 });
+  out.push(`<path class="ink hair" d="M${P1(T)}L${P1(tip)}"/>`);
+  bladeBunch(out, blades, tone(r, { spread: 0.06, hue: 10 }));
+}
+
+// A velvety pod: flat, a little curved, pinched between its seeds.
+function wisteriaPod(out: Out, r: Rng, T: Pt, L: number) {
+  const curve = (r() - 0.5) * 0.4;
+  const at = (u: number, w: number): Pt => add(T, [Math.sin(u * 2) * L * curve * 0.3 + w, u * L]);
+  const up: Pt[] = [];
+  const dn: Pt[] = [];
+  for (let k = 0; k <= 8; k++) {
+    const u = k / 8;
+    const w = 9 * Math.sin(Math.PI * Math.min(1, u * 1.1)) ** 0.5 * (k % 2 ? 0.85 : 1);
+    up.push(at(u, -w));
+    dn.push(at(u, w));
+  }
+  shape(out, r, [...up, ...dn.reverse()], tone(r, { pc: "--pod-wisteria", spread: 0.04 }), { deep: 0.3 });
+}
+
+export function wisteria(out: Out, r: Rng, base: Pt) {
+  const at = (p: Pt) => add(base, p);
+  arborBeam(out, r, at([0, 0]), 640, 24);
+  // Old vines wound along the beam, twisting over and under it.
+  const gv = [0, 0.06];
+  const vine = grow(out, gv[0], gv[1], () => limb(out, r, [at([-30, 6]), at([110, -10]), at([230, 16]), at([360, -8]), at([480, 14]), at([600, 0])], { w0: 18, w1: 6, cap: "taper", ...VINE }));
+  const vineB = branch(out, r, { res: vine, g: gv }, 0.3, [[60, 18], [150, -6], [240, 20]], 0.04, { w0: 9, w1: 4, cap: "taper", ...VINE });
+  const n = vine.n;
+  for (let i = 4, k = 0; i < n - 2; i += 5, k++) {
+    const T = add(vine.pts[i], [0, 12]);
+    const g = gate(vine, gv, i);
+    if (k % 2 === 0) raceme(out, r, T, 180 + r() * 120, 0.18 + (i / n) * 0.04, racemesFall);
+    else part(out, Math.max(g + 0.02, 0.24 + r() * 0.06), T, () => wisteriaLeaf(out, r, T, rad(90 + (r() - 0.5) * 40), 130 + r() * 40), wisteriaShed(T));
+    if (k % 3 === 1) part(out, 0.5 + r() * 0.04, T, () => wisteriaPod(out, r, add(T, [12, 0]), 110 + r() * 40));
+  }
+  for (let i = 3; i < vineB.res.n; i += 6) {
+    const T = add(vineB.res.pts[i], [0, 8]);
+    part(out, Math.max(gate(vineB.res, vineB.g, i) + 0.02, 0.26), T, () => wisteriaLeaf(out, r, T, rad(95), 120 + r() * 30), wisteriaShed(T));
+  }
+}
+
+export function wisteriaDetail(out: Out, r: Rng) {
+  arborBeam(out, r, [-140, -170], 280, 26);
+  raceme(out, r, [-30, -154], 320, 0);
+  wisteriaLeaf(out, r, [70, -154], rad(80), 220);
+}
+

@@ -988,5 +988,19 @@
     "note": "A bough reaching in from the edge, long whips falling from it in a curtain, narrow leaves along them, and yellow-green catkins on the bare whips as spring opens.",
     "enters": "Reaches in from a side",
     "grows": "Catkins hang on the bare whips, then the first green; the curtain fills by summer, yellows in October and sheds, and the bare whips still hang through winter"
+  },
+  {
+    "name": "wisteria",
+    "garden": "eastasian",
+    "rank": 7,
+    "turn": [
+      0.72,
+      0.78
+    ],
+    "common": "Japanese wisteria",
+    "latin": "Wisteria floribunda",
+    "note": "Old twisted vines wound along a timber arbor beam, long violet racemes falling from it, pinnate leaves, and velvety pods hanging on into winter.",
+    "enters": "Hangs from an arbor beam reaching in from a side",
+    "grows": "The racemes fall from the beam and open from base to tip; the leaves follow, pods hang from summer, the leaves yellow and fall, and the bare vines hold their pods through winter"
   }
 ]
