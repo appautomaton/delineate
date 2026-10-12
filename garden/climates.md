@@ -1,14 +1,13 @@
 # Climates
 
-Gardens beyond the tropical and the Mediterranean, from a botany survey (October 2026). The survey
-was written from memory: check every Latin name against a regional flora before a plant enters
-`src/garden/plants.json`, and doubt those marked (?) most.
+Gardens beyond the tropical and the Mediterranean, from a survey of their plants (October 2026).
+The survey was written from memory: research how each plant looks before it enters
+`src/garden/plants.json` (the skill's `ref/botany.md`), and doubt those marked (?) most.
 
 ## Status
 
-- **Built:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld savanna, Namib
-  and Namaqualand, mangrove (all 7 single-moment terrestrial gardens plus the tidal mangrove garden:
-  8 / 12).
+- **Built, 8 of 12:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld
+  savanna, Namib and Namaqualand, and the mangrove, the first with water.
 - **Next:** East Asian, the first four-season garden, with lotus and rabbit-ear iris on a still
   pond. The seasons system comes first; see Seasons.
 - **Waiting for seasons:** boreal taiga, Eastern North American edge, Northwest European
@@ -17,10 +16,10 @@ was written from memory: check every Latin name against a regional flora before 
 ## The test
 
 A garden earns its place if it can be told from every other by silhouette alone, before color.
-Every plant must be real and belong to the climate; a garden need not keep to one place. Each
-holds about twelve plants in three roles: **side** (about 4, branches reaching in from an
-edge), **hanging** (2 or 3, entering from the top on a host drawn with them, a bough or an arbor
-beam; open land has none), **bed** (about 5, rising from the bottom).
+Every plant must be real and grown in the climate, wild or cultivated; a garden need not keep to
+one place. Each holds about twelve plants in three roles: **side** (about 4, branches reaching in
+from an edge), **hanging** (2 or 3, entering from the top on a host drawn with them, a bough or an
+arbor beam; open land has none), **bed** (about 5, rising from the bottom).
 
 ## Ranking
 
@@ -37,19 +36,15 @@ beam; open land has none), **bed** (about 5, rising from the bottom).
 | 9 | Eastern North American edge | Dfa | squared leaves, tall prairie spikes | weak |
 | 10 | Northwest European woodland | Cfb | ferns, ivy, foxglove | weakest: reads as generic green woodland |
 
-**Order:** Single-moment terrestrial gardens come first, from simple to complex, before adding
-waterlines or seasonal timelines. All five new single-moment terrestrial gardens—Sonoran (`#1`),
-Afroalpine (`#3`), Cape fynbos (`#5`), Lowveld savanna (`#6`), and Namib and Namaqualand (`#8`)—plus
-the tidal mangrove (`#4`) are now built alongside the original tropical and Mediterranean gardens
-(8 / 12 total). East Asian (`#2`), boreal taiga (`#7`), Eastern North American edge (`#9`), and
-Northwest European woodland (`#10`) wait for the season system.
+**Order:** single-moment gardens first, simple to complex, then water, then seasons; Status
+says where that stands.
 
 ## What the survey taught
 
 - **Open land has no top.** Deserts, tundra, and savanna have almost nothing that truly hangs;
   the survey filled the role with standing plants (cholla fruit chains, nara, twinflower, beach
   morning glory). The three roles come from gardens with a canopy. In open gardens, leave the top
-  to the sky: emptiness is the climate's character, and a fake hanger is a lie.
+  to the sky: emptiness is the climate's character, and a standing plant drawn as a hanger floats.
 - **Geometry compounds.** `draw/` already covers much of the survey: `tendril`, `trailingStem`
   and `heartLeaf`, `palmate`, `needleTuft` and `pineCone`, `lavenderSpike`, `agaveLeaf` (a
   rosette's leaf), `walkFrond`. New geometry, by reach:
@@ -95,8 +90,8 @@ Northwest European woodland (`#10`) wait for the season system.
 
 ## What the Afroalpine taught
 
-- **Verify, draw the signature plant, draw the rest, compose.** The botany check replaced six of
-  the survey's twelve plants before a line was drawn. The giant groundsel took five rounds; once
+- **Research, draw the signature plant, draw the rest, compose.** The check replaced six of the
+  survey's twelve plants before a line was drawn. The giant groundsel took five rounds; once
   it set the manner, the others took two or three each. Judge each plant in the token gallery, day
   and night side by side, before placing it; the layout comes last and is only CSS.
 - **Rosettes and whorls are modeled in space.** A flat fan of leaves reads as a paper fan or a
@@ -113,8 +108,8 @@ Northwest European woodland (`#10`) wait for the season system.
   the flower, not the plant.
 - **Forks hide their seams.** A branch's hem of leaf tips hangs over the stem it leaves, in
   hairline ink; a capped dome reads as a pipe.
-- **Budget.** Ten segments a leaf are as smooth once the curve runs through them. Keep a plant
-  near 50 KB gzipped.
+- **Detail no one sees need not be drawn.** Ten segments a leaf are as smooth once the curve runs
+  through them.
 - **Empty sides take real wood.** Fill a thin edge with a woody plant rooted past the frame (the
   young groundsel, the Mount Kenya heath), never with a hanger from the sky.
 
@@ -288,8 +283,7 @@ which would double every drawing and break the paper-and-wash look.
    East Asian garden needs it.
 3. **Tide (`src/main.ts`).** `--tide` rises from 0 to `LOW_TIDE = 0.22` over the intro, so roots and
    pegs stand exposed above a low rim, then to 1 over the scroll. When a water garden comes on show,
-   the tide grows in with its plants. A still pond, like the East Asian garden's, holds at full
-   depth: `gardens.ts` marks its water still, and `--tide` stays at 1.
+   the tide grows in with its plants. A still pond is designed with the seasons (see Seasons).
 4. **The band (`src/garden/paint.css`).** `.garden .water` is a fixed band `--water` × `--u` tall,
    lowered by `1 − --tide`, washed with `--water-tint` under a thin `--water-line` edge.
 5. **Plants at the surface (`src/main.ts`).** `collect` wraps each water-garden plant in a group
@@ -388,18 +382,18 @@ pond. Revised from the survey:
 | Hydrangea | March to April | mopheads June to July, in the plum rain | heads stay, fading to antique green and rose | leaves fall in October; dried heads on bare stems all winter |
 | Red spider lily | October to May, through winter | August to September, on bare scapes | capsules in October | leaves wither in late spring; dormant in summer |
 
-**Drawing facts the check gave.** Ginkgo fans 5 to 10 cm wide on 3 to 8 cm stalks, three to seven
-to a spur shoot, the notch deeper on young shoots. Maple hands 4 to 12 cm, five to nine tailed
-lobes, doubly toothed. Paulownia hearts 15 to 40 cm, velvety beneath; capsules egg-shaped, 3 to
-4 cm. Willow leaves 4 to 16 cm, narrow and long-pointed. Plum leaves 4 to 8 cm, oval; the tree
-bent and knotted. Wisteria racemes 20 to 50 cm; leaves of eleven to nineteen leaflets, 2 to 6 cm each. Chocolate
-vine leaflets five, notched; pods sausage-shaped, grey-purple. Arrow bamboo culms 1 to 3 m, one
-branch a node, blades 15 to 37 cm, glaucous beneath. Lotus blades 25 to 90 cm, glaucous, on hollow
-stalks 1 to 2 m; flowers 10 to 23 cm; the pod a flat-topped cone 5 to 10 cm. Rabbit-ear
+**Drawing facts.** Ginkgo fans 5 to 10 cm wide on 3 to 8 cm stalks, three to seven to a spur
+shoot, the notch deeper on young shoots. Maple hands 4 to 12 cm, five to nine tailed lobes, doubly
+toothed. Paulownia hearts 15 to 40 cm, velvety beneath; capsules egg-shaped, 3 to 4 cm. Willow
+leaves 4 to 16 cm, narrow and long-pointed. Plum leaves 4 to 8 cm, oval; the tree bent and
+knotted. Wisteria racemes 20 to 50 cm; leaves of eleven to nineteen leaflets, 2 to 6 cm each.
+Chocolate vine leaflets five, notched; pods sausage-shaped, grey-purple. Arrow bamboo culms 1 to
+3 m, one branch a node, blades 15 to 37 cm, glaucous beneath. Lotus blades 25 to 90 cm, glaucous,
+on hollow stalks 1 to 2 m; flowers 10 to 23 cm; the pod a flat-topped cone 5 to 10 cm. Rabbit-ear
 iris leaves grey-green, 40 to 100 cm, no midrib; stems 22 to 60 cm; flowers 9 to 10 cm, the falls
-marked with white or yellow. Peony to 70 cm, its
-leaflets with a white toothed margin. Lycoris scapes about 30 cm, four to seven flowers, the
-lobes strongly recurved and the stamens far out; leaves about 15 cm by 5 mm, a pale midvein.
+marked with white or yellow. Peony to 70 cm, its leaflets with a white toothed margin. Lycoris
+scapes about 30 cm, four to seven flowers, the lobes strongly recurved and the stamens far out;
+leaves about 15 cm by 5 mm, a pale midvein.
 
 **Keep apart in the drawing.** Plum and maple are both fine bare trees in winter: the plum's trunk
 bent and knotted, the maple's crown layered. Wisteria and chocolate vine are both bare twining
@@ -407,11 +401,10 @@ stems in winter: the wisteria thick and twisted with pods, the akebia thin with 
 arbor they hang from is East Asian timber, not a Mediterranean pergola, or the vines read as a
 grapevine.
 
-**Unresolved.** POWO and the Flora of China web pages could not be read; names were checked on
-GBIF and the Flora of China PDFs. Plum's leaf fall month and bark; maple's and plum's bark color;
-the wisteria's twining direction (sources disagree); the chocolate vine's winter leaves on the
-Yangtze; lotus pod timing and whether winter stalks break into the water; peony autumn color and
-its Jiangnan flowering dates; hydrangea's autumn color; the Yangtze's plum-rain dates.
+**Unresolved.** Plum's leaf-fall month and bark; the maple's bark color; the wisteria's twining
+direction (sources disagree); how many leaves the chocolate vine keeps in winter; when lotus pods
+ripen and whether winter stalks break into the water; the peony's autumn color and flowering
+dates; the hydrangea's autumn color; the plum rain's dates.
 
 **Sources.** Flora of China PDFs at iplant.cn (Poaceae, Iridaceae, Amaryllidaceae, Paeoniaceae,
 Nelumbonaceae, Saxifragaceae); efloras.org, *Iris laevigata*; GBIF species match; Oregon State
@@ -446,8 +439,8 @@ every plant below is recorded growing together (Hedberg 1964; Downing et al. 202
 | Young giant groundsel | Dendrosenecio keniodendron | side, from a bottom corner | Not yet flowered, so not yet branched: one rosette on a skirted column, leaning in from beyond the frame | none new |
 | Mount Kenya heath | Erica trimera subsp. keniensis | side | A low shrub's grey twiggy branch, its sticky light-green leaves packed into rounded clumps, bells opening white and aging brown | leaf clumps |
 
-**Nothing hangs from the top.** What hangs is honest and drawn with its host, as the desert's
-mistletoe is: Usnea articulata draped over the tree heath (on Mount Kenya the beard lichens hang
+**Nothing hangs from the top.** What hangs is drawn with its host, as the desert's mistletoe
+is: Usnea articulata draped over the tree heath (on Mount Kenya the beard lichens hang
 from Erica, never from the groundsels), and the groundsel's spent panicles.
 
 **The sides fill from beyond the frame.** At this height only the groundsels and the heaths are
@@ -504,8 +497,9 @@ seaward prop-root fringe across the intertidal pneumatophore mudflat to the brac
 | Sea purslane | Sesuvium portulacastrum | bed | A low prostrate mat of fleshy crimson-pink stems hugging the mud, opposite glossy jade-green spatulate leaves, and solitary five-pointed rose-pink star flowers | dichotomous crimson stems, succulent spatulate pairs |
 | Swamp lily | Crinum americanum | bed | A basal fountain of channeled dark-green strap leaves and a stout scape crowned by an umbel of 2 to 6 spider-like white flowers with long crimson-purple stamen filaments | spider-tepal umbel, exserted purple filaments |
 
-**Two honest hangers, no third.** Spanish moss (*Tillandsia usneoides*) and the giant airplant
-(*Tillandsia utriculata*) are true canopy epiphytes of Everglades mangroves and buttonwoods. Beach
+**Two hangers, no third.** Spanish moss (*Tillandsia usneoides*) and the giant airplant
+(*Tillandsia utriculata*) are canopy epiphytes of Everglades mangroves and buttonwoods, drawn on
+their host boughs. Beach
 morning glory (*Ipomoea pes-caprae* subsp. *brasiliensis*) is a prostrate supratidal runner ("railroad
 vine") that roots at every node along the shore berm and never hangs from trees: it moves to the bed.
 
@@ -686,8 +680,8 @@ ruschiorum* flush across the gravel flats.
 
 **Nothing hangs from the sky.** Open fog desert has no tree canopy. *Tapinanthus oleifolius* is
 drawn as part of *Euphorbia virosa*, erupting from its upper stems just as *Phoradendron* grows on
-the Sonoran palo verde. *Acanthosicyos horridus* is drawn honestly as a mounded thorny dune-base
-shrub with heavy spiny melons resting near the ground.
+the Sonoran palo verde. *Acanthosicyos horridus* is drawn as a mounded thorny dune-base shrub
+with heavy spiny melons resting near the ground.
 
 **Corrections to the survey.**
 - `Aloe dichotoma` is now accepted as `Aloidendron dichotomum` (Grace et al. 2013, *Phytotaxa* 76).
@@ -699,8 +693,8 @@ shrub with heavy spiny melons resting near the ground.
   Namib roster (which would repeat the savanna's *Vachellia tortilis*). Namibian field studies
   (Richter et al. 1995; Midgley et al. 1995) and SANBI e-Flora document *Tapinanthus oleifolius*
   growing directly as a stem hemiparasite on *Euphorbia virosa* (as well as *Aloidendron* and
-  *Tylecodon*). Drawing *T. oleifolius* on *E. virosa* both honors the open sky and visually
-  separates *E. virosa* from the Sonoran organ pipe.
+  *Tylecodon*). Drawing *T. oleifolius* on *E. virosa* keeps the sky open and sets *E. virosa*
+  apart from the Sonoran organ pipe.
 - `Acanthosicyos horridus` (nara) has no tendrils and never hangs from above; it is a deep-rooted
   phreatophytic thorny bush trapping sand into hummocks, moved to `bed`/`side`.
 - `Pachypodium namaquanum` carries **three** spines per tubercle (a spreading pair of 3–7 cm
