@@ -534,7 +534,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9815,
     draw: (o, r) => E.willow(o, r, [0, 0]),
     detail: (o, r) => E.willowDetail(o, r),
+  },  moso: {
+    seed: 9916,
+    draw: (o, r) => E.moso(o, r, [0, 0]),
+    detail: (o, r) => E.mosoDetail(o, r),
   },
+
 
 
 

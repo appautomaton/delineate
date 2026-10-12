@@ -910,6 +910,16 @@
     "grows": "The carmine-red stems spread across the mud, fleshy spatulate leaf pairs open, and five-pointed pink star flowers bloom in the axils"
   },
   {
+    "name": "moso",
+    "garden": "eastasian",
+    "rank": 6,
+    "common": "Moso bamboo",
+    "latin": "Phyllostachys edulis",
+    "note": "Tall green culms rising out of the frame, ringed at every node and white-powdered below each ring, fine branches from the upper nodes holding sprays of narrow drooping leaves.",
+    "enters": "Rises from below the left edge",
+    "grows": "The standing culms are evergreen; in April a new shoot rises in brown spotted sheaths, grows into a culm, and lets the sheaths fall"
+  },
+  {
     "name": "ginkgo",
     "garden": "eastasian",
     "rank": 1,

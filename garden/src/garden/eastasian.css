@@ -12,6 +12,7 @@
 /* Landscape screens. */
 @media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
   .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-moso { display: block; --x: 1%; --y: calc(100svh + var(--u) * 3); --h: 150; --enter: 0 0.3; }
   .plant.g-willow { display: block; --x: 0%; --y: 6%; --h: 54; --enter: -0.3 -0.2; }
   .plant.g-ginkgo { display: block; --x: 0%; --y: 92%; --h: 80; --enter: -0.4 0; }
   .plant.g-paulownia { display: block; --x: 100%; --y: 38%; --h: 30; --flip: -1; --enter: 0.4 0; }

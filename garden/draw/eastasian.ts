@@ -5,7 +5,7 @@
 // stalks, and each long shoot carries single fans along its length. Every fan has its apex at its
 // stalk, a notch cut in its outer margin, and veins that fork dichotomously out to the margin.
 
-import { rad, P1, add, mul, lerp, polar, rot, quad, closed, line, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
+import { rad, P1, add, sub, mul, lerp, polar, rot, quad, closed, line, sample, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
@@ -515,5 +515,90 @@ export function willowDetail(out: Out, r: Rng) {
     const d = angleOf(whip.pts, i) + (i % 8 ? 1 : -1) * rad(30);
     blade(out, r, p, d, 70, { W: 0.17, v: tone(r, { spread: 0.05 }), deep: 0.3, rib: "ink hair", hairline: true });
   }
+}
+
+// ---------------------------------------------------------------------------
+// Moso bamboo: a few tall culms rising from below the frame and out of its top, ringed at every
+// node and white-powdered when young, with fine branches from the upper nodes carrying sprays of
+// narrow leaves. Evergreen, the garden's one full green in winter. In April a new shoot rises
+// in its brown, spotted sheaths, grows into a culm, and lets the sheaths fall.
+
+const CULM = { pc: "--culm-moso" };
+const sheathsFall = fallsAt(0.36, 0.1);
+
+// A culm from B along `lean`, H tall, w wide: a tapering green column with a ring at each node,
+// grown from g0 to g1. Returns its spine and the nodes.
+function culm(out: Out, r: Rng, B: Pt, lean: number, H: number, w: number, g: [number, number]) {
+  const spine = sample((t) => add(B, add(polar(H * t, rad(-90) + lean), [Math.sin(t * 3) * 6, 0])), 30);
+  const nodes: number[] = [];
+  const res = grow(out, g[0], g[1], () => {
+    const st = stalk(out, (t) => spine[Math.round(t * 30)], w, w * 0.7, tone(r, { ...CULM, spread: 0.03 }), 30);
+    let rings = "";
+    let bloom = "";
+    for (let i = 2; i < 30; i += 2 + (i > 10 ? 1 : 0)) {
+      nodes.push(i);
+      const p = spine[i];
+      const half = (w * (1 - (i / 30) * 0.3)) / 2;
+      const nrm = polar(half, angleOf(spine, i) + rad(90));
+      rings += `M${P1(add(p, nrm))}Q${P1(add(p, [0, 2.5]))} ${P1(sub(p, nrm))}`;
+      bloom += closed([add(add(p, nrm), [0, 2]), add(add(p, nrm), [0, 7]), add(sub(p, nrm), [0, 7]), add(sub(p, nrm), [0, 2])]);
+    }
+    out.push(`<path class="wash felt"${vars(tone(r, { pc: "--bloom-moso", spread: 0.02 }))} d="${bloom}"/><path class="ink thin" d="${rings}"/>`);
+    return { ...st, pts: spine, n: 30 };
+  });
+  return { res, nodes, g };
+}
+
+// A fine branch from a node with sprays of narrow drooping leaves at its joints.
+function bambooSpray(out: Out, r: Rng, P: Pt, a: number, g: number) {
+  const tip = add(P, polar(70 + r() * 40, a));
+  part(out, g, P, () => {
+    out.push(`<path class="ink thin" d="M${P1(P)}Q${P1(add(lerp(P, tip, 0.5), [0, -8]))} ${P1(tip)}"/>`);
+    const blades: { O: Pt; dir: number; L: number; W: number }[] = [];
+    for (const u of [0.45, 0.75, 1]) {
+      const O = lerp(P, tip, u);
+      for (let k = 0; k < 3; k++) blades.push({ O, dir: a + rad(40 + k * 28 + (r() - 0.5) * 16) * (a > rad(-90) ? 1 : -1), L: 34 + r() * 14, W: 0.14 });
+    }
+    bladeBunch(out, blades, tone(r, { spread: 0.06, hue: 8 }));
+  });
+}
+
+export function moso(out: Out, r: Rng, base: Pt) {
+  const at = (p: Pt) => add(base, p);
+  // Standing culms are up with the intro; the new shoot rises through April.
+  const stands: [number, number, number, number, [number, number]][] = [
+    [0, 0.02, 1300, 30, [0, 0.07]],
+    [70, -0.05, 1250, 26, [0.01, 0.08]],
+    [150, 0.04, 1200, 24, [0.02, 0.09]],
+  ];
+  for (const [x, lean, H, w, g] of stands) {
+    const c = culm(out, r, at([x, 0]), lean, H, w, g);
+    for (const i of c.nodes.filter((i) => i > 14)) {
+      const p = c.res.pts[i];
+      const side = i % 2 ? 1 : -1;
+      bambooSpray(out, r, p, rad(-90) + lean + side * rad(50 + r() * 15), gate(c.res, c.g, i) + 0.01);
+    }
+  }
+  // The new shoot: sheathed, spotted brown, shedding its sheaths as it grows into a culm.
+  const shoot = culm(out, r, at([110, 0]), -0.02, 900, 22, [0.14, 0.34]);
+  for (const i of shoot.nodes) {
+    const p = shoot.res.pts[i];
+    const g = gate(shoot.res, shoot.g, i);
+    const d = angleOf(shoot.res.pts, i);
+    const side = i % 4 ? 1 : -1;
+    part(out, g, p, () => {
+      const pts = [add(p, polar(13, d + rad(90) * side)), add(p, polar(40, d)), add(p, polar(13, d - rad(90) * side * 0.2)), sub(p, polar(4, d))];
+      shape(out, r, pts, tone(r, { pc: "--sheath-moso", spread: 0.04 }), { deep: 0.3 });
+    }, sheathsFall(p));
+  }
+}
+
+export function mosoDetail(out: Out, r: Rng) {
+  stalk(out, (t) => [0, 200 - t * 400], 34, 30, tone(r, CULM), 10);
+  let rings = "";
+  for (const y of [120, 0, -120]) rings += `M-17 ${y}Q0 ${y + 4} 17 ${y}`;
+  out.push(`<path class="ink thin" d="${rings}"/>`);
+  bambooSpray(out, r, [0, -120], rad(-40), 0);
+  bambooSpray(out, r, [0, 0], rad(-140), 0);
 }
 
