@@ -6,6 +6,8 @@
 //                                  (v003.svg), `latest`, or `previous` (default: every reference, then latest)
 //   &at=<x>,<y>,<zoom>             the picture point at the panes' center, and screen pixels per picture pixel
 //   &grid=1                        a coordinate grid in the picture's own pixels
+//   &tone=<px>                     every pane blurred by so many picture pixels, so marks vanish and
+//                                  only tone is left to compare (T toggles it at 6)
 //
 // The panes move together: scroll to zoom about the pointer, drag to pan, G toggles the grid,
 // 0 fits the whole picture. A new build redraws `latest` and `previous` where they are shown.
@@ -15,7 +17,7 @@ type Piece = { references: string[]; versions: string[]; build: Build | null };
 
 const q = new URLSearchParams(location.search);
 const piece = q.get("piece") ?? "";
-const view = { x: 627, y: 627, zoom: 0, grid: q.get("grid") === "1" };
+const view = { x: 627, y: 627, zoom: 0, grid: q.get("grid") === "1", tone: Number(q.get("tone") ?? 0) };
 const at = q.get("at")?.split(",").map(Number);
 if (at?.length === 3) [view.x, view.y, view.zoom] = at;
 
@@ -46,7 +48,7 @@ function keys(): string[] {
 function header() {
   const b = state.build;
   const status = b ? (b.ok ? `<span class="ok">built ${b.version} in ${b.seconds.toFixed(1)}s</span>` : `<span class="fail" id="fail">build failed (click)</span>`) : "";
-  bar.innerHTML = `<b>${piece || "no piece"}</b><span>${state.versions.length} versions</span>${status}<span id="where"></span><span class="hint">scroll zoom · drag pan · G grid · 0 fit · B build</span>`;
+  bar.innerHTML = `<b>${piece || "no piece"}</b><span>${state.versions.length} versions</span>${status}<span id="where"></span><span class="hint">scroll zoom · drag pan · G grid · T tone · 0 fit · B build</span>`;
   log.textContent = b && !b.ok ? b.log : "";
   document.getElementById("fail")?.addEventListener("click", () => (log.style.display = log.style.display === "block" ? "none" : "block"));
 }
@@ -89,7 +91,10 @@ function place() {
     const [w, h] = [pane.clientWidth, pane.clientHeight];
     const [ox, oy] = [w / 2 - view.x * view.zoom, h / 2 - view.y * view.zoom];
     const img = pane.querySelector("img");
-    if (img) img.style.transform = `translate(${ox}px, ${oy}px) scale(${view.zoom})`;
+    if (img) {
+      img.style.transform = `translate(${ox}px, ${oy}px) scale(${view.zoom})`;
+      img.style.filter = view.tone ? `blur(${view.tone}px)` : "";
+    }
     const grid = pane.querySelector("svg.grid")!;
     grid.innerHTML = view.grid ? gridMarks(w, h, ox, oy) : "";
   }
@@ -98,6 +103,8 @@ function place() {
   q.set("at", `${Math.round(view.x)},${Math.round(view.y)},${+z.toFixed(3)}`);
   if (view.grid) q.set("grid", "1");
   else q.delete("grid");
+  if (view.tone) q.set("tone", String(view.tone));
+  else q.delete("tone");
   history.replaceState(null, "", `?${q}`);
 }
 
@@ -153,6 +160,7 @@ main.addEventListener("pointerdown", (e) => {
 addEventListener("keydown", (e) => {
   if (e.key === "g" || e.key === "G") (view.grid = !view.grid), place();
   if (e.key === "0") fit(), place();
+  if (e.key === "t" || e.key === "T") (view.tone = view.tone ? 0 : 6), place();
   if (e.key === "b" || e.key === "B") fetch(`/api/build?name=${encodeURIComponent(piece)}`);
 });
 addEventListener("resize", place);

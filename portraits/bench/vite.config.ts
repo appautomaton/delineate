@@ -51,7 +51,8 @@ export default defineConfig({
   root: fileURLToPath(new URL(".", import.meta.url)),
   // Kept beside the versions, so the bench writes nothing into node_modules (a worktree may share it).
   cacheDir: fileURLToPath(new URL("../../.cache/vite-bench/", import.meta.url)),
-  server: { port: 5288, strictPort: true },
+  // Polled, as file events do not always reach a sandboxed process; the bench is a few files.
+  server: { port: 5288, strictPort: true, watch: { usePolling: true, interval: 300 } },
   plugins: [
     {
       name: "bench",
