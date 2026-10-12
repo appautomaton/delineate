@@ -32,5 +32,8 @@ For what still screenshots cannot show (the growth as the page scrolls, a garden
 the switcher, the tide), use the chrome-devtools tools on the dev server. Open
 `http://localhost:5199/?garden=<key>`, reload with the cache ignored after each change, and scroll
 in an evaluated script. The theme toggle saves its choice in the browser; click it back afterwards.
-Performance is what this shows: if the growth stutters as the page scrolls in Chrome, report it;
-nothing is measured beyond that.
+Performance is read from the code, not measured. The page writes only what has changed
+(`renderGarden` in `src/main.ts`): a frame whose inputs have not moved is skipped, and each limb,
+part, and waterline is compared with what it last wrote. Look for the two ways to break that: a
+write made every frame whether or not its value moved, and a layout read (`offsetHeight`,
+`getBoundingClientRect`) inside the render loop.

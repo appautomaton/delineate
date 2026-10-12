@@ -226,8 +226,8 @@ autumn, and the end of the scroll rests on winter; scrolling back runs the year 
 - **An exit.** Parts must leave as well as arrive: leaves color and fall, flowers drop, fruit
   swells and ripens. Only arrival exists now.
 - **Leaf color by season.** One season value on the root, and `color-mix` between a species'
-  summer and autumn tokens, in both lights. Changing it every frame restyles every inlined
-  drawing, so measure before committing; stepping it at the redraw rate may be enough.
+  summer and autumn tokens, in both lights. Changing it restyles every inlined drawing,
+  so it is written only when its step changes, as everything `renderGarden` draws is.
 - **Bare winter wood.** Today's trees are drawn for leaves to cover the branch tips. A deciduous
   tree must read bare, so its twigs are drawn to be seen: spur shoots, buds, fine tips. This is
   why no seasonal plant should be drawn before the system exists.

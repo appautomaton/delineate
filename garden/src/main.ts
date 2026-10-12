@@ -50,7 +50,7 @@ type Limb = {
   clipped: boolean;
 };
 type Part = { el: SVGGElement; g: number; o: string; back: string; turn: number; last: number };
-type Water = { body: SVGGElement; maskId: string; grad: SVGLinearGradientElement; edge: SVGPathElement; line: SVGPathElement; masked: boolean };
+type Water = { body: SVGGElement; maskId: string; grad: SVGLinearGradientElement; edge: SVGPathElement; line: SVGPathElement; masked: boolean; wy: number };
 // boost scales a plant's growth: 1 normally, and rising from 0 while its garden grows in.
 // enter is how far, in CSS pixels, a plant starts from its place (null if it starts there), and
 // shift the offset last applied.
@@ -71,6 +71,14 @@ type Plant = {
   shift: string;
 };
 
+// The inputs the garden was last drawn at, cleared when what they map to changes (a resize, a new
+// plant); and the height of the water at full tide, measured only when the layout changes.
+let frame = "";
+let tideDrawn = "";
+let waterFull = 0;
+let pending = false;
+let lastDraw = 0;
+
 const root = document.documentElement;
 const gardenEl = document.querySelector<HTMLElement>(".garden")!;
 const waterEl = document.querySelector<HTMLElement>(".garden .water");
@@ -88,10 +96,6 @@ let garden = chosenGarden(root.dataset.theme === "dark" ? "mediterranean" : "tro
 root.dataset.garden = garden;
 syncWater();
 linkGallery();
-let drawn = -1;
-let pending = false;
-let forceNext = false;
-let lastDraw = 0;
 
 // Every visit starts at the top, where the garden starts growing.
 history.scrollRestoration = "manual";
@@ -109,7 +113,9 @@ addEventListener(
       scaleInk(plant);
       readEnter(plant);
     });
-    renderGarden(true);
+    waterFull = waterEl?.offsetHeight ?? 0;
+    frame = "";
+    renderGarden();
     plantGarden();
   }, 250),
 );
@@ -186,7 +192,8 @@ async function plantGarden(growing = false) {
       readEnter(plant);
       plants.push(plant);
       if (growing) growIn(plant);
-      renderGarden(true);
+      frame = "";
+      renderGarden();
     }),
   );
 }
@@ -277,7 +284,7 @@ function collect(bed: HTMLElement, lag: number): Plant {
     line.setAttribute("class", "ink water-line");
     cross.append(edge, line);
     svg.append(defs, body, cross);
-    water = { body, maskId, grad, edge, line, masked: false };
+    water = { body, maskId, grad, edge, line, masked: false, wy: NaN };
   }
   return { bed, garden: bed.dataset.garden!, vb: box.height, vbY: box.y, top: 0, k: 0, lag, boost: 1, limbs, parts, water, enter: null, flip: 1, shift: "" };
 }
@@ -305,18 +312,15 @@ function scaleInk(plant: Plant, height = plant.bed.offsetHeight) {
   plant.limbs.forEach((limb) => (limb.last = -1));
 }
 
-// Every change repaints the plants it touches, so the garden redraws at most FPS times a
-// second, and only when growth has moved a visible step.
-function requestGarden(force = false) {
-  forceNext ||= force;
+// The garden redraws at most FPS times a second.
+function requestGarden() {
   if (pending) return;
   pending = true;
   const tick = (now: number) => {
     if (now - lastDraw < 1000 / FPS - 4) return void requestAnimationFrame(tick);
     pending = false;
     lastDraw = now;
-    renderGarden(forceNext);
-    forceNext = false;
+    renderGarden();
   };
   requestAnimationFrame(tick);
 }
@@ -329,7 +333,7 @@ function showGarden(next: string) {
   root.dataset.garden = garden;
   if (syncWater() && !still) {
     tideIn.k = 0;
-    animate(tideIn, { k: 1, duration: GROW_IN, ease: "out(2)", onUpdate: () => requestGarden(true) });
+    animate(tideIn, { k: 1, duration: GROW_IN, ease: "out(2)", onUpdate: () => requestGarden() });
   }
   keepGarden(garden);
   linkGallery();
@@ -343,27 +347,32 @@ function showGarden(next: string) {
   plantGarden(true);
 }
 
-// Marks the garden's default water depth on the page, and tells whether it has water.
+// Marks the garden's default water depth on the page, measures it, and tells whether it has water.
 function syncWater() {
   const w = GARDENS.find((g) => g.key === garden)?.water ?? 0;
   if (w) gardenEl.style.setProperty("--water", String(w));
   else gardenEl.style.removeProperty("--water");
+  waterFull = waterEl?.offsetHeight ?? 0;
   return w > 0;
 }
 
 function growIn(plant: Plant) {
   if (still) return;
   plant.boost = 0;
-  animate(plant, { boost: 1, duration: GROW_IN, ease: "out(2)", onUpdate: () => requestGarden(true) });
+  animate(plant, { boost: 1, duration: GROW_IN, ease: "out(2)", onUpdate: () => requestGarden() });
 }
 
-function renderGarden(force = false) {
+// Writes only what has changed: a frame whose inputs have not moved is skipped, and each offset,
+// limb, part, and waterline is compared with what it last wrote.
+function renderGarden() {
   const all = Math.round(Math.min(1, growth.intro + (1 - INTRO) * growth.scroll) * 400) / 400;
-  if (all === drawn && !force) return;
-  drawn = all;
-  const waterFull = waterEl?.offsetHeight ?? 0;
   const tide = waterFull ? tideIn.k * (all <= INTRO ? (all / INTRO) * LOW_TIDE : LOW_TIDE + ((all - INTRO) / (1 - INTRO)) * (1 - LOW_TIDE)) : 0;
-  if (waterFull) gardenEl.style.setProperty("--tide", tide.toFixed(3));
+  let key = `${garden} ${all} ${tide}`;
+  for (const plant of plants) if (plant.garden === garden) key += ` ${plant.boost}`;
+  if (key === frame) return;
+  frame = key;
+  const tideCss = tide.toFixed(3);
+  if (waterFull && tideCss !== tideDrawn) gardenEl.style.setProperty("--tide", (tideDrawn = tideCss));
   for (const plant of plants) {
     if (plant.garden !== garden) continue;
     const p = clamp((all - plant.lag) / (1 - plant.lag)) * plant.boost;
@@ -374,12 +383,14 @@ function renderGarden(force = false) {
       const k = 1 - p * p * (3 - 2 * p);
       shiftY = plant.enter[1] * k;
       const shift = `translate(${(plant.enter[0] * k * plant.flip).toFixed(1)}px, ${shiftY.toFixed(1)}px)`;
-      if (force || shift !== plant.shift) plant.bed.style.transform = plant.shift = shift;
+      if (shift !== plant.shift) plant.bed.style.transform = plant.shift = shift;
     }
+    let moved = false;
     for (const limb of plant.limbs) {
       const t = clamp((p - limb.g0) / (limb.g1 - limb.g0));
-      if (t === limb.last && !force) continue;
+      if (t === limb.last) continue;
       limb.last = t;
+      moved = true;
       limb.el.style.visibility = t ? "" : "hidden";
       // Only a growing limb is clipped.
       const growing = t > 0 && t < 1;
@@ -394,7 +405,7 @@ function renderGarden(force = false) {
     }
     for (const part of plant.parts) {
       const t = clamp((p - part.g) / UNFOLD);
-      if (t === part.last && !force) continue;
+      if (t === part.last) continue;
       part.last = t;
       part.el.style.visibility = t ? "" : "hidden";
       part.el.style.opacity = t < 0.3 ? String(t / 0.3) : "";
@@ -404,7 +415,7 @@ function renderGarden(force = false) {
     if (plant.water && waterFull) {
       const waterY = innerHeight - waterFull * tide;
       const wy = plant.vbY + (waterY - (plant.top + shiftY)) * plant.k;
-      waterPlant(plant, wy);
+      if (moved || wy !== plant.water.wy) waterPlant(plant, wy);
     }
   }
 }
@@ -413,6 +424,7 @@ function renderGarden(force = false) {
 // units) and draws a soft meniscus glaze and ripple stroke where each grown root or stem crosses wy.
 function waterPlant(plant: Plant, wy: number) {
   const w = plant.water!;
+  w.wy = wy;
   const k = plant.k;
   const bot = plant.vbY + plant.vb;
   if (wy >= bot - k) {
