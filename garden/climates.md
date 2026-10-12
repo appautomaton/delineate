@@ -334,8 +334,10 @@ Monsoon summers, plum-rain haze, a clear gold autumn, bare trunks under a low wi
 Palette: bamboo olive, ginkgo butter, paulownia lilac, wisteria violet, lotus pink, lycoris
 vermilion.
 
-The first seasonal garden, and the second with water: a still pond in the bed. Not yet verified
-against a flora; that is its first step (see Seasons, Build order).
+The first seasonal garden, and the second with water: a still pond in the bed. Verified in
+October 2026 (below). A garden's plants are cultivated: one long grown in these gardens is as
+honest as one native to them, so the roster chooses by how a plant reads, and the check records
+which is which.
 
 **The roster through the year.** Thirteen plants: five sides, two hangers, six in the bed and the
 pond. Revised from the survey:
@@ -345,7 +347,13 @@ pond. Revised from the survey:
   morning glory and is gone in winter, and the kiwi's leaves sit near the tropical philodendron's
   hearts. Two woody vines hold the top, each hanging from its host (an arbor beam or a bough)
   drawn with it, and both keep bare twisted vines and split pods through winter.
-- Lotus and rabbit-ear iris return on the still water the mangrove built.
+- Lotus and rabbit-ear iris return on the still water the mangrove built; the iris grows in
+  standing water.
+- Japanese wisteria over Chinese: its racemes fall 20 to 50 cm, against 15 to 20, and read at
+  garden size as the rain they are named for.
+- Arrow bamboo for moso, for scale: moso's culms reach 20 m and would tower over the bed; arrow
+  bamboo arches 1 to 3 m. Moso could return as tall ringed culms rising out of the frame, as a
+  side.
 
 | Plant | Latin | Role | Spring | Summer | Autumn | Winter |
 |---|---|---|---|---|---|---|
@@ -354,14 +362,65 @@ pond. Revised from the survey:
 | Paulownia | Paulownia tomentosa | side | lilac panicles on bare wood | plate-sized heart leaves | leaves drop, capsules split, next year's buds already furred | bare, hung with capsules and furred buds |
 | Weeping willow | Salix babylonica | side | first green, catkins | a full curtain | a yellowing curtain | bare whips that still hang |
 | Plum | Prunus mume | side | new leaves, small fruit | green plums yellowing in the plum rain | leaves yellow and fall | flowers on bare zigzag wood, late in winter |
-| Wisteria | Wisteria floribunda | hanging | violet racemes as the leaves unfold | pinnate leaves, velvet pods | yellow leaves, pods | bare twisted vines, pods splitting |
-| Chocolate vine | Akebia quinata | hanging | purple-brown flowers | five-leaflet palms | purple pods split open | thinned leaves on twining stems |
-| Moso bamboo | Phyllostachys edulis | bed | shoots rising in sheaths; old leaves yellow and shed | full plumes on ringed culms | unchanged | the garden's one full green |
+| Japanese wisteria | Wisteria floribunda | hanging | long violet racemes opening base to tip as the leaves unfold | pinnate leaves, velvet pods | yellow leaves, pods | bare twisted vines, pods splitting |
+| Chocolate vine | Akebia quinata | hanging | purple-brown flowers | five-leaflet palms | sausage pods split open | thinned leaves on twining stems |
+| Arrow bamboo | Pseudosasa japonica | bed | new shoots in sheaths; old leaves yellow and shed | arching culms, broad blades | unchanged | the garden's one full green |
 | Lotus | Nelumbo nucifera | bed, in the pond | rolled leaves rising from the water | shield leaves on tall stalks, pink flowers over their pods | leaves tattered and browning, pods ripening | dry pods on broken stalks bent into the water |
-| Rabbit-ear iris | Iris laevigata | bed, at the pond's edge | sword leaves; violet flowers late in spring | the last flowers, then green swords | leaves yellowing, seed capsules | dry leaf stubs at the water |
+| Rabbit-ear iris | Iris laevigata | bed, in the pond's shallows | grey-green swords; violet flowers in May | the last flowers into June, then capsules | leaves yellowing | dry leaf stubs at the water |
 | Peony | Paeonia lactiflora | bed | red shoots, then ball flowers late in spring | glossy divided leaves | leaves redden, seed follicles | dies back to the ground |
 | Hydrangea | Hydrangea macrophylla | bed | new leaves | mopheads in the plum rain | heads fade to antique green and rose | dried heads on bare stems |
-| Red spider lily | Lycoris radiata | bed | strap leaves wither | dormant, nothing above ground | scarlet umbels on bare stalks | dark strap leaves, grown after the flowers |
+| Red spider lily | Lycoris radiata | bed | narrow leaves wither | dormant, nothing above ground; scarlet umbels on bare stalks at its end | the flowers fade; narrow dark leaves rise | dark leaves, about 5 mm wide |
+
+**The calendar,** lower Yangtze unless marked; the year axis starts in March (see Seasons).
+
+| Plant | Leaves | Flowers | Fruit and what persists | Autumn and leaf fall |
+|---|---|---|---|---|
+| Ginkgo | late March | April (male catkins) | seeds drop in October | saffron yellow late November (Tokyo) to early December (Nanjing), shed in 1 to 15 days; spur shoots all winter |
+| Japanese maple | red new leaves in March | hanging red-purple corymbs, April to May | paired keys ripen in September | scarlet in sun, yellow in shade, late November to early December; bare by December |
+| Paulownia | late April, after the flowers | pale violet panicles on bare wood, late March to April | brown capsules from September, hanging all winter with next year's furred buds | leaves drop in October |
+| Weeping willow | late March | catkins, February to March | none to draw | yellowing in October, bare in November |
+| Plum | March, after the flowers | from mid-February to early March (from December in warm years) | fruit yellowing in June, in the plum rain | yellow, falling in November (not verified) |
+| Japanese wisteria | with the flowers, April to May | April to May, each raceme opening from base to tip | velvety pods from summer, splitting in winter's dry air | yellow in October to November |
+| Chocolate vine | spring | purple-brown, March to May | sausage pods ripen and split, September to October | leaves thin out; some stay through mild winters |
+| Arrow bamboo | evergreen; new shoots in spring | rare | culm sheaths persist | unchanged |
+| Lotus | rolled leaves from the water in May | June to August | pods ripen and darken, September to October | tattered and brown in October; dry pods on stalks over winter |
+| Rabbit-ear iris | swords in March to April | May to June | capsules ripen July to August | yellowing in autumn; stubs over winter |
+| Peony | red shoots, February to March | April to May (double in cultivation, single in the wild) | follicles in August | yellow or red in autumn; dies back after frost |
+| Hydrangea | March to April | mopheads June to July, in the plum rain | heads stay, fading to antique green and rose | leaves fall in October; dried heads on bare stems all winter |
+| Red spider lily | October to May, through winter | August to September, on bare scapes | capsules in October | leaves wither in late spring; dormant in summer |
+
+**Drawing facts the check gave.** Ginkgo fans 5 to 10 cm wide on 3 to 8 cm stalks, three to seven
+to a spur shoot, the notch deeper on young shoots. Maple hands 4 to 12 cm, five to nine tailed
+lobes, doubly toothed. Paulownia hearts 15 to 40 cm, velvety beneath; capsules egg-shaped, 3 to
+4 cm. Willow leaves 4 to 16 cm, narrow and long-pointed. Plum leaves 4 to 8 cm, oval; the tree
+bent and knotted. Wisteria racemes 20 to 50 cm; leaves of eleven to nineteen leaflets, 2 to 6 cm each. Chocolate
+vine leaflets five, notched; pods sausage-shaped, grey-purple. Arrow bamboo culms 1 to 3 m, one
+branch a node, blades 15 to 37 cm, glaucous beneath. Lotus blades 25 to 90 cm, glaucous, on hollow
+stalks 1 to 2 m; flowers 10 to 23 cm; the pod a flat-topped cone 5 to 10 cm. Rabbit-ear
+iris leaves grey-green, 40 to 100 cm, no midrib; stems 22 to 60 cm; flowers 9 to 10 cm, the falls
+marked with white or yellow. Peony to 70 cm, its
+leaflets with a white toothed margin. Lycoris scapes about 30 cm, four to seven flowers, the
+lobes strongly recurved and the stamens far out; leaves about 15 cm by 5 mm, a pale midvein.
+
+**Keep apart in the drawing.** Plum and maple are both fine bare trees in winter: the plum's trunk
+bent and knotted, the maple's crown layered. Wisteria and chocolate vine are both bare twining
+stems in winter: the wisteria thick and twisted with pods, the akebia thin with a few leaves. The
+arbor they hang from is East Asian timber, not a Mediterranean pergola, or the vines read as a
+grapevine.
+
+**Unresolved.** POWO and the Flora of China web pages could not be read; names were checked on
+GBIF and the Flora of China PDFs. Plum's leaf fall month and bark; maple's and plum's bark color;
+the wisteria's twining direction (sources disagree); the chocolate vine's winter leaves on the
+Yangtze; lotus pod timing and whether winter stalks break into the water; peony autumn color and
+its Jiangnan flowering dates; hydrangea's autumn color; the Yangtze's plum-rain dates.
+
+**Sources.** Flora of China PDFs at iplant.cn (Poaceae, Iridaceae, Amaryllidaceae, Paeoniaceae,
+Nelumbonaceae, Saxifragaceae); efloras.org, *Iris laevigata*; GBIF species match; Oregon State
+Landscape Plants (*Wisteria sinensis*, *Paulownia tomentosa*); RHS (wisteria, *Akebia quinata*,
+*Iris laevigata*); Trees and Shrubs Online (*Akebia*); Missouri Botanical Garden (*Akebia*,
+*Paeonia lactiflora*); NC State Extension (*Hydrangea macrophylla*); Nohara 1997 on lotus and
+water depth; Nanjing municipal guide to ginkgo color; Hangzhou plum bloom reports; English and
+Japanese Wikipedia for each plant.
 
 ### 3. Afroalpine: ET, the Teleki Valley on Mount Kenya, about 3,900 to 4,100 metres
 Thin hard equatorial sun by day, frost almost every night, no seasons: "winter every night,

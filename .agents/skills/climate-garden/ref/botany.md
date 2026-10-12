@@ -43,6 +43,8 @@ a correction. Draw nothing but scaffolding until it returns.
 
 ## Deciding the roster
 
+- **Cultivated counts.** A garden's plants are grown there: one long cultivated in the climate is
+  as honest as a native. Choose by how a plant reads; record which is which.
 - **Silhouette first.** Two plants that read alike are one plant too many, unless drawn apart by
   habit (Afroalpine keeps two heaths: ascending plumes on red-brown limbs against rounded
   light-green clumps on grey twigs).
