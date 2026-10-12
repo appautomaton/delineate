@@ -9,9 +9,21 @@ dist/
 *.jpeg
 *.webp
 *.gif
+*.avif
+*.heic
+*.tif
+*.tiff
+*.bmp
+*.psd
 *.mp4
 *.mov
 *.webm
+*.mkv
+*.onnx
+
+# Secrets
+.env
+.env.*
 
 # Written by garden/draw/draw.ts (npm run draw; dev and check run it first)
 garden/public/garden/
