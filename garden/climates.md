@@ -8,8 +8,9 @@ The survey was written from memory: research how each plant looks before it ente
 
 - **Built, 8 of 12:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld
   savanna, Namib and Namaqualand, and the mangrove, the first with water.
-- **Next:** East Asian, the first four-season garden, with lotus and rabbit-ear iris on a still
-  pond. The seasons system comes first; see Seasons.
+- **In progress:** East Asian, the first four-season garden, with lotus and rabbit-ear iris on a
+  still pond. Scaffolded with its signature plant, the ginkgo, at one moment (late spring), a side
+  tree from the left edge; the seasons system comes next (see Seasons).
 - **Waiting for seasons:** boreal taiga, Eastern North American edge, Northwest European
   woodland.
 
