@@ -12,7 +12,7 @@
   .garden { --u: min(0.8svh, 1.15vw); }
   :root[data-garden="mangrove"] .garden .water { --water: 10.2; }
   .plant.g-whitemangrove { display: block; --x: 100%; --y: 22%; --h: 24; --flip: -1; --enter: 0.45 -0.1; }
-  .plant.g-spanishmoss { display: block; --x: 34%; --y: calc(var(--u) * -1); --h: 36; --enter: -0.16 -0.42; }
+  .plant.g-spanishmoss { display: block; --x: 14%; --y: calc(var(--u) * -1); --h: 36; --enter: -0.16 -0.42; }
   .plant.g-redmangrove { display: block; --x: 14%; --y: calc(100svh + var(--u) * 1.5); --h: 64; --enter: -0.22 0; }
   .plant.g-leatherfern { display: block; --x: 54%; --y: calc(100svh + var(--u) * 2); --h: 38; --enter: 0 0.34; }
   .plant.g-blackmangrove { display: block; --x: 92%; --y: calc(100svh + var(--u) * 1.5); --h: 52; --flip: -1; --enter: 0.24 0.04; }
@@ -20,7 +20,7 @@
 
 /* Portrait tablets and tall windows: the swamp lily and giant airplant join. */
 @media (max-aspect-ratio: 1/1) and (min-width: 600px) {
-  .plant.g-airplant { display: block; --x: 68%; --y: calc(var(--u) * -1); --h: 32; --flip: -1; --enter: 0.18 -0.42; }
+  .plant.g-airplant { display: block; --x: 50%; --y: calc(var(--u) * -1); --h: 32; --flip: -1; --enter: 0.18 -0.42; }
   .plant.g-leatherfern { --x: 44%; }
   .plant.g-swamplily { display: block; --x: 66%; --y: calc(100svh + var(--u) * 2); --h: 30; --enter: 0.08 0.36; }
 }

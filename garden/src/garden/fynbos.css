@@ -23,7 +23,7 @@
 /* Landscape screens. */
 @media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
   .garden { --u: min(1svh, 0.6vw); }
-  .plant.g-silvertree { display: block; --x: 100%; --y: 34%; --h: 36; --flip: -1; }
+  .plant.g-silvertree { display: block; --x: 100%; --y: 40%; --h: 36; --flip: -1; }
   .plant.g-pincushion { display: block; --x: 100%; --y: 78%; --h: 42; --flip: -1; }
   .plant.g-sugarbush { display: block; --x: 0%; --y: 44%; --h: 38; }
   .plant.g-fireheath { display: block; --x: 4%; --y: calc(100svh + var(--u) * 2); --h: 22; }
@@ -48,7 +48,7 @@
 /* Short landscape phones: the king protea, the thatching reed, and the silver tree branch. */
 @media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
   .garden { --u: min(1svh, 0.5vw); }
-  .plant.g-silvertree { display: block; --x: 100%; --y: 34%; --h: 40; --flip: -1; }
+  .plant.g-silvertree { display: block; --x: 100%; --y: 54%; --h: 40; --flip: -1; }
   .plant.g-kingprotea { display: block; --x: 20%; --y: calc(100svh + var(--u) * 3); --h: 58; }
   .plant.g-pagoda { display: block; --x: 48%; --y: calc(100svh + var(--u) * 2); --h: 42; }
   .plant.g-restio { display: block; --x: 74%; --y: calc(100svh + var(--u) * 2); --h: 58; }

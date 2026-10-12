@@ -5,7 +5,7 @@
 /* Portrait screens. */
 @media (max-aspect-ratio: 1/1) {
   .garden { --u: min(0.8svh, 1.15vw); }
-  .plant.g-frangipani { display: block; --x: 0%; --y: calc(var(--u) * 34); --h: 44; }
+  .plant.g-frangipani { display: block; --x: 0%; --y: calc(var(--u) * 46); --h: 44; }
   .plant.g-philodendron { display: block; --x: 90%; --y: calc(var(--u) * -1); --h: 50; }
   .plant.g-mango { display: block; --x: 100%; --y: 45%; --h: 40; --flip: -1; }
   .plant.g-bauhinia { display: block; --x: 0%; --y: 60%; --h: 30; }
@@ -24,7 +24,7 @@
 @media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
   .garden { --u: min(1svh, 0.6vw); }
   .plant.g-philodendron { display: block; --x: 19%; --y: calc(var(--u) * -1); --h: 48; }
-  .plant.g-staghorn { display: block; --x: 84%; --y: calc(var(--u) * -1); --h: 34; }
+  .plant.g-staghorn { display: block; --x: 66%; --y: calc(var(--u) * -1); --h: 34; }
   .plant.g-frangipani { display: block; --x: 0%; --y: 44%; --h: 54; }
   .plant.g-mango { display: block; --x: 100%; --y: 30%; --h: 46; --flip: -1; }
   .plant.g-bauhinia { display: block; --x: 0%; --y: 84%; --h: 28; }
@@ -48,7 +48,7 @@
 @media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
   .garden { --u: min(1svh, 0.5vw); }
   .plant.g-frangipani { display: block; --x: 0%; --y: 30%; --h: 50; }
-  .plant.g-mango { display: block; --x: 100%; --y: 24%; --h: 44; --flip: -1; }
+  .plant.g-mango { display: block; --x: 100%; --y: 48%; --h: 44; --flip: -1; }
   .plant.g-lychee { display: block; --x: 100%; --y: 78%; --h: 34; --flip: -1; }
   .plant.g-monstera { display: block; --x: 6%; --y: calc(100svh + var(--u) * 4); --h: 40; }
   .plant.g-strelitzia { display: block; --x: 95%; --y: calc(100svh + var(--u) * 6); --h: 40; }

@@ -48,7 +48,7 @@
 /* Short landscape phones: the saguaro, a palo verde branch, and the prickly pear. */
 @media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
   .garden { --u: min(1svh, 0.5vw); }
-  .plant.g-paloverde { display: block; --x: 100%; --y: 24%; --h: 44; --flip: -1; }
+  .plant.g-paloverde { display: block; --x: 100%; --y: 52%; --h: 44; --flip: -1; }
   .plant.g-saguaro { display: block; --x: 10%; --y: calc(100svh + var(--u) * 3); --h: 84; }
   .plant.g-opuntia { display: block; --x: 88%; --y: calc(100svh + var(--u) * 4); --h: 40; }
 }

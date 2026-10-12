@@ -15,10 +15,9 @@
   .plant.g-halfmens { display: block; --x: 96%; --y: calc(100svh + var(--u) * 3); --h: 54; --flip: -1; }
 }
 
-/* Portrait tablets and tall windows: the butter tree on the left and the ghaap in the bed. */
+/* Portrait tablets and tall windows: the butter tree on the left. */
 @media (max-aspect-ratio: 1/1) and (min-width: 600px) {
   .plant.g-buttertree { display: block; --x: 2%; --y: calc(100svh + var(--u) * 3); --h: 35; }
-  .plant.g-hoodia { display: block; --x: 36%; --y: calc(100svh + var(--u) * 2); --h: 20; }
 }
 
 /* Landscape screens. */

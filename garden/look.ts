@@ -1,7 +1,7 @@
 // Looks at the gardens the way a visitor meets them: every layout, by day and by night, fully
 // grown. Saves a screenshot of each to garden/look/<garden>/<screen>-<light>.png and prints what a
 // screenshot hides: how many plants each layout shows, which ones the solver left out, and which
-// paint under the controls.
+// paint under the controls, with how far down they reach.
 //
 //   npm run look              every garden
 //   npm run look namib fynbos the gardens named
@@ -54,8 +54,9 @@ try {
   await server.close();
 }
 
-function report(screen: string, { shown, crowded, under }: { shown: number; crowded: string[]; under: string[] }) {
-  const notes = [crowded.length && `left out: ${crowded.join(", ")}`, under.length && `under the controls: ${under.join(", ")}`].filter(Boolean);
+function report(screen: string, { shown, crowded, under }: { shown: number; crowded: string[]; under: [string, number][] }) {
+  const reach = under.map(([plant, px]) => `${plant} (${px}px)`);
+  const notes = [crowded.length && `left out: ${crowded.join(", ")}`, under.length && `under the controls: ${reach.join(", ")}`].filter(Boolean);
   console.log(`  ${screen.padEnd(7)}${String(shown).padStart(2)} plants${notes.length ? `   ${notes.join("   ")}` : ""}`);
 }
 
@@ -66,21 +67,22 @@ function planted() {
 }
 
 // In the page: the plants shown, the ones the solver left out, and the ones whose paint reaches
-// within `clear` pixels of the controls. Plants ignore the pointer, so hit testing is switched on
-// for them while the controls' box is sampled.
+// within `clear` pixels of the controls, each with how far it would have to move down to clear
+// them. Plants ignore the pointer, so hit testing is switched on for them while the controls' box
+// is sampled.
 function survey(clear: number) {
   const garden = document.documentElement.dataset.garden;
   const beds = [...document.querySelectorAll<HTMLElement>(`.garden .plant[data-garden="${garden}"]`)];
   const hit = document.head.appendChild(document.createElement("style"));
   hit.textContent = ".garden .plant * { pointer-events: visiblePainted !important; }";
   const box = document.querySelector(".controls")!.getBoundingClientRect();
-  const under = new Set<string>();
+  const under = new Map<string, number>();
   for (let y = box.top - clear; y <= box.bottom + clear; y += 4)
     for (let x = box.left - clear; x <= box.right + clear; x += 4)
       for (const el of document.elementsFromPoint(x, y)) {
         // Only painted geometry counts: an inline <svg> answers anywhere in its box.
         const bed = el instanceof SVGGeometryElement && el.closest<HTMLElement>(".garden .plant");
-        if (bed) under.add(bed.dataset.plant!);
+        if (bed) under.set(bed.dataset.plant!, Math.max(under.get(bed.dataset.plant!) ?? 0, Math.ceil(box.bottom + clear - y)));
       }
   hit.remove();
   return {

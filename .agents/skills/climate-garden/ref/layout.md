@@ -10,7 +10,7 @@ where. Plants it leaves out are never fetched. Copy the breakpoints of `desert.c
 | `... and (min-width: 600px)` | portrait tablets: one or two more |
 | `(min-aspect-ratio: 1001/1000) and (min-height: 521px)` | landscape: the full composition |
 | `... and (min-width: 1200px)`, `... (min-width: 1600px)` | wider screens: plants added into the gaps |
-| `(min-aspect-ratio: 1001/1000) and (max-height: 520px)` | short landscape phones: three plants |
+| `(min-aspect-ratio: 1001/1000) and (max-height: 520px)` | short landscape phones: three to five plants |
 
 Each plant gets `display: block` and four properties:
 
@@ -34,7 +34,8 @@ Each plant gets `display: block` and four properties:
   reaching in from that edge, and the solver treats it as a side plant that may sink but never
   lift its cut base into view. A leaning young tree or a shrub branch fills a thin edge honestly.
 - **Keep clear of the controls** at the top right: a side branch there sits a third of the way
-  down, not at the top.
+  down, not at the top, and on short landscape phones about half way, since its crown rises above
+  its base. `npm run look` names any plant that reaches the controls and how far it must move down.
 - **The solver** (`arrange.ts`) slides each plant along its edge (up to 12%) and lets it sink into
   that edge (up to 6%) to reduce overlap, then drops plants more than half covered, highest rank
   number first. Give filler plants the highest ranks. If a plant keeps disappearing, it is placed

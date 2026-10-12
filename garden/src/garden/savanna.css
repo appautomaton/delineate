@@ -48,7 +48,7 @@
 /* Short landscape phones: the baobab, the umbrella thorn, and the crinum. */
 @media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
   .garden { --u: min(1svh, 0.5vw); }
-  .plant.g-thorn { display: block; --x: 100%; --y: 22%; --h: 40; --flip: -1; --enter: 0.4 0; }
+  .plant.g-thorn { display: block; --x: 100%; --y: 52%; --h: 40; --flip: -1; --enter: 0.4 0; }
   .plant.g-baobab { display: block; --x: 18%; --y: calc(100svh + var(--u) * 3); --h: 80; --enter: -0.3 0.12; }
   .plant.g-crinum { display: block; --x: 64%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: 0 0.3; }
 }
