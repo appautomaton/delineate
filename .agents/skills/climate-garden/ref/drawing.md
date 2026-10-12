@@ -18,10 +18,12 @@ pixels.
   `agaveLeaf`.
 - `draw/desert.ts`: ribbed columns with areoles (`saguaroColumn`), pads, joints, bipinnate leaves
   (`mesquiteLeaf`), fine twigs (`verdeTwig`), a host-drawn hanger (`mistletoe`).
-- `draw/afroalpine.ts`: rosettes in space (`rosette` with a `Habit`: `GIANT`, `NARROW`, `CABBAGE`,
-  `GLOSSY`, `FLAT`), dead-leaf skirts (`skirt`), cork (`corkTrunk`), hairy bract columns
-  (`hairyBract`), needle plumes (`plume`), leaf clumps (`heathClump`), strand lichen (`usnea`),
-  thistle leaves and heads, nodding heads, daisies, papery heads, spent panicles.
+- `draw/rosette.ts`: rosettes in space (`rosette`, shaped by a `Habit`) and single leaves in space
+  (`leafInSpace`).
+- `draw/afroalpine.ts`: habits (`GIANT`, `NARROW`, `CABBAGE`, `GLOSSY`, `FLAT`), dead-leaf skirts
+  (`skirt`), cork (`corkTrunk`), hairy bract columns (`hairyBract`), needle plumes (`plume`), leaf
+  clumps (`heathClump`), strand lichen (`usnea`), thistle leaves and heads, nodding heads, daisies,
+  papery heads, spent panicles.
 - `draw/savanna.ts`: a bottle trunk (`baobabTrunk`), palmate and pinnate leaves as single washes
   (`baobabLeaf`, `pinnateLeaf`), pendant flowers (`baobabFlower`), puffballs (`puffball`), coiled
   pods (`coiledPod`), hanging fruit (`sausage`), strap-leaf rosettes with umbels (`crinum`), stars

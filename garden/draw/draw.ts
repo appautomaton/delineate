@@ -16,6 +16,7 @@ import * as H from "./herbs.ts";
 import * as M from "./mediterranean.ts";
 import * as D from "./desert.ts";
 import * as A from "./afroalpine.ts";
+import * as RO from "./rosette.ts";
 import * as S from "./savanna.ts";
 import * as F from "./fynbos.ts";
 import * as N from "./namib.ts";
@@ -179,14 +180,14 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 3647,
     draw: (o, r) => A.groundsel(o, r, [0, 0]),
     detail: (o, r) => {
-      A.rosette(o, r, [0, 0], 190, 0);
+      RO.rosette(o, r, [0, 0], 190, 0, 40, A.GIANT);
       A.spentPanicle(o, r, [40, 0], 1, 320);
     },
   },
   sapling: {
     seed: 4657,
     draw: (o, r) => A.sapling(o, r, [0, 0]),
-    detail: (o, r) => A.rosette(o, r, [0, 0], 200, 0, 56),
+    detail: (o, r) => RO.rosette(o, r, [0, 0], 200, 0, 56, A.GIANT),
   },
   trimera: {
     seed: 4758,
@@ -208,7 +209,7 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 3849,
     draw: (o, r) => A.cabbage(o, r, [0, 0]),
     detail: (o, r) => {
-      A.rosette(o, r, [0, 0], 200, 0, 40, A.CABBAGE);
+      RO.rosette(o, r, [0, 0], 200, 0, 40, A.CABBAGE);
       A.noddingHead(o, r, [230, -120], 90, rad(15));
     },
   },
@@ -237,7 +238,7 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 4253,
     draw: (o, r) => A.gregoriana(o, r, [0, 0]),
     detail: (o, r) => {
-      A.rosette(o, r, [0, 0], 170, 0, 36, A.GLOSSY);
+      RO.rosette(o, r, [0, 0], 170, 0, 36, A.GLOSSY);
       [[150, -150, -20], [180, -100, -10], [140, -60, -30]].forEach(([x, y, d]) => A.lobeliaFlower(o, r, [x, y], rad(d), 60));
     },
   },
@@ -255,7 +256,7 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 4556,
     draw: (o, r) => A.haplocarpha(o, r, [0, 0]),
     detail: (o, r) => {
-      A.rosette(o, r, [0, 0], 160, 0, 30, A.FLAT);
+      RO.rosette(o, r, [0, 0], 160, 0, 30, A.FLAT);
       A.daisy(o, r, [60, -130], 130, 0.55);
     },
   },
