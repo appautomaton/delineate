@@ -518,7 +518,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9411,
     draw: (o, r) => E.ginkgo(o, r, [0, 0]),
     detail: (o, r) => E.ginkgoSpurDetail(o, r),
+  },  maple: {
+    seed: 9512,
+    draw: (o, r) => E.maple(o, r, [0, 0]),
+    detail: (o, r) => E.mapleDetail(o, r),
   },
+
 };
 
 // Bounding box from the absolute coordinates in path data, read before it is compacted.

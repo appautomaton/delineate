@@ -5,10 +5,11 @@
 // stalks, and each long shoot carries single fans along its length. Every fan has its apex at its
 // stalk, a notch cut in its outer margin, and veins that fork dichotomously out to the margin.
 
-import { rad, P1, add, polar, rot, quad, closed, shape, stalk, tone, grow, part, gate } from "./lib.ts";
+import { rad, P1, add, mul, lerp, polar, rot, quad, closed, vars, shape, stalk, tone, grow, part, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
+import { palmate } from "./mediterranean.ts";
 
 const BARK = { pc: "--bark-ginkgo" };
 const STALK = { pc: "--stem-green" };
@@ -44,10 +45,14 @@ export function ginkgoFan(out: Out, r: Rng, O: Pt, dir: number, R: number) {
   out.push(`<path class="ink hair vein" d="${veins}"/>`);
 }
 
-// When the ginkgo's leaves fall: gold all at once in late November, then the tree sheds over a
-// stretch of scroll long enough to watch the fans go. Each fan's moment comes from where it
-// hangs, not from the random stream, so timing never moves the drawing.
-const shed = ([x, y]: Pt) => 0.8 + (((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 250;
+// When a leaf falls: somewhere in a tree's shedding, which starts at `from` and lasts `span`,
+// at a moment taken from where the leaf hangs, not from the random stream, so timing never moves
+// the drawing.
+const fallsAt = (from: number, span: number) => ([x, y]: Pt) => from + ((((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 20) * span;
+
+// The ginkgo turns gold all at once in late November, then sheds over a stretch of scroll long
+// enough to watch the fans go.
+const shed = fallsAt(0.8, 0.08);
 
 // A fan on a long stalk from attach point T, leaning toward a direction a. The stalk and the fan
 // open together, from T, at their own gate, and fall together at the shed.
@@ -136,3 +141,105 @@ export function ginkgoSpurDetail(out: Out, r: Rng) {
   const knuckle = limb(out, r, [base, add(base, polar(14 * sc, dir + rad(6))), add(base, polar(30 * sc, dir))], { w0: 8 * sc, w1: 6.5 * sc, cap: "blunt", ...BARK });
   spurLeaves(out, r, knuckle.pts[knuckle.n], dir, 0, sc);
 }
+
+// ---------------------------------------------------------------------------
+// Japanese maple: low layered limbs reaching in from the right, fine twigs held in near-level
+// tiers, hand-shaped leaves in opposite pairs, and paired winged keys hanging under them through
+// summer. It turns scarlet before the ginkgo turns gold, and stands in winter as tiers of fine
+// bare twigs.
+
+const MAPLE = { pc: "--bark-maple" };
+const MAPLE_STALK = { pc: "--stem-maple" };
+// Seven tailed lobes, the outer pair short, cut deep toward the stalk.
+const LOBES: [number, number][] = [[0, 1], [-0.62, 0.9], [0.62, 0.9], [-1.24, 0.72], [1.24, 0.72], [-1.9, 0.4], [1.9, 0.4]];
+const mapleShed = fallsAt(0.75, 0.08);
+const keysFall = fallsAt(0.78, 0.06);
+
+export function mapleLeaf(out: Out, r: Rng, O: Pt, dir: number, L: number) {
+  palmate(out, r, O, dir, L, { lobes: LOBES, sigma: 0.27, power: 1.7, teeth: 0.035, toothCount: 130, core: 0.3, deep: 0.4, v: tone(r, { spread: 0.06, hue: 10 }), hairline: true });
+}
+
+// A leaf on its red stalk from the twig at T, opening at g and falling at the maple's shedding.
+function mapleOnStalk(out: Out, r: Rng, T: Pt, a: number, len: number, L: number, g: number) {
+  const E = add(T, polar(len, a));
+  part(
+    out,
+    g,
+    T,
+    () => {
+      stalk(out, quad(T, add(lerp(T, E, 0.5), polar(len * 0.1, a + rad(90))), E), 1.8, 1.1, MAPLE_STALK, 6);
+      mapleLeaf(out, r, E, a + (r() - 0.5) * 0.3, L);
+    },
+    mapleShed(T),
+  );
+}
+
+// A pair of winged keys hanging from the twig at T: two seeds joined at a short stalk, their
+// wings spread wide, red-flushed green.
+export function mapleKeys(out: Out, r: Rng, T: Pt, a: number, s: number) {
+  const C = add(T, polar(10 * s, a));
+  let wings = "";
+  for (const side of [-1, 1]) {
+    const w = a + side * rad(58);
+    const seed = add(C, polar(3 * s, w));
+    const tip = add(C, polar(24 * s, w + side * 0.12));
+    const n = polar(4.5 * s, w + rad(90) * side);
+    wings += closed([seed, add(lerp(seed, tip, 0.45), n), add(tip, mul(n, 0.3)), tip, lerp(seed, tip, 0.6), seed]);
+  }
+  out.push(`<path class="ink hair" d="M${P1(T)}L${P1(C)}"/>`);
+  out.push(`<path class="wash"${vars(tone(r, { pc: "--keys-maple", spread: 0.05 }))} d="${wings}"/><path class="ink hair" d="${wings}"/>`);
+}
+
+// A twig off a tier: fine and level, carrying a pair of leaves along it and a pair at its tip,
+// drooping a little below the line of the twig.
+function mapleTwig(out: Out, r: Rng, parent: { res: Limb; g: number[] }, t: number, a: number, len: number, keys: boolean) {
+  const twig = branch(out, r, parent, t, [polar(len * 0.4, a), polar(len, a + (r() - 0.5) * 0.2)], 0.02, { w0: 4.2, w1: 1.6, cap: "taper", ...MAPLE });
+  const n = twig.res.n;
+  for (const [k, u] of [[0, 0.6], [1, 1]] as const) {
+    const i = Math.round(n * u);
+    const p = twig.res.pts[i];
+    const d = angleOf(twig.res.pts, Math.min(i, n - 1));
+    const g = gate(twig.res, twig.g, i) + 0.02 + k * 0.004;
+    for (const side of [-1, 1]) mapleOnStalk(out, r, p, d + side * rad(62) + rad(18), 20 + r() * 8, 30 + r() * 8, g);
+  }
+  if (keys) {
+    const p = twig.res.pts[Math.round(n * 0.6)];
+    part(out, 0.46, p, () => mapleKeys(out, r, p, rad(100), 1), keysFall(p));
+  }
+}
+
+export function maple(out: Out, r: Rng, base: Pt) {
+  const at = (p: Pt) => add(base, p);
+  // On the year: wood through March, leaves opening into April, in full leaf by late spring.
+  const gm = [0, 0.14];
+  const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-30, 16]), at([70, -18]), at([170, -40]), at([280, -48]), at([390, -40])], { w0: 30, w1: 8, cap: "taper", ...MAPLE }));
+  const parent = { res: main, g: gm };
+  // Tiers: limbs held near level, one above another, each a layer of foliage.
+  const tiers = [
+    branch(out, r, parent, 0.22, [[30, -40], [100, -86], [190, -108], [260, -112]], 0.07, { w0: 16, w1: 4, cap: "taper", ...MAPLE }),
+    branch(out, r, parent, 0.42, [[40, 12], [120, 30], [210, 34], [280, 26]], 0.07, { w0: 14, w1: 4, cap: "taper", ...MAPLE }),
+    branch(out, r, parent, 0.6, [[30, -30], [100, -60], [180, -66]], 0.06, { w0: 12, w1: 3.5, cap: "taper", ...MAPLE }),
+  ];
+  for (const [j, tier] of [parent, ...tiers].entries()) {
+    const n = tier.res.n;
+    for (let i = Math.round(n * 0.3), s = j % 2 ? 1 : -1; i <= n - 3; i += 10 + Math.floor(r() * 4), s = -s) {
+      const a = angleOf(tier.res.pts, i) + s * rad(28 + r() * 18);
+      mapleTwig(out, r, tier, i / n, a, 46 + r() * 22, (i + j) % 3 === 0);
+    }
+  }
+}
+
+// A close study: one twig with two pairs of leaves and a pair of keys.
+export function mapleDetail(out: Out, r: Rng) {
+  const twig = limb(out, r, [[-150, 20], [-40, 6], [80, -10], [160, -14]], { w0: 7, w1: 2.5, cap: "taper", ...MAPLE });
+  for (const [u, side] of [[0.35, -1], [0.35, 1], [0.8, -1], [0.8, 1]] as const) {
+    const i = Math.round(twig.n * u);
+    const p = twig.pts[i];
+    const d = angleOf(twig.pts, i) + side * rad(62) + rad(18);
+    const E = add(p, polar(44, d));
+    stalk(out, quad(p, lerp(p, E, 0.5), E), 3, 1.8, tone(r, MAPLE_STALK), 6);
+    mapleLeaf(out, r, E, d, 84);
+  }
+  mapleKeys(out, r, twig.pts[Math.round(twig.n * 0.58)], rad(95), 2.6);
+}
+

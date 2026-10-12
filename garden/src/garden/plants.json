@@ -835,7 +835,7 @@
     "rank": 2,
     "common": "Black mangrove",
     "latin": "Avicennia germinans",
-    "note": "A dark fissured trunk and ascending crown of opposite lance-elliptic leaves—glossy dark green above and silvery salt-crusted beneath—with white four-lobed flower spikes, lima-bean propagules, and a horizontal mud cable root bristling with erect pencil pneumatophores across the waterline.",
+    "note": "A dark fissured trunk and ascending crown of opposite lance-elliptic leaves\u2014glossy dark green above and silvery salt-crusted beneath\u2014with white four-lobed flower spikes, lima-bean propagules, and a horizontal mud cable root bristling with erect pencil pneumatophores across the waterline.",
     "enters": "Rooted in the intertidal mudflat, leaning in from the margin",
     "grows": "The mud cable root spreads and sends up erect breathing pegs across the rising waterline while the bicolored crown and flower spikes open above"
   },
@@ -922,5 +922,19 @@
     "note": "A stout grey-brown limb forking into ascending wood, knobbed with spur shoots, each bearing a cluster of long-stalked fresh green fans notched at the outer edge.",
     "enters": "Reaches in from the left edge",
     "grows": "The limb climbs and forks, spur shoots knuckle out along the wood, and the fans open on their stalks, a cluster at each spur, a single fan along each long shoot"
+  },
+  {
+    "name": "maple",
+    "garden": "eastasian",
+    "rank": 2,
+    "turn": [
+      0.7,
+      0.74
+    ],
+    "common": "Japanese maple",
+    "latin": "Acer palmatum",
+    "note": "Low limbs held in level tiers of fine twigs, seven-lobed hands in opposite pairs on red stalks, and paired winged keys hanging beneath them.",
+    "enters": "Reaches in from the right edge",
+    "grows": "The tiers reach out level, the hands open in pairs along the twigs, keys hang through summer, the crown turns scarlet and sheds, and the tiers of fine twigs stand bare"
   }
 ]
