@@ -63,7 +63,7 @@ export function setupSwitcher(button: HTMLButtonElement, list: HTMLElement, curr
   list.addEventListener("beforetoggle", (e) => {
     if ((e as ToggleEvent).newState !== "open") return;
     const { bottom, right } = button.getBoundingClientRect();
-    list.style.top = `${bottom + 8}px`;
+    list.style.setProperty("--top", `${bottom + 8}px`);
     list.style.right = `${document.documentElement.clientWidth - right}px`;
   });
   list.addEventListener("toggle", (e) => {

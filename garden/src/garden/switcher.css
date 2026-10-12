@@ -46,10 +46,15 @@
   rotate: 180deg;
 }
 
-/* The list opens under the button; switcher.ts sets its top and right. */
+/* The list opens under the button; switcher.ts sets its top (--top) and right. On a short
+   screen it stops above the bottom edge and scrolls. */
 .garden-list {
   position: fixed;
   inset: auto;
+  top: var(--top);
+  max-height: calc(100dvh - var(--top) - 0.75rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   margin: 0;
   min-width: 13rem;
   padding: 0.35rem;
