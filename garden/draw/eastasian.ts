@@ -5,7 +5,7 @@
 // stalks, and each long shoot carries single fans along its length. Every fan has its apex at its
 // stalk, a notch cut in its outer margin, and veins that fork dichotomously out to the margin.
 
-import { rad, P1, add, polar, rot, quad, sample, shape, stalk, tone, grow, part, gate } from "./lib.ts";
+import { rad, P1, add, polar, rot, quad, shape, stalk, tone, grow, part, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
@@ -66,7 +66,7 @@ function spurLeaves(out: Out, r: Rng, T: Pt, dir: number, g: number, sc: number)
 // Spur shoots along a limb: a short knuckle on alternate sides, each grown from the limb as it
 // passes and carrying its cluster of fans at the tip.
 function spursOn(out: Out, r: Rng, parent: { res: Limb; g: number[] }, from: number, side: number) {
-  const { res, g } = parent;
+  const { res } = parent;
   for (let i = Math.round(res.n * from), s = side; i <= res.n - 6; i += 12 + Math.floor(r() * 3), s = -s) {
     const a = angleOf(res.pts, i) + s * rad(48 + r() * 30);
     const spur = branch(out, r, parent, i / res.n, [polar(5, a), polar(12 + r() * 4, a)], 0.03, { w0: 9, w1: 7.5, cap: "blunt", ...BARK });
