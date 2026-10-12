@@ -31,8 +31,8 @@ Each plant gets `display: block` and four properties:
   least one stretch of bare ground between bed plants at laptop size; wider screens add plants into
   it.
 - **Corners make sides.** A plant at `--x: 0%` or `100%`, rooted past a bottom corner, reads as
-  reaching in from that edge, and the solver treats it as a side plant. A leaning young tree or a
-  shrub branch fills a thin edge honestly.
+  reaching in from that edge, and the solver treats it as a side plant that may sink but never
+  lift its cut base into view. A leaning young tree or a shrub branch fills a thin edge honestly.
 - **Keep clear of the controls** at the top right: a side branch there sits a third of the way
   down, not at the top.
 - **The solver** (`arrange.ts`) slides each plant along its edge (up to 12%) and lets it sink into

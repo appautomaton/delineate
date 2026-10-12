@@ -69,6 +69,8 @@ export function arrange(beds: HTMLElement[]) {
           for (let p = 0; p <= back; p++) {
             const dx = it.along === "y" ? it.out * p : s;
             const dy = it.along === "y" ? s : it.out * p;
+            // A plant rooted past the bottom edge may sink but never lift its cut base into view.
+            if (dy < 0 && it.top >= vh - 1) continue;
             if (water && (it.top >= waterY ? it.top + dy * c < waterY : it.top + dy * c > waterY)) continue;
             const n = it.cells.length / 2;
             const cost = cover(it, dx, dy) + STAY * n * ((s * s) / (span * span || 1) + (p * p) / (back * back || 1));

@@ -24,14 +24,14 @@
 /* Landscape screens. */
 @media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
   .garden { --u: min(1svh, 0.6vw); }
-  .plant.g-buttertree { display: block; --x: 0.2%; --y: calc(100svh + var(--u) * 3); --h: 35; }
+  .plant.g-buttertree { display: block; --x: 0%; --y: calc(100svh + var(--u) * 3); --h: 35; }
   .plant.g-quivertree { display: block; --x: 19%; --y: calc(100svh + var(--u) * 3); --h: 76; }
   .plant.g-hoodia { display: block; --x: 27%; --y: calc(100svh + var(--u) * 2); --h: 19; }
   .plant.g-welwitschia { display: block; --x: 47%; --y: calc(100svh + var(--u) * 2); --h: 17; }
   .plant.g-gifboom { display: block; --x: 73%; --y: calc(100svh + var(--u) * 2); --h: 42; }
   .plant.g-dunegrass { display: block; --x: 85%; --y: calc(100svh + var(--u) * 2); --h: 38; }
-  .plant.g-damara { display: block; --x: 99%; --y: calc(100svh + var(--u) * 3); --h: 26; --flip: -1; }
-  .plant.g-halfmens { display: block; --x: 99.5%; --y: calc(100svh + var(--u) * 3); --h: 58; --flip: -1; }
+  .plant.g-damara { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 26; --flip: -1; }
+  .plant.g-halfmens { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 58; --flip: -1; }
 }
 
 /* Wider screens: the nara melon and the Bushman's candle. */

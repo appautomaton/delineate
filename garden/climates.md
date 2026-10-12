@@ -165,13 +165,11 @@ Northwest European woodland (`#10`) wait for the season system.
 
 ## What the Namib taught
 
-- **Corner-rooted floor plants must stay strictly inside `0% < --x < 100%`.** In `src/garden/arrange.ts`,
-  `const side = left <= 1 ? -1 : left >= vw - 1 ? 1 : 0` classifies any plant at `--x: 0%` or `100%`
-  as wall-mounted (`along: "y"`), allowing `arrange()` to slide it *upward* (`dy < 0`) and expose its
-  flat bottom base in mid-air. Any plant drawn rooted in the ground (such as *Tylecodon paniculatus*,
-  *Euphorbia damarana*, or *Pachypodium namaquanum* leaning in from a bottom corner) must use
-  `0% < --x < 100%` (for example `--x: 0.2%` or `99%`) so `arrange()` treats it as floor-rooted
-  (`along: "x"`, `out: 1`, `dy >= 0`), guaranteeing it only ever sinks into the ground.
+- **A plant rooted past the bottom edge must never rise.** The solver slides a corner plant along
+  its side, and a slide upward lifted the cut bases of *Tylecodon paniculatus*, *Euphorbia
+  damarana*, and *Pachypodium namaquanum* into mid-air. Nudging them off the edge (`--x: 0.2%`,
+  `99%`) only hid the fault; `arrange.ts` now lets any plant rooted past the bottom edge sink but
+  never lift, and corner plants stay at `0%` and `100%`.
 - **Two-leaved *Welwitschia* needs longitudinal splits, frayed tan tips, and a central crater cup.**
   Carving a dark bi-lobed corky growth groove across the woody crown, splitting each undulating strap
   into ribbon lobes that fray and bleach into weathered tan strips where they touch the gravel, and
