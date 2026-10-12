@@ -6,8 +6,9 @@ drawing a plant that does not belong is the most expensive mistake available.
 
 ## The brief
 
-Spawn a general-purpose agent in the background on Haiku at high effort (lookup work does not
-need a larger model) with this brief, filled in. Spot-check a few of its sources before acting on
+Spawn one or two general-purpose agents in the background on Haiku at high effort (lookup work
+does not need a larger model, nor more agents) with this brief, filled in; split a long roster
+between two. Spot-check a few of its sources before acting on
 a correction. Draw nothing but scaffolding until it returns.
 
 > You are verifying the botany for an illustrated web garden before any drawing starts. Accuracy
@@ -32,11 +33,13 @@ a correction. Draw nothing but scaffolding until it returns.
 > bark, flowers and fruit, what persists dead (skirts, spikes, pods), inflorescence structure,
 > behavior worth drawing (closing at night, nodding); (5) gaps, with replacements from the same
 > climate that are distinct in silhouette from each other and from the gardens already built
-> (<list them>).
+> (<list them>); (6) for a four-season garden, the calendar in the region: the months of leaf-out,
+> flowering, fruit, autumn color, and leaf fall, what each plant looks like in each season, and
+> what persists through winter.
 >
 > **Return:** a roster table (common name, accepted name, role, range, one-line silhouette), drawing
-> notes per plant, corrections to the survey, what remains uncertain (marked, not guessed), and
-> sources as URLs. Keep it tight.
+> notes per plant, the calendar for a four-season garden, corrections to the survey, what remains
+> uncertain (marked, not guessed), and sources as URLs. Keep it tight.
 
 ## Deciding the roster
 
