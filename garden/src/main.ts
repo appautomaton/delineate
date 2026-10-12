@@ -7,6 +7,9 @@ import "./garden/mediterranean.css";
 import "./garden/desert.css";
 import "./garden/afroalpine.css";
 import "./garden/savanna.css";
+import "./garden/fynbos.css";
+import "./garden/namib.css";
+import "./garden/mangrove.css";
 import "./garden/anchors.css";
 import { animate } from "animejs";
 import { arrange } from "./garden/arrange";
@@ -20,6 +23,7 @@ import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
 // switcher the garden.
 
 const INTRO = 0.5; // how far the garden grows before the visitor scrolls
+const LOW_TIDE = 0.22; // the share of a water garden's depth shown before scrolling begins
 const UNFOLD = 0.08; // the span of progress a leaf, flower, or fruit takes to open
 const FPS = 30; // growth is slow, so the garden redraws at most this often
 const LAG = 75; // ms for the smoothed scroll to close about two thirds of the gap to the page
@@ -46,21 +50,43 @@ type Limb = {
   clipped: boolean;
 };
 type Part = { el: SVGGElement; g: number; o: string; back: string; turn: number; last: number };
+type Water = { body: SVGGElement; maskId: string; grad: SVGLinearGradientElement; edge: SVGPathElement; line: SVGPathElement; masked: boolean };
 // boost scales a plant's growth: 1 normally, and rising from 0 while its garden grows in.
 // enter is how far, in CSS pixels, a plant starts from its place (null if it starts there), and
 // shift the offset last applied.
-type Plant = { bed: HTMLElement; garden: string; vb: number; k: number; lag: number; boost: number; limbs: Limb[]; parts: Part[]; enter: number[] | null; flip: number; shift: string };
+type Plant = {
+  bed: HTMLElement;
+  garden: string;
+  vb: number;
+  vbY: number;
+  top: number;
+  k: number;
+  lag: number;
+  boost: number;
+  limbs: Limb[];
+  parts: Part[];
+  water: Water | null;
+  enter: number[] | null;
+  flip: number;
+  shift: string;
+};
 
 const root = document.documentElement;
+const gardenEl = document.querySelector<HTMLElement>(".garden")!;
+const waterEl = document.querySelector<HTMLElement>(".garden .water");
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const touch = matchMedia("(pointer: coarse)").matches;
 const growth = { intro: still ? 1 : 0, scroll: 0 };
+// A water garden's tide grows in with its plants, so the surface and every plant's waterline
+// rise together.
+const tideIn = { k: 1 };
 const plants: Plant[] = [];
 const beds = [...document.querySelectorAll<HTMLElement>(".garden .plant")];
 // The garden on show: a first visit opens on the theme's, tropical by day and Mediterranean at
 // night. It is marked on the root, where paint.css hides the other gardens' beds.
 let garden = chosenGarden(root.dataset.theme === "dark" ? "mediterranean" : "tropical");
 root.dataset.garden = garden;
+syncWater();
 linkGallery();
 let drawn = -1;
 let pending = false;
@@ -167,6 +193,7 @@ async function plantGarden(growing = false) {
 
 function collect(bed: HTMLElement, lag: number): Plant {
   const svg = bed.querySelector("svg")!;
+  const name = bed.dataset.plant!;
   const limbs = [...bed.querySelectorAll<SVGGElement>(".gl")].map((el, i): Limb => {
     const v = el.dataset.sp!.split(" ").map(Number);
     const x: number[] = [];
@@ -185,7 +212,7 @@ function collect(bed: HTMLElement, lag: number): Plant {
       ny.push((x[b] - x[a]) / d);
       if (k) s.push(s[k - 1] + Math.hypot(x[k] - x[k - 1], y[k] - y[k - 1]));
     }
-    const id = `${bed.dataset.plant}-grow${i}`;
+    const id = `${name}-grow${i}`;
     const clipPath = document.createElementNS(SVG_NS, "clipPath");
     clipPath.id = id;
     const clip = clipPath.appendChild(document.createElementNS(SVG_NS, "path"));
@@ -199,19 +226,73 @@ function collect(bed: HTMLElement, lag: number): Plant {
     const [x, y] = el.dataset.o!.split(" ");
     return { el, g: +el.dataset.g!, o: `${x} ${y}`, back: `${-x} ${-y}`, turn: i % 2 ? 22 : -22, last: -1 };
   });
-  return { bed, garden: bed.dataset.garden!, vb: svg.viewBox.baseVal.height, k: 0, lag, boost: 1, limbs, parts, enter: null, flip: 1, shift: "" };
+  const box = svg.viewBox.baseVal;
+  let water: Water | null = null;
+  if (GARDENS.find((g) => g.key === bed.dataset.garden)?.water) {
+    const body = document.createElementNS(SVG_NS, "g");
+    while (svg.firstChild) body.appendChild(svg.firstChild);
+    const defs = document.createElementNS(SVG_NS, "defs");
+    const grad = document.createElementNS(SVG_NS, "linearGradient");
+    const gradId = `${name}-wgrad`;
+    const maskId = `${name}-wmask`;
+    grad.id = gradId;
+    grad.setAttribute("gradientUnits", "userSpaceOnUse");
+    grad.setAttribute("x1", "0");
+    grad.setAttribute("x2", "0");
+    for (const [off, col] of [
+      ["0", "#fff"],
+      ["0.1", "#8c8c8c"],
+      ["0.75", "#444"],
+      ["1", "#0a0a0a"],
+    ]) {
+      const stop = document.createElementNS(SVG_NS, "stop");
+      stop.setAttribute("offset", off);
+      stop.setAttribute("stop-color", col);
+      grad.appendChild(stop);
+    }
+    const mask = document.createElementNS(SVG_NS, "mask");
+    mask.id = maskId;
+    mask.setAttribute("maskUnits", "userSpaceOnUse");
+    const pad = 40;
+    for (const [k, v] of [
+      ["x", box.x - pad],
+      ["y", box.y - pad],
+      ["width", box.width + pad * 2],
+      ["height", box.height + pad * 2],
+    ] as const) {
+      mask.setAttribute(k, String(v));
+    }
+    const rect = document.createElementNS(SVG_NS, "rect");
+    rect.setAttribute("x", String(box.x - pad));
+    rect.setAttribute("y", String(box.y - pad));
+    rect.setAttribute("width", String(box.width + pad * 2));
+    rect.setAttribute("height", String(box.height + pad * 2));
+    rect.setAttribute("fill", `url(#${gradId})`);
+    mask.appendChild(rect);
+    defs.append(grad, mask);
+    const cross = document.createElementNS(SVG_NS, "g");
+    const edge = document.createElementNS(SVG_NS, "path");
+    edge.setAttribute("class", "wash water-edge");
+    const line = document.createElementNS(SVG_NS, "path");
+    line.setAttribute("class", "ink water-line");
+    cross.append(edge, line);
+    svg.append(defs, body, cross);
+    water = { body, maskId, grad, edge, line, masked: false };
+  }
+  return { bed, garden: bed.dataset.garden!, vb: box.height, vbY: box.y, top: 0, k: 0, lag, boost: 1, limbs, parts, water, enter: null, flip: 1, shift: "" };
 }
 
 // A plant can enter from beyond its place, so the garden starts open and fills as it grows:
 // --enter, in its garden's layout, is where it starts, as shares of its own width and height,
 // and it eases into place as it grows. Read per layout, since each layout can say otherwise.
 function readEnter(plant: Plant) {
+  plant.bed.style.removeProperty("transform");
+  plant.top = plant.bed.getBoundingClientRect().top;
   const style = getComputedStyle(plant.bed);
   const v = style.getPropertyValue("--enter").trim().split(/\s+/).map(Number);
   plant.enter = v.length === 2 && v.every(Number.isFinite) && (v[0] || v[1]) ? [v[0] * plant.bed.offsetWidth, v[1] * plant.bed.offsetHeight] : null;
   plant.flip = style.getPropertyValue("--flip").trim() === "-1" ? -1 : 1;
   plant.bed.toggleAttribute("data-enters", !!plant.enter);
-  if (!plant.enter) plant.bed.style.removeProperty("transform");
   plant.shift = "";
 }
 
@@ -246,6 +327,10 @@ function showGarden(next: string) {
   if (next === garden) return;
   garden = next;
   root.dataset.garden = garden;
+  if (syncWater() && !still) {
+    tideIn.k = 0;
+    animate(tideIn, { k: 1, duration: GROW_IN, ease: "out(2)", onUpdate: () => requestGarden(true) });
+  }
   keepGarden(garden);
   linkGallery();
   arrange(beds);
@@ -258,6 +343,14 @@ function showGarden(next: string) {
   plantGarden(true);
 }
 
+// Marks the garden's default water depth on the page, and tells whether it has water.
+function syncWater() {
+  const w = GARDENS.find((g) => g.key === garden)?.water ?? 0;
+  if (w) gardenEl.style.setProperty("--water", String(w));
+  else gardenEl.style.removeProperty("--water");
+  return w > 0;
+}
+
 function growIn(plant: Plant) {
   if (still) return;
   plant.boost = 0;
@@ -268,19 +361,24 @@ function renderGarden(force = false) {
   const all = Math.round(Math.min(1, growth.intro + (1 - INTRO) * growth.scroll) * 400) / 400;
   if (all === drawn && !force) return;
   drawn = all;
+  const waterFull = waterEl?.offsetHeight ?? 0;
+  const tide = waterFull ? tideIn.k * (all <= INTRO ? (all / INTRO) * LOW_TIDE : LOW_TIDE + ((all - INTRO) / (1 - INTRO)) * (1 - LOW_TIDE)) : 0;
+  if (waterFull) gardenEl.style.setProperty("--tide", tide.toFixed(3));
   for (const plant of plants) {
     if (plant.garden !== garden) continue;
     const p = clamp((all - plant.lag) / (1 - plant.lag)) * plant.boost;
+    let shiftY = 0;
     if (plant.enter) {
       // Eased: it leaves its start briskly and settles slowly. The transform comes after the
       // flip, so a mirrored plant's offset is mirrored back.
       const k = 1 - p * p * (3 - 2 * p);
-      const shift = `translate(${(plant.enter[0] * k * plant.flip).toFixed(1)}px, ${(plant.enter[1] * k).toFixed(1)}px)`;
+      shiftY = plant.enter[1] * k;
+      const shift = `translate(${(plant.enter[0] * k * plant.flip).toFixed(1)}px, ${shiftY.toFixed(1)}px)`;
       if (force || shift !== plant.shift) plant.bed.style.transform = plant.shift = shift;
     }
     for (const limb of plant.limbs) {
       const t = clamp((p - limb.g0) / (limb.g1 - limb.g0));
-      if (t === limb.last) continue;
+      if (t === limb.last && !force) continue;
       limb.last = t;
       limb.el.style.visibility = t ? "" : "hidden";
       // Only a growing limb is clipped.
@@ -296,14 +394,79 @@ function renderGarden(force = false) {
     }
     for (const part of plant.parts) {
       const t = clamp((p - part.g) / UNFOLD);
-      if (t === part.last) continue;
+      if (t === part.last && !force) continue;
       part.last = t;
       part.el.style.visibility = t ? "" : "hidden";
       part.el.style.opacity = t < 0.3 ? String(t / 0.3) : "";
       if (t === 1) part.el.removeAttribute("transform");
       else part.el.setAttribute("transform", `translate(${part.o}) rotate(${(1 - t) * part.turn}) scale(${unfold(t)}) translate(${part.back})`);
     }
+    if (plant.water && waterFull) {
+      const waterY = innerHeight - waterFull * tide;
+      const wy = plant.vbY + (waterY - (plant.top + shiftY)) * plant.k;
+      waterPlant(plant, wy);
+    }
   }
+}
+
+// Softens the submerged portion of a plant below the garden's waterline wy (in the plant's SVG
+// units) and draws a soft meniscus glaze and ripple stroke where each grown root or stem crosses wy.
+function waterPlant(plant: Plant, wy: number) {
+  const w = plant.water!;
+  const k = plant.k;
+  const bot = plant.vbY + plant.vb;
+  if (wy >= bot - k) {
+    if (w.masked) {
+      w.body.removeAttribute("mask");
+      w.edge.removeAttribute("d");
+      w.line.removeAttribute("d");
+      w.masked = false;
+    }
+    return;
+  }
+  if (!w.masked) {
+    w.body.setAttribute("mask", `url(#${w.maskId})`);
+    w.masked = true;
+  }
+  w.grad.setAttribute("y1", (wy - 1.5 * k).toFixed(1));
+  w.grad.setAttribute("y2", Math.max(wy + 16 * k, bot - 2 * k).toFixed(1));
+
+  const spans: [number, number][] = [];
+  for (const limb of plant.limbs) {
+    if (limb.last <= 0) continue;
+    const { x, y, w: rw, s } = limb;
+    const at = limb.last * s[s.length - 1];
+    for (let i = 0; i < y.length - 1 && s[i] <= at; i++) {
+      const y0 = y[i];
+      const y1 = y[i + 1];
+      if ((y0 - wy) * (y1 - wy) > 0 || y0 === y1) continue;
+      const u = (wy - y0) / (y1 - y0);
+      if (s[i] + u * (s[i + 1] - s[i]) > at) continue;
+      const cx = x[i] + (x[i + 1] - x[i]) * u;
+      const hw = (rw[i] + (rw[i + 1] - rw[i]) * u) * Math.min(1.8, Math.hypot(x[i + 1] - x[i], y1 - y0) / Math.abs(y1 - y0));
+      spans.push([cx - hw, cx + hw]);
+    }
+  }
+  spans.sort((a, b) => a[0] - b[0]);
+  const merged: [number, number][] = [];
+  for (const sp of spans) {
+    const last = merged[merged.length - 1];
+    if (last && sp[0] <= last[1] + 5 * k) last[1] = Math.max(last[1], sp[1]);
+    else merged.push(sp);
+  }
+  let edgeD = "";
+  let lineD = "";
+  const pt = (px: number, py: number) => `${px.toFixed(1)} ${py.toFixed(1)}`;
+  for (const [x0, x1] of merged) {
+    const cx = (x0 + x1) / 2;
+    const hw = (x1 - x0) / 2;
+    const pad = hw + 8 * k;
+    const h = 2.6 * k;
+    edgeD += `M${pt(cx - pad, wy)}Q${pt(cx, wy - h)} ${pt(cx + pad, wy)}Q${pt(cx, wy + h * 1.5)} ${pt(cx - pad, wy)}Z`;
+    lineD += `M${pt(cx - pad - 2 * k, wy)}Q${pt(cx, wy + 1.2 * k)} ${pt(cx + pad + 2 * k, wy)}M${pt(cx - hw - 3.5 * k, wy + 3.2 * k)}Q${pt(cx, wy + 4 * k)} ${pt(cx + hw + 3.5 * k, wy + 3.2 * k)}`;
+  }
+  w.edge.setAttribute("d", edgeD);
+  w.line.setAttribute("d", lineD);
 }
 
 // Clips a growing limb to its spine up to the share t of its length, widened by ROOM on both

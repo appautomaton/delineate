@@ -14,10 +14,9 @@ const SLIDE = 0.12; // how far a plant may slide along its edge, as a share of t
 const RETREAT = 0.06; // how far it may sink into its edge, as a share of the shorter side
 const STAY = 0.08; // the pull back to the composed place: a full slide costs this share of the plant
 const OFFSCREEN = 0.6; // a cell pushed off screen costs this much against a covered cell
-const NAME = 0.4; // a cell behind the name costs this much
 const CROWDED = 0.5; // a plant with more than this share of itself covered is left out
 
-type Item = { bed: HTMLElement; cells: Int32Array; along: "x" | "y"; out: number; dx: number; dy: number; rank: number };
+type Item = { bed: HTMLElement; cells: Int32Array; along: "x" | "y"; out: number; top: number; dx: number; dy: number; rank: number };
 
 export function arrange(beds: HTMLElement[]) {
   for (const bed of beds) {
@@ -29,13 +28,13 @@ export function arrange(beds: HTMLElement[]) {
   }
   const vw = innerWidth;
   const vh = innerHeight;
+  const water = document.querySelector<HTMLElement>(".garden .water")?.offsetHeight ?? 0;
+  const waterY = vh - water;
   const c = Math.max(8, Math.round(Math.min(vw, vh) / 64));
   const W = Math.ceil(vw / c);
   const H = Math.ceil(vh / c);
+  const waterRow = water ? Math.floor(waterY / c) : H;
   const count = new Uint8Array(W * H);
-  const name = new Uint8Array(W * H);
-  const head = document.querySelector(".card header")?.getBoundingClientRect();
-  if (head) fillRect(name, W, H, head.left / c, head.top / c, head.right / c, head.bottom / c);
 
   const items: Item[] = [];
   for (const bed of beds) {
@@ -51,6 +50,7 @@ export function arrange(beds: HTMLElement[]) {
       cells: footprint(field, r, style.getPropertyValue("--flip").trim() === "-1", c),
       along: side ? "y" : "x",
       out: side || (top <= 1 ? -1 : 1),
+      top,
       dx: 0,
       dy: 0,
       rank: RANK.get(bed.dataset.plant!) ?? 99,
@@ -69,6 +69,7 @@ export function arrange(beds: HTMLElement[]) {
           for (let p = 0; p <= back; p++) {
             const dx = it.along === "y" ? it.out * p : s;
             const dy = it.along === "y" ? s : it.out * p;
+            if (water && (it.top >= waterY ? it.top + dy * c < waterY : it.top + dy * c > waterY)) continue;
             const n = it.cells.length / 2;
             const cost = cover(it, dx, dy) + STAY * n * ((s * s) / (span * span || 1) + (p * p) / (back * back || 1));
             if (cost < best) [best, it.dx, it.dy] = [cost, dx, dy];
@@ -110,7 +111,7 @@ export function arrange(beds: HTMLElement[]) {
       const x = cells[i] + dx;
       const y = cells[i + 1] + dy;
       if (x < 0 || y < 0 || x >= W || y >= H) cost += OFFSCREEN;
-      else cost += count[y * W + x] + NAME * name[y * W + x];
+      else cost += y >= waterRow ? count[y * W + x] * 0.25 : count[y * W + x];
     }
     return cost;
   }
@@ -149,9 +150,4 @@ function footprint([cols, rows, hex]: [number, number, string], r: DOMRect, flip
         }
     }
   return Int32Array.from(out);
-}
-
-function fillRect(grid: Uint8Array, W: number, H: number, x0: number, y0: number, x1: number, y1: number) {
-  for (let y = Math.max(0, Math.floor(y0)); y < Math.min(H, Math.ceil(y1)); y++)
-    for (let x = Math.max(0, Math.floor(x0)); x < Math.min(W, Math.ceil(x1)); x++) grid[y * W + x] = 1;
 }

@@ -46,9 +46,10 @@ const RULES = [...paint.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]+)\{([^
 
 // A garden's palette: every token its drawings reach, directly (a shape's --pc) or through a
 // paint rule their classes meet, and its plants' species. Paper and ink belong to every garden.
-function reached(drawings: string[], plants: Plant[]) {
+function reached(drawings: string[], plants: Plant[], water = false) {
   const text = drawings.join("");
   const classes = new Set([...text.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(" ")));
+  if (water) ["water", "water-edge", "water-line"].forEach((c) => classes.add(c));
   const names = new Set([...text.matchAll(/var\((--[\w-]+)\)/g)].map((m) => m[1]));
   for (const plant of plants) names.add(`--pl-${plant.name}`);
   for (const rule of RULES) if (rule.classes.length && rule.classes.every((c) => c === "garden" || classes.has(c))) rule.names.forEach((n) => names.add(n));
@@ -178,7 +179,7 @@ async function show() {
   const heading = document.querySelector<HTMLElement>("[data-garden-name]")!;
   heading.style.setProperty("--tone", `var(${g.tone})`);
   heading.innerHTML = `${emblem(g)}<span>${g.name} garden</span>`;
-  renderPalette(document.querySelector("[data-palette]")!, reached(drawings, plants));
+  renderPalette(document.querySelector("[data-palette]")!, reached(drawings, plants, !!g.water));
   document.querySelector("[data-plants]")!.replaceChildren(...plants.map((plant, i) => renderPlant(plant, drawings[i], studies[i])));
   scaleInk();
 }
