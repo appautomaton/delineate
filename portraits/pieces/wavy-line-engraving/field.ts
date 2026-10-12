@@ -67,8 +67,8 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; li
   const wide = blur(inked, alpha, w, h, 2.5 * SPACING);
   const { hair, face, neck } = headFields(w, h);
   const light = Float32Array.from(wide, (v, p) => Math.max(face[p], hair[p], neck[p], smoothstep(0.4, 0.2, v)));
-  // Where the lines are a tint: where he is light, but not his neck, whose shadow is the ink's own.
-  const tint = Float32Array.from(wide, (v, p) => Math.max(face[p], hair[p], smoothstep(0.4, 0.2, v)) * (1 - neck[p]));
+  // Where the lines are a tint: wherever he is light, his neck included.
+  const tint = light;
   // The neck's shadow is the plate's waves, not line art: the neck is light only in register.
   const { line, depth } = lineField(L, w, h, REACH, CONTRAST, true);
   const art = Float32Array.from(L, (v, p) => (light[p] > 0.5 && neck[p] < 0.5 && alpha[p] > 0.5 ? Math.max(line[p], MASS - v) : -1));
