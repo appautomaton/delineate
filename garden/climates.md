@@ -6,13 +6,11 @@ The survey was written from memory: research how each plant looks before it ente
 
 ## Status
 
-- **Built, 8 of 12:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld
-  savanna, Namib and Namaqualand, and the mangrove, the first with water.
-- **In progress:** East Asian, the first four-season garden, with lotus and rabbit-ear iris on a
-  still pond. Its signature plant, the ginkgo, is drawn through its year, a side tree from the
-  left edge, and the seasons system is built on it (see Seasons); the rest of the roster is next.
-- **Waiting for seasons:** boreal taiga, Eastern North American edge, Northwest European
-  woodland.
+- **Built, 9 of 12:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld
+  savanna, Namib and Namaqualand, the mangrove (the first with water), and East Asian (the first
+  to show a year, with a still pond).
+- **Next:** boreal taiga, Eastern North American edge, Northwest European woodland, on the
+  seasons system the East Asian garden built.
 
 ## The test
 
@@ -200,6 +198,31 @@ says where that stands.
   utriculata* on a bare brown bar from the top border looks like a cut stick; tipping the dipping
   host bough with a terminal mangrove leaf cluster (`leafCluster`) turns it into a living canopy limb.
 
+## What the East Asian taught
+
+- **The first scroll must answer.** An intro that grew the garden to its fullest left the first
+  scroll nothing to do. The intro now stops in early spring, the wood reaching in, and the scroll
+  leafs the garden.
+- **A fall needs room on the scroll.** The ginkgo sheds in days, but a shedding squeezed into a
+  twelfth of the scroll read as leaves vanishing. Spread over a sixth, each leaf letting go at once
+  and swaying as it drops, it reads as falling.
+- **A check reads every attribute it parses.** When `part` began writing `data-d` between `data-g`
+  and `data-o`, `draw.ts`'s pattern stopped matching any falling part, and several plants passed
+  unchecked until it did.
+- **Crowns of many leaves take hairline rims.** Light-and-heavy edges on a hundred overlapping
+  leaves darken a crown into a mass. The ginkgo's fans, the maple's hands, and the hydrangea's
+  leaves take one fine rim (`blade` and `palmate`'s `hairline`), and a curtain of small leaves one
+  wash a bunch (the willow, `bladeBunch`).
+- **Vines bring their hosts.** The wisteria hangs from a timber beam and the chocolate vine twines
+  a bamboo pole, each drawn in its own drawing, so nothing at the top floats.
+- **Two edges hold about six plants on a laptop.** Six sides and two hangers crowd them: the laptop
+  shows six, and wide screens add the paulownia and the chocolate vine.
+- **A seasonal plant is shown at one moment.** Inlined whole, it showed every season's parts at
+  once, the plum's two flowerings over its fruit; the gallery shows it at late spring.
+- **Research asks how a plant looks.** A first brief that asked for native ranges sent the checks
+  after where plants come from; a garden's plants are grown there, so the brief now asks only how
+  they look through the year.
+
 ## Settled
 
 - **How a visitor chooses a climate.** A switcher in the controls lists every garden by emblem
@@ -212,11 +235,10 @@ says where that stands.
 
 ## Seasons
 
-The gardens built each show one moment. A four-season garden shows a year: its parts arrive and
-leave in their own seasons, its leaves turn, and its wood stands bare in winter. Built and proven
-on the ginkgo: the year, parts that fall, turning, and seeing the year in `npm run look`. Still to
-build, each with the first plant that needs it: stems that die back, the check that a part does
-not outlive its stem, and still water.
+Most gardens show one moment. A four-season garden shows a year: its parts arrive and leave in
+their own seasons, its leaves turn, and its wood stands bare in winter. Built on the East Asian
+garden, each piece with the first plant that needed it: the year, parts that fall or fade, stems
+that die back, turning, still water, and seeing the year in `npm run look`.
 
 **One axis, the year.** A garden marked `year` in `gardens.ts` runs its progress u from 0 to 1
 through the year, on the same axis growth uses (`data-g`): spring 0 to 0.45, summer to 0.65,
@@ -239,15 +261,19 @@ to the calendar.
   plum flowering on bare zigzag wood so the end reads as finished.
 
 **A part's life.** A part arrives at g and, if it leaves, falls at d (`part`'s `leave`, written
-as `data-d`). Wood, winter buds, and fruit that stays through winter never leave. A herbaceous
-stem that dies back (the peony, the spider lily's scape, the lotus's stalks) will leave too.
+as `data-d`), or, marked `fade`, fades where it is: the hydrangea's mopheads fade to the dry heads
+drawn beneath them. Wood, winter buds, and fruit that stays through winter never leave. A
+herbaceous stem that dies back (the peony's, the spider lily's scape, the lotus's stalks) leaves
+too (`grow`'s `leave`). What happens twice on the page's year is drawn twice at the same place:
+the plum's flowers in early spring and again at the year's end, the spider lily's leaves standing
+as the year opens and coming again after its flowers.
 
 **Leaving reads as falling, not as arrival run backward.** A part shrinking back into its bud
 reads as time reversed. A falling part lets go at once and drops toward the foot of its plant,
 faster as it goes, swaying side to side and tilting, and fades over the second half of its fall.
 A tree's shedding is spread over enough of the scroll to watch (the ginkgo's, about a sixth),
 even where the real one sheds in days. Before it falls, a leaf has already turned. A dying stem
-will bend and fade.
+bends over from its base and fades.
 
 **Turning.** A species that turns has an autumn tone, `--pl-<key>-autumn`, beside its summer one
 in both lights, and a turning window on the year in `plants.json` (`turn`). `draw.ts` writes its
@@ -258,15 +284,14 @@ when the step changes. The ginkgo turns late and all at once, the maple early an
 shoots, buds, fine tips. Drawn bare first, then leafed. The ginkgo's spurs are stout and ringed
 with leaf scars for this.
 
-**Still water.** A garden whose water is a pond, not a tide, will hold it at full depth:
-`gardens.ts` marks the water still, and `--tide` stays at 1.
+**Still water.** A garden whose water is a pond, not a tide, holds it full: `gardens.ts` marks it
+`still`, and `--tide` stays at 1. Water plants root below the frame, in it; plants of the bank root
+at the waterline (`100svh − <water>u`), so the pond reads as foreground with the bank beyond.
 
 **The tools follow.** `npm run look` shows a seasonal garden at rest and then at summer, early
-autumn, late autumn, and winter, so a layout is judged across the year. `npm run draw` will also
-fail when a part outlives the stem it sits on.
-
-**Build order.** Done: the East Asian roster's research, and the system on the ginkgo. Next: the
-rest of the roster, each bringing the system piece it needs.
+autumn, late autumn, and winter, so a layout is judged across the year. `npm run draw` fails a
+part that opens before its limb reaches it or stays after its limb has died back. The gallery
+shows a seasonal plant in full leaf, at late spring.
 
 The taiga and the two temperate woodlands take the same system, and their rosters get the same
 four columns when their turn comes.
@@ -291,7 +316,7 @@ which would double every drawing and break the paper-and-wash look.
    East Asian garden needs it.
 3. **Tide (`src/main.ts`).** `--tide` rises from 0 to `LOW_TIDE = 0.22` over the intro, so roots and
    pegs stand exposed above a low rim, then to 1 over the scroll. When a water garden comes on show,
-   the tide grows in with its plants. A still pond is designed with the seasons (see Seasons).
+   the tide grows in with its plants. A still pond stays full (see Seasons).
 4. **The band (`src/garden/paint.css`).** `.garden .water` is a fixed band `--water` × `--u` tall,
    lowered by `1 − --tide`, washed with `--water-tint` under a thin `--water-line` edge.
 5. **Plants at the surface (`src/main.ts`).** `collect` wraps each water-garden plant in a group
@@ -304,8 +329,8 @@ which would double every drawing and break the paper-and-wash look.
 
 The mangrove (`#4`) built and verified this mechanism with its twelve brackish Everglades and
 Caribbean lagoon species (§4). Lotus (*Nelumbo nucifera*) and rabbit-ear iris (*Iris laevigata*)
-stay out of the mangrove—both are freshwater plants, and the iris is temperate—and will reuse
-`water` in the East Asian garden (`#2`).
+stay out of the mangrove—both are freshwater plants, and the iris is temperate—and stand in the
+East Asian garden's still pond (`#2`).
 
 ## The gardens
 
@@ -336,7 +361,7 @@ Monsoon summers, plum-rain haze, a clear gold autumn, bare trunks under a low wi
 Palette: bamboo olive, ginkgo butter, paulownia lilac, wisteria violet, lotus pink, lycoris
 vermilion.
 
-The first seasonal garden, and the second with water: a still pond in the bed. Researched in
+Built. The first seasonal garden, and the second with water: a still pond in the bed. Researched in
 October 2026 (below). The roster chooses each plant by how it reads; where it is native does not
 matter, since a garden's plants are grown there. Plants reach in from the sides and the top and
 enter as they grow (`--enter`), so the garden's motion carries the year as much as its colors.

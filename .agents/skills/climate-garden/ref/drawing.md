@@ -14,8 +14,8 @@ pixels.
 - `draw/woody.ts`: `limb` (a barked branch with shade, light, and texture; forks drawn over their
   parent with `inkFrom`), `branch` (a limb forking from a growing one, timed to its tip),
   `spineThrough`, `angleOf`.
-- `draw/mediterranean.ts`: `blade`, `palmate`, `bladeBunch` (many blades in one path), `tendril`,
-  `agaveLeaf`.
+- `draw/mediterranean.ts`: `blade`, `palmate` (both with a `hairline` rim for crowns of many
+  leaves), `bladeBunch` (many blades in one path), `tendril`, `agaveLeaf`.
 - `draw/desert.ts`: ribbed columns with areoles (`saguaroColumn`), pads, joints, bipinnate leaves
   (`mesquiteLeaf`), fine twigs (`verdeTwig`), a host-drawn hanger (`mistletoe`).
 - `draw/rosette.ts`: rosettes in space (`rosette`, shaped by a `Habit`) and single leaves in space
@@ -28,6 +28,8 @@ pixels.
   (`baobabLeaf`, `pinnateLeaf`), pendant flowers (`baobabFlower`), puffballs (`puffball`), coiled
   pods (`coiledPod`), hanging fruit (`sausage`), strap-leaf rosettes with umbels (`crinum`), stars
   (`star`). Its boughs, thorns, and grass tufts are private to the savanna's plants.
+- `draw/eastasian.ts`: a tree's shedding (`fallsAt`), hosts for vines (`arborBeam`, a timber beam;
+  a bamboo pole), pendant racemes (`raceme`), double cup flowers, mopheads, lotus leaves and pods.
 
 Copy a plant's shape of code from the closest existing plant, not its numbers.
 
@@ -38,18 +40,22 @@ A garden that shows a year runs the same value through the year (spring to 0.45,
 autumn to 0.85, winter to 1; see Seasons in `climates.md`), so there g is a date: open a part
 when the plant opens it, and have the whole plant in leaf by late spring, 0.42.
 
-- `grow(out, g0, g1, fn)` wraps a limb or stem; the page clips it to a rounded shoot that reaches
-  its tip at g1. `fn` must return the stem's edges (`limb`, `stalk`, and `skirt` do).
-- `part(out, g, origin, fn, leave?)` wraps a leaf, flower, or fruit; it unfolds from `origin` over
-  0.08 and, given `leave`, falls from then over 0.03. Take a leaf's `leave` from where it hangs,
-  not from `r()`, so its timing never moves the drawing (the ginkgo's `shed`).
+- `grow(out, g0, g1, fn, leave?)` wraps a limb or stem; the page clips it to a rounded shoot that
+  reaches its tip at g1. `fn` must return the stem's edges (`limb`, `stalk`, and `skirt` do).
+  Given `leave`, a herbaceous stem dies back then, bending over from its base and fading.
+- `part(out, g, origin, fn, leave?, fade?)` wraps a leaf, flower, or fruit; it unfolds from
+  `origin` over 0.08 and, given `leave`, falls from then over 0.08, or with `fade` fades where it
+  is (a head drying on its stem over a dry one drawn beneath it). Take a leaf's `leave` from where
+  it hangs with `fallsAt`, not from `r()`, so its timing never moves the drawing. What happens
+  twice in the page's year (the plum's two flowerings) is two parts at the same place.
 - A species that turns in autumn gets `turn: [start, end]` in `plants.json` and a
   `--pl-<key>-autumn` token beside its summer one in both lights; its species-toned leaves mix
   toward it.
 - `gate(res, g, i)` is the progress at which a grown stem reaches its point i: open parts there.
 - `npm run draw` fails when a part sits on a limb (within its half width) before the limb reaches
-  it. Usually a part near a fork is closer to the fork's base than to its own limb: open it a beat
-  later (`+ 0.03`), or grow the structure that was already standing (a dead spike) first.
+  it, or stays after the limb has died back. Usually a part near a fork is closer to the fork's
+  base than to its own limb: open it a beat later (`+ 0.03`), start it clear of the fork, or grow
+  the structure that was already standing (a dead spike) first.
 - Order in the list is paint order, so draw back to front. A trunk drawn last covers where its
   branches leave it; a branch drawn over its stem hides the seam with a hem of leaf tips in
   hairline ink.

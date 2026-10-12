@@ -28,8 +28,7 @@ and by moonlight.
 - **One moment, or a year.** A garden shows the moment its climate looks most itself (the desert
   after rain, the alpine at any hour), or, marked `year` in `gardens.ts`, a four-season climate's
   whole year, its leaves opening, turning, and falling as the page scrolls (see Seasons in
-  `climates.md`; parts of it are still to build). A garden can have a tide (see Water there); a
-  still pond comes with the seasons.
+  `climates.md`). A garden can have water: a tide, or a still pond (see Water there).
 - **Nothing floats.** Whatever hangs (lichen, mistletoe, a vine, spent flowers, fruit) is drawn
   hanging from its host, in the host's drawing: from a branch reaching in, or, in a garden with a
   canopy, from a bough or an arbor beam entering from the top. Open land leaves the top empty.
