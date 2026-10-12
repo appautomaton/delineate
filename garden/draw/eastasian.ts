@@ -5,7 +5,7 @@
 // stalks, and each long shoot carries single fans along its length. Every fan has its apex at its
 // stalk, a notch cut in its outer margin, and veins that fork dichotomously out to the margin.
 
-import { rad, P1, add, polar, rot, quad, shape, stalk, tone, grow, part, gate } from "./lib.ts";
+import { rad, P1, add, polar, rot, quad, closed, shape, stalk, tone, grow, part, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
@@ -25,7 +25,11 @@ export function ginkgoFan(out: Out, r: Rng, O: Pt, dir: number, R: number) {
   for (let k = 0; k <= 6; k++) arc.push(polar(rim(-half + (half - 0.14) * (k / 6)), -half + (half - 0.14) * (k / 6)));
   arc.push(polar(rim(0), 0));
   for (let k = 6; k >= 0; k--) arc.push(polar(rim(half - (half - 0.14) * (k / 6)), half - (half - 0.14) * (k / 6)));
-  shape(out, r, [[0, 0], ...arc].map(toW), tone(r, { spread: 0.06, hue: 8 }), { deep: 0.5, deepAbout: toW(polar(R * 0.4, 0)) });
+  // A hairline rim, not the shape's light-and-heavy edges: dozens of fans overlap, and the full
+  // edges turn a crown of them dark.
+  const pts = [[0, 0] as Pt, ...arc].map(toW);
+  shape(out, r, pts, tone(r, { spread: 0.06, hue: 8 }), { deep: 0.5, deepAbout: toW(polar(R * 0.4, 0)), ink: false });
+  out.push(`<path class="ink hair" d="${closed(pts)}"/>`);
 
   const FORK = [0.5, 0.78, 0.92];
   let veins = "";
@@ -52,14 +56,16 @@ function fanOnStalk(out: Out, r: Rng, T: Pt, a: number, len: number, R: number, 
   });
 }
 
-// The leaves of a spur shoot: three to seven fans round its tip, stalks spreading from it. Each
-// opens in turn once the spur has reached its tip, which is gate g.
+// The leaves of a spur shoot: three to five fans from its tip on stalks of uneven length, turned
+// up toward the light rather than spread round it like spokes. Each opens in turn once the spur
+// has reached its tip, which is gate g.
 function spurLeaves(out: Out, r: Rng, T: Pt, dir: number, g: number, sc: number) {
   const n = 3 + Math.floor(r() * 3);
-  const spread = rad(160);
+  const aim = Math.atan2(Math.sin(dir) - 0.9, Math.cos(dir));
+  const spread = rad(110);
   for (let k = 0; k < n; k++) {
-    const a = dir + (n > 1 ? spread * (k / (n - 1) - 0.5) : 0) + (r() - 0.5) * 0.18;
-    fanOnStalk(out, r, T, a, (40 + r() * 14) * sc, (34 + r() * 4) * sc, g + k * 0.014);
+    const a = aim + spread * (k / (n - 1) - 0.5) + (r() - 0.5) * 0.3;
+    fanOnStalk(out, r, T, a, (30 + r() * 28) * sc, (26 + r() * 12) * sc, g + k * 0.014);
   }
 }
 
@@ -67,9 +73,10 @@ function spurLeaves(out: Out, r: Rng, T: Pt, dir: number, g: number, sc: number)
 // passes and carrying its cluster of fans at the tip.
 function spursOn(out: Out, r: Rng, parent: { res: Limb; g: number[] }, from: number, side: number) {
   const { res } = parent;
-  for (let i = Math.round(res.n * from), s = side; i <= res.n - 6; i += 12 + Math.floor(r() * 3), s = -s) {
+  for (let i = Math.round(res.n * from), s = side; i <= res.n - 6; i += 15 + Math.floor(r() * 4), s = -s) {
     const a = angleOf(res.pts, i) + s * rad(48 + r() * 30);
-    const spur = branch(out, r, parent, i / res.n, [polar(5, a), polar(12 + r() * 4, a)], 0.03, { w0: 9, w1: 7.5, cap: "blunt", ...BARK });
+    // Stout and ringed with leaf scars, so the spur still reads once its leaves have fallen.
+    const spur = branch(out, r, parent, i / res.n, [polar(8, a), polar(20 + r() * 6, a)], 0.03, { w0: 11, w1: 9, cap: "blunt", lenticels: true, ...BARK });
     const tip = spur.res.pts[spur.res.n];
     spurLeaves(out, r, tip, angleOf(spur.res.pts, spur.res.n), gate(spur.res, spur.g, spur.res.n) + 0.02, 1);
   }
@@ -80,7 +87,7 @@ function spursOn(out: Out, r: Rng, parent: { res: Limb; g: number[] }, from: num
 export function ginkgo(out: Out, r: Rng, base: Pt) {
   const at = (p: Pt) => add(base, p);
   const gm = [0, 0.5];
-  const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-30, 14]), at([80, -8]), at([190, -60]), at([280, -150]), at([330, -262])], { w0: 40, w1: 13, cap: "blunt", ...BARK }));
+  const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-30, 14]), at([80, -8]), at([190, -60]), at([280, -150]), at([330, -262])], { w0: 46, w1: 13, cap: "blunt", ...BARK }));
   const parent = { res: main, g: gm };
 
   const forks = [

@@ -5,13 +5,13 @@
 /* Portrait screens. */
 @media (max-aspect-ratio: 1/1) {
   .garden { --u: min(0.8svh, 1.15vw); }
-  .plant.g-ginkgo { display: block; --x: 0%; --y: 80%; --h: 46; --enter: -0.4 0; }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 80%; --h: 58; --enter: -0.4 0; }
 }
 
 /* Landscape screens. */
 @media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
   .garden { --u: min(1svh, 0.6vw); }
-  .plant.g-ginkgo { display: block; --x: 0%; --y: 90%; --h: 58; --enter: -0.4 0; }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 92%; --h: 80; --enter: -0.4 0; }
 }
 
 /* Short landscape phones. */
