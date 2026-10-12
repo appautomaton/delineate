@@ -936,5 +936,19 @@
     "note": "Low limbs held in level tiers of fine twigs, seven-lobed hands in opposite pairs on red stalks, and paired winged keys hanging beneath them.",
     "enters": "Reaches in from the right edge",
     "grows": "The tiers reach out level, the hands open in pairs along the twigs, keys hang through summer, the crown turns scarlet and sheds, and the tiers of fine twigs stand bare"
+  },
+  {
+    "name": "plum",
+    "garden": "eastasian",
+    "rank": 3,
+    "turn": [
+      0.72,
+      0.77
+    ],
+    "common": "Plum",
+    "latin": "Prunus mume",
+    "note": "A bent, knotted trunk leaning in from the corner, zigzag twigs, white five-petaled flowers on bare wood, oval leaves after them, and green plums that yellow in the June rain.",
+    "enters": "Leans in from the bottom right corner",
+    "grows": "Still in flower as spring opens, the petals falling as the leaves come; plums swell and yellow in summer; the leaves yellow and fall; and the flowers open again on bare wood at the year's end"
   }
 ]

@@ -5,11 +5,11 @@
 // stalks, and each long shoot carries single fans along its length. Every fan has its apex at its
 // stalk, a notch cut in its outer margin, and veins that fork dichotomously out to the margin.
 
-import { rad, P1, add, mul, lerp, polar, rot, quad, closed, vars, shape, stalk, tone, grow, part, gate } from "./lib.ts";
+import { rad, P1, add, mul, lerp, polar, rot, quad, closed, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
-import { palmate } from "./mediterranean.ts";
+import { palmate, blade } from "./mediterranean.ts";
 
 const BARK = { pc: "--bark-ginkgo" };
 const STALK = { pc: "--stem-green" };
@@ -241,5 +241,100 @@ export function mapleDetail(out: Out, r: Rng) {
     mapleLeaf(out, r, E, d, 84);
   }
   mapleKeys(out, r, twig.pts[Math.round(twig.n * 0.58)], rad(95), 2.6);
+}
+
+// ---------------------------------------------------------------------------
+// Plum (Prunus mume): a bent, knotted trunk rooted past the bottom corner and leaning in, its
+// twigs going zigzag from node to node. It flowers twice on the page's year: still in flower as
+// spring opens, the petals falling as the leaves come; and again on bare wood at the year's end,
+// where the page rests. Green plums yellow in the June rain; the leaves yellow and fall in autumn.
+
+const PLUM = { pc: "--bark-plum" };
+const plumShed = fallsAt(0.76, 0.08);
+const petalsFall = fallsAt(0.12, 0.08);
+
+// A plum flower facing out: five round petals, a dark calyx, a burst of stamens.
+export function plumFlower(out: Out, r: Rng, C: Pt, R: number) {
+  let petals = "";
+  const spin = r() * 6.28;
+  for (let k = 0; k < 5; k++) {
+    const a = spin + (k / 5) * 6.28;
+    petals += closed(roundPts(add(C, polar(R * 0.55, a)), R * 0.5, R * 0.46, a, 8));
+  }
+  out.push(`<path class="wash petal"${vars(tone(r, { pc: "--flower-plum", spread: 0.03 }))} d="${petals}"/><path class="ink hair petal-edge" d="${petals}"/>`);
+  let stamens = "";
+  for (let k = 0; k < 9; k++) {
+    const a = spin + (k / 9) * 6.28;
+    stamens += `M${P1(C)}L${P1(add(C, polar(R * 0.5, a)))}`;
+  }
+  out.push(`<path class="ink hair" style="stroke:var(--stamen-plum)" d="${stamens}"/>`);
+  shape(out, r, roundPts(C, R * 0.2, R * 0.2, 0, 6), tone(r, { pc: "--calyx-plum", spread: 0.02 }), { deep: 0, ink: false });
+}
+
+// A zigzag twig: straight segments that turn at each node, thinning to a fine tip.
+function zigzag(a: number, len: number, turns: number, r: Rng): Pt[] {
+  const pts: Pt[] = [[0, 0]];
+  let dir = a;
+  for (let k = 1; k <= turns; k++) {
+    dir += (k % 2 ? 1 : -1) * rad(18 + r() * 14);
+    pts.push(add(pts[k - 1], polar(len / turns, dir)));
+  }
+  return pts;
+}
+
+function plumTwig(out: Out, r: Rng, parent: { res: Limb; g: number[] }, t: number, a: number, len: number) {
+  const twig = branch(out, r, parent, t, zigzag(a, len, 4, r).slice(1), 0.03, { w0: 6, w1: 2, cap: "taper", ...PLUM });
+  const n = twig.res.n;
+  // Flowers sit close along the twig on the side toward the light, two moments each.
+  for (const u of [0.3, 0.55, 0.8, 1]) {
+    const i = Math.round(n * u);
+    const p = add(twig.res.pts[i], polar(4, angleOf(twig.res.pts, Math.min(i, n - 1)) - rad(90)));
+    const g = gate(twig.res, twig.g, i) + 0.005;
+    const R = 9 + r() * 3;
+    part(out, g, p, () => plumFlower(out, r, p, R), petalsFall(p));
+    part(out, 0.93 + (u * 0.04), p, () => plumFlower(out, r, p, R));
+  }
+  // Leaves come after the flowers, alternate along the twig.
+  for (const [k, u] of [[0, 0.4], [1, 0.65], [2, 0.9]] as const) {
+    const i = Math.round(n * u);
+    const T = twig.res.pts[i];
+    const d = angleOf(twig.res.pts, Math.min(i, n - 1)) + (k % 2 ? 1 : -1) * rad(50);
+    part(out, 0.14 + k * 0.03 + r() * 0.04, T, () => blade(out, r, T, d, 34 + r() * 8, { W: 0.46, prof: (q) => Math.sin(Math.PI * Math.min(1, q) ** 0.7) ** 0.9, v: tone(r, { spread: 0.05, hue: 8 }), deep: 0.4, rib: "ink hair" }), plumShed(T));
+  }
+  // A green plum or two, from late spring until the June rain has yellowed them.
+  if (r() < 0.5) {
+    const T = twig.res.pts[Math.round(n * 0.5)];
+    const C = add(T, [0, 12]);
+    part(out, 0.3, T, () => {
+      out.push(`<path class="ink hair" d="M${P1(T)}L${P1(C)}"/>`);
+      shape(out, r, roundPts(C, 9, 10, 0, 10), tone(r, { pc: "--fruit-plum", spread: 0.04 }), { deep: 0.4 });
+    }, 0.56 + r() * 0.04);
+  }
+}
+
+export function plum(out: Out, r: Rng, base: Pt) {
+  const at = (p: Pt) => add(base, p);
+  // The wood is up early, before the year's first flowers.
+  const gm = [0, 0.05];
+  const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-20, 20]), at([30, -60]), at([10, -130]), at([60, -200]), at([150, -240]), at([230, -300])], { w0: 40, w1: 12, cap: "blunt", swell: [[0.3, 0.12], [0.55, 0.1]], ...PLUM }));
+  const parent = { res: main, g: gm };
+  const limbs = [
+    branch(out, r, parent, 0.42, [[50, -20], [120, -70], [150, -40], [230, -90]], 0.03, { w0: 16, w1: 5, cap: "taper", ...PLUM }),
+    branch(out, r, parent, 0.68, [[-30, -50], [-20, -110], [-70, -150]], 0.03, { w0: 12, w1: 4, cap: "taper", ...PLUM }),
+  ];
+  for (const [j, l] of [parent, ...limbs].entries()) {
+    const n = l.res.n;
+    for (let i = Math.round(n * 0.35), s = j % 2 ? 1 : -1; i <= n - 2; i += 9 + Math.floor(r() * 4), s = -s) {
+      plumTwig(out, r, l, i / n, angleOf(l.res.pts, i) + s * rad(40 + r() * 20), 60 + r() * 30);
+    }
+  }
+}
+
+export function plumDetail(out: Out, r: Rng) {
+  const twig = limb(out, r, zigzag(rad(-20), 300, 4, r).map((p) => add(p, [-150, 60])), { w0: 10, w1: 3, cap: "taper", ...PLUM });
+  for (const u of [0.25, 0.5, 0.75, 1]) {
+    const i = Math.round(twig.n * u);
+    plumFlower(out, r, add(twig.pts[i], [0, -6]), 26);
+  }
 }
 

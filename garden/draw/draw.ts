@@ -522,7 +522,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9512,
     draw: (o, r) => E.maple(o, r, [0, 0]),
     detail: (o, r) => E.mapleDetail(o, r),
+  },  plum: {
+    seed: 9613,
+    draw: (o, r) => E.plum(o, r, [0, 0]),
+    detail: (o, r) => E.plumDetail(o, r),
   },
+
 
 };
 
