@@ -558,5 +558,355 @@
     "note": "Hairy strap leaves arching out in three ranks, and erect stalks of bright yellow six-pointed stars.",
     "enters": "Low in the bed",
     "grows": "The leaves arch out, and the stalks rise with their stars last"
+  },
+  {
+    "name": "pincushion",
+    "garden": "fynbos",
+    "rank": 4,
+    "common": "Tree pincushion",
+    "latin": "Leucospermum conocarpodendron",
+    "note": "Thick corky limbs branching at wide angles, wedge leaves notched with red-tipped apical teeth, and golden domes of arching styles with conical pollen presenters.",
+    "enters": "Leans in from a bottom corner",
+    "grows": "The corky trunk rises and forks, wedge leaves unfold, and the golden style domes arch open last"
+  },
+  {
+    "name": "silvertree",
+    "garden": "fynbos",
+    "rank": 2,
+    "common": "Silver tree",
+    "latin": "Leucadendron argenteum",
+    "note": "Stout ascending grey limbs scarred with horizontal leaf rings, shingled in silky silver lance-leaves that flare into terminal rosettes round heavy silver-velvet cones.",
+    "enters": "Reaches in from a side",
+    "grows": "The scarred limb extends and forks, silver leaves shingle the shoots, and the terminal rosettes and cones open last"
+  },
+  {
+    "name": "sugarbush",
+    "garden": "fynbos",
+    "rank": 3,
+    "common": "Sugarbush",
+    "latin": "Protea repens",
+    "note": "Woody branches of narrow upright blue-green leaves, V-shaped goblets of pointed cream-to-carmine bracts, old brown cones, and leafless yellow-orange threads of dodder laurel (Cassytha ciliolata) cascading from the limbs.",
+    "enters": "Reaches in from a side",
+    "grows": "The branch extends and forks, upright leaves and V-goblets open, and the Cassytha threads cascade last"
+  },
+  {
+    "name": "restio",
+    "garden": "fynbos",
+    "rank": 6,
+    "common": "Cape thatching reed",
+    "latin": "Elegia tectorum",
+    "note": "A dense fountain of leafless dark-green culms ringed with black node bands, curling golden-chestnut papery sheaths peeling from the nodes, and nodding dark-brown plumes.",
+    "enters": "Rises from the bottom",
+    "grows": "The fountain of culms arches out, papery sheaths curl at the nodes, and the brown plumes nod last"
+  },
+  {
+    "name": "watsonia",
+    "garden": "fynbos",
+    "rank": 7,
+    "common": "Cape bugle-lily",
+    "latin": "Watsonia borbonica",
+    "note": "An equitant fan of broad sword leaves edged in yellow, and a tall branched spire lined in two opposite ranks with rose-magenta bugle trumpets.",
+    "enters": "Rises from the bottom",
+    "grows": "The sword fan spreads, the tall spire and side branches rise, and the trumpets open up their length"
+  },
+  {
+    "name": "aristea",
+    "garden": "fynbos",
+    "rank": 12,
+    "common": "Blue sceptre",
+    "latin": "Aristea capitata",
+    "note": "A stiff fan of narrow ribbed sword leaves and tall rod stems packed along the upper half with sessile clusters of deep gentian-blue six-pointed stars and papery brown spathes.",
+    "enters": "Rises from the bottom",
+    "grows": "The leaf fan opens, the rods rise, and the gentian-blue stars unfold up the stems"
+  },
+  {
+    "name": "kingprotea",
+    "garden": "fynbos",
+    "rank": 1,
+    "common": "King protea",
+    "latin": "Protea cynaroides",
+    "note": "Thick red stems clothed in glossy oval leaves on crimson stalks, each crowned by a giant bowl of pointed silky-pink bracts cupped round a snowy-white cone.",
+    "enters": "Rises from the bottom",
+    "grows": "The red stems rise, oval leaves unfold up their length, and the giant bract bowls open last"
+  },
+  {
+    "name": "pagoda",
+    "garden": "fynbos",
+    "rank": 5,
+    "common": "Hooded pagoda",
+    "latin": "Mimetes cucullatus",
+    "note": "Upright wand stems clad in oval leaves below, crowned by a cylindrical pagoda where scarlet-and-gold folded leaf-hoods cowl over white beards and red style tufts.",
+    "enters": "Rises from the bottom",
+    "grows": "The red wands rise, green leaves clothe the base, and the scarlet-and-gold hoods unfold at the top"
+  },
+  {
+    "name": "berzelia",
+    "garden": "fynbos",
+    "rank": 11,
+    "common": "Kolkol",
+    "latin": "Berzelia lanuginosa",
+    "note": "Soft bottlebrush stems clothed in fine yellow-green needles, topped by corymb clusters of creamy-white spherical pompom heads and reddish fruiting knobs.",
+    "enters": "Low in the bed",
+    "grows": "The feathery stems rise, and the creamy pompom clusters open at the tips"
+  },
+  {
+    "name": "phaenocoma",
+    "garden": "fynbos",
+    "rank": 9,
+    "common": "Cape everlasting",
+    "latin": "Phaenocoma prolifera",
+    "note": "Stiff white-woolly branches studded with bead-like dark-green granular spur shoots, crowned with glossy cerise-magenta papery star-heads.",
+    "enters": "Low in the bed",
+    "grows": "The white-woolly branches rise with their green bead shoots, and the papery magenta stars open last"
+  },
+  {
+    "name": "fireheath",
+    "garden": "fynbos",
+    "rank": 8,
+    "common": "Fire heath",
+    "latin": "Erica cerinthoides",
+    "note": "Wiry stems clothed in whorls of dark needle leaves, tipped with nodding umbels of swollen, white-hairy crimson-scarlet tubular bells.",
+    "enters": "Low in the bed",
+    "grows": "The wiry stems rise in needle whorls, and the scarlet tubular umbels nod open last"
+  },
+  {
+    "name": "pelargonium",
+    "garden": "fynbos",
+    "rank": 10,
+    "common": "Hooded pelargonium",
+    "latin": "Pelargonium cucullatum",
+    "note": "Soft-hairy sprawling stems with cupped kidney-shaped toothed leaves and long-stalked umbels of asymmetric orchid-magenta flowers feathered dark purple.",
+    "enters": "Low in the bed",
+    "grows": "The stems spread their cupped leaves, and the feathered magenta umbels open above them"
+  },
+  {
+    "name": "damara",
+    "garden": "namib",
+    "rank": 5,
+    "common": "Damara milk-bush",
+    "latin": "Euphorbia damarana",
+    "note": "A dense hemispherical dome of erect leafless glaucous pencil-thick rods tipped with sessile yellow-brown cyathia and three-lobed capsules.",
+    "enters": "Leans in from a bottom corner",
+    "grows": "The pencil rods fan upward from the base, and the yellow-brown cyathia and three-lobed capsules form at the tips"
+  },
+  {
+    "name": "buttertree",
+    "garden": "namib",
+    "rank": 4,
+    "common": "Butter tree",
+    "latin": "Tylecodon paniculatus",
+    "note": "A squat pachycaul trunk with translucent golden-yellow peeling bark over olive underbark, thick forked branches, succulent green paddle leaves, and red-stalked urn panicles.",
+    "enters": "Leans in from a bottom corner",
+    "grows": "The swollen trunk and branches extend, peeling bark curls at the edges, and paddle leaves and red-stalked urns open at the tips"
+  },
+  {
+    "name": "halfmens",
+    "garden": "namib",
+    "rank": 2,
+    "common": "Halfmens",
+    "latin": "Pachypodium namaquanum",
+    "note": "An unbranched warty silver-grey column tilting north, armed with three-spined tubercles and crowned by a tilted crest of strongly wavy velvety leaves and red-throated tubular flowers.",
+    "enters": "Reaches in from a side",
+    "grows": "The spiny column leans in, the wavy leaf crest unfolds at the apex, and the red-throated tubes open last"
+  },
+  {
+    "name": "quivertree",
+    "garden": "namib",
+    "rank": 1,
+    "common": "Quiver tree",
+    "latin": "Aloidendron dichotomum",
+    "note": "A stout tapering trunk plated with golden-brown scales, forking repeatedly in pairs into a rounded crown of compact blue-glaucous rosettes and erect canary-yellow racemes.",
+    "enters": "Rises from the bottom",
+    "grows": "The plated trunk rises and forks in pairs, blue-green rosettes open at every tip, and canary-yellow racemes rise last"
+  },
+  {
+    "name": "dunegrass",
+    "garden": "namib",
+    "rank": 7,
+    "common": "Bushman's grass",
+    "latin": "Stipagrostis sabulicola",
+    "note": "A tough dune-anchoring hummock of rigid bamboo-like knotted culms bent by wind and topped by narrow feathery silver-cream plumose panicles.",
+    "enters": "Rises from the bottom",
+    "grows": "The knotted culms arch in the wind, and the feathery silver-cream plumes unfurl at the tips"
+  },
+  {
+    "name": "gifboom",
+    "garden": "namib",
+    "rank": 6,
+    "common": "Gifboom",
+    "latin": "Euphorbia virosa",
+    "note": "A candelabra whorl of constricted five-to-eight-angled ribbed stems armed with paired stipular spines on continuous grey shields, hosting a woody clump of Namibian mistletoe (Tapinanthus oleifolius) with crimson-red split-tube flowers.",
+    "enters": "Rises from the bottom",
+    "grows": "The constricted spiny ribs rise from the twisted base, and the mistletoe clump opens its crimson tubes on the upper stems"
+  },
+  {
+    "name": "nara",
+    "garden": "namib",
+    "rank": 8,
+    "common": "Nara melon",
+    "latin": "Acanthosicyos horridus",
+    "note": "A leafless thorny mound of grooved grey-green stems armed with paired straight ivory-tipped spines at every node, pale greenish-yellow axillary flowers, and globose spiny orange-yellow melons.",
+    "enters": "Low in the bed",
+    "grows": "The grooved thorny stems arch out, paired spines arm the nodes, and the spiny golden melons swell near the base"
+  },
+  {
+    "name": "welwitschia",
+    "garden": "namib",
+    "rank": 3,
+    "common": "Welwitschia",
+    "latin": "Welwitschia mirabilis",
+    "note": "A low corky bi-lobed crater crown issuing two broad leathery olive-russet straps that arch out, split lengthwise into frayed ribbons over the gravel, and frame forked scarlet-and-salmon four-ranked cone panicles.",
+    "enters": "Low in the bed",
+    "grows": "The corky crown settles, the two broad straps unroll and fray over the ground, and the forked salmon-red cone panicles rise from the rim"
+  },
+  {
+    "name": "hoodia",
+    "garden": "namib",
+    "rank": 9,
+    "common": "Ghaap",
+    "latin": "Hoodia gordonii",
+    "note": "A tight upright cluster of multi-ribbed grey-tan succulent cylinders studded with spiny tubercles and crowned near the apex by flat five-angled flesh-pink saucer corollas.",
+    "enters": "Low in the bed",
+    "grows": "The ribbed spiny cylinders rise in a cluster, and the five-angled flesh-pink saucers open flat at the top"
+  },
+  {
+    "name": "bushmanscandle",
+    "garden": "namib",
+    "rank": 10,
+    "common": "Bushman's candle",
+    "latin": "Monsonia crassicaulis",
+    "note": "A dwarf waxy-barked spiny shrublet of pale-grey branches armed with petiolar spines, small crenate glaucous leaves, and crinkly translucent sulphur-yellow five-petalled saucer flowers.",
+    "enters": "Low in the bed",
+    "grows": "The waxy spiny branches spread, small glaucous leaves unfold, and the crinkly sulphur-yellow saucers open last"
+  },
+  {
+    "name": "lithops",
+    "garden": "namib",
+    "rank": 11,
+    "common": "Rusch's living stones",
+    "latin": "Lithops ruschiorum",
+    "note": "Clumps of cordate, convex pearl-grey and bone-ochre fused pebble leaf pairs split by a shallow cleft, with five-chambered seed capsules nestled in the gravel.",
+    "enters": "Low in the bed",
+    "grows": "The paired stone leaves swell from the gravel, and the five-chambered capsules open in the clefts"
+  },
+  {
+    "name": "whitemangrove",
+    "garden": "mangrove",
+    "rank": 5,
+    "common": "White mangrove",
+    "latin": "Laguncularia racemosa",
+    "note": "An open ascending branch of opposite rounded-oblong yellow-green blades on carmine-red petioles with paired sub-blade salt glands, and axillary spikes of small cream flowers and ten-ribbed obovoid samaras.",
+    "enters": "Reaches in from a side as the tide rises",
+    "grows": "The lenticellate branch extends from the margin, biglandular red-petioled leaves open in pairs, and the ribbed samara spikes form at the tips"
+  },
+  {
+    "name": "buttonwood",
+    "garden": "mangrove",
+    "rank": 6,
+    "common": "Buttonwood",
+    "latin": "Conocarpus erectus",
+    "note": "A dark fissured limb from the landward rim bearing spirally alternate acute leaves on green and silvery-sericeous shoots and branched panicles of globose scale-tessellated reddish-brown button cones.",
+    "enters": "Reaches in from a side as the tide rises",
+    "grows": "The dark limb forks inward, alternate green and silver-felted leaves unfold, and the globose button cones cluster at the ends"
+  },
+  {
+    "name": "spanishmoss",
+    "garden": "mangrove",
+    "rank": 4,
+    "common": "Spanish moss",
+    "latin": "Tillandsia usneoides",
+    "note": "Rootless silvery-grey peltate-scaly festoons cascading from an upper canopy host bough in pendulous zig-zagging threads of curved filiform leaves and tiny chartreuse flowers.",
+    "enters": "Dips in on an upper canopy bough and cascades down",
+    "grows": "The host bough dips from the upper canopy, zig-zagging silvery threads lengthen downward, and curly filiform scales unfurl at every node"
+  },
+  {
+    "name": "airplant",
+    "garden": "mangrove",
+    "rank": 7,
+    "common": "Giant airplant",
+    "latin": "Tillandsia utriculata",
+    "note": "A solitary massive cream-green tank rosette of spreading recurved blades with castaneous basal sheaths perched on an upper canopy limb, issuing a laxly branched crimson-bracted panicle of tubular violet-and-cream flowers.",
+    "enters": "Perches on an upper canopy bough and arches down",
+    "grows": "The canopy bough enters from above, the recurved tank-rosette blades fan outward, and the branched crimson panicle arches down"
+  },
+  {
+    "name": "blackmangrove",
+    "garden": "mangrove",
+    "rank": 2,
+    "common": "Black mangrove",
+    "latin": "Avicennia germinans",
+    "note": "A dark fissured trunk and ascending crown of opposite lance-elliptic leaves—glossy dark green above and silvery salt-crusted beneath—with white four-lobed flower spikes, lima-bean propagules, and a horizontal mud cable root bristling with erect pencil pneumatophores across the waterline.",
+    "enters": "Rooted in the intertidal mudflat, leaning in from the margin",
+    "grows": "The mud cable root spreads and sends up erect breathing pegs across the rising waterline while the bicolored crown and flower spikes open above"
+  },
+  {
+    "name": "redmangrove",
+    "garden": "mangrove",
+    "rank": 1,
+    "common": "Red mangrove",
+    "latin": "Rhizophora mangle",
+    "note": "A leaning grey-barked trunk lifted above the tidal lagoon on multi-order russet-red catenary stilt-root arches and plumb-vertical aerial drop roots, crowned by opposite glossy dark-green elliptic leaves, four-pointed lemon-yellow star cymes, and pendulous viviparous pencil propagules.",
+    "enters": "Rooted in the lagoon, leaning in from the side",
+    "grows": "The catenary stilt-root arcade anchors in the mud, the tide rises across the roots on scroll, and the leathery leaves, yellow star cymes, and pendulous pencil propagules unfold in the crown"
+  },
+  {
+    "name": "cordgrass",
+    "garden": "mangrove",
+    "rank": 9,
+    "common": "Smooth cordgrass",
+    "latin": "Sporobolus alterniflorus",
+    "note": "An intertidal saltmarsh colony of smooth erect culms rising through the brackish water, long flat tapering leaf blades arching to one side, and narrow panicles of closely appressed one-sided spikes.",
+    "enters": "Rises through the lagoon water in the bed",
+    "grows": "The smooth culms rise through the tide, tapering blades arch out, and the appressed one-sided spike panicles emerge at the tips"
+  },
+  {
+    "name": "leatherfern",
+    "garden": "mangrove",
+    "rank": 3,
+    "common": "Giant leather fern",
+    "latin": "Acrostichum danaeifolium",
+    "note": "A tall erect V-clump of stiff 1-pinnate leathery fronds with closely spaced oblong-lanceolate pinnae, mixing sterile dark-green fronds with fertile fronds coated beneath in velvety golden-rust sporangia.",
+    "enters": "Rises from the brackish bed",
+    "grows": "Stout rachises unroll upward from the lagoon floor, and closely ranked sterile green and fertile golden-rust pinnae unfold pair by pair"
+  },
+  {
+    "name": "swamplily",
+    "garden": "mangrove",
+    "rank": 8,
+    "common": "Swamp lily",
+    "latin": "Crinum americanum",
+    "note": "An emergent brackish-water bulb clump of arching channeled green strap leaves and stout scapes crowned by umbels of fragrant white six-tepaled spider flowers with long spreading crimson-purple stamen filaments.",
+    "enters": "Rises from the lagoon floor in the bed",
+    "grows": "Channeled strap leaves arch out from the bulb, stout scapes rise above the water, and the white spider-lily umbels unfurl their crimson stamens"
+  },
+  {
+    "name": "morningglory",
+    "garden": "mangrove",
+    "rank": 10,
+    "common": "Beach morning glory",
+    "latin": "Ipomoea pes-caprae subsp. brasiliensis",
+    "note": "Long prostrate purplish-red stolons creeping across the shore margin with upright succulent bilobed goat's-foot leaves and rose-violet funnel corollas marked by a five-rayed magenta star throat.",
+    "enters": "Creeps in along the shore margin in the bed",
+    "grows": "The prostrate stolons trail across the berm, notched goat's-foot leaves lift at the nodes, and the rose-violet funnels open"
+  },
+  {
+    "name": "saltwort",
+    "garden": "mangrove",
+    "rank": 11,
+    "common": "Saltwort",
+    "latin": "Batis maritima",
+    "note": "A low succulent subshrub of arching stems sending up erect shoots clothed in decussate pairs of plump club-shaped chartreuse leaves and sessile axillary cones.",
+    "enters": "Low on the tidal flat in the bed",
+    "grows": "The succulent shoots rise over the mudflat, plump club-shaped leaf pairs swell in opposite ranks, and small green cones form in the axils"
+  },
+  {
+    "name": "seapurslane",
+    "garden": "mangrove",
+    "rank": 12,
+    "common": "Sea purslane",
+    "latin": "Sesuvium portulacastrum",
+    "note": "A prostrate succulent mat of fleshy carmine-red stems hugging the tidal mud, opposite glossy jade-green spatulate blades, and solitary five-pointed rose-pink star calyces.",
+    "enters": "Creeping low across the mud in the bed",
+    "grows": "The carmine-red stems spread across the mud, fleshy spatulate leaf pairs open, and five-pointed pink star flowers bloom in the axils"
   }
 ]

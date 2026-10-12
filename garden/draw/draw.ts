@@ -17,6 +17,9 @@ import * as M from "./mediterranean.ts";
 import * as D from "./desert.ts";
 import * as A from "./afroalpine.ts";
 import * as S from "./savanna.ts";
+import * as F from "./fynbos.ts";
+import * as N from "./namib.ts";
+import * as MG from "./mangrove.ts";
 
 const REGISTRY: { name: string }[] = JSON.parse(readFileSync(new URL("../src/garden/plants.json", import.meta.url), "utf8"));
 
@@ -260,8 +263,8 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 4859,
     draw: (o, r) => S.baobab(o, r, [0, 0]),
     detail: (o, r) => {
-      S.baobabFlower(o, r, [0, -200], 120, 120, 1);
-      [-150, -110, -70].forEach((d, k) => S.baobabLeaf(o, r, [-120 + k * 30, 40], (d * Math.PI) / 180, 150));
+      S.baobabFlower(o, r, [100, -180], 115, 115, 1);
+      [-150, -110, -70].forEach((d, k) => S.baobabLeaf(o, r, [-120 + k * 34, 40], (d * Math.PI) / 180, 145));
     },
   },
   thorn: {
@@ -293,12 +296,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
   redgrass: {
     seed: 5364,
     draw: (o, r) => S.redgrass(o, r, [0, 0]),
-    detail: (o, r) => S.redgrass(o, r, [0, 0]),
+    detail: (o, r) => S.redgrassDetail(o, r, [0, 0]),
   },
   thatchgrass: {
     seed: 5465,
     draw: (o, r) => S.thatchgrass(o, r, [0, 0]),
-    detail: (o, r) => S.thatchgrass(o, r, [0, 0]),
+    detail: (o, r) => S.thatchgrassDetail(o, r, [0, 0]),
   },
   crinum: {
     seed: 5566,
@@ -312,6 +315,203 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
       S.star(o, r, [0, 0], 120, 0.8);
       S.star(o, r, [200, 60], 80, 0.6);
     },
+  },
+  kingprotea: {
+    seed: 5768,
+    draw: (o, r) => F.kingprotea(o, r, [0, 0]),
+    detail: (o, r) => F.kingProteaDetail(o, r),
+  },
+  silvertree: {
+    seed: 5869,
+    draw: (o, r) => F.silvertree(o, r, [0, 0]),
+    detail: (o, r) => F.silverRosette(o, r, [0, 0], rad(-65), 165, true),
+  },
+  sugarbush: {
+    seed: 5970,
+    draw: (o, r) => F.sugarbush(o, r, [0, 0]),
+    detail: (o, r) => {
+      F.repensHead(o, r, [-60, 70], rad(-82), 185, false);
+      F.cassytha(o, r, [70, -70], 240);
+    },
+  },
+  pincushion: {
+    seed: 6071,
+    draw: (o, r) => F.pincushion(o, r, [0, 0]),
+    detail: (o, r) => {
+      F.pincushionLeaf(o, r, [-90, 95], rad(-135), 115, -0.02);
+      F.pincushionLeaf(o, r, [90, 95], rad(-45), 115, 0.02);
+      F.pincushionHead(o, r, [0, 50], rad(4), 145);
+    },
+  },
+  pagoda: {
+    seed: 6172,
+    draw: (o, r) => F.pagoda(o, r, [0, 0]),
+    detail: (o, r) => {
+      F.pagodaHood(o, r, [0, 80], -1, 105);
+      F.pagodaHood(o, r, [0, 15], 1, 100);
+      F.pagodaHood(o, r, [0, -50], -1, 92);
+    },
+  },
+  restio: {
+    seed: 6273,
+    draw: (o, r) => F.restio(o, r, [0, 0]),
+    detail: (o, r) => F.restioDetail(o, r),
+  },
+  watsonia: {
+    seed: 6374,
+    draw: (o, r) => F.watsonia(o, r, [0, 0]),
+    detail: (o, r) => {
+      F.watsoniaFlower(o, r, [0, 80], -1, 130);
+      F.watsoniaFlower(o, r, [0, 15], 1, 125);
+      F.watsoniaFlower(o, r, [0, -50], -1, 115);
+    },
+  },
+  fireheath: {
+    seed: 6475,
+    draw: (o, r) => F.fireheath(o, r, [0, 0]),
+    detail: (o, r) => F.fireheathUmbel(o, r, [0, -20], rad(8), 95),
+  },
+  phaenocoma: {
+    seed: 6576,
+    draw: (o, r) => F.phaenocoma(o, r, [0, 0]),
+    detail: (o, r) => {
+      F.phaenocomaHead(o, r, [-55, 25], 88, 0.65);
+      F.phaenocomaHead(o, r, [65, -35], 76, 0.58);
+    },
+  },
+  pelargonium: {
+    seed: 6677,
+    draw: (o, r) => F.pelargonium(o, r, [0, 0]),
+    detail: (o, r) => {
+      F.pelargoniumLeaf(o, r, [-65, 55], 78, rad(-115), 0);
+      F.pelargoniumFlower(o, r, [45, -35], 92, rad(10));
+      F.pelargoniumFlower(o, r, [-35, -55], 78, rad(-14));
+    },
+  },
+  berzelia: {
+    seed: 6778,
+    draw: (o, r) => F.berzelia(o, r, [0, 0]),
+    detail: (o, r) => F.berzeliaCorymb(o, r, [0, 80], rad(4), 125),
+  },
+  aristea: {
+    seed: 6879,
+    draw: (o, r) => F.aristea(o, r, [0, 0]),
+    detail: (o, r) => F.aristeaDetail(o, r),
+  },
+  quivertree: {
+    seed: 6980,
+    draw: (o, r) => N.quivertree(o, r, [0, 0]),
+    detail: (o, r) => N.quivertreeDetail(o, r),
+  },
+  halfmens: {
+    seed: 7081,
+    draw: (o, r) => N.halfmens(o, r, [0, 0]),
+    detail: (o, r) => N.halfmensDetail(o, r),
+  },
+  buttertree: {
+    seed: 7182,
+    draw: (o, r) => N.buttertree(o, r, [0, 0]),
+    detail: (o, r) => N.buttertreeDetail(o, r),
+  },
+  damara: {
+    seed: 7283,
+    draw: (o, r) => N.damara(o, r, [0, 0]),
+    detail: (o, r) => N.damaraDetail(o, r),
+  },
+  gifboom: {
+    seed: 7384,
+    draw: (o, r) => N.gifboom(o, r, [0, 0]),
+    detail: (o, r) => N.gifboomDetail(o, r),
+  },
+  nara: {
+    seed: 7485,
+    draw: (o, r) => N.nara(o, r, [0, 0]),
+    detail: (o, r) => N.naraDetail(o, r),
+  },
+  welwitschia: {
+    seed: 7586,
+    draw: (o, r) => N.welwitschia(o, r, [0, 0]),
+    detail: (o, r) => N.welwitschiaDetail(o, r),
+  },
+  dunegrass: {
+    seed: 7687,
+    draw: (o, r) => N.dunegrass(o, r, [0, 0]),
+    detail: (o, r) => N.dunegrassDetail(o, r),
+  },
+  bushmanscandle: {
+    seed: 7788,
+    draw: (o, r) => N.bushmanscandle(o, r, [0, 0]),
+    detail: (o, r) => N.bushmanscandleDetail(o, r),
+  },
+  hoodia: {
+    seed: 7889,
+    draw: (o, r) => N.hoodia(o, r, [0, 0]),
+    detail: (o, r) => N.hoodiaDetail(o, r),
+  },
+  lithops: {
+    seed: 7990,
+    draw: (o, r) => N.lithops(o, r, [0, 0]),
+    detail: (o, r) => N.lithopsDetail(o, r),
+  },
+  redmangrove: {
+    seed: 8091,
+    draw: (o, r) => MG.redmangrove(o, r, [0, 0]),
+    detail: (o, r) => MG.redmangroveDetail(o, r),
+  },
+  blackmangrove: {
+    seed: 8192,
+    draw: (o, r) => MG.blackmangrove(o, r, [0, 0]),
+    detail: (o, r) => MG.blackmangroveDetail(o, r),
+  },
+  whitemangrove: {
+    seed: 8293,
+    draw: (o, r) => MG.whitemangrove(o, r, [0, 0]),
+    detail: (o, r) => MG.whitemangroveDetail(o, r),
+  },
+  buttonwood: {
+    seed: 8394,
+    draw: (o, r) => MG.buttonwood(o, r, [0, 0]),
+    detail: (o, r) => MG.buttonwoodDetail(o, r),
+  },
+  spanishmoss: {
+    seed: 8495,
+    draw: (o, r) => MG.spanishmoss(o, r, [0, 0]),
+    detail: (o, r) => MG.spanishmossDetail(o, r),
+  },
+  airplant: {
+    seed: 8596,
+    draw: (o, r) => MG.airplant(o, r, [0, 0]),
+    detail: (o, r) => MG.airplantDetail(o, r),
+  },
+  leatherfern: {
+    seed: 8697,
+    draw: (o, r) => MG.leatherfern(o, r, [0, 0]),
+    detail: (o, r) => MG.leatherfernDetail(o, r),
+  },
+  cordgrass: {
+    seed: 8798,
+    draw: (o, r) => MG.cordgrass(o, r, [0, 0]),
+    detail: (o, r) => MG.cordgrassDetail(o, r),
+  },
+  swamplily: {
+    seed: 8899,
+    draw: (o, r) => MG.swamplily(o, r, [0, 0]),
+    detail: (o, r) => MG.swamplilyDetail(o, r),
+  },
+  morningglory: {
+    seed: 8901,
+    draw: (o, r) => MG.morningglory(o, r, [0, 0]),
+    detail: (o, r) => MG.morninggloryDetail(o, r),
+  },
+  saltwort: {
+    seed: 9012,
+    draw: (o, r) => MG.saltwort(o, r, [0, 0]),
+    detail: (o, r) => MG.saltwortDetail(o, r),
+  },
+  seapurslane: {
+    seed: 9123,
+    draw: (o, r) => MG.seapurslane(o, r, [0, 0]),
+    detail: (o, r) => MG.seapurslaneDetail(o, r),
   },
 };
 

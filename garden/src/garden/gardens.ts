@@ -1,9 +1,9 @@
 // The gardens a visitor can choose, in the switcher's order. Each has an emblem: a line drawing of
 // its signature plant on a 24-unit square, in the garden's own ink. `leaves` are closed shapes,
 // washed with `tone` (a species token in src/tokens.css) while the garden is on show; `lines` are
-// open strokes: ribs, stems, cuts.
+// open strokes: ribs, stems, cuts. A garden with water sets `water`, its height in `--u` units.
 
-export type Garden = { key: string; name: string; tone: string; leaves: string[]; lines: string[] };
+export type Garden = { key: string; name: string; tone: string; water?: number; leaves: string[]; lines: string[] };
 
 export const GARDENS: Garden[] = [
   {
@@ -67,6 +67,62 @@ export const GARDENS: Garden[] = [
       "M13.1 11.1C13.4 9 13.5 7.2 13.4 5.6",
       "M14.4 11.6C15.6 9.8 17 8.4 18.6 7.4",
       "M4 22H20",
+    ],
+  },
+  {
+    key: "fynbos",
+    name: "Fynbos",
+    tone: "--pl-kingprotea",
+    // A king protea: a crown of pointed bracts cupped round a domed cone, between two oval leaves.
+    leaves: [
+      "M12 15.6C7.8 15.6 5.2 12.6 4.4 7.4L7.6 10.2 9.4 5.6 12 9.2 14.6 5.6 16.4 10.2 19.6 7.4C18.8 12.6 16.2 15.6 12 15.6Z",
+      "M8.8 17.8C6.1 16.4 4.2 14.2 3.6 11.8 6.2 12.6 8.2 14.8 8.8 17.8Z",
+      "M15.2 17.8C17.9 16.4 19.8 14.2 20.4 11.8 17.8 12.6 15.8 14.8 15.2 17.8Z",
+    ],
+    lines: ["M12 22V15.6", "M8.8 10.2Q12 6.8 15.2 10.2", "M5 22H19"],
+  },
+  {
+    key: "namib",
+    name: "Namib",
+    tone: "--pl-quivertree",
+    // A quiver tree: a tapering trunk forked into four, a rosette on every tip, on desert gravel.
+    leaves: [
+      "M3.6 10.2 5.4 7.2 6.4 9.2 7.4 6.8 8.2 9.6C7.1 10.8 4.8 11 3.6 10.2Z",
+      "M8 6.8 9.2 3.6 10.3 5.8 11.2 3.4 12 6.4C10.9 7.4 9 7.5 8 6.8Z",
+      "M12 6.4 12.8 3.4 13.7 5.8 14.8 3.6 16 6.8C15 7.5 13.1 7.4 12 6.4Z",
+      "M15.8 9.6 16.6 6.8 17.6 9.2 18.6 7.2 20.4 10.2C19.2 11 16.9 10.8 15.8 9.6Z",
+    ],
+    lines: [
+      "M9.4 22 10.8 13.2",
+      "M14.6 22 13.2 13.2",
+      "M10.8 13.2 8.6 9.8 6.2 10.2",
+      "M8.6 9.8 10 6.8",
+      "M13.2 13.2 15.4 9.8 17.8 10.2",
+      "M15.4 9.8 14 6.8",
+      "M4 22H20",
+    ],
+  },
+  {
+    key: "mangrove",
+    name: "Mangrove",
+    tone: "--pl-redmangrove",
+    water: 16,
+    // A red mangrove: opposite leaves above a trunk lifted on arched stilt roots crossing water.
+    leaves: [
+      "M11.6 8.2C8.2 7.8 6.4 5.6 7.4 3.4 9.8 3.6 11.6 5.6 11.6 8.2Z",
+      "M12.4 8.2C15.8 7.8 17.6 5.6 16.6 3.4 14.2 3.6 12.4 5.6 12.4 8.2Z",
+      "M10.8 11.4C7.2 11.4 5 9.6 5.6 7.4 8.2 7.4 10.2 9.2 10.8 11.4Z",
+      "M13.2 11.4C16.8 11.4 19 9.6 18.4 7.4 15.8 7.4 13.8 9.2 13.2 11.4Z",
+    ],
+    lines: [
+      "M12 16V7.6",
+      "M12 12.6C8.2 13.4 5.8 16.4 5.2 21.6",
+      "M12 12.6C15.8 13.4 18.2 16.4 18.8 21.6",
+      "M8.2 14.8C6.4 16.4 5.6 18.8 5.4 21.6",
+      "M15.8 14.8C17.6 16.4 18.4 18.8 18.6 21.6",
+      "M12 14.2C10.2 16 9.4 18.6 9.2 21.6",
+      "M12 14.2C13.8 16 14.6 18.6 14.8 21.6",
+      "M3 18.4H21",
     ],
   },
 ];

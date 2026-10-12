@@ -1,6 +1,6 @@
 /* Design tokens: every color the page and the garden use, in a day set and a night set.
    Three layers, from the page inward:
-   1. Paper and ink: the page, the card, and the pen the garden is drawn with.
+   1. Paper and ink: the page, the controls and gallery, and the pen the garden is drawn with.
    2. Materials: bark, stems, flowers, and fruit, shared by any plant that uses them.
    3. Species: one base tone per plant, named after its key in src/garden/plants.json. Every
       leaf shifts lightness, hue, and chroma around it (--dl, --dh, --dc on each shape).
@@ -9,8 +9,7 @@
    draw with keeps one value in either light. Night is the day under the moon: a little darker,
    less chroma, a touch cooler; the night paper shows through every glaze, so the colors need
    not be much darker. src/garden/paint.css turns these into fills and strokes. The night set
-   also applies to any element with the class "night". At night the garden's ink never
-   outshines the card's border: it sits just under it. */
+   also applies to any element with the class "night". */
 
 :root {
   /* Paper and ink */
@@ -176,6 +175,95 @@
   --pl-crinum: oklch(0.62 0.06 175);
   --pl-hypoxis: oklch(0.58 0.09 128);
 
+  /* Materials: the fynbos */
+  --stem-protea: oklch(0.5 0.14 22);
+  --bract-protea: oklch(0.76 0.11 10);
+  --bract-protea-deep: oklch(0.56 0.16 14);
+  --cone-protea: oklch(0.95 0.015 95);
+  --bark-silver: oklch(0.58 0.018 110);
+  --cone-silver: oklch(0.62 0.05 70);
+  --bract-repens: oklch(0.64 0.16 16);
+  --cassytha: oklch(0.72 0.14 78);
+  --flower-pincushion: oklch(0.82 0.16 88);
+  --hood-mimetes: oklch(0.56 0.2 26);
+  --sheath-restio: oklch(0.58 0.1 62);
+  --plume-restio: oklch(0.38 0.06 52);
+  --flower-fireheath: oklch(0.58 0.2 24);
+  --flower-watsonia: oklch(0.64 0.17 348);
+  --flower-pelargonium: oklch(0.74 0.14 338);
+  --bract-phaenocoma: oklch(0.62 0.19 350);
+  --flower-aristea: oklch(0.52 0.18 264);
+
+  /* Species: the fynbos */
+  --pl-kingprotea: oklch(0.52 0.09 138);
+  --pl-silvertree: oklch(0.78 0.032 148);
+  --pl-sugarbush: oklch(0.58 0.065 158);
+  --pl-pincushion: oklch(0.6 0.11 132);
+  --pl-pagoda: oklch(0.58 0.1 130);
+  --pl-restio: oklch(0.48 0.08 142);
+  --pl-fireheath: oklch(0.46 0.08 148);
+  --pl-watsonia: oklch(0.56 0.1 136);
+  --pl-pelargonium: oklch(0.62 0.065 144);
+  --pl-berzelia: oklch(0.64 0.11 126);
+  --pl-phaenocoma: oklch(0.68 0.04 142);
+  --pl-aristea: oklch(0.5 0.075 154);
+
+  /* Materials: the Namib */
+  --bark-quiver: oklch(0.68 0.085 68);
+  --bark-halfmens: oklch(0.74 0.015 85);
+  --bark-butter: oklch(0.78 0.115 82);
+  --strap-welwitschia: oklch(0.54 0.075 86);
+  --cone-welwitschia: oklch(0.62 0.175 34);
+  --flower-quiver: oklch(0.84 0.175 92);
+  --flower-mistletoe: oklch(0.56 0.21 26);
+  --flower-hoodia: oklch(0.66 0.105 22);
+  --flower-candle: oklch(0.88 0.145 98);
+  --fruit-nara: oklch(0.74 0.145 72);
+
+  /* Species: the Namib */
+  --pl-quivertree: oklch(0.58 0.07 168);
+  --pl-halfmens: oklch(0.48 0.065 142);
+  --pl-buttertree: oklch(0.58 0.115 128);
+  --pl-damara: oklch(0.62 0.075 136);
+  --pl-gifboom: oklch(0.48 0.085 138);
+  --pl-nara: oklch(0.54 0.08 132);
+  --pl-welwitschia: oklch(0.49 0.075 124);
+  --pl-dunegrass: oklch(0.6 0.075 118);
+  --pl-bushmanscandle: oklch(0.56 0.065 152);
+  --pl-hoodia: oklch(0.54 0.045 96);
+  --pl-lithops: oklch(0.76 0.035 72);
+
+  /* Materials: the mangrove */
+  --water-tint: oklch(0.66 0.055 182);
+  --water-line: oklch(0.46 0.065 184);
+  --bark-mangrove: oklch(0.48 0.032 55);
+  --bark-red: oklch(0.51 0.115 36);
+  --bark-black: oklch(0.35 0.025 50);
+  --leaf-under-mangrove: oklch(0.7 0.105 124);
+  --leaf-senescent: oklch(0.79 0.145 88);
+  --flower-mangrove: oklch(0.88 0.115 98);
+  --propagule: oklch(0.54 0.095 132);
+  --propagule-tip: oklch(0.47 0.095 46);
+  --petiole-red: oklch(0.54 0.165 18);
+  --cone-buttonwood: oklch(0.48 0.095 44);
+  --spore-rust: oklch(0.52 0.125 54);
+  --flower-ipomoea: oklch(0.64 0.185 336);
+  --stem-sesuvium: oklch(0.56 0.155 14);
+
+  /* Species: the mangrove */
+  --pl-redmangrove: oklch(0.48 0.095 146);
+  --pl-blackmangrove: oklch(0.45 0.07 148);
+  --pl-whitemangrove: oklch(0.64 0.115 128);
+  --pl-buttonwood: oklch(0.54 0.095 136);
+  --pl-spanishmoss: oklch(0.76 0.025 142);
+  --pl-airplant: oklch(0.68 0.075 130);
+  --pl-leatherfern: oklch(0.5 0.1 140);
+  --pl-cordgrass: oklch(0.6 0.07 138);
+  --pl-swamplily: oklch(0.52 0.105 142);
+  --pl-morningglory: oklch(0.58 0.12 134);
+  --pl-saltwort: oklch(0.68 0.125 122);
+  --pl-seapurslane: oklch(0.56 0.11 144);
+
   color-scheme: light;
 }
 
@@ -332,6 +420,95 @@
   --pl-thatchgrass: oklch(0.66 0.05 103);
   --pl-crinum: oklch(0.58 0.043 183);
   --pl-hypoxis: oklch(0.54 0.065 136);
+
+  /* Materials: the fynbos, by moonlight */
+  --stem-protea: oklch(0.45 0.109 22);
+  --bract-protea: oklch(0.71 0.086 10);
+  --bract-protea-deep: oklch(0.51 0.125 14);
+  --cone-protea: oklch(0.84 0.012 95);
+  --bark-silver: oklch(0.53 0.014 110);
+  --cone-silver: oklch(0.57 0.039 70);
+  --bract-repens: oklch(0.59 0.125 16);
+  --cassytha: oklch(0.67 0.109 78);
+  --flower-pincushion: oklch(0.77 0.125 88);
+  --hood-mimetes: oklch(0.51 0.156 26);
+  --sheath-restio: oklch(0.53 0.078 62);
+  --plume-restio: oklch(0.33 0.047 52);
+  --flower-fireheath: oklch(0.53 0.156 24);
+  --flower-watsonia: oklch(0.59 0.133 348);
+  --flower-pelargonium: oklch(0.69 0.109 338);
+  --bract-phaenocoma: oklch(0.57 0.148 350);
+  --flower-aristea: oklch(0.47 0.14 264);
+
+  /* Species: the fynbos, by moonlight */
+  --pl-kingprotea: oklch(0.48 0.065 146);
+  --pl-silvertree: oklch(0.71 0.023 156);
+  --pl-sugarbush: oklch(0.54 0.047 166);
+  --pl-pincushion: oklch(0.56 0.079 140);
+  --pl-pagoda: oklch(0.54 0.072 138);
+  --pl-restio: oklch(0.44 0.058 150);
+  --pl-fireheath: oklch(0.42 0.058 156);
+  --pl-watsonia: oklch(0.52 0.072 144);
+  --pl-pelargonium: oklch(0.58 0.047 152);
+  --pl-berzelia: oklch(0.6 0.079 134);
+  --pl-phaenocoma: oklch(0.63 0.029 150);
+  --pl-aristea: oklch(0.46 0.054 162);
+
+  /* Materials: the Namib, by moonlight */
+  --bark-quiver: oklch(0.62 0.065 68);
+  --bark-halfmens: oklch(0.68 0.012 85);
+  --bark-butter: oklch(0.71 0.09 82);
+  --strap-welwitschia: oklch(0.49 0.058 86);
+  --cone-welwitschia: oklch(0.57 0.14 34);
+  --flower-quiver: oklch(0.79 0.14 92);
+  --flower-mistletoe: oklch(0.52 0.165 26);
+  --flower-hoodia: oklch(0.61 0.082 22);
+  --flower-candle: oklch(0.82 0.115 98);
+  --fruit-nara: oklch(0.68 0.115 72);
+
+  /* Species: the Namib, by moonlight */
+  --pl-quivertree: oklch(0.54 0.052 174);
+  --pl-halfmens: oklch(0.44 0.048 150);
+  --pl-buttertree: oklch(0.54 0.084 136);
+  --pl-damara: oklch(0.58 0.055 144);
+  --pl-gifboom: oklch(0.44 0.062 146);
+  --pl-nara: oklch(0.5 0.058 140);
+  --pl-welwitschia: oklch(0.45 0.055 132);
+  --pl-dunegrass: oklch(0.56 0.055 126);
+  --pl-bushmanscandle: oklch(0.52 0.048 160);
+  --pl-hoodia: oklch(0.5 0.034 104);
+  --pl-lithops: oklch(0.72 0.025 80);
+
+  /* Materials: the mangrove, by moonlight */
+  --water-tint: oklch(0.36 0.048 190);
+  --water-line: oklch(0.62 0.055 188);
+  --bark-mangrove: oklch(0.43 0.025 55);
+  --bark-red: oklch(0.46 0.09 36);
+  --bark-black: oklch(0.3 0.02 50);
+  --leaf-under-mangrove: oklch(0.64 0.082 124);
+  --leaf-senescent: oklch(0.73 0.115 88);
+  --flower-mangrove: oklch(0.81 0.09 98);
+  --propagule: oklch(0.5 0.074 140);
+  --propagule-tip: oklch(0.42 0.074 46);
+  --petiole-red: oklch(0.49 0.128 18);
+  --cone-buttonwood: oklch(0.43 0.074 44);
+  --spore-rust: oklch(0.47 0.098 54);
+  --flower-ipomoea: oklch(0.59 0.145 336);
+  --stem-sesuvium: oklch(0.51 0.12 14);
+
+  /* Species: the mangrove, by moonlight */
+  --pl-redmangrove: oklch(0.44 0.068 154);
+  --pl-blackmangrove: oklch(0.41 0.05 156);
+  --pl-whitemangrove: oklch(0.6 0.082 136);
+  --pl-buttonwood: oklch(0.5 0.068 144);
+  --pl-spanishmoss: oklch(0.69 0.018 150);
+  --pl-airplant: oklch(0.63 0.054 138);
+  --pl-leatherfern: oklch(0.46 0.072 148);
+  --pl-cordgrass: oklch(0.56 0.05 146);
+  --pl-swamplily: oklch(0.48 0.075 150);
+  --pl-morningglory: oklch(0.54 0.086 142);
+  --pl-saltwort: oklch(0.63 0.09 130);
+  --pl-seapurslane: oklch(0.52 0.079 152);
 
   color-scheme: dark;
 }

@@ -6,12 +6,12 @@ was written from memory: check every Latin name against a regional flora before 
 
 ## Status
 
-- **Built:** tropical, Mediterranean, Sonoran Desert, Afroalpine.
-- **Drawn, in review:** Lowveld savanna, all nine plants and their layouts.
-- **Waiting for seasons:** East Asian, boreal taiga, Eastern North American edge, Northwest
-  European woodland. Each is a four-season climate, unlike the gardens built; see Seasons.
-- **Waiting for water:** mangrove, and the lotus and rabbit-ear iris from the East Asian survey;
-  see Water.
+- **Built:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld savanna, Namib
+  and Namaqualand, mangrove (all 7 single-moment terrestrial gardens plus the tidal mangrove garden:
+  8 / 12).
+- **Waiting for seasons:** East Asian (reusing the water mechanism for lotus and rabbit-ear iris),
+  boreal taiga, Eastern North American edge, Northwest European woodland. Each is a four-season
+  climate, unlike the gardens built; see Seasons.
 
 ## The test
 
@@ -35,11 +35,12 @@ edge), **hanging** (about 3, from the top), **bed** (about 5, rising from the bo
 | 9 | Eastern North American edge | Dfa | squared leaves, tall prairie spikes | weak |
 | 10 | Northwest European woodland | Cfb | ferns, ivy, foxglove | weakest: reads as generic green woodland |
 
-**Order:** Sonoran first, now built: its ribbed columns, areoles, and pads are a new family of
-geometry that the Namib euphorbias reuse. Afroalpine second: one moment, like the gardens
-built, and its rosettes on columns and strand lichens serve the Namib, the taiga, and the water
-garden later. The savanna third: the most legible silhouettes left, and the first warm palette.
-East Asian waits for the season system, and mangrove for water.
+**Order:** Single-moment terrestrial gardens come first, from simple to complex, before adding
+waterlines or seasonal timelines. All five new single-moment terrestrial gardens—Sonoran (`#1`),
+Afroalpine (`#3`), Cape fynbos (`#5`), Lowveld savanna (`#6`), and Namib and Namaqualand (`#8`)—plus
+the tidal mangrove (`#4`) are now built alongside the original tropical and Mediterranean gardens
+(8 / 12 total). East Asian (`#2`), boreal taiga (`#7`), Eastern North American edge (`#9`), and
+Northwest European woodland (`#10`) wait for the season system.
 
 ## What the survey taught
 
@@ -51,20 +52,26 @@ East Asian waits for the season system, and mangrove for water.
   and `heartLeaf`, `palmate`, `needleTuft` and `pineCone`, `lavenderSpike`, `agaveLeaf` (a
   rosette's leaf), `walkFrond`. New geometry, by reach:
   - ribbed column with areoles and spines: saguaro, organ pipe, barrel cactus (built);
-    Euphorbia virosa; Euphorbia ingens (three gardens)
+    Euphorbia virosa (built); Euphorbia ingens (dropped)
   - jointed segments: prickly pear pads, cholla joints (built); Cissus quadrangularis;
     horsetail; bamboo culms (four gardens)
-  - rosette on a column, extending `agaveLeaf`: giant groundsel; quiver tree, halfmens; Aloe
-    marlothii (three gardens)
-  - curtain of strands: Usnea lichen; Spanish moss; weeping willow; taiga beard lichens (four
-    gardens)
-  - bipinnate leaflets: mesquite, palo verde (built); umbrella thorn (two gardens)
-  - one garden each: prop roots and pegs (mangrove), bract heads (fynbos), dichotomous fan
-    (East Asian), pendant raceme (wisteria)
-- **Overlaps to settle when choosing.** Candelabra euphorbias (Namib, savanna); aloe rosettes
-  (Namib, savanna); mistletoe (Sonoran, Namib); Sesuvium (Namib, mangrove); Crinum (mangrove,
-  savanna); silver birch (taiga, northwest Europe); beard lichens (Afroalpine, taiga); Erica
-  (Afroalpine, fynbos); Clematis (fynbos, northwest Europe).
+  - rosette on a column, extending `agaveLeaf`: giant groundsel, quiver tree, halfmens (all built)
+  - curtain of strands: Usnea lichen, Cassytha dodder, Spanish moss (all built); weeping willow;
+    taiga beard lichens (five gardens)
+  - bipinnate leaflets: mesquite, palo verde, umbrella thorn (all built)
+  - one garden each: prop roots and pegs (mangrove, built), bract heads (fynbos, built), dichotomous
+    fan (East Asian), pendant raceme (wisteria)
+- **Overlaps to settle when choosing.** Candelabra euphorbias (settled: dropped from savanna, built
+  in Namib as `Euphorbia virosa` hosting `Tapinanthus oleifolius`); aloe rosettes (settled: dropped
+  from savanna, built in Namib as `Aloidendron dichotomum`); mistletoe (settled: leafless coral-red
+  `Phoradendron californicum` on Sonoran palo verde vs leafy grey-green and crimson-tubed
+  `Tapinanthus oleifolius` erupting from Namib `Euphorbia virosa`); Sesuvium (settled: dropped from
+  Namib in favor of `Monsonia crassicaulis` and `Hoodia gordonii`, built in mangrove as `Sesuvium
+  portulacastrum`); Crinum (settled: bell-flowered pink-striped `Crinum macowanii` in savanna vs
+  spider-tepaled white `Crinum americanum` in mangrove); silver birch (taiga, northwest Europe);
+  beard lichens (Afroalpine, taiga); Erica (settled: woody tree `Erica arborea` and cushion
+  `E. trimera` in Afroalpine vs scarlet tubular fire-heath `E. cerinthoides` in fynbos); Clematis
+  (settled: dropped from fynbos, kept for northwest Europe).
 
 ## What the desert taught
 
@@ -114,15 +121,87 @@ East Asian waits for the season system, and mangrove for water.
   layout, as shares of its own size) and eases in as it grows, so the garden opens wide and fills
   as the visitor scrolls. Gardens that do not set it are unchanged: the motion is the garden's to
   choose, since it only displays the tokens.
-- **A trunk that forks hides its neck under its limbs.** The baobab's limbs start well inside the
-  neck and are drawn over it, without ink across the top; started at its edge, they poke out as
-  hard cuts.
-- **Tiers taper.** Foliage tiers with square ends show seams where they overlap; lens-shaped tiers
-  read as one crown.
-- **Leaves are drawn at the size they are seen.** A bipinnate leaf of nine pinnae reads the same as
-  one of forty-four leaflets at garden size, at a fifth of the bytes; a palmate leaf is one wash,
-  not a shape per leaflet.
-- **Haiku at high effort verified the roster well,** and marked plainly what it could not confirm.
+- **A trunk that forks hides its neck under its limbs, and sets `shadeFrom` at the neck.** The
+  baobab's limbs start well inside the neck and are drawn over it, without ink across the top;
+  started at its edge, they poke out as hard cuts. Because the trunk outline is open at the top
+  (`closed: false`), `shape()`'s default shadow polygon would connect the upper-left neck corner to
+  the lower-right base and slice a diagonal shadow stripe across the trunk; passing `shadeFrom` at
+  the upper-right neck index keeps the shadow strictly along the right trunk wall.
+- **Never back compound leaves with a circular `.wash` blob.** Because `.garden .wash` carries a
+  darker `0.7px` stroke even when `ink: false`, a polar backing shape behind pinnate or palmate
+  crowns (`kigelia`, `marula`, `baobab`) renders as a visible circular plate. Layering back-rank
+  (`dl: -0.05`) and front-rank (`dl: +0.03`) leaflets batched via `bladeBunch` builds natural
+  foliage depth while cutting raw SVG byte size by 65–75%.
+- **Tussock grasses need three-point arching blades and dedicated close studies.** Two-point
+  `bladeBunch` segments produce stiff fans of straight needles; three-point quadratics give a
+  parabolic arch, and exporting dedicated `redgrassDetail` and `thatchgrassDetail` studies lets the
+  gallery inspect boat-shaped spatheoles, geniculate twisted awns, and paired racemes rather than
+  repeating the full tussock.
+- **Open spiral pods beat tight discs at garden scale.** A 2.5-turn closed pod merges into a solid
+  dark coin at tree scale; an open 1.35-turn ribbon spiral reads immediately as *Vachellia tortilis*
+  in both the gallery and the full garden.
+- **Every `part()` rotates and scales around its single `data-o` origin (`main.ts`).** Grouping
+  thorns or canopy pads along a whole 700-unit limb into one `part()` with `origin` at the limb's
+  midpoint swings the outer thorns into empty air whenever `0 < t < 1`—especially at `scrollY = 0`,
+  where the intro rests at `INTRO = 0.5`. Emit each node's thorn pair, leaf cushion, and hanging
+  pod in its own `part(out, gate(res, g, i) + 0.015, p, ...)` anchored at `p = res.pts[i]` so its
+  base stays locked to the bark at every frame.
+
+## What the fynbos taught
+
+- **A front-row bract bowl dips its front lip to reveal the cone.** Drawing all involucral bract
+  tiers at equal length turns *Protea cynaroides* into a closed pink wall that hides its signature
+  snowy-white bearded floret dome. Foreshortening the front-center `midCount` and `outCount` bracts
+  while fanning the back rank opens a three-quarter royal cup around the plush white cone.
+- **Cylindrical pagodas and two-ranked spikes read by axil-by-axil layering.** *Mimetes cucullatus*
+  reads as a hooded pagoda only when each upper node layers its scarlet-and-gold cucullate leaf-hood
+  directly over the white-bearded floret packet and extended red styles below it; *Watsonia borbonica*
+  reads as a bugle-lily when curved zygomorphic trumpets alternate in two ranks below ascending
+  unopened buds at the apex.
+- **Rush fountains read by their node sheaths and spathe.** *Elegia tectorum* is told apart from
+  grass tussocks by its leafless dark-green rods ringed with black node bands, curling golden-brown
+  papery sheaths peeling away at the lower nodes, and the boat-shaped papery spathe subtending each
+  dark-brown terminal plume.
+
+## What the Namib taught
+
+- **Corner-rooted floor plants must stay strictly inside `0% < --x < 100%`.** In `src/garden/arrange.ts`,
+  `const side = left <= 1 ? -1 : left >= vw - 1 ? 1 : 0` classifies any plant at `--x: 0%` or `100%`
+  as wall-mounted (`along: "y"`), allowing `arrange()` to slide it *upward* (`dy < 0`) and expose its
+  flat bottom base in mid-air. Any plant drawn rooted in the ground (such as *Tylecodon paniculatus*,
+  *Euphorbia damarana*, or *Pachypodium namaquanum* leaning in from a bottom corner) must use
+  `0% < --x < 100%` (for example `--x: 0.2%` or `99%`) so `arrange()` treats it as floor-rooted
+  (`along: "x"`, `out: 1`, `dy >= 0`), guaranteeing it only ever sinks into the ground.
+- **Two-leaved *Welwitschia* needs longitudinal splits, frayed tan tips, and a central crater cup.**
+  Carving a dark bi-lobed corky growth groove across the woody crown, splitting each undulating strap
+  into ribbon lobes that fray and bleach into weathered tan strips where they touch the gravel, and
+  raising forked scarlet-and-salmon cone panicles from the crown rim makes *Welwitschia mirabilis*
+  unmistakable at a glance.
+- **Host-drawn hemiparasites separate convergent desert silhouettes.** Drawing *Tapinanthus
+  oleifolius* as a woody haustorial bush of glaucous opposite leaves and split crimson-and-black
+  floral tubes erupting directly from an upper ribbed arm of *Euphorbia virosa* honors the treeless
+  Namib sky while immediately distinguishing the gifboom from the Sonoran organ pipe.
+
+## What the mangrove taught
+
+- **Tide and entry share one scroll.** Before scrolling (`scrollY = 0`, `all = INTRO = 0.5`), the
+  waterline rests low near the bottom edge (`LOW_TIDE = 0.22`) so the full arch of the red mangrove's
+  stilt roots and the black mangrove's breathing pegs stand exposed above the mud, and only those two
+  margin anchors plus a single central cordgrass shoot are present (`g0 < 0.50`). Scrolling from
+  `0.5` to `1.0` raises the tide (`--tide: 0.22 -> 1.0`) across the roots while the remaining plants
+  reach in from every edge and angle (`--enter` + `g0 >= 0.50`).
+- **Supratidal shore runners belong on the high-tide bank, not the lagoon floor.** Rooting prostrate
+  runners (*Ipomoea pes-caprae* and *Sesuvium portulacastrum*) at `calc(100svh + var(--u) * 1.5)`
+  submerges their terrestrial flowers under high water. They root on the left and right banks
+  (`--x: 0%` and `--x: 100%`), high enough that the lowest stolon, not just the anchor, clears the
+  surface: at `calc(100svh - var(--u) * 15.5)` and `* 17` over a landscape depth of 12.9.
+- **A drawing cannot know its own scale.** `waterOf` once assumed 10 drawing units per `--u`, but
+  each layout sets `--h`, so the true ratio ran from 10.2 to 13.7, and in portrait 11 of the black
+  mangrove's 14 pegs, sized to clear high water, drowned. The layout now sets the depth to fit
+  the drawing; see Water.
+- **Canopy epiphytes need living host wood.** Hanging *Tillandsia usneoides* or perching *Tillandsia
+  utriculata* on a bare brown bar from the top border looks like a cut stick; tipping the dipping
+  host bough with a terminal mangrove leaf cluster (`leafCluster`) turns it into a living canopy limb.
 
 ## Settled
 
@@ -188,9 +267,39 @@ four columns when their turn comes.
 
 ## Water
 
-Water plants wait for a garden of their own, where the water is seen. The mangrove becomes that
-garden or joins it; lotus (Nelumbo nucifera) and rabbit-ear iris (Iris laevigata) come to it
-from the East Asian survey.
+Water is a mechanism of the garden, not a feature of the mangrove alone. Below the surface is a
+tint, and where roots and stems cross the surface they meet a soft edge—no mirrored reflections,
+which would double every drawing and break the paper-and-wash look.
+
+**How water works (built in `#4 Mangrove`, ready for `#2 East Asian`):**
+1. **Depth.** A garden with water sets `water` on its `Garden` entry in `src/garden/gardens.ts`: its
+   default depth in `--u`, which `src/main.ts` writes as `--water` on `.garden`. The flag also gives
+   the garden's plants the runtime treatment below.
+2. **Drawings and layouts agree on the surface.** A drawing places what meets the water from
+   `waterOf` in `draw/mangrove.ts`: high water in drawing units above the base, the default depth at
+   10 units per `--u`. A layout draws each plant at its own scale (viewBox height ÷ `--h` units per
+   `--u`), and `draw.ts` never reads layouts, so each layout sets its own depth on
+   `:root[data-garden="<key>"] .garden .water`, chosen to land the surface on `waterOf` for the
+   plant whose parts are sized to it: `--water = W × --h / viewBox height − sink`. Redraw that plant
+   and its viewBox changes, and these numbers with it. Move `waterOf` to a shared module when the
+   East Asian garden needs it.
+3. **Tide (`src/main.ts`).** `--tide` rises from 0 to `LOW_TIDE = 0.22` over the intro, so roots and
+   pegs stand exposed above a low rim, then to 1 over the scroll. When a water garden comes on show,
+   the tide grows in with its plants. A still pond can pin `--tide: 1`.
+4. **The band (`src/garden/paint.css`).** `.garden .water` is a fixed band `--water` × `--u` tall,
+   lowered by `1 − --tide`, washed with `--water-tint` under a thin `--water-line` edge.
+5. **Plants at the surface (`src/main.ts`).** `collect` wraps each water-garden plant in a group
+   masked by a vertical luminance gradient that fades it below the waterline; `waterPlant` draws a
+   glaze (`.wash.water-edge`) and ripple strokes (`.ink.water-line`) wherever a grown limb crosses
+   it. Only limbs drawn with `grow` are found, so anything that should meet the water with a
+   meniscus is drawn as a limb.
+6. **The solver (`src/garden/arrange.ts`).** `arrange` reads the band's full height: no plant's
+   anchor slides across the high-water line, and crowding below it costs a quarter as much.
+
+The mangrove (`#4`) built and verified this mechanism with its twelve brackish Everglades and
+Caribbean lagoon species (§4). Lotus (*Nelumbo nucifera*) and rabbit-ear iris (*Iris laevigata*)
+stay out of the mangrove—both are freshwater plants, and the iris is temperate—and will reuse
+`water` in the East Asian garden (`#2`).
 
 ## The gardens
 
@@ -301,49 +410,123 @@ names; GBIF lichen specimens.
 Flat white light off brackish water; hot salt air; tides, not seasons. Palette: glaucous olive,
 leathery dark green, rust-red stilts, black mud, bleached silver, cream flowers.
 
-| Plant | Latin | Role | Note | New geometry |
-|---|---|---|---|---|
-| Red mangrove | Rhizophora mangle | side | Arched red stilts lift the trunk out of the water | converging prop roots |
-| Black mangrove | Avicennia germinans | side | A dark crown over a field of upright breathing pegs | pneumatophores |
-| White mangrove | Laguncularia racemosa | side | A pale open crown with sky through it | sparse foliage |
-| Buttonwood | Conocarpus erectus | side | A dense round head on the landward rim | cone-studded crown |
-| Spanish moss | Tillandsia usneoides | hanging | Grey threads from every limb like wet hair | strand curtain |
-| Giant airplant | Tillandsia utriculata (?) | hanging | Stacked green rosettes swelling on a limb | angled rosette cups |
-| Beach morning glory | Ipomoea pes-caprae | hanging (stretch: a beach runner) | Purple funnels spilling over a dune lip | paired bilobed leaves |
-| Giant leather fern | Acrostichum danaeifolium | bed | Tall leathery fronds, spore-dusted beneath | tall unscrolling frond |
-| Smooth cordgrass | Spartina alterniflora | bed | Arching blades in a dense fringe | parallel arches |
-| Saltwort | Batis maritima | bed | A low fleshy shrub greening the flats | jointed succulent stems |
-| Sea purslane | Sesuvium portulacastrum | bed | A pink-stemmed mat hugging the mud | rooting carpet |
-| Swamp lily | Crinum americanum | bed | A strap-leaf clump, white trumpets on a stalk | strap fan, long-tubed umbel |
-
-### 5. Cape fynbos: Csb, the Cape Peninsula
-Wet winters, dry summers, fire every decade or so; strong wind, bright light, poor sand. Palette:
-silver-grey, cream, rose, bronze bract heads.
+Built. Verified in October 2026 against Flora of North America (FNA), World Flora Online (WFO / WCVP), the
+Institute for Regional Conservation's *Floristic Inventory of South Florida*, and Gill & Tomlinson's
+monographs on *Rhizophora* architecture. All twelve species are native and co-occur across
+Everglades National Park and the Greater Caribbean basin, spanning the tidal zonation from the
+seaward prop-root fringe across the intertidal pneumatophore mudflat to the brackish landward rim.
 
 | Plant | Latin | Role | Note | New geometry |
 |---|---|---|---|---|
-| Silver tree | Leucadendron argenteum | side | Silky silver leaves in a round crown | radial silky rosettes |
-| Sugarbush | Protea repens | side | Pink-red cups of overlapping bracts | bract heads |
-| Hooded pagoda | Mimetes cucullatus | side | An upright shrub of hooded red heads | hooded bract clusters |
-| Fire heath | Erica cerinthoides | side | Dense clusters of red tube flowers | whorled tubes |
-| Wild grape | Rhoicissus digitata (?) | hanging | Hand-shaped leaves, coiling tendrils | tendril coils |
-| Traveller's joy | Clematis brachiata | hanging | Twining stems, fluffy seed plumes | plumed seeds |
-| Dodder laurel | Cassytha ciliolata | hanging | Leafless yellow-green threads | twining threads |
-| King protea | Protea cynaroides | bed | One giant domed head on a short stem | stiff-bract dome |
-| Thatching reed | Elegia tectorum | bed | A fountain of leafless green stems | reed fountain |
-| Bugle lily | Watsonia borbonica | bed | Pink tubes up a spear | tubular spike |
-| Pride of Table Mountain | Disa uniflora | bed | One scarlet hooded flower | hooded flower |
-| Hooded pelargonium | Pelargonium cucullatum | bed | Pale hairy lobed leaves, pink flowers | hairy lobes |
+| Red mangrove | Rhizophora mangle | side, rooted in water | Multi-tiered catenary arches of rust-red stilt roots and plumb-vertical aerial drop roots lifting an opposite-leaved crown hung with 15 to 25 cm viviparous pencil propagules above the waterline | catenary stilt-root arcade, drop roots, pencil propagules |
+| Black mangrove | Avicennia germinans | side | A dark fissured trunk and rounded crown of grey-backed opposite leaves over a bristling intertidal carpet of erect pencil pneumatophores, creamy four-lobed flowers, and lima-bean capsules | erect pneumatophore field, bicolored opposite leaves |
+| White mangrove | Laguncularia racemosa | side | An open ascending crown of rounded yellow-green opposite leaves on bright carmine-red petioles with paired sub-blade nectar glands, loose flowering spikes, and ribbed obovoid drupes | biglandular red petioles, ribbed drupe spikes |
+| Buttonwood | Conocarpus erectus | side, on the landward rim | A leaning rough-plated trunk and angled twigs of spirally alternate elliptic leaves bearing stalked panicles of globose cone-like button heads | globose cone panicles |
+| Spanish moss | Tillandsia usneoides | hanging (on host limbs) | Rootless cascading silver-grey festoons of flexuous wiry stems and curly two-ranked scaly filiform leaves draped from mangrove and buttonwood limbs | curly silver strand festoons |
+| Giant airplant | Tillandsia utriculata | hanging (perched on host limb) | A solitary massive cream-green crateriform tank rosette of spreading recurved blades anchored on a stout limb, raising a tall laxly 2- to 3-pinnate green-and-rose panicle with tubular white flowers | epiphytic tank rosette, lax pinnate panicle |
+| Beach morning glory | Ipomoea pes-caprae subsp. brasiliensis | bed (prostrate shore runner) | Long fleshy purplish-green stolons creeping across the shore berm, rooting at the nodes with upright bilobed goat's-foot leaves and rose-magenta funnels | prostrate stolon, notched bilobed leaves |
+| Giant leather fern | Acrostichum danaeifolium | bed | A tall erect V-clump of stiff 1-pinnate leathery fronds with 20 to 32 overlapping lanceolate pinna pairs; fertile inner fronds coated golden-rust beneath with sporangia | overlapping leathery pinnae, spore-felted fertile fronds |
+| Smooth cordgrass | Sporobolus alterniflorus (syn. Spartina alterniflora) | bed, emergent in water | Dense intertidal colonies of smooth hollow culms, flat tapering grey-green blades, and narrow wand-like panicles of appressed one-sided spikes | appressed one-sided spike panicles |
+| Saltwort | Batis maritima | bed | Sprawling woody-based stems sending up perpendicular ranks of 4-angled shoots crowded with swollen club-shaped chartreuse succulent leaves and axillary green cones | decussate club-succulent shoots |
+| Sea purslane | Sesuvium portulacastrum | bed | A low prostrate mat of fleshy crimson-pink stems hugging the mud, opposite glossy jade-green spatulate leaves, and solitary five-pointed rose-pink star flowers | dichotomous crimson stems, succulent spatulate pairs |
+| Swamp lily | Crinum americanum | bed | A basal fountain of channeled dark-green strap leaves and a stout scape crowned by an umbel of 2 to 6 spider-like white flowers with long crimson-purple stamen filaments | spider-tepal umbel, exserted purple filaments |
+
+**Two honest hangers, no third.** Spanish moss (*Tillandsia usneoides*) and the giant airplant
+(*Tillandsia utriculata*) are true canopy epiphytes of Everglades mangroves and buttonwoods. Beach
+morning glory (*Ipomoea pes-caprae* subsp. *brasiliensis*) is a prostrate supratidal runner ("railroad
+vine") that roots at every node along the shore berm and never hangs from trees: it moves to the bed.
+
+**Corrections to the survey.**
+- `Tillandsia utriculata (?)` is confirmed native and frequent on mangrove and buttonwood limbs in
+  Everglades National Park (IRC `Tillutri`, FNA Vol. 22). It is solitary and monocarpic (not stacked
+  vegetative offsets, though several independent plants often perch along one limb) and raises a
+  laxly branched 2- to 3-pinnate panicle of tubular white flowers.
+- `Spartina alterniflora` is now accepted in POWO/WCVP and WFO (`wfo-0001341444`) as `Sporobolus
+  alterniflorus` (Loisel.) P.M.Peterson & Saarela (Peterson et al. 2014), with *Spartina
+  alterniflora* retained as its universal ecological synonym.
+- `Ipomoea pes-caprae` in the Atlantic and Caribbean is subsp. `brasiliensis` (L.) van Ooststr.,
+  with shallowly bilobed/emarginate goat's-foot leaves, moved from `hanging` to `bed`.
+- `Acrostichum danaeifolium` is distinguished from *A. aureum* by its 20–32+ closely spaced,
+  overlapping acute pinna pairs and fertile fronds coated with golden-brown sporangia along nearly
+  their entire length rather than only the top 4–8 pinna pairs.
+
+**Unresolved:** whether to show green buttonwood (*Conocarpus erectus* var. *erectus*, dominant in
+the mainland Everglades) or silver buttonwood (var. *sericeus*)—green buttonwood keeps the four
+woody side species maximally distinct in tone against the silver-backed *Avicennia* and silver
+*Tillandsia*; whether a secondary limb should also carry a clustering cardinal airplant (*Tillandsia
+fasciculata* var. *densispica*).
+
+Sources: Flora of North America Vols. 2, 4, 7, 10, 12, 14, 22, 26 (efloras.org); World Flora Online
+/ WCVP (`wfo-0000460362`, `wfo-0000302902`, `wfo-0000358854`, `wfo-0000618338`, `wfo-0000586340`,
+`wfo-0000586439`, `wfo-0001296638`, `wfo-0001109379`, `wfo-0001341444`, `wfo-0000320463`,
+`wfo-0000432992`, `wfo-0000764381`); Institute for Regional Conservation, *Floristic Inventory of
+South Florida* (regionalconservation.org); Gill & Tomlinson (1969, 1971a, 1971b, 1977), *Biotropica*
+1(1): 1–9, 3(1): 63–77, 3(2): 109–124, 9(3): 145–155; Tomlinson (1986), *The Botany of Mangroves*.
+
+### 5. Cape fynbos: Csb, Table Mountain and the Cape Peninsula, October
+Wet winters, dry summers, fire every decade or so; strong wind, bright light, poor sandstone and
+granite slopes. Palette: silky silver-grey, cream, shell pink and carmine bracts, golden pincushion
+styles, chestnut restio sheaths, gentian blue.
+
+Built. Verified in October 2026 against WFO/WCVP, SANBI e-Flora and PlantZAfrica, and Cape Peninsula
+GBIF and iNaturalist phenology records. The moment is October (mid-spring), when the king protea, the
+tree pincushion, the hooded pagoda, the fire heath, the watsonia, the pelargonium, the buttonbush,
+the Cape everlasting, and the blue sceptre all peak together, the silver tree and the sugarbush
+flower while carrying last year's cones, and the thatching reed sheds its papery brown sheaths.
+
+| Plant | Latin | Role | Note | New geometry |
+|---|---|---|---|---|
+| King protea | Protea cynaroides | bed, carries the focal bowl | Thick unbranched stems with long red-stalked oval leaves and a 20 to 30 cm bowl of pointed silky-pink bracts around a snowy-white cone | imbricate bract bowl, bearded cone |
+| Silver tree | Leucadendron argenteum | side | Stout ascending grey limbs shingled with silky silver lance-leaves flaring into terminal rosettes around heavy silver-felted cones | shingled silver rosettes, woody cones |
+| Sugarbush | Protea repens | side | Woody branches of narrow upright blue-green leaves and V-shaped goblets of pointed cream-to-carmine bracts, draped with Cassytha threads and old brown cones | V-cup bract head, host-drawn parasite threads |
+| Tree pincushion | Leucospermum conocarpodendron | side, from a corner | Thick corky limbs branching at right angles, wedge leaves notched with red-tipped apical teeth, and 8 cm golden domes of arching styles with conical pollen presenters | arching style dome, apical-toothed leaves |
+| Hooded pagoda | Mimetes cucullatus | bed | Upright wand stems clad in oval leaves, crowned by a cylindrical pagoda where scarlet-and-gold folded leaf-hoods cowl over white beards and red style tufts | cucullate bract hoods |
+| Cape thatching reed | Elegia tectorum | bed | A dense fountain of leafless dark-green culms ringed with black node bands, curling golden-brown papery sheaths, and dark-brown terminal plumes | ringed rush fountain, peeling sheaths |
+| Fire heath | Erica cerinthoides | bed | Wiry stems with 4- to 6-whorled needles, tipped with nodding umbels of swollen hairy crimson-scarlet tubes | swollen tubular umbels |
+| Cape bugle-lily | Watsonia borbonica | bed | A basal fan of broad sword leaves and a tall branched spire lined in two ranks with rose-magenta bugle trumpets | two-ranked trumpet spire |
+| Hooded pelargonium | Pelargonium cucullatum | bed | Hairy sprawling stems with cupped kidney-shaped toothed leaves and long-stalked umbels of asymmetric magenta-pink flowers feathered dark purple | cupped reniform leaves, feathered petals |
+| Kolkol | Berzelia lanuginosa | bed | Soft bottlebrush stems clothed in fine yellow-green needles, topped by clusters of creamy-white spherical pompom heads and reddish fruiting knobs | needle bottlebrush, pompom corymbs |
+| Cape everlasting | Phaenocoma prolifera | bed | Stiff white-woolly branches studded with bead-like granular spur shoots, crowned with 5 cm glossy magenta-pink papery star-heads | granular spur shoots, radiant bract star |
+| Blue sceptre | Aristea capitata | bed | Stiff sword-leaf fans and 1.5 m rod stems packed along the upper third with sessile clusters of deep gentian-blue six-petaled stars and papery brown spathes | sessile star thyrse |
+
+**Nothing hangs from the top.** Fynbos is an open-sky shrubland with no forest canopy. Dodder
+laurel (Cassytha ciliolata) is a rootless, leafless yellow-green to orange parasitic twiner that
+smothers fynbos shrubs on Table Mountain and cascades from their limbs with tiny white flower spikes
+and red berries; it is drawn on the sugarbush (Protea repens), as mistletoe is drawn on the desert's
+palo verde.
+
+**Corrections to the survey.** Rhoicissus digitata is a summer-flowering coastal thicket and forest
+climber (only one Cape Peninsula record in GBIF) whose tendrils repeat the Mediterranean grapevine;
+Clematis brachiata is a summer-rainfall savanna and forest-margin liana flowering in autumn (March
+to April) and overlapping the European woodland roster: both dropped. Disa uniflora is strictly a
+mid-summer flowerer (January to February, zero records from June to November) confined to waterfall
+spray zones and dripping vertical cliffs, so Aristea capitata (or Gladiolus carneus) takes its place
+in the October bed. Leucospermum conocarpodendron (native and abundant on Table Mountain) replaces
+the dropped climbers on the side/corner; Berzelia lanuginosa (representing the endemic Cape family
+Bruniaceae) and Phaenocoma prolifera complete the bed. Chondropetalum tectorum is now Elegia
+tectorum (Moline & Linder 2005).
+
+**Unresolved:** whether to draw Leucospermum conocarpodendron subsp. viridum (bright green hairless
+leaves, Kirstenbosch to Cape Point) rather than subsp. conocarpodendron (silver-felted leaves,
+Table Mountain and Lion's Head) so its foliage stays distinct in tone from Leucadendron argenteum;
+whether Gladiolus carneus (blush-pink funnels with carmine spades) should join or replace Aristea
+capitata; whether Disa uniflora is wanted despite its January–February bloom.
+
+Sources: World Flora Online / WCVP and SANBI e-Flora of South Africa (Goldblatt & Manning 2000;
+Manning & Goldblatt 2012, *Strelitzia* 29); SANBI PlantZAfrica monographs (pza.sanbi.org); Fernkloof
+Nature Reserve Herbarium (fernkloof.org.za); GBIF occurrence and monthly phenology facets for the
+Cape Peninsula; iNaturalist flowering phenology histograms.
 
 ### 6. Lowveld savanna: Aw, the Kruger lowveld of South Africa, early in December
 Hard white light after the first rains: the trees just in leaf and flower, last year's grass
 bleached to straw under the new green, a wide sky. Palette: grey and copper bark, straw and rust
 grass, dusty olive leaves, white baobab and thorn flowers, a plum flame lily.
 
-Drawn, in review. Verified in October 2026 against GBIF records for the eastern lowveld and the
-regional floras. The moment is early December: the baobab, the umbrella thorn, the crinum, and
-the star flower are in flower, the flame lily has its first bells, and the sausage tree still
-carries last season's fruit.
+Built. Verified in October 2026 against GBIF records for the eastern lowveld and the regional
+floras, and refined in a second pass for botanical silhouette, two-tone layered compound crowns,
+arching tussock culms with boat-shaped spatheoles, and responsive spacing. The moment is early
+December: the baobab, the umbrella thorn, the crinum, and the star flower are in flower, the flame
+lily has its first bells, and the sausage tree still carries last season's fruit.
 
 | Plant | Latin | Role | Note | New geometry |
 |---|---|---|---|---|
@@ -399,24 +582,80 @@ rust-gold larch, grey lichen.
 | Wood horsetail | Equisetum sylvaticum | bed | Jointed hollow stems in whorls | jointed whorls |
 | Lady fern | Athyrium filix-femina | bed | Feathered fronds from crosiers | unrolling crosiers |
 
-### 8. Namib and Namaqualand: BWk, the Namibian coast to the Richtersveld
-Low hazy light under dawn fog; wet air at the coast, rain failing for years. Palette: dune ochre
-and rose, bone white, grey-green, welwitschia brown, flat yellow-green mats.
+### 8. Namib and Namaqualand: BWk, the Namibian coast and escarpment to the Richtersveld, August–September
+Low hazy light under dawn advection fog; wet air at the coast, winter rain just past in the
+Richtersveld and Namaqualand. Palette: dune ochre and rose, bone-white and golden-flaking pachycaul
+bark, blue-glaucous aloe rosettes, weathered welwitschia brown, crimson mistletoe tubes, flesh-pink
+hoodia saucers, and crinkly sulphur-yellow Bushman's candle petals.
+
+Built. Verified in October 2026 against World Flora Online (WFO / WCVP), SANBI e-Flora of South
+Africa, Tree Atlas of Namibia, and peer-reviewed Namibian field studies. The chosen moment is **late
+winter to early spring (August–September)**: *Aloidendron dichotomum* finishes its bright yellow
+winter racemes while *Pachypodium namaquanum* opens its velvet-crowned tubular flowers, *Tylecodon
+paniculatus* stands in full succulent paddle leaf initiating its crimson flower stalks, *Euphorbia
+virosa* and its hemiparasite *Tapinanthus oleifolius* are in bloom, *Welwitschia mirabilis* carries
+late salmon-red female cones, and *Hoodia gordonii*, *Monsonia crassicaulis*, and *Lithops
+ruschiorum* flush across the gravel flats.
 
 | Plant | Latin | Role | Note | New geometry |
 |---|---|---|---|---|
-| Quiver tree | Aloidendron dichotomum | side | A forked trunk, rosettes at the branch tips | dichotomous forks |
-| Halfmens | Pachypodium namaquanum | side | A swollen trunk crowned by a rosette, paired spines | pachycaul, spine pairs |
-| Phantom tree | Moringa ovalifolia | side | A pale bottle trunk under fine sparse leaves | sparse foliage |
-| Damara milk-bush | Euphorbia damarana | side | A dense grey-green mound of leafless pencil stems | pencil stems |
-| Namibian mistletoe | Tapinanthus oleifolius | hanging | Leafy clumps hanging from acacia | forking clumps |
-| Nara | Acanthosicyos horridus | hanging (stretch: a dune shrub) | Spiny leafless stems over dune crests, melons at the joints | spiny trailing stems |
-| Ceropegia | Ceropegia sp. (?) | hanging | Thin succulent stems falling from a ledge | paired leaves on threads |
-| Welwitschia | Welwitschia mirabilis | bed | Two leathery straps spilling from a woody crown | torn ribbons |
-| Dune grass | Stipagrostis sabulicola | bed | Fine tufts bent by wind | arcing blades |
-| Living stones | Lithops sp. | bed | Pairs of fused pebble leaves in sand | fused leaf pairs |
-| Sesuvium | Sesuvium sesuvioides | bed | Fleshy mats creeping over sand | radiating stems |
-| Gifboom | Euphorbia virosa | bed | Clustered ribbed stems rising from sand | ribs and teeth |
+| Quiver tree | Aloidendron dichotomum | bed or side, carries the height | A stout tapering trunk plated with golden-brown scales, 4–6 dichotomous forks into a rounded crown of compact blue-glaucous rosettes and erect canary-yellow racemes | dichotomous forks, terminal rosettes |
+| Halfmens | Pachypodium namaquanum | side, leaning in | A single unbranched warty silver-grey column tilting 20–30° north, 3 spines per tubercle (2 long spreading + 1 short central), a terminal crest of strongly undulate velvety leaves and red-throated yellow-green tubes | tilted pachycaul, 3-spine tubercles, wavy apical crest |
+| Butter tree | Tylecodon paniculatus | side, from a corner | A squat dwarf-baobab pachycaul (1–2 m) with translucent golden-yellow peeling bark over olive underbark, thick dichotomous branches, and terminal clusters of bright green obovate paddle leaves with red-stalked urn panicles | peeling golden bark, paddle leaves |
+| Damara milk-bush | Euphorbia damarana | side, from a corner | A dense hemispherical dome of hundreds of erect leafless pencil-thick (12–20 mm) glaucous yellow-green rods tipped with sessile yellow-brown cyathia and 3-lobed capsules | erect leafless pencil rods |
+| Gifboom + Namibian mistletoe | Euphorbia virosa + Tapinanthus oleifolius | bed (host + hemiparasite drawn as one plant) | *E. virosa*: twisted basal caudex with strict candelabra whorl of 5–8-angled constricted segments armed with paired shiny brown stipular spines on a continuous horny grey shield. *T. oleifolius*: woody haustorial clump erupting directly from an upper *E. virosa* rib, bearing leathery glaucous opposite leaves and umbels of 4–5 cm crimson-red split-tube flowers with black-tipped yellow-green reflexed lobes | spirally twisted constricted ribs, hemiparasitic mistletoe clump |
+| Nara melon | Acanthosicyos horridus | bed or lower side | A leafless, tendril-less phreatophytic thorny mounding shrub of grooved grey-green stems armed with paired 2–3 cm straight ivory-tipped spines at every node, pale greenish-yellow axillary flowers, and 15 cm globose spiny orange-yellow melons | paired nodal spines, spiny globose melon |
+| Welwitschia | Welwitschia mirabilis | bed | A low corky bi-lobed crater-cup crown issuing exactly two broad leathery olive-russet straps that arch out, split lengthwise into frayed ribbons over the gravel, and frame forked scarlet-and-salmon cone panicles | two split leathery straps, 4-ranked cone panicles |
+| Bushman's grass | Stipagrostis sabulicola | bed | A tough dune-anchoring hummock of rigid bamboo-like knotted culms (to 1.8 m) bent by wind and topped by narrow feathery silver-cream plumose panicles | wind-bent knotted culms, plumose panicles |
+| Bushman's candle | Monsonia crassicaulis | bed | A dwarf spiny resin-waxy shrublet (20–40 cm) of horizontal pale-grey branches armed with 2–4 cm petiolar spines, small crenate-folded glaucous leaves, and 4 cm crinkly translucent sulphur-yellow 5-petalled saucer flowers | waxy spiny branches, crinkly saucer flowers |
+| Ghaap | Hoodia gordonii | bed | A tight upright cluster of 12–17-ribbed grey-brown succulent cylinders studded with single-spined tubercles and crowned near the apex by flat 7–10 cm five-angled flesh-pink to maroon saucer corollas with five tail-like points | tuberculate multi-ribbed stems, pentagonal saucer flowers |
+| Rusch's living stones | Lithops ruschiorum | bed (foreground) | Clumps of 2–6 cordate, convex, nearly unspotted pearl-grey and bone-ochre fused leaf pairs with a shallow V-cleft and persistent 5-chambered boat-valved capsules in the gravel | cordate cleft pebble bodies |
+
+**Nothing hangs from the sky.** Open fog desert has no tree canopy. *Tapinanthus oleifolius* is
+drawn as part of *Euphorbia virosa*, erupting from its upper stems just as *Phoradendron* grows on
+the Sonoran palo verde. *Acanthosicyos horridus* is drawn honestly as a mounded thorny dune-base
+shrub with heavy spiny melons resting near the ground.
+
+**Corrections to the survey.**
+- `Aloe dichotoma` is now accepted as `Aloidendron dichotomum` (Grace et al. 2013, *Phytotaxa* 76).
+- `Ceropegia sp. (?)` ("thin succulent stems falling from a ledge | paired leaves on threads")
+  conflated the subtropical Eastern Cape/KZN forest vine *Ceropegia linearis* subsp. *woodii* with
+  arid Namaqualand geophytes (*C. occidentalis*, *C. filiformis*), which are tiny underground tubers
+  that never hang from ledges: **dropped**.
+- `Tapinanthus oleifolius` was listed as "hanging from acacia," but there is no *Vachellia* in the
+  Namib roster (which would repeat the savanna's *Vachellia tortilis*). Namibian field studies
+  (Richter et al. 1995; Midgley et al. 1995) and SANBI e-Flora document *Tapinanthus oleifolius*
+  growing directly as a stem hemiparasite on *Euphorbia virosa* (as well as *Aloidendron* and
+  *Tylecodon*). Drawing *T. oleifolius* on *E. virosa* both honors the open sky and visually
+  separates *E. virosa* from the Sonoran organ pipe.
+- `Acanthosicyos horridus` (nara) has no tendrils and never hangs from above; it is a deep-rooted
+  phreatophytic thorny bush trapping sand into hummocks, moved to `bed`/`side`.
+- `Pachypodium namaquanum` carries **three** spines per tubercle (a spreading pair of 3–7 cm
+  stipular spines plus a shorter central spine), not paired spines alone, and tilts 20–30° north.
+- `Moringa ovalifolia` (phantom tree) is a summer-rain Central/Northern Namib escarpment tree that
+  stands bare from June to September and leafs/flowers November–May. Replaced in the August–September
+  single-season roster by `Tylecodon paniculatus` (butter tree / botterboom), which shares the pale
+  peeling pachycaul bottle silhouette of the Richtersveld/Namaqualand escarpment while standing in
+  full succulent leaf and early flower scape in August–September (if `Moringa ovalifolia` is kept
+  as a secondary corner tree, it should either show bare white bottle wood with pendulous 3-angled
+  pods or acknowledge a slight seasonal compression).
+- `Sesuvium sesuvioides` overlapped with mangrove's `Sesuvium portulacastrum`: replaced by
+  `Monsonia crassicaulis` (syn. *Sarcocaulon crassicaule*, Bushman's candle) and `Hoodia gordonii`
+  (ghaap), with `Dimorphotheca sinuata` (orange Namaqualand daisy) available as an optional low bed
+  accent.
+- `Lithops sp.` is specified as `Lithops ruschiorum` (the true Central/Northern Namib fog-zone
+  species co-occurring with *Welwitschia* on quartz/dolerite gravel plains, bearing opaque
+  pearl-grey/ochre cordate bodies; *Lithops optica* f. *rubra* from the Lüderitz southern fog coast
+  is an alternative if ruby-magenta bodies are wanted).
+
+Sources: World Flora Online / WCVP (`wfo-0001335020`, `wfo-0000262078`, `wfo-0000965374`,
+`wfo-0000413298`, `wfo-0000513667`, `wfo-0000899838`, `wfo-0000363042`, `wfo-0001297274`); Grace et
+al. (2013), *Phytotaxa* 76(1): 7–14 (`doi:10.11646/phytotaxa.76.1.2`); Richter et al. (1995),
+*Functional Plant Biology* 22(4): 537–544 (`doi:10.1071/pp9950537`); Midgley et al. (1995), *South
+African Journal of Botany* 61(4): 230–232 (`doi:10.1016/s0254-6299(15)30534-2`); Roth-Nebelsick et
+al. (2012), *J. R. Soc. Interface* 9(73): 1965–1974 (`doi:10.1098/rsif.2011.0847`); Ebner et al.
+(2011), *J. Arid Environments* 75(6): 513–520 (`doi:10.1016/j.jaridenv.2011.03.005`); SANBI
+PlantZAfrica and Tree Atlas of Namibia.
 
 ### 9. Eastern North American edge: Dfa, the Ohio Valley
 Tulip tree (Liriodendron tulipifera), sugar maple (Acer saccharum), eastern redbud (Cercis
