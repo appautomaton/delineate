@@ -272,6 +272,19 @@ export function width_(dark: number, light = 0): number {
   return width < FINEST / 2 ? 0 : width;
 }
 
+// How open the gap after line `n` is at `x`, as a multiple of its mean: closed for stretches, open
+// for strokes of 10 to 40 px, each swelling from a point to its middle and back. A sum of three
+// waves with phases drawn per gap, lifted and clipped, has mean near 1.
+function dashes(n: number, x: number): number {
+  const h = (k: number) => {
+    let s = Math.imul(n * 7919 + k * 104729, 0x9e3779b1);
+    s = Math.imul(s ^ (s >>> 15), 0x85ebca6b);
+    return ((s ^ (s >>> 13)) >>> 0) / 4294967296;
+  };
+  const v = Math.sin(x / 9 + 6.28 * h(1)) + 0.7 * Math.sin(x / 4.3 + 6.28 * h(2)) + 0.5 * Math.sin(x / 17 + 6.28 * h(3));
+  return Math.max(0, 0.9 + 0.95 * v);
+}
+
 // The ink: positive where a line's ink lies, over a box of the frame sampled `k` times per pixel.
 // A line's ink reaches half its width either side of it, the width set by the darkness there; the
 // distance to the line is measured across it, so a sloping stretch is no thicker than a level one.
@@ -296,7 +309,15 @@ export function ink(dark: Field, light: Field, inside: Field, run: Field, [x0, y
       // Where the lines draw together or apart, their width follows, so the tone stays even.
       const u = F[i] / SPACING;
       const g = Math.hypot(fx, fy);
-      const line = width_(sample(dark, x, y), sample(light, x, y)) / 2 / g - (SPACING * Math.abs(u - Math.round(u))) / g;
+      const w = width_(sample(dark, x, y), sample(light, x, y));
+      // In the dark, the paper between two lines is cut as the plate cuts it: short strokes that
+      // taper at both ends, not one unbroken thread. Its width swells and pinches along the gap
+      // by a noise of the gap's own (so neighbors do not break together), wider where open, so
+      // the paper shown on average is the same.
+      const gap = SPACING - w;
+      const strokes = smoothstep(0.55, 0.8, w / SPACING);
+      const open = gap * (1 + strokes * (dashes(Math.floor(u), x) - 1));
+      const line = (SPACING / 2 - SPACING * Math.abs(u - Math.floor(u) - 0.5) - open / 2) / g;
       const edge = (sample(inside, x, y) - 0.5) * 2;
       out[gy * width + gx] = Math.min(line, edge);
     }
