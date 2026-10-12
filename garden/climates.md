@@ -9,16 +9,18 @@ was written from memory: check every Latin name against a regional flora before 
 - **Built:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld savanna, Namib
   and Namaqualand, mangrove (all 7 single-moment terrestrial gardens plus the tidal mangrove garden:
   8 / 12).
-- **Waiting for seasons:** East Asian (reusing the water mechanism for lotus and rabbit-ear iris),
-  boreal taiga, Eastern North American edge, Northwest European woodland. Each is a four-season
-  climate, unlike the gardens built; see Seasons.
+- **Next:** East Asian, the first four-season garden, with lotus and rabbit-ear iris on a still
+  pond. The seasons system comes first; see Seasons.
+- **Waiting for seasons:** boreal taiga, Eastern North American edge, Northwest European
+  woodland.
 
 ## The test
 
 A garden earns its place if it can be told from every other by silhouette alone, before color.
 Every plant must be real and belong to the climate; a garden need not keep to one place. Each
 holds about twelve plants in three roles: **side** (about 4, branches reaching in from an
-edge), **hanging** (about 3, from the top), **bed** (about 5, rising from the bottom).
+edge), **hanging** (2 or 3, entering from the top on a host drawn with them, a bough or an arbor
+beam; open land has none), **bed** (about 5, rising from the bottom).
 
 ## Ranking
 
@@ -55,7 +57,8 @@ Northwest European woodland (`#10`) wait for the season system.
     Euphorbia virosa (built); Euphorbia ingens (dropped)
   - jointed segments: prickly pear pads, cholla joints (built); Cissus quadrangularis;
     horsetail; bamboo culms (four gardens)
-  - rosette on a column, extending `agaveLeaf`: giant groundsel, quiver tree, halfmens (all built)
+  - rosette in space (`draw/rosette.ts`): giant groundsel, quiver tree (built); halfmens (built,
+    drawn flat)
   - curtain of strands: Usnea lichen, Cassytha dodder, Spanish moss (all built); weeping willow;
     taiga beard lichens (five gardens)
   - bipinnate leaflets: mesquite, palo verde, umbrella thorn (all built)
@@ -213,55 +216,54 @@ Northwest European woodland (`#10`) wait for the season system.
 
 ## Seasons
 
-The gardens built each show one moment. A four-season garden shows a year, which changes both
-the drawings and the renderer, so these gardens wait until the system below is designed.
+The gardens built each show one moment. A four-season garden shows a year: its parts arrive and
+leave in their own seasons, its leaves turn, and its wood stands bare in winter. This is the
+design; nothing of it is built yet.
 
-**The year is the scroll.** The intro is spring: today's growth (shoots, limbs, leaves unfolding,
-flowers opening) already reads as spring. Scrolling carries the garden on through summer and
-autumn, and the end of the scroll rests on winter; scrolling back runs the year back.
+**One axis, the year.** A seasonal garden's progress u runs from 0 to 1 through the year, on the
+same axis growth already uses (`data-g`): spring 0 to 0.45, summer to 0.65, autumn to 0.85,
+winter to 1. Growth is not only spring's: the spider lily's scape rises in autumn, the plum
+flowers in late winter, pods and seed heads form after the flowers. Each happens where it
+happens on the one axis.
 
-**What the system needs:**
-- **Season windows.** Every leaf, flower, and fruit carries the span of the year it shows, not
-  only the moment it unfolds. `draw/` stamps them as it stamps growth (`data-g`) today.
-- **An exit.** Parts must leave as well as arrive: leaves color and fall, flowers drop, fruit
-  swells and ripens. Only arrival exists now.
-- **Leaf color by season.** One season value on the root, and `color-mix` between a species'
-  summer and autumn tokens, in both lights. Changing it restyles every inlined drawing,
-  so it is written only when its step changes, as everything `renderGarden` draws is.
-- **Bare winter wood.** Today's trees are drawn for leaves to cover the branch tips. A deciduous
-  tree must read bare, so its twigs are drawn to be seen: spur shoots, buds, fine tips. This is
-  why no seasonal plant should be drawn before the system exists.
-- **A garden's own timeline.** `src/main.ts` grows every garden by one value, the intro plus the
-  scroll. A seasonal garden maps the scroll past full growth into the year.
+- **Where the page rests.** The intro grows a seasonal garden to late spring, u = 0.42, its
+  fullest moment, and the scroll carries it from there to winter. Reduced motion rests at 0.42
+  too, where a single-moment garden rests fully grown. Touch autoplay stops at full summer,
+  u = 0.6. Scrolling back runs the year back.
+- **Switching in.** A seasonal garden switched into mid-scroll grows in straight to the page's
+  season.
+- **The end.** The page ends on winter as the climate has it: bare wood and seed heads, with the
+  plum flowering on bare zigzag wood so the end reads as finished.
 
-**Settled:**
-- Reduced motion rests on late spring, the fullest moment, as the single-moment gardens do.
-- Touch autoplay grows the garden to full summer and stops; the visitor scrolls on into autumn
-  and winter.
-- A seasonal garden switched into mid-scroll grows in straight to the season the page is at.
-- The page ends on winter as the climate has it: bare wood and seed heads, with the plum
-  flowering on bare zigzag wood so the end reads as finished.
+**A part's life.** Today a part only arrives: it unfolds at g. A seasonal part may also leave,
+and its markup carries both: it arrives at g and, if it leaves, leaves at d. Wood, winter buds,
+and fruit that stays through winter never leave. A herbaceous stem that dies back (the peony,
+the spider lily's scape, the lotus's stalks) leaves too.
 
-**East Asian through the year.** The survey's roster, revised: weeping willow replaces Japanese
-cedar, whose spire nears the Mediterranean cypress and pine; plum replaces lotus, which waits for
-water. Undecided: morning glory or hardy kiwi. Morning glory gives summer a second star; kiwi
-must be drawn with serrate oval leaves to stay clear of the tropical philodendron's hearts.
+**Leaving reads as falling, not as arrival run backward.** A part shrinking back into its bud
+reads as time reversed. A leaf leaves by dropping and tilting as it fades; a petal drops and
+fades; a dying stem bends and fades. Before it falls, a leaf has already turned.
 
-| Plant | Latin | Role | Spring | Summer | Autumn | Winter |
-|---|---|---|---|---|---|---|
-| Ginkgo | Ginkgo biloba | side | fresh green fans on short shoots | full green fans | gold fans, shed almost at once | bare limbs studded with spur shoots |
-| Japanese maple | Acer palmatum | side | red-tinged new hands, tiny red flowers | green hands, paired winged keys | scarlet | fine bare twigs |
-| Paulownia | Paulownia tomentosa | side | lilac panicles on bare wood | plate-sized heart leaves | leaves drop, capsules split, next year's buds already furred | bare, hung with capsules and furred buds |
-| Weeping willow | Salix babylonica | side | first green, catkins | a full curtain | a yellowing curtain | bare whips that still hang |
-| Plum | Prunus mume | side | new leaves, small fruit | green plums yellowing in the plum rain | leaves yellow and fall | flowers on bare zigzag wood, late in winter |
-| Wisteria | Wisteria floribunda | hanging | violet racemes as the leaves unfold | pinnate leaves, velvet pods | yellow leaves, pods | bare twisted vines, pods splitting |
-| Chocolate vine | Akebia quinata | hanging | purple-brown flowers | five-leaflet palms | purple pods split open | thinned leaves on twining stems |
-| Morning glory | Ipomoea nil | hanging (or kiwi) | seedlings | blue funnels each morning | the last flowers, seed capsules | gone, an annual |
-| Hardy kiwi | Actinidia arguta | hanging (or morning glory) | leaves on red stalks | white cup flowers, early | smooth green fruit | bare twining stems |
-| Moso bamboo | Phyllostachys edulis | bed | shoots rising in sheaths; old leaves yellow and shed | full plumes on ringed culms | unchanged | the garden's one full green |
-| Peony | Paeonia lactiflora | bed | red shoots, then ball flowers late in spring | glossy divided leaves | leaves redden, seed follicles | dies back to the ground |
-| Hydrangea | Hydrangea macrophylla | bed | new leaves | mopheads in the plum rain | heads fade to antique green and rose | dried heads on bare stems |
-| Red spider lily | Lycoris radiata | bed | strap leaves wither | dormant, nothing above ground | scarlet umbels on bare stalks | dark strap leaves, grown after the flowers |
+**Turning.** Each species has a summer and an autumn tone, `--pl-<key>` and
+`--pl-<key>-autumn`, in both lights, and a turning window on the year in `plants.json`. The
+page writes each plant's turn (0 to 1) on its bed, stepped, and only when the step changes, as
+everything `renderGarden` draws is; `paint.css` mixes the two tones by it. The ginkgo turns late
+and all at once, the maple early and scarlet.
+
+**Bare winter wood.** Today's trees are drawn for leaves to cover the branch tips. A deciduous
+tree must read bare, so its twigs are drawn to be seen: spur shoots, buds, fine tips. Drawn bare
+first, then leafed.
+
+**Still water.** A garden whose water is a pond, not a tide, holds it at full depth: `gardens.ts`
+marks the water still, and `--tide` stays at 1.
+
+**The tools follow.** `npm run draw` also fails when a part outlives the stem it sits on.
+`npm run look` shows a seasonal garden in each season (late spring, summer, autumn, winter), so
+a layout is judged across the year, not at one moment.
+
+**Build order.** Verify the East Asian roster against a flora (the skill's step 1). Build the
+system with one plant, the ginkgo, which crosses every part of it: fans unfolding, green
+deepening, gold all at once, then bare limbs with spur shoots. Show it, then grow the roster.
 
 The taiga and the two temperate woodlands take the same system, and their rosters get the same
 four columns when their turn comes.
@@ -286,7 +288,8 @@ which would double every drawing and break the paper-and-wash look.
    East Asian garden needs it.
 3. **Tide (`src/main.ts`).** `--tide` rises from 0 to `LOW_TIDE = 0.22` over the intro, so roots and
    pegs stand exposed above a low rim, then to 1 over the scroll. When a water garden comes on show,
-   the tide grows in with its plants. A still pond can pin `--tide: 1`.
+   the tide grows in with its plants. A still pond, like the East Asian garden's, holds at full
+   depth: `gardens.ts` marks its water still, and `--tide` stays at 1.
 4. **The band (`src/garden/paint.css`).** `.garden .water` is a fixed band `--water` × `--u` tall,
    lowered by `1 − --tide`, washed with `--water-tint` under a thin `--water-line` edge.
 5. **Plants at the surface (`src/main.ts`).** `collect` wraps each water-garden plant in a group
@@ -331,23 +334,34 @@ Monsoon summers, plum-rain haze, a clear gold autumn, bare trunks under a low wi
 Palette: bamboo olive, ginkgo butter, paulownia lilac, wisteria violet, lotus pink, lycoris
 vermilion.
 
-Waits for seasons. The table is the survey; the revised roster, through the year, is under
-Seasons.
+The first seasonal garden, and the second with water: a still pond in the bed. Not yet verified
+against a flora; that is its first step (see Seasons, Build order).
 
-| Plant | Latin | Role | Note | New geometry |
-|---|---|---|---|---|
-| Ginkgo | Ginkgo biloba | side | Fan leaves on short shoots, one notch per fan | dichotomous fan veins |
-| Japanese maple | Acer palmatum | side | Five to seven lobes held open like hands | palmate lobes, opposite pairs |
-| Paulownia | Paulownia tomentosa | side | Plate-sized heart leaves; lilac panicles before them | huge heart leaves, panicles |
-| Japanese cedar | Cryptomeria japonica | side | Shaggy spires of curved needles, bark peeling red | spiral needle fans, shredding bark |
-| Wisteria | Wisteria floribunda | hanging | Violet racemes falling like rain | pinnate leaves, pendant racemes |
-| Chocolate vine | Akebia quinata | hanging | Five-leaflet palms over dangling purple-brown flowers | five-leaflet clusters |
-| Hardy kiwi | Actinidia arguta | hanging | Heart leaves on long twining stems, white stars | twining stem |
-| Moso bamboo | Phyllostachys edulis | bed | Green culms ringed at every node, plumes at the top | node rings, sheath scars |
-| Lotus | Nelumbo nucifera | bed (needs water) | Shield leaves on stalks; a pink flower over its seedpod | peltate disk, pod |
-| Peony | Paeonia lactiflora | bed | Glossy divided leaves under ball-shaped flowers | biternate leaves |
-| Red spider lily | Lycoris radiata | bed | Bare scarlet stamens on a leafless stalk | recurved umbel |
-| Hydrangea | Hydrangea macrophylla | bed | Mophead clusters of pink or blue florets | corymb clusters |
+**The roster through the year.** Thirteen plants: five sides, two hangers, six in the bed and the
+pond. Revised from the survey:
+- Weeping willow replaces Japanese cedar, whose spire nears the Mediterranean cypress and pine.
+- Plum joins, for winter's flowers on bare wood.
+- Morning glory and hardy kiwi stay out: the morning glory's funnel repeats the mangrove's beach
+  morning glory and is gone in winter, and the kiwi's leaves sit near the tropical philodendron's
+  hearts. Two woody vines hold the top, each hanging from its host (an arbor beam or a bough)
+  drawn with it, and both keep bare twisted vines and split pods through winter.
+- Lotus and rabbit-ear iris return on the still water the mangrove built.
+
+| Plant | Latin | Role | Spring | Summer | Autumn | Winter |
+|---|---|---|---|---|---|---|
+| Ginkgo | Ginkgo biloba | side | fresh green fans on short shoots | full green fans | gold fans, shed almost at once | bare limbs studded with spur shoots |
+| Japanese maple | Acer palmatum | side | red-tinged new hands, tiny red flowers | green hands, paired winged keys | scarlet | fine bare twigs |
+| Paulownia | Paulownia tomentosa | side | lilac panicles on bare wood | plate-sized heart leaves | leaves drop, capsules split, next year's buds already furred | bare, hung with capsules and furred buds |
+| Weeping willow | Salix babylonica | side | first green, catkins | a full curtain | a yellowing curtain | bare whips that still hang |
+| Plum | Prunus mume | side | new leaves, small fruit | green plums yellowing in the plum rain | leaves yellow and fall | flowers on bare zigzag wood, late in winter |
+| Wisteria | Wisteria floribunda | hanging | violet racemes as the leaves unfold | pinnate leaves, velvet pods | yellow leaves, pods | bare twisted vines, pods splitting |
+| Chocolate vine | Akebia quinata | hanging | purple-brown flowers | five-leaflet palms | purple pods split open | thinned leaves on twining stems |
+| Moso bamboo | Phyllostachys edulis | bed | shoots rising in sheaths; old leaves yellow and shed | full plumes on ringed culms | unchanged | the garden's one full green |
+| Lotus | Nelumbo nucifera | bed, in the pond | rolled leaves rising from the water | shield leaves on tall stalks, pink flowers over their pods | leaves tattered and browning, pods ripening | dry pods on broken stalks bent into the water |
+| Rabbit-ear iris | Iris laevigata | bed, at the pond's edge | sword leaves; violet flowers late in spring | the last flowers, then green swords | leaves yellowing, seed capsules | dry leaf stubs at the water |
+| Peony | Paeonia lactiflora | bed | red shoots, then ball flowers late in spring | glossy divided leaves | leaves redden, seed follicles | dies back to the ground |
+| Hydrangea | Hydrangea macrophylla | bed | new leaves | mopheads in the plum rain | heads fade to antique green and rose | dried heads on bare stems |
+| Red spider lily | Lycoris radiata | bed | strap leaves wither | dormant, nothing above ground | scarlet umbels on bare stalks | dark strap leaves, grown after the flowers |
 
 ### 3. Afroalpine: ET, the Teleki Valley on Mount Kenya, about 3,900 to 4,100 metres
 Thin hard equatorial sun by day, frost almost every night, no seasons: "winter every night,

@@ -27,9 +27,12 @@ and by moonlight.
   place, but every name is checked against a flora before it is drawn.
 - **One moment.** The system grows a garden once; it has no seasons yet. Pick the moment the
   climate looks most itself (the desert after rain, the alpine at any hour). Four-season climates
-  and water gardens wait for system work described in `climates.md`.
-- **An open top.** Nothing hangs from the sky. What hangs (lichen, mistletoe, spent flowers, fruit)
-  hangs from a host and is drawn inside the host's drawing. Open land leaves the top empty.
+  wait for the seasons system designed in `climates.md`. Water is built: a garden can have a tide
+  or a pond (see Water there).
+- **An open top.** Nothing hangs from the sky. What hangs (lichen, mistletoe, a vine, spent
+  flowers, fruit) hangs from a host and is drawn inside the host's drawing: a bough or an arbor
+  beam entering from the top in a garden with a canopy, the plant itself elsewhere. Open land
+  leaves the top empty.
 - **Sides from beyond the frame.** Side plants are branches reaching in from an edge, or plants
   rooted past a bottom corner and leaning in. A thin edge takes real wood, not filler.
 
