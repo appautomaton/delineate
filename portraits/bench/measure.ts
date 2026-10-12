@@ -1,6 +1,6 @@
 // Tone against the plate, as the eye sees it from afar: each image blurred past its lines, compared
 // in linear light, where the plate is dark (its jacket, his hair's masses) and where it is light
-// (skin, shirt). Run from the bench page: `await measure(["v040.svg", "latest"])`.
+// (skin, shirt); within `region` ([x0, y0, x1, y1] in picture pixels) if given.
 
 const lin = (v: number) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
 
@@ -21,14 +21,16 @@ async function luminance(src: string, size: number, blur: number, paper: string)
 export type Tone = { dark: number; plateDark: number; offDark: number; light: number; plateLight: number; offLight: number };
 
 // `reference` and each of `srcs` are URLs of images in the same frame.
-export async function measure(reference: string, srcs: string[], { size = 1280, blur = 6, paper = "#f3e8cc" } = {}): Promise<Record<string, Tone>> {
+export async function measure(reference: string, srcs: string[], { size = 1280, blur = 6, paper = "#f3e8cc", region = [0, 0, Infinity, Infinity] } = {}): Promise<Record<string, Tone>> {
   const plate = await luminance(reference, size, blur, paper);
   const out: Record<string, Tone> = {};
   for (const src of srcs) {
     const ours = await luminance(src, size, blur, paper);
     const sum = { dark: [0, 0, 0, 0], light: [0, 0, 0, 0] };
+    const [x0, y0, x1, y1] = region;
     plate.forEach((a, p) => {
-      if (a > 0.75) return; // paper round him
+      const [x, y] = [p % size, Math.floor(p / size)];
+      if (a > 0.75 || x < x0 || x >= x1 || y < y0 || y >= y1) return; // paper round him, or outside
       const s = a < 0.2 ? sum.dark : sum.light;
       s[0]++;
       s[1] += ours[p];

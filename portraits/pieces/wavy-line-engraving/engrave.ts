@@ -151,10 +151,11 @@ function slivers(n: number, x: number, mean: number, { peak, cell: [shortest, lo
 // by `width`; the distance to the line is measured across it, so a sloping stretch is no thicker
 // than a level one. `inside`, if given, cuts the lines cleanly along a smooth edge (a silhouette).
 // `cut` says where the line is broken: the paper between lines where it is dark (as on his
-// jacket), and the lines themselves where it is light, into tapered dashes (as at a cloud's edge).
+// jacket), and the lines themselves where it is light, into tapered dashes (as at a cloud's edge):
+// `ink` is true, or the share of the spacing below which a line breaks (true: 0.3).
 export function ink(
   width: (x: number, y: number) => number,
-  { level, spacing, cut = { paper: true, ink: false } }: { level: (x: number, y: number) => number; spacing: number; cut?: { paper: boolean; ink: boolean } },
+  { level, spacing, cut = { paper: true, ink: false } }: { level: (x: number, y: number) => number; spacing: number; cut?: { paper: boolean; ink: boolean | number } },
   inside: Field | null,
   [x0, y0, x1, y1]: Box,
   k: number,
@@ -180,7 +181,8 @@ export function ink(
       const g = Math.hypot(fx, fy);
       let w = width(x, y);
       // In the light, a line breaks into dashes (see slivers), the same ink on average.
-      const dashes = cut.ink ? smoothstep(0.3, 0.1, w / spacing) : 0;
+      const below = cut.ink === true ? 0.3 : cut.ink || 0;
+      const dashes = below ? smoothstep(below, below / 3, w / spacing) : 0;
       if (dashes > 0) w = (1 - dashes) * w + dashes * slivers(Math.floor(u) + 50000, x, w, INK_CUT)[0];
       // In the dark, the paper between two lines is cut in slivers, the same paper on average; in
       // the light, it is one unbroken thread. The gap is the one centered nearest.

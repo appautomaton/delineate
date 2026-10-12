@@ -1,6 +1,6 @@
 // The wavy-line engraving: a young man in a leather jacket in a city street, printed from its
 // layers back to front, each drawn in a folder of its own (see sheet.ts): the sky, the buildings,
-// the street's trees, the ground, him, and the leaves overhead.
+// the ground, the street's trees and what stands on the ground, him, and the leaves overhead.
 //
 //   node portraits/pieces/wavy-line-engraving/build.ts          the whole
 //   node portraits/pieces/wavy-line-engraving/<layer>/build.ts  one layer alone
@@ -10,7 +10,8 @@ import { fileURLToPath } from "node:url";
 import { svgOf } from "./sheet.ts";
 import type { Affine } from "../../harness/trace/plate.ts";
 
-const LAYERS = ["sky", "building", "tree", "ground", "subject", "leaves"];
+// Back to front. The ground lies under the trees' layer, whose railing, planters and steps stand on it.
+const LAYERS = ["sky", "building", "ground", "tree", "subject", "leaves"];
 // Each plate's frame in the whole's, where it is not the whole's own: x' = a x + b y + c,
 // y' = d x + e y + f. His plate shows him a tenth larger, fitted by ORB features and RANSAC
 // (trace/plate.ts) against the whole; the sky, buildings, trees and ground fit it within a pixel.
