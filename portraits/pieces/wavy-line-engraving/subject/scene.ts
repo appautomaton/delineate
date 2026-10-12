@@ -18,7 +18,7 @@
 // The eye goes to his face, then the zip and the hands.
 
 import type { Point } from "../../../harness/trace/polygon.ts";
-import type { Edge, Stud, Tab, Zip } from "./hardware.ts";
+import type { Cuff, Edge, Stud, Tab, Zip } from "./hardware.ts";
 
 const DIR = new URL("../../../references/wavy-line-engraving/", import.meta.url);
 export const PLATE = new URL("wav-subject.png", DIR);
@@ -70,6 +70,12 @@ export const TABS: Tab[] = [
   { buckle: [[430, 986], [424, 1027], [423, 1033]], eyelet: { at: [448, 1005], size: [8, 11] } },
   { buckle: [[826, 953], [831, 988]], eyelet: { at: [807, 971], size: [8, 11] } },
   { buckle: [[829, 995], [836, 1031], [834, 1036]], eyelet: { at: [811, 1013], size: [8, 11] } },
+];
+// His shirt's cuffs, showing where his hands go into his pockets: each a band of paper round the
+// sleeve's opening, and the fold where it turns in. Read off the plate at 4x.
+export const CUFFS: Cuff[] = [
+  { outline: [[427, 1070], [362, 1116], [374, 1137], [388, 1141], [422, 1077]], fold: [[421, 1078], [402, 1093], [385, 1111], [377, 1133]] },
+  { outline: [[828, 1072], [888, 1123], [878, 1145], [861, 1147], [823, 1079]], fold: [[830, 1083], [843, 1094], [854, 1108], [876, 1141]] },
 ];
 export const STUDS: Stud[] = [
   { at: [452, 466], size: [19, 8], angle: -15 },

@@ -172,3 +172,19 @@ export function edgeMarkup(edges: Edge[], ink: string, paper: string): string {
     `</g>`
   );
 }
+
+// A shirt's cuff: a band of paper edged in fine ink, and the fold where it turns in, a finer line.
+export type Cuff = { outline: Point[]; fold: Point[] };
+export function cuffMarkup(cuffs: Cuff[], ink: string, paper: string): string {
+  return (
+    `<g id="cuffs">` +
+    cuffs
+      .map(
+        ({ outline, fold }) =>
+          `<path fill="${paper}" stroke="${ink}" stroke-width="1.2" stroke-linejoin="round" d="${pathOf(outline)}"/>` +
+          `<path fill="none" stroke="${ink}" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" d="${polyline(fold)}"/>`,
+      )
+      .join("") +
+    `</g>`
+  );
+}

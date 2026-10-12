@@ -15,9 +15,9 @@ import { readPng } from "../../../harness/trace/image.ts";
 import { type Box, extent, ink, over, placed, sample, shapes } from "../engrave.ts";
 import { run } from "../sheet.ts";
 import { level, tone, width_ } from "./field.ts";
-import { edgeMarkup, studMarkup, tabMarkup, weaveMarkup, zipMarkup } from "./hardware.ts";
+import { cuffMarkup, edgeMarkup, studMarkup, tabMarkup, weaveMarkup, zipMarkup } from "./hardware.ts";
 import { drawn, strokeData } from "./lines.ts";
-import { CONTOURS, EDGES, INK, LINE_TINT, PAPER, PATCH, PLATE, SPACING, STUDS, TABS, TINT, ZIPS } from "./scene.ts";
+import { CONTOURS, CUFFS, EDGES, INK, LINE_TINT, PAPER, PATCH, PLATE, SPACING, STUDS, TABS, TINT, ZIPS } from "./scene.ts";
 
 const K = 3; // samples per pixel of the ink field, so lines a pixel wide keep their shape
 
@@ -61,6 +61,7 @@ export async function draw(stage = Number(process.env.STAGE ?? 3)): Promise<stri
     body.push(zipMarkup(ZIPS, INK, PAPER));
     body.push(tabMarkup(TABS, INK, PAPER));
     body.push(studMarkup(STUDS, INK, PAPER));
+    body.push(cuffMarkup(CUFFS, INK, PAPER));
 
     // The jacket's big lines, drawn by hand (see scene.ts), each cut free of the waves by paper.
     const big = Object.values(CONTOURS);
