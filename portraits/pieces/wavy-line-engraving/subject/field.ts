@@ -43,10 +43,10 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; ma
   // along a fold's light to model it. His face keeps the faint hairlines the plate gives it.
   const broad = blur(near, alpha, w, h, 2 * SPACING);
   const dark = near.map((v, p) => (Math.max(clean[p], SKIN * face[p]) * light[p] + Math.max(0, v + FOLDS * (v - broad[p])) * (1 - light[p])) * (1 - hair[p]));
-  // Where the lines are a tint: on his skin always, its shadows included (the plate's band under
-  // his jaw is gray-blue, never black); elsewhere wherever he is light, but not in a shadow deeper
-  // than a tint can hold (the shirt's folds into the collar), where they are the ink's own.
-  const tint = Float32Array.from(light, (v, p) => Math.max(face[p], neck[p], v * smoothstep(1.3, 0.9, dark[p] / (FINE * TINT))));
+  // Where the lines are a tint: wherever he is light, but not in a shadow deeper than a tint can
+  // hold (the shirt's folds into the collar), where they are the ink's own; and never on his neck,
+  // whose lines the plate draws fine and in ink throughout, close under his jaw, sparse below.
+  const tint = Float32Array.from(light, (v, p) => v * (1 - neck[p]) * smoothstep(1.3, 0.9, dark[p] / (FINE * TINT)));
   const field = (d: Float32Array) => ({ width: w, height: h, data: d });
   return { dark: field(dark), alpha: field(alpha), art: field(art), mass: field(mass), light: field(light), tint: field(tint) };
 }
@@ -105,13 +105,14 @@ export const level = waves({ ripple: RIPPLE, wander: WANDER, seed: 7 });
 // A line's width for a darkness: its share of the spacing is the share of paper the ink must cover
 // (see tone), so seen from afar the drawing gives the plate's light, up to FULLEST. Where light
 // thins a line below half the finest, it stops; as the tone fades toward that, the line tapers to it.
-// Where he is light (skin, shirt), lines keep to a finer register, FINE at most, so a shadow there
-// stays delicate rather than turning to the jacket's weight.
+// Where he is light (skin, shirt), lines keep to a finer register (FINE at most in a tint, SHADE in
+// ink where the shadow is too deep for a tint), so a shadow there stays delicate rather than
+// turning to the jacket's weight.
 //
 // Where he is light, the plate's lines are a pale tint of its ink, not the ink itself: there ours
 // are drawn at TINT opacity (see build.ts), and widened by as much, so the tone stays the same.
 export function width_(dark: number, light: number, tinted: boolean): number {
-  const most = tinted ? SHADE : FULLEST + (FINE - FULLEST) * light;
+  const most = tinted ? FINE : FULLEST + (SHADE - FULLEST) * light;
   const width = Math.min(most, Math.max(0, tinted ? dark / TINT : dark)) * SPACING - GAIN;
   return width < FINEST / 2 ? 0 : width;
 }

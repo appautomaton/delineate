@@ -32,10 +32,10 @@ export const MAP: Affine = [0.913, -0.0028, 53.5199, -0.0125, 0.9184, 145.7893];
 // Read by eye off a gridded crop of the plate, as coarse as the lay-in needs. His face, from the
 // hairline beneath the bangs round the jaw; and his head, hair and face, down to the jaw and the
 // tips of the hair beside it. His hair is the head without the face: drawn in strands, not waves.
-export const FACE: Point[] = [[640, 176], [675, 194], [697, 224], [702, 250], [697, 272], [702, 294], [697, 329], [684, 351], [658, 372], [634, 386], [606, 372], [580, 351], [558, 333], [547, 311], [540, 285], [540, 264], [562, 242], [593, 211], [614, 185]];
+export const FACE: Point[] = [[640, 176], [675, 194], [697, 224], [702, 250], [697, 272], [702, 294], [697, 329], [681, 348], [656, 371], [624, 389], [600, 381], [577, 365], [561, 346], [547, 311], [540, 285], [540, 264], [562, 242], [593, 211], [614, 185]];
 // His neck, from under the jaw to the shirt's collar: skin, drawn in the fine register however deep
 // its shadow.
-export const NECK: Point[] = [[572, 340], [702, 340], [708, 432], [640, 472], [582, 432]];
+export const NECK: Point[] = [[566, 372], [579, 371], [600, 385], [624, 394], [658, 377], [684, 354], [704, 337], [708, 432], [640, 472], [582, 432]];
 export const HEAD: Point[] = [[380, 60], [900, 60], [900, 330], [741, 355], [684, 351], [658, 372], [634, 386], [606, 372], [580, 351], [558, 333], [566, 372], [527, 355], [423, 329], [380, 330]];
 
 // The jacket's big lines, which the colored original cannot give (black leather on black): read by
@@ -124,8 +124,9 @@ export const FINE = 0.4;
 // Where he is light, the opacity of the lines: the plate's there are pale gray-blue, fine, and
 // unbroken across the skin.
 export const TINT = 0.55;
-// The most a tinted line may cover in a shadow on his skin: soft, as the plate's under his jaw.
-export const SHADE = 0.75;
+// The most an untinted line may cover where he is light: the plate's band under his jaw is fine
+// lines of ink, close, not broad ones.
+export const SHADE = 0.32;
 // The opacity of the strands and folds in his hair, face and shirt: the plate's are mid gray-blue.
 export const LINE_TINT = 0.6;
 // The least darkness his face takes, so it keeps the faint hairlines the plate draws across it.
