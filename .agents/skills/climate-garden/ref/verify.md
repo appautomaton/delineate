@@ -8,9 +8,9 @@
 - `npm run look`: every layout by day and night, below.
 - Dev server, from the repository root: `npx vite garden --port 5199 --strictPort`, in the
   background. The page's plant beds are written from `plants.json` on every load. In a sandboxed
-  session the server may not see edits
-  at all (polling did not help either): restart it after every source edit and wait until it
-  prints its address before loading the page. Redrawn SVGs need only a reload.
+  session the server may not see edits at all (polling did not help either): restart it after
+  every source edit and wait until it prints its address before loading the page. Redrawn SVGs
+  need only a reload.
 
 ## Looking at every layout
 
@@ -32,8 +32,11 @@ For what still screenshots cannot show (the growth as the page scrolls, a garden
 the switcher, the tide), use the chrome-devtools tools on the dev server. Open
 `http://localhost:5199/?garden=<key>`, reload with the cache ignored after each change, and scroll
 in an evaluated script. The theme toggle saves its choice in the browser; click it back afterwards.
-Performance is read from the code, not measured. The page writes only what has changed
-(`renderGarden` in `src/main.ts`): a frame whose inputs have not moved is skipped, and each limb,
-part, and waterline is compared with what it last wrote. Look for the two ways to break that: a
-write made every frame whether or not its value moved, and a layout read (`offsetHeight`,
-`getBoundingClientRect`) inside the render loop.
+
+## Performance
+
+Read from the code, not measured. The page writes only what has changed (`renderGarden` in
+`src/main.ts`): a frame whose inputs have not moved is skipped, and each limb, part, and waterline
+is compared with what it last wrote. Look for the two ways to break that: a write made every frame
+whether or not its value moved, and a layout read (`offsetHeight`, `getBoundingClientRect`) inside
+the render loop.

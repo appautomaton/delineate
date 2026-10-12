@@ -2,12 +2,12 @@
 name: climate-garden
 description: >
   Build or extend a climate garden on this project's garden site (garden/): research how a roster
-  of real plants looks, draw each plant with the garden/draw kit as growing watercolor-and-ink SVG, give the
-  garden its day and night tokens, compose its layouts, and check it in Chrome. Use whenever the
-  user wants a new garden or climate (savanna, fynbos, taiga, a water garden), a new plant in an
-  existing garden, a plant redrawn or refined, a garden's composition changed (sides feel empty,
-  plants crowd, the sky fills up), or a plant's look researched, even if they never say "skill"
-  or name the files.
+  of real plants looks, draw each plant with the garden/draw kit as growing watercolor-and-ink
+  SVG, give the garden its day and night tokens, compose its layouts, and check every layout. Use
+  whenever the user wants a new garden or climate (savanna, fynbos, taiga, a water garden), a new
+  plant in an existing garden, a plant redrawn or refined, a garden's composition changed (sides
+  feel empty, plants crowd, the sky fills up), or a plant's look researched, even if they never
+  say "skill" or name the files.
 ---
 
 # Climate garden
@@ -27,12 +27,11 @@ and by moonlight.
   it looks is researched before it is drawn; where it is native is not our question.
 - **One moment.** The system grows a garden once; it has no seasons yet. Pick the moment the
   climate looks most itself (the desert after rain, the alpine at any hour). Four-season climates
-  wait for the seasons system designed in `climates.md`. Water is built: a garden can have a tide
-  or a pond (see Water there).
-- **An open top.** Nothing hangs from the sky. What hangs (lichen, mistletoe, a vine, spent
-  flowers, fruit) hangs from a host and is drawn inside the host's drawing: a bough or an arbor
-  beam entering from the top in a garden with a canopy, the plant itself elsewhere. Open land
-  leaves the top empty.
+  wait for the seasons system designed in `climates.md`. A garden can have a tide (built, see
+  Water there); a still pond comes with the seasons.
+- **Nothing floats.** Whatever hangs (lichen, mistletoe, a vine, spent flowers, fruit) is drawn
+  hanging from its host, in the host's drawing: from a branch reaching in, or, in a garden with a
+  canopy, from a bough or an arbor beam entering from the top. Open land leaves the top empty.
 - **Sides from beyond the frame.** Side plants are branches reaching in from an edge, or plants
   rooted past a bottom corner and leaning in. A thin edge takes real wood, not filler.
 
