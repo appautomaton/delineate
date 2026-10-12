@@ -4,7 +4,7 @@
 // hangs from the top: hemiparasitic mistletoe (Tapinanthus oleifolius) grows as a dense haustorial
 // bush directly on the ribbed candelabra stems of the gifboom (Euphorbia virosa).
 
-import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
+import { rad, P1, add, sub, mul, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, angleOf, branch } from "./woody.ts";
 import { bladeBunch } from "./mediterranean.ts";
@@ -681,7 +681,7 @@ export function gifboom(out: Out, r: Rng, base: Pt) {
       // Continuous horny grey spine shields along the outer and inner rib crests.
       shields += `${line(L)}${line(R)}${line(midRib1)}${line(midRib2)}`;
       out.push(`<path class="ink mid" style="stroke:var(--bark-halfmens)" d="${shields}"/>`);
-      return { L, R, pts: spine, n, len: st.H, s: spine.map((_, i) => (i / n) * st.H), width: (t: number) => 30 * (1 - t * 0.2) };
+      return { L, R, pts: spine, n };
     });
 
     // Paired stipular spines along the rib crests + bright yellow cyathia at the upper segments.
@@ -1187,7 +1187,7 @@ export function hoodia(out: Out, r: Rng, base: Pt) {
       // Vertical rib grooves and grid of mammillate tubercles across the cylinder face.
       let ribs = "";
       for (const u of [-0.28, 0, 0.28]) {
-        const ribPts = l.pts.slice(1, -1).map((p, i) => add(p, [u * st.w, 0] as Pt));
+        const ribPts = l.pts.slice(1, -1).map((p) => add(p, [u * st.w, 0] as Pt));
         ribs += line(ribPts);
       }
       for (let i = 2; i < l.n - 1; i += 2) {

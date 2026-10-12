@@ -23,10 +23,9 @@ pixels.
   (`hairyBract`), needle plumes (`plume`), leaf clumps (`heathClump`), strand lichen (`usnea`),
   thistle leaves and heads, nodding heads, daisies, papery heads, spent panicles.
 - `draw/savanna.ts`: a bottle trunk (`baobabTrunk`), palmate and pinnate leaves as single washes
-  (`baobabLeaf`, `pinnateLeaf`), a light bipinnate leaf (`thornLeaf`), pendant flowers
-  (`baobabFlower`), puffballs (`puffball`), coiled pods (`coiledPod`), hanging fruit (`sausage`),
-  strap-leaf rosettes with umbels (`crinum`), stars (`star`). Its boughs, thorns, and grass tufts
-  are private to the savanna's plants.
+  (`baobabLeaf`, `pinnateLeaf`), pendant flowers (`baobabFlower`), puffballs (`puffball`), coiled
+  pods (`coiledPod`), hanging fruit (`sausage`), strap-leaf rosettes with umbels (`crinum`), stars
+  (`star`). Its boughs, thorns, and grass tufts are private to the savanna's plants.
 
 Copy a plant's shape of code from the closest existing plant, not its numbers.
 

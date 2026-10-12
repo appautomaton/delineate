@@ -8,7 +8,7 @@
 // rises across the stilt roots and pneumatophores while branches, epiphytes, ferns, grasses, and
 // shore runners reach in from every direction and angle.
 
-import { rad, P1, add, sub, mul, polar, lerp, closed, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
+import { rad, P1, add, sub, mul, polar, lerp, closed, sample, vars, tone, shape, stalk, quad, grow, part, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng, Tone } from "./lib.ts";
 import { limb, angleOf } from "./woody.ts";
 import { GARDENS } from "../src/garden/gardens.ts";
@@ -89,19 +89,11 @@ function leafCluster(
   p: Pt,
   dir: number,
   len: number,
-  { candle = true, senescent = 0 }: { candle?: boolean; senescent?: -1 | 0 | 1 } = {},
+  { candle = true }: { candle?: boolean } = {},
 ) {
   const pBack = add(p, polar(-len * 0.14, dir));
-  mangroveLeaf(out, r, pBack, dir - rad(66 + (r() - 0.5) * 10), len * 0.92, {
-    under: senescent !== -1,
-    senescent: senescent === -1,
-    tilt: 0.78,
-  });
-  mangroveLeaf(out, r, pBack, dir + rad(64 + (r() - 0.5) * 10), len * 0.92, {
-    under: senescent === -1,
-    senescent: senescent === 1,
-    tilt: 0.82,
-  });
+  mangroveLeaf(out, r, pBack, dir - rad(66 + (r() - 0.5) * 10), len * 0.92, { under: true, tilt: 0.78 });
+  mangroveLeaf(out, r, pBack, dir + rad(64 + (r() - 0.5) * 10), len * 0.92, { tilt: 0.82 });
   mangroveLeaf(out, r, p, dir - rad(32 + (r() - 0.5) * 8), len * (0.98 + r() * 0.08), { tilt: 0.98 });
   mangroveLeaf(out, r, p, dir + rad(30 + (r() - 0.5) * 8), len * (0.98 + r() * 0.08), { tilt: 0.98 });
   if (candle) mangroveCandle(out, r, p, dir, len * 0.54);
@@ -381,7 +373,7 @@ export function redmangrove(out: Out, r: Rng, base: Pt = [0, 0]) {
         });
       }
       part(out, Math.min(0.88, leafG), p, () => {
-        if (nd.cluster) leafCluster(out, r, p, dir, nd.len, { candle: true, senescent: nd.sen ?? 0 });
+        if (nd.cluster) leafCluster(out, r, p, dir, nd.len, { candle: true });
         else leafNode(out, r, p, dir, nd.len, { underLeft: nd.underL, underRight: nd.underR, senescent: nd.sen ?? 0 });
       });
       if (nd.cyme) {

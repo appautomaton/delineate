@@ -3,7 +3,7 @@
 // what hangs (the baobab's flowers, the sausage tree's fruit, the thorn's pods) hangs from its own
 // plant. Drawn with the same kit as the other gardens.
 
-import { TAU, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, glaze, vars, tone, shape, stalk, quad, grow, part, rad, along, roundPts, gate } from "./lib.ts";
+import { TAU, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, glaze, vars, tone, shape, stalk, quad, grow, part, rad, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng, Tone } from "./lib.ts";
 import { limb, angleOf, spineThrough } from "./woody.ts";
 import type { Limb } from "./woody.ts";
@@ -101,7 +101,7 @@ export function baobabTrunk(out: Out, r: Rng, base: Pt, T: number, W: number) {
   return { pts, L, R, n, top: pts[n], width, v };
 }
 
-// Collects the 5-7 leaflets of a palmate baobab leaf for batched rendering, or renders one leaf directly.
+// Collects the 5-7 leaflets of a palmate baobab leaf, to be drawn in one batch.
 function baobabLeafParts(r: Rng, O: Pt, dir: number, S: number, blades: { O: Pt; dir: number; L: number; W: number }[]) {
   const tip = add(O, polar(S * 0.32, dir));
   let stems = `M${P1(O)}Q${P1(add(lerp(O, tip, 0.5), polar(S * 0.025, dir - Math.PI / 2)))} ${P1(tip)}`;
@@ -131,7 +131,7 @@ export function baobabLeaf(out: Out, r: Rng, O: Pt, dir: number, S: number) {
 export function baobabFlower(out: Out, r: Rng, top: Pt, len: number, s: number, sway: number) {
   const end = add(top, [sway * len * 0.14, len]);
   out.push(`<path class="ink mid" d="M${P1(top)}Q${P1(add(lerp(top, end, 0.52), [sway * len * 0.12, 0]))} ${P1(end)}"/>`);
-  // Soft velvety calyx lobes curled back at the apex of the pedicel (no heavy dark ring).
+  // Soft velvety calyx lobes curled back at the apex of the pedicel.
   const cupPts = sample((t) => add(end, [Math.cos(t * TAU) * s * 0.22, Math.sin(t * TAU) * s * 0.11]), 10).slice(0, -1);
   shape(out, r, cupPts, tone(r, { dl: -0.06, dc: 0.6, spread: 0.03 }), { deep: 0, ink: false });
 
@@ -326,8 +326,8 @@ export function baobab(out: Out, r: Rng, base: Pt) {
     });
   });
 
-  // Palmate leaf rosettes at the blunt twig ends: drawn in two depth tones (back leaves darker,
-  // front leaves brighter) without any artificial circular backing plate.
+  // Palmate leaf rosettes at the blunt twig ends, in two depth tones: back leaves darker, front
+  // leaves brighter.
   rosettes.forEach(({ p, dir, g, count }) => {
     part(out, g, p, () => {
       const backBlades: { O: Pt; dir: number; L: number; W: number }[] = [];
@@ -372,13 +372,6 @@ function thornLeafParts(r: Rng, O: Pt, dir: number, L: number, blades: { O: Pt; 
     for (const sg of [-1, 1]) blades.push({ O: p, dir: dir + sg * rad(62 + (r() - 0.5) * 10), L: pinnaL, W: 0.17 });
   }
   return rachis;
-}
-
-export function thornLeaf(out: Out, r: Rng, O: Pt, dir: number, L: number) {
-  const blades: { O: Pt; dir: number; L: number; W: number }[] = [];
-  const rachis = thornLeafParts(r, O, dir, L, blades);
-  out.push(`<path class="ink hair vein" d="${rachis}"/>`);
-  bladeBunch(out, blades, tone(r, { spread: 0.07, hue: 10 }));
 }
 
 // A globose acacia flower head: a fluffy cream-white pom-pom of tiny stamens with a warm gold heart.
@@ -591,17 +584,9 @@ function pinnateLeafParts(r: Rng, O: Pt, dir: number, L: number, pairs: number, 
   return { stems, ribs };
 }
 
-// An odd-pinnate leaf: at close-study scale (L >= 160), each leaflet is drawn individually with
-// lateral veins and deep glazes; at tree scale, leaflets batch cleanly into bladeBunch.
+// An odd-pinnate leaf at close-study scale: each leaflet drawn on its own with lateral veins and
+// deep glazes. At tree scale, the crowns batch their leaflets through pinnateLeafParts.
 export function pinnateLeaf(out: Out, r: Rng, O: Pt, dir: number, L: number, pairs: number, W = 0.42, v = tone(r, { spread: 0.07, hue: 10 })) {
-  if (L < 160) {
-    const blades: { O: Pt; dir: number; L: number; W: number }[] = [];
-    const { stems, ribs } = pinnateLeafParts(r, O, dir, L, pairs, W, blades);
-    out.push(`<path class="ink thin" d="${stems}"/>`);
-    bladeBunch(out, blades, v);
-    out.push(`<path class="ink hair vein" d="${ribs}"/>`);
-    return;
-  }
   const bend = Math.cos(dir) * 0.14;
   const end = add(O, polar(L, dir + bend));
   const midCtrl = add(lerp(O, end, 0.5), polar(L * 0.05 * Math.sign(Math.cos(dir) || 1), dir + Math.PI / 2));
@@ -700,7 +685,7 @@ export function kigelia(out: Out, r: Rng, base: Pt) {
     forks.push({ res, g });
   }
 
-  // Dense rosettes of odd-pinnate leaves in two depth tones (no artificial circular blobs).
+  // Dense rosettes of odd-pinnate leaves in two depth tones.
   const rosettes: { res: Limb; g: number[]; t: number; count: number; spread: number }[] = [
     { res: forks[1].res, g: forks[1].g, t: 0.56, count: 6, spread: 160 },
     { res: forks[1].res, g: forks[1].g, t: 1.0, count: 7, spread: 195 },
@@ -994,7 +979,7 @@ function tussockBase(out: Out, r: Rng, base: Pt, count: number, len: number, spr
   part(out, g + 0.1, base, () => bladeBunch(out, groups[2], tone(r, { ...tones[2], spread: 0.05 })));
 }
 
-function themedaTassel(r: Rng, O: Pt, dir: number, s: number) {
+function themedaTassel(O: Pt, dir: number, s: number) {
   let spathes = "";
   let spikes = "";
   let awns = "";
@@ -1043,7 +1028,7 @@ export function redgrassDetail(out: Out, r: Rng, base: Pt) {
     const p = culm[idx];
     const tasselO = t === 1 ? p : add(p, [sg * 28, 22]);
     if (t < 1) peduncles += `M${P1(p)}Q${P1(add(p, [sg * 16, -8]))} ${P1(tasselO)}`;
-    const res = themedaTassel(r, tasselO, rad(78 + sg * 12), s);
+    const res = themedaTassel(tasselO, rad(78 + sg * 12), s);
     spathes += res.spathes;
     spikes += res.spikes;
     awns += res.awns;
@@ -1090,7 +1075,7 @@ export function redgrass(out: Out, r: Rng, base: Pt) {
         const tasselO = t === 1 ? p : add(p, [Math.cos(dropDir) * 16 + sg * 8, 12]);
         if (t < 1) peduncles += `M${P1(p)}Q${P1(add(p, [sg * 8, -4]))} ${P1(tasselO)}`;
         const tDir = rad(76 + sg * 14) + (ca + Math.PI / 2) * 0.35;
-        const res = themedaTassel(r, tasselO, tDir, s * (0.9 + r() * 0.2));
+        const res = themedaTassel(tasselO, tDir, s * (0.9 + r() * 0.2));
         spathes += res.spathes;
         spikes += res.spikes;
         awns += res.awns;

@@ -3,7 +3,7 @@
 // the beard lichen is draped over the tree heath, and the groundsel's spent panicles hang from its
 // rosettes, each drawn with its host. Drawn with the same kit as the other gardens.
 
-import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, share, roundPts, gate } from "./lib.ts";
+import { rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, spineThrough, angleOf, branch } from "./woody.ts";
 import { bladeBunch } from "./mediterranean.ts";

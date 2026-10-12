@@ -5,7 +5,7 @@
 // are their own pen (.ink.spine, and .ink.hook for the barrel's red hooks), and areoles are dots
 // of felt in the spine's color.
 
-import { TAU, rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, along, share, roundPts, gate } from "./lib.ts";
+import { TAU, rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, closed, line, sample, vars, tone, shape, stalk, quad, grow, part, roundPts, gate } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, angleOf } from "./woody.ts";
 import { blade, palmate, bladeBunch, tendril } from "./mediterranean.ts";
@@ -117,7 +117,7 @@ export function saguaro(out: Out, r: Rng, base: Pt) {
   const at = (t: number) => trunk[Math.round(t * 64)];
   // An arm leaves the trunk level, bends up at its knee, and rises; arms come first, so the
   // trunk covers where they join it.
-  const arm = (t0: number, side: number, reach: number, rise: number, w: number) => {
+  const arm = (t0: number, side: number, reach: number, rise: number) => {
     const p0 = add(at(t0), [side * W * 0.38, 0]);
     const knee = add(at(t0), [side * (W / 2 + reach), 12]);
     const bend = add(knee, [side * 2, -reach * 0.9]);
@@ -126,8 +126,8 @@ export function saguaro(out: Out, r: Rng, base: Pt) {
     return [...elbow, ...lift];
   };
   const arms = [
-    { spine: arm(0.4, -1, 62, 250, 76), w: 76, g: [0.3, 0.64] },
-    { spine: arm(0.55, 1, 52, 190, 70), w: 70, g: [0.36, 0.68] },
+    { spine: arm(0.4, -1, 62, 250), w: 76, g: [0.3, 0.64] },
+    { spine: arm(0.55, 1, 52, 190), w: 70, g: [0.36, 0.68] },
   ];
   for (const { spine, w, g } of arms) grow(out, g[0], g[1], () => saguaroColumn(out, r, spine, w, 3));
   grow(out, 0.02, 0.56, () => saguaroColumn(out, r, trunk, W, 6));

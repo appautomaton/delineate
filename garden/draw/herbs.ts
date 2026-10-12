@@ -1,7 +1,7 @@
 // Herbaceous tokens: plants that rise from the bottom, hang from the top, or trail in from any edge.
 // Stalks and stems grow from their base, and leaves and flowers unfold where they attach.
 
-import { TAU, rad, f, P1, add, sub, mul, dot, norm, rot, polar, lerp, rng, wobble, through, line, closed, poly, quad, sample, centroid, inkEdges, glaze, vars, tone, shape, stalk, grow, part } from "./lib.ts";
+import { TAU, rad, P1, add, sub, mul, norm, rot, polar, lerp, wobble, line, closed, poly, quad, sample, centroid, inkEdges, glaze, vars, tone, shape, stalk, grow, part } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 
 // ---------------------------------------------------------------------------
@@ -534,7 +534,6 @@ export function staghorn(out: Out, r: Rng, top: Pt) {
   ].forEach(([deg, len, w, droop, off], k) => part(out, 0.12 + k * 0.12, add(rim, off), () => antlerFrond(out, r, add(rim, off), rad(deg), len, w, droop)));
   const fronds = out.splice(fronStart).join("");
   // The basket: a woven bowl.
-  const bowl = [...sample((t) => add(rim, [rx * Math.cos(Math.PI * t), ry * Math.sin(Math.PI * t)]), 12), ...sample((t) => add(rim, [-rx * 0.86 * Math.cos(Math.PI * t), 70 * Math.sin(Math.PI * t) + ry * 0.5]), 14).slice(1)];
   shape(out, r, [add(rim, [rx, 0]), ...sample((t) => add(rim, [rx * Math.cos(Math.PI * t) * (1 - 0.14 * Math.sin(Math.PI * t) ** 0), 62 * Math.sin(Math.PI * t)]), 16)], tone(r, { pc: "--cork", spread: 0.03 }), { deep: 0.5 });
   let weave = "";
   for (let k = 1; k < 4; k++) weave += line(sample((t) => add(rim, [rx * Math.cos(Math.PI * t) * (1 - k * 0.05), (62 * k) / 4 * 1.0 + 6 * Math.sin(Math.PI * t) * k]), 10));

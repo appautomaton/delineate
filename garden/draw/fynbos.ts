@@ -811,7 +811,7 @@ export function restio(out: Out, r: Rng, base: Pt) {
   const culms = 42;
   const order = Array.from({ length: culms }, (_, k) => k).sort(() => r() - 0.5);
   const groups: { O: Pt; dir: number; L: number; W: number }[][] = [[], []];
-  const heroCulms: { p0: Pt; pts: Pt[]; lean: number }[] = [];
+  const heroCulms: { pts: Pt[]; lean: number }[] = [];
 
   for (const k of order) {
     const u = k / (culms - 1); // 0..1
@@ -832,7 +832,7 @@ export function restio(out: Out, r: Rng, base: Pt) {
       { O: p1, dir: d1, L: L1 * 1.04, W: 0.026 },
       { O: p2, dir: d2, L: L2, W: 0.02 },
     );
-    if (k % 2 === 0) heroCulms.push({ p0, pts: [p0, p1, p2, p3], lean });
+    if (k % 2 === 0) heroCulms.push({ pts: [p0, p1, p2, p3], lean });
   }
 
   part(out, 0.04, base, () => bladeBunch(out, groups[0], tone(r, { dl: -0.05, spread: 0.04 })));
@@ -1003,16 +1003,16 @@ export function fireheathBell(out: Out, r: Rng, silk: string[], O: Pt, dir: numb
 export function fireheathUmbel(out: Out, r: Rng, C: Pt, lean: number, s: number) {
   const silk: string[] = [];
   let pedicels = "";
-  const bells: [number, number, number][] = [
-    [-135, 0.88, -0.04],
-    [-105, 0.94, -0.02],
-    [-75, 0.94, -0.02],
-    [-45, 0.88, -0.04],
-    [155, 0.96, 0.02],
-    [125, 1.02, 0.04],
-    [95, 1.04, 0.05],
-    [65, 1.02, 0.04],
-    [35, 0.96, 0.02],
+  const bells: [number, number][] = [
+    [-135, 0.88],
+    [-105, 0.94],
+    [-75, 0.94],
+    [-45, 0.88],
+    [155, 0.96],
+    [125, 1.02],
+    [95, 1.04],
+    [65, 1.02],
+    [35, 0.96],
   ];
   for (const [deg, lMul] of bells) {
     const a = lean + rad(deg) + (r() - 0.5) * 0.08;
