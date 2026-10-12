@@ -530,7 +530,12 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9714,
     draw: (o, r) => E.paulownia(o, r, [0, 0]),
     detail: (o, r) => E.paulowniaDetail(o, r),
+  },  willow: {
+    seed: 9815,
+    draw: (o, r) => E.willow(o, r, [0, 0]),
+    detail: (o, r) => E.willowDetail(o, r),
   },
+
 
 
 

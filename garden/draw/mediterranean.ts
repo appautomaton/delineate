@@ -11,15 +11,18 @@ import { limb, angleOf } from "./woody.ts";
 // Shared shapes
 
 // A blade leaf along a gently curved midrib. W is its width as a share of its length, prof
-// its outline from base (0) to tip (1).
-export function blade(out: Out, r: Rng, O: Pt, dir: number, L: number, { W = 0.3, prof = (s) => Math.sin(Math.PI * Math.min(1, s) ** 0.85) ** 0.8, bend = 0, v = tone(r), veins = 0, shine = false, deep = 0.55, wavy = 0, rib = "ink mid" }: { W?: number; prof?: (s: number) => number; bend?: number; v?: Tone; veins?: number; shine?: boolean; deep?: number; wavy?: number; rib?: string } = {}) {
+// its outline from base (0) to tip (1). `hairline` rims it with one fine line instead of
+// light-and-heavy edges, for foliage of many overlapping leaves.
+export function blade(out: Out, r: Rng, O: Pt, dir: number, L: number, { W = 0.3, prof = (s) => Math.sin(Math.PI * Math.min(1, s) ** 0.85) ** 0.8, bend = 0, v = tone(r), veins = 0, shine = false, deep = 0.55, wavy = 0, rib = "ink mid", hairline = false }: { W?: number; prof?: (s: number) => number; bend?: number; v?: Tone; veins?: number; shine?: boolean; deep?: number; wavy?: number; rib?: string; hairline?: boolean } = {}) {
   const mid = (s: number): Pt => [s * L, bend * L * s * s];
   const toW = (p: Pt) => add(O, rot(p, dir));
   const wav = wobble(r, wavy * L, [4, 7]);
   const half = (s: number) => (W * L * prof(s)) / 2;
   const up = sample((s) => add(mid(s), [0, -half(s) - wav(s)]), 18);
   const dn = sample((s) => add(mid(s), [0, half(s) + wav(s + 0.3)]), 18);
-  shape(out, r, [...up, mid(1.02), ...dn.slice(0, -1).reverse()].map(toW), v, { deep, deepAbout: toW(mid(0.35)) });
+  const outline = [...up, mid(1.02), ...dn.slice(0, -1).reverse()].map(toW);
+  shape(out, r, outline, v, { deep, deepAbout: toW(mid(0.35)), ink: !hairline });
+  if (hairline) out.push(`<path class="ink hair" d="${closed(outline)}"/>`);
   if (veins) {
     let d = "";
     for (let k = 1; k <= veins; k++) {

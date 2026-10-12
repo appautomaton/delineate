@@ -9,7 +9,7 @@ import { rad, P1, add, mul, lerp, polar, rot, quad, closed, line, vars, shape, s
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
-import { palmate, blade } from "./mediterranean.ts";
+import { palmate, blade, bladeBunch } from "./mediterranean.ts";
 
 const BARK = { pc: "--bark-ginkgo" };
 const STALK = { pc: "--stem-green" };
@@ -453,5 +453,67 @@ export function paulowniaDetail(out: Out, r: Rng) {
   const twig = limb(out, r, [[-120, 160], [-40, 80], [10, 0]], { w0: 18, w1: 10, cap: "blunt", ...PAULOWNIA });
   paulowniaPanicle(out, r, twig.pts[twig.n], rad(-95), 200);
   paulowniaLeaf(out, r, twig.pts[Math.round(twig.n * 0.5)], rad(160), 150);
+}
+
+// ---------------------------------------------------------------------------
+// Weeping willow: a bough reaching in from the edge, its long whips falling from it in a
+// curtain. Yellow-green catkins hang on the bare whips as spring opens; narrow leaves follow and
+// thicken into a full curtain by summer; it yellows in October and sheds, and the bare whips
+// still hang through winter.
+
+const WILLOW = { pc: "--bark-willow" };
+const willowShed = fallsAt(0.76, 0.1);
+const catkinsFall = fallsAt(0.12, 0.06);
+
+// Narrow, long-pointed leaves, a few at a time along a whip, angled down and out from it: one
+// light wash and one hairline for the lot, so a curtain of them stays soft and pale.
+function willowLeaves(out: Out, r: Rng, pts: Pt[], from: number, to: number) {
+  const blades: { O: Pt; dir: number; L: number; W: number }[] = [];
+  for (let i = from; i < to; i += 2) {
+    const d = angleOf(pts, Math.min(i, pts.length - 2)) + (i % 4 ? 1 : -1) * rad(32 + r() * 16);
+    blades.push({ O: pts[i], dir: d, L: 24 + r() * 10, W: 0.2 });
+  }
+  bladeBunch(out, blades, tone(r, { dl: 0.04, spread: 0.06, hue: 10 }));
+}
+
+// A whip: a fine shoot hanging from the bough, swaying a little, leafed in clusters along it.
+function willowWhip(out: Out, r: Rng, parent: { res: Limb; g: number[] }, t: number, len: number) {
+  const sway = (r() - 0.5) * 40;
+  const whip = branch(out, r, parent, t, [[sway * 0.2, len * 0.25], [sway * 0.7, len * 0.6], [sway, len]], 0.06, { w0: 3.2, w1: 1, cap: "taper", ...WILLOW });
+  const n = whip.res.n;
+  const pts = whip.res.pts;
+  for (let i = 3; i < n; i += 6) {
+    const p = pts[i];
+    const g = gate(whip.res, whip.g, i);
+    part(out, g + 0.004, p, () => {
+      const c = add(p, polar(9, angleOf(pts, i) + rad(30)));
+      shape(out, r, roundPts(c, 3.2, 8, angleOf(pts, i), 8), tone(r, { pc: "--catkin-willow", spread: 0.04 }), { deep: 0, ink: false });
+    }, catkinsFall(p));
+    part(out, Math.max(g + 0.02, 0.1 + (i / n) * 0.12), p, () => willowLeaves(out, r, pts, i, Math.min(n, i + 6)), willowShed(p));
+  }
+}
+
+export function willow(out: Out, r: Rng, base: Pt) {
+  const at = (p: Pt) => add(base, p);
+  const gm = [0, 0.05];
+  const bough = grow(out, gm[0], gm[1], () => limb(out, r, [at([-30, 10]), at([90, -24]), at([220, -30]), at([350, -10]), at([460, 22])], { w0: 30, w1: 7, cap: "taper", ...WILLOW }));
+  const parent = { res: bough, g: gm };
+  const twig = branch(out, r, parent, 0.5, [[60, -30], [150, -40], [230, -20]], 0.03, { w0: 10, w1: 4, cap: "taper", ...WILLOW });
+  for (const [l, from] of [[parent, 0.3], [twig, 0.2]] as const) {
+    const n = l.res.n;
+    for (let i = Math.round(n * from); i <= n; i += 5 + Math.floor(r() * 3)) {
+      const len = 220 + r() * 200 - (i / n) * 60;
+      willowWhip(out, r, l, i / n, len);
+    }
+  }
+}
+
+export function willowDetail(out: Out, r: Rng) {
+  const whip = limb(out, r, [[0, -160], [10, -60], [6, 40], [20, 150]], { w0: 4, w1: 1.5, cap: "taper", ...WILLOW });
+  for (let i = 4; i < whip.n; i += 4) {
+    const p = whip.pts[i];
+    const d = angleOf(whip.pts, i) + (i % 8 ? 1 : -1) * rad(30);
+    blade(out, r, p, d, 70, { W: 0.17, v: tone(r, { spread: 0.05 }), deep: 0.3, rib: "ink hair", hairline: true });
+  }
 }
 

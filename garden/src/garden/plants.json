@@ -964,5 +964,19 @@
     "note": "Coarse stout limbs, upright panicles of pale violet trumpets on bare wood, plate-sized velvety hearts in opposite pairs, and brown capsules hanging on through winter beside next year's furred buds.",
     "enters": "Reaches in from a side",
     "grows": "Violet panicles open on bare wood and drop as the great hearts unfold; the leaves fall dull in autumn, and the capsules and furred buds stand through winter"
+  },
+  {
+    "name": "willow",
+    "garden": "eastasian",
+    "rank": 5,
+    "turn": [
+      0.72,
+      0.78
+    ],
+    "common": "Weeping willow",
+    "latin": "Salix babylonica",
+    "note": "A bough reaching in from the edge, long whips falling from it in a curtain, narrow leaves along them, and yellow-green catkins on the bare whips as spring opens.",
+    "enters": "Reaches in from a side",
+    "grows": "Catkins hang on the bare whips, then the first green; the curtain fills by summer, yellows in October and sheds, and the bare whips still hang through winter"
   }
 ]
