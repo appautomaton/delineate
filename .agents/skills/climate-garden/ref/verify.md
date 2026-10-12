@@ -34,7 +34,11 @@ in an evaluated script. The theme toggle saves its choice in the browser; click 
 
 ## Weight
 
-Gzip each drawing and total the garden:
-`for f in garden/public/garden/<key>.svg; do gzip -c $f | wc -c; done`. Aim near 50 KB per plant;
-the desert totals about 250 KB and Afroalpine about 410 KB. Name the heaviest plants in the report
-when a garden runs over.
+A plant's size is not the cost; two things are. A garden downloads whole: total its gzipped
+drawings (`for f in garden/public/garden/*.svg; do gzip -c $f | wc -c; done`, for the garden's
+plants) and compare with the heaviest gardens already accepted, Afroalpine and the savanna at
+about 400 KB each. And it repaints as it grows: on the dev server, throttle the CPU four times
+(chrome-devtools `emulate`, `cpuThrottlingRate: 4`), scroll the whole page over four seconds in
+an evaluated script, and record the gaps between animation frames. Afroalpine, the savanna, and
+the Namib hold a 95th percentile near 8 ms with no frame over 50 ms. A garden within both can
+keep its detail; one over either names its heaviest plants in the report.
