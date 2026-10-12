@@ -254,7 +254,7 @@ export function ink(dark: Field, light: Field, tint: Field, inside: Field, [x0, 
       // by a noise of the gap's own (so neighbors do not break together), wider where open, so
       // the paper shown on average is the same.
       const gap = SPACING - w;
-      const strokes = smoothstep(0.55, 0.8, w / SPACING);
+      const strokes = smoothstep(0.4, 0.7, w / SPACING);
       const open = gap * (1 + strokes * (dashes(Math.floor(u), x) - 1));
       const line = (SPACING / 2 - SPACING * Math.abs(u - Math.floor(u) - 0.5) - open / 2) / g;
       const edge = (sample(inside, x, y) - 0.5) * 2;

@@ -89,8 +89,8 @@ export const INK = "#031731"; // the plate's own ink, measured on its darkest te
 export const SPACING = 6.8;
 export const RIPPLE = { amplitude: 1.1, wavelength: 26 };
 export const WANDER = [
-  { amplitude: 1.1, scale: 34 },
-  { amplitude: 2.6, scale: 140 },
+  { amplitude: 0.6, scale: 34 },
+  { amplitude: 1.2, scale: 140 },
 ];
 // Ink covers a line's share of the spacing in proportion to darkness, up to this share, so even the
 // deepest shadow keeps a thread of paper between its lines.
