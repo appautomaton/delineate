@@ -7,14 +7,12 @@
 
 import { existsSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { FRAMES, svgOf } from "./sheet.ts";
+import { FRAMES, LAYERS, svgOf } from "./sheet.ts";
 
-// Back to front. The ground lies under the trees' layer, whose railing, planters and steps stand on it.
-const LAYERS = ["sky", "building", "ground", "tree", "subject", "leaves"];
 
 const started = Date.now();
 const body: string[] = [];
-for (const name of LAYERS) {
+for (const [name] of LAYERS) {
   const file = new URL(`./${name}/build.ts`, import.meta.url);
   if (!existsSync(file)) continue;
   const { draw } = await import(file.href);

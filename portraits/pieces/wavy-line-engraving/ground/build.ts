@@ -11,13 +11,10 @@
 //   itself a fine line.
 // Kept: all of it. Dropped: the stone's cracks, which do not read at the whole's scale.
 
-import { fileURLToPath } from "node:url";
-import { readPng } from "../../../harness/trace/image.ts";
 import { type Box, GAIN, type Field, blur, ink, luminance, placed, rgb, sample, shapes, smoothstep, waves } from "../engrave.ts";
-import { PAPER, REFERENCES, SIZE, SPACING, STREET_INK, run } from "../sheet.ts";
+import { PAPER, REFERENCES, SIZE, SPACING, STREET_INK, run, source } from "../sheet.ts";
 import { HORIZON, JOINTS, structures } from "./scene.ts";
 
-const PLATE = new URL("wav-ground.png", REFERENCES);
 const K = 3;
 
 // Between the horizon and the frame's foot the plane recedes, its lines drawn closer by NEAR at
@@ -45,7 +42,7 @@ const TINT = 0.5;
 // The plate's tone, as the share of paper our ink must cover; its own horizon line is left out,
 // as ours is drawn.
 function tone(): Field {
-  const { width: w, height: h, data } = readPng(fileURLToPath(PLATE));
+  const { width: w, height: h, data } = source("ground");
   const [p, i] = [luminance(...rgb(PAPER)), luminance(...rgb(STREET_INK))];
   const alpha = Float32Array.from({ length: w * h }, (_, q) => data[q * 4 + 3] / 255);
   const value = Float32Array.from({ length: w * h }, (_, q) => {

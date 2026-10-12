@@ -2,14 +2,11 @@
 // toned by the engraving's level waves read off the plate as a field, outlined in fine ink, with
 // its window columns, masts and plant; the near towers' floors run to the vanishing point.
 
-import { fileURLToPath } from "node:url";
-import { readPng } from "../../../harness/trace/image.ts";
 import type { Point } from "../../../harness/trace/polygon.ts";
 import { type Box, GAIN, blur, ink, inked, luminance, placed, rgb, sample, shapes, waves } from "../engrave.ts";
-import { PAPER, REFERENCES, SIZE, SPACING, STREET_INK, run } from "../sheet.ts";
+import { PAPER, REFERENCES, SIZE, SPACING, STREET_INK, run, source } from "../sheet.ts";
 import { type Block, FAR, GROUND, MASTS, NEAR, PLANT, VANISH } from "./scene.ts";
 
-const PLATE = new URL("wav-building.png", REFERENCES);
 const K = 3;
 // The far towers' lines run finer than the near ones', as the plate's do: distance in the line.
 const FAR_SPACING = 4.6;
@@ -99,7 +96,7 @@ function group(name: string, blocks: Block[], level: (x: number, y: number) => n
 }
 
 export async function draw(): Promise<string> {
-  const plate = readPng(fileURLToPath(PLATE));
+  const plate = source("building");
   const { dark } = inked(plate, PAPER, STREET_INK, 0.8 * FAR_SPACING);
   // A far face keeps to its own tone: the plate's darkness blurred within the part of the face
   // that shows, past its windows, so a face's light and shade carry but never bleed into its

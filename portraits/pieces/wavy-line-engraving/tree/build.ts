@@ -13,15 +13,12 @@
 // structure as models placed by eye (see scene.ts). Dropped: the crumbs of leaves inside the
 // shrubs' shadows, and the bricks' joints, which read only as the blocks' wavy hatching.
 
-import { fileURLToPath } from "node:url";
-import { readPng } from "../../../harness/trace/image.ts";
 import { type Point, distance, pathOf } from "../../../harness/trace/polygon.ts";
 import { type Box, type Field, blur, ink, luminance, over, placed, rgb, sample, shapes, smoothstep, waves } from "../engrave.ts";
-import { PAPER, REFERENCES, SPACING, STREET_INK, run } from "../sheet.ts";
+import { PAPER, REFERENCES, SPACING, STREET_INK, run, source } from "../sheet.ts";
 import { drawn, strokeData } from "../subject/lines.ts";
 import { BACK_LAMPS, BLOCKS, FRONT_LAMPS, HANDRAIL, HANDRAIL_POSTS, LAMP_BASES, type Lamp, POSTS, RAILS, TRUNKS } from "./scene.ts";
 
-const PLATE = new URL("wav-tree.png", REFERENCES);
 const BOX: Box = [0, 160, 1254, 1070];
 const K = 2; // samples per pixel of the foliage field
 const level = waves({ ripple: { amplitude: 1.1, wavelength: 26 }, wander: [{ amplitude: 0.6, scale: 34 }, { amplitude: 1.2, scale: 140 }], seed: 31 });
@@ -158,7 +155,7 @@ const postMarkup = (posts: [Point, Point][], width: number) =>
   `<path fill="none" stroke="${STREET_INK}" stroke-width="${f(width)}" d="${posts.map((p) => line(p)).join("")}"/>`;
 
 export async function draw(): Promise<string> {
-  const plate = readPng(fileURLToPath(PLATE));
+  const plate = source("tree");
   const { width: W, height: H, data } = plate;
   const [p, i] = [luminance(...rgb(PAPER)), luminance(...rgb(STREET_INK))];
   const alphaData = Float32Array.from({ length: W * H }, (_, q) => data[q * 4 + 3] / 255);
