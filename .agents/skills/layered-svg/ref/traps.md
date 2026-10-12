@@ -2,6 +2,20 @@
 
 ## Approach
 
+- **Cutting before sketching.** Opening a piece with Segment Anything cuts the picture into the
+  reference's accidents before anything is decided. Lay in by hand; segment only what earns it.
+- **Finishing a corner first.** A region drawn to full precision while the rest is blank cannot be
+  judged; the whole frame advances a stage at a time.
+- **Copying the reference's accidents.** A generated reference breaks its own style. Follow the
+  grammar where it does; drop what has no logic.
+- **Tracing a grammar of marks.** Engraved lines traced from pixels are fragments, by the hundred
+  thousand. Generate the marks from a tone field.
+- **Reinterpreting the grammar itself.** Reinterpretation corrects the reference's accidents, never
+  the style's defining trait. An engraving of level waves stays level everywhere: turning the lines
+  with the form made it another style.
+- **Style as an excuse.** Mimicry frees the choice of details, not the standard. Ragged line ends,
+  open joins, and fragments are faults in any style.
+- **Judging marks by pixel error.** It punishes a line for its phase. Compare tone at blur, and look.
 - **Changing the composition** to suit a camera model or a layout idea. The picture is fixed.
 - **Slicing the reference** into image layers. It is not vector work, and it is not acceptable.
 - **Over-splitting**: brows, mouth, and earrings as layers, each confetto as a layer. Layers are

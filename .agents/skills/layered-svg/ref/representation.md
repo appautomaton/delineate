@@ -26,17 +26,20 @@ show four.
 
 ## Choosing how a thing is drawn
 
-Pick the cheapest representation that still reads as the thing at normal size. In rough order of
-preference:
+Pick the cheapest representation that still reads as the thing at normal size, in the piece's
+grammar (see `grammar.md`). The table is written for the cel grammar. In a grammar of marks the
+geometry choices hold (authored outlines, models, symbols), and tone comes from the grammar's
+marks, not from a trace. In rough order of preference:
 
 | The thing | Draw it as | Cost |
 |---|---|---|
+| The big masses of the lay-in: horizon, building blocks, a figure's silhouette, large shadows | **Authored outlines** read off gridded crops (`look.ts grid`), as coarse as the stage allows; refined later only where the eye goes | bytes |
 | Flat geometric pieces: confetti, cards, tags, tiles | **Authored data** (`model/card.ts`): corners, a color, a blur if defocused. Fit once from the clearest source, store the numbers in the scene, draw from them. | tens of bytes each |
 | Regular solids: balloons, spheres, lanterns, wheels | **A parametric model** fitted to the picture (`model/sphere.ts` for panelled spheres): center, radius, axis, panel count, colors. Add a model to `portraits/harness/model` for a new geometric family. | about a kilobyte |
 | Repeated things: crowd figures, petals, windows, trees | **One `<symbol>`, many `<use>`** (`model/sprite.ts`): draw the thing once; place it with position, angle, scale; vary color with a CSS custom property on the `<use>` (it inherits into the symbol). Read placements off the picture or fit them to found copies. | one drawing plus tens of bytes per placement |
 | Built structure of straight members: gates, beams, frames | **A straight-edged trace**: few tones, polygonal rings, no crumbs. | kilobytes |
 | Organic and complex things: faces, hair, animals, costumes | **A tone-stack trace**, finer where the paint is smooth (skin), coarser elsewhere. | tens to hundreds of kilobytes |
-| A busy backdrop: city, crowd, foliage | **A tone-stack trace** with straight-where-straight rings, a coarser palette, crumbs dropped. | the bulk of the file |
+| A busy backdrop: city, crowd, foliage | **Selected, not copied:** tone and the few edges that give its silhouette, authored or traced coarsely with straight-where-straight rings and crumbs dropped; the generator's clutter left out. | in the pieces so far, the bulk of the file |
 | What is seen only when layers move or part | **A coarse trace**, plus symbols for any repeated things in it. | modest |
 | Hand-made details the picture does not show | **Draw them**: lash lines for a blink, a closed lid. | bytes |
 

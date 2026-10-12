@@ -13,6 +13,7 @@
     "preview": "vite preview garden",
     "prelook": "npm run draw",
     "look": "node garden/look.ts",
+    "bench": "vite --config portraits/bench/vite.config.ts --configLoader native",
     "paprika:segment": "node portraits/pieces/paprika/segment.ts",
     "paprika": "node portraits/pieces/paprika/build.ts",
     "paprika-girl:segment": "node portraits/pieces/paprika-girl/segment.ts",
@@ -20,7 +21,8 @@
     "memories:segment": "node portraits/pieces/memories/segment.ts",
     "memories": "node portraits/pieces/memories/build.ts",
     "memories-girl:segment": "node portraits/pieces/memories-girl/segment.ts",
-    "memories-girl": "node portraits/pieces/memories-girl/build.ts"
+    "memories-girl": "node portraits/pieces/memories-girl/build.ts",
+    "wavy-line-engraving": "node portraits/pieces/wavy-line-engraving/build.ts"
   },
   "devDependencies": {
     "@huggingface/transformers": "4.3.0",

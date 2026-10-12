@@ -14,8 +14,11 @@
 
 ## What to check
 
-- The whole frame side by side, then crops where the eye goes (eyes, mouth, hands) and where layers
-  meet (the subject's outline, where defocused pieces overlap things).
+- At the end of every stage, the whole frame beside the reference: small, for whether it reads, and
+  at size, for whether it holds. Do not start the next stage on a frame that does not hold.
+- Then crops where the eye goes (eyes, mouth, hands) and where layers meet (the subject's outline,
+  where defocused pieces overlap things), render and reference side by side. Ask whether each
+  reads as the style, not whether it matches the pixels.
 - Each layer alone, and each layer with the layers in front of it turned off: hidden parts must be
   continuous, with no streaks, holes, or stray pieces left in the wrong layer.
 - The standalone SVG and the page at rest. A screenshot of a page with a side panel, taken at the
@@ -25,6 +28,10 @@
 - No raster in the file: no `<image>`, no `data:`.
 
 ## What the numbers mean
+
+Pixel error (`compare.ts`) is fair only to the cel grammar. For a grammar of marks, blur render and
+reference until the marks vanish and compare tone; a line shifted half a period scores as a gross
+error and is not one.
 
 For a painted 1254 px portrait, a mean error near 5 of 255 with about 15% of pixels off by more
 than 12 looked like the same picture at normal size; the remaining error lived in texture and soft

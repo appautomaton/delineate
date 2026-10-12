@@ -1,15 +1,21 @@
-# Segmenting and tracing
+# Regions, plates, and the cel grammar
 
 ## Regions
 
-A region is the backdrop, a thing, or a part of a thing; each becomes one group. The region map is
-a PNG with one flat color per region (color derived from the region's name, black for the
-backdrop), so it can be checked by eye and touched up by hand (`portraits/harness/trace/labels.ts`). The build
-reads maps; it never reruns a model. A piece's `segment.ts` writes them, composing what
-`portraits/harness/trace/mask.ts` offers: Segment Anything masks, boxes, polygons, lines across the frame
-(below a rail, above a ridge read by eye and settled onto its edge), and tone ranges in OKLab.
+A region is the backdrop, a thing, or a part of a thing; each becomes one group. Its outline is
+needed only as precisely as the current stage needs it: the lay-in wants blocks and silhouettes,
+read off gridded crops and authored; only the subject's edge and what is nearest earn precision
+later.
 
-Segment Anything (`portraits/harness/trace/sam.ts`):
+The region map is a PNG with one flat color per region (color derived from the region's name,
+black for the backdrop), so it can be checked by eye and touched up by hand
+(`portraits/harness/trace/labels.ts`). The build reads maps; it never reruns a model. A piece's
+`segment.ts` writes them, composing what `portraits/harness/trace/mask.ts` offers: polygons and
+boxes authored by hand, lines across the frame (below a rail, above a ridge read by eye and settled
+onto its edge), tone ranges in OKLab, and Segment Anything masks.
+
+Segment Anything (`portraits/harness/trace/sam.ts`), for an intricate outline that a hand outline
+would cost more than it is worth:
 
 - ViT-B in **fp16**. The 8-bit build lost whole parts (a shirt, the hair, the koi) on the same
   prompts; fp16 agreed with fp32 on 99.6% of pixels at half the size.
@@ -23,7 +29,11 @@ Segment Anything (`portraits/harness/trace/sam.ts`):
 - Use SAM only where outlines are complex and colors close to their neighbors. A flat piece is
   found by its color; a regular solid by fitting its model.
 
-## Tracing a region (`portraits/harness/trace/layer.ts`, `stack.ts`)
+## The cel grammar: tracing a region (`portraits/harness/trace/layer.ts`, `stack.ts`)
+
+How a region in flat color is made into tone shapes. It executes the cel grammar; it is not how a
+grammar of marks is drawn (see `grammar.md`).
+
 
 1. Flatten paint texture with a light bilateral filter (one pass, color 12, space 3).
 2. Palette in OKLab, sized per region to a mean error target (`paletteFor`).
