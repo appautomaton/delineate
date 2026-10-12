@@ -11,6 +11,8 @@
     "dev": "vite garden",
     "build": "npm run check && vite build garden",
     "preview": "vite preview garden",
+    "prelook": "npm run draw",
+    "look": "node garden/look.ts",
     "paprika:segment": "node portraits/pieces/paprika/segment.ts",
     "paprika": "node portraits/pieces/paprika/build.ts",
     "paprika-girl:segment": "node portraits/pieces/paprika-girl/segment.ts",

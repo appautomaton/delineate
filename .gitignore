@@ -31,6 +31,9 @@ garden/gallery/details/
 garden/src/garden/anchors.css
 garden/src/garden/fields.ts
 
+# Written by garden/look.ts (npm run look)
+garden/look/
+
 # Written by each portrait's build.ts
 portraits/pieces/*/*.svg
 portraits/pieces/*/index.html

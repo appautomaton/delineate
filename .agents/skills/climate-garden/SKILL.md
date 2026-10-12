@@ -69,8 +69,8 @@ emblem in `src/garden/gardens.ts`; its line in the garden-hiding rule of `src/ga
    traps in `ref/drawing.md` first.
 6. **Compose.** Lay out each breakpoint; leave open sky and open ground; fill thin sides with
    real wood. See `ref/layout.md`.
-7. **Verify.** `npm run draw`, `npm run check`, `npm run build`; look at the garden at laptop,
-   wide, and portrait sizes, by day and by night; weigh the drawings. See `ref/verify.md`.
+7. **Verify.** `npm run draw`, `npm run check`, `npm run build`; `npm run look <key>` for every
+   layout by day and by night, then read its screenshots; weigh the drawings. See `ref/verify.md`.
 8. **Record and report.** Update the status and add "What the <garden> taught" to `climates.md`.
    Tell the user where to look, what changed, and what is still off.
 
