@@ -913,6 +913,10 @@
     "name": "ginkgo",
     "garden": "eastasian",
     "rank": 1,
+    "turn": [
+      0.79,
+      0.83
+    ],
     "common": "Ginkgo",
     "latin": "Ginkgo biloba",
     "note": "A stout grey-brown limb forking into ascending wood, knobbed with spur shoots, each bearing a cluster of long-stalked fresh green fans notched at the outer edge.",

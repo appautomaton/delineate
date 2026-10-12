@@ -44,16 +44,27 @@ export function ginkgoFan(out: Out, r: Rng, O: Pt, dir: number, R: number) {
   out.push(`<path class="ink hair vein" d="${veins}"/>`);
 }
 
+// When the ginkgo's leaves fall: gold all at once in late November, the whole tree bare within
+// about two weeks. Each fan's moment comes from where it hangs, not from the random stream, so
+// timing never moves the drawing.
+const shed = ([x, y]: Pt) => 0.835 + (((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 1000;
+
 // A fan on a long stalk from attach point T, leaning toward a direction a. The stalk and the fan
-// open together, from T, at their own gate.
+// open together, from T, at their own gate, and fall together at the shed.
 function fanOnStalk(out: Out, r: Rng, T: Pt, a: number, len: number, R: number, g: number) {
   const E = add(T, polar(len, a));
   const bow = polar(len * 0.12, a + rad(90) * (r() < 0.5 ? -1 : 1));
   const ctrl = add(add(T, polar(len * 0.5, a)), bow);
-  part(out, g, T, () => {
-    stalk(out, quad(T, ctrl, E), 2.4, 1.3, STALK, 8);
-    ginkgoFan(out, r, E, a + (r() - 0.5) * 0.25, R);
-  });
+  part(
+    out,
+    g,
+    T,
+    () => {
+      stalk(out, quad(T, ctrl, E), 2.4, 1.3, STALK, 8);
+      ginkgoFan(out, r, E, a + (r() - 0.5) * 0.25, R);
+    },
+    shed(T),
+  );
 }
 
 // The leaves of a spur shoot: three to five fans from its tip on stalks of uneven length, turned
@@ -65,7 +76,7 @@ function spurLeaves(out: Out, r: Rng, T: Pt, dir: number, g: number, sc: number)
   const spread = rad(110);
   for (let k = 0; k < n; k++) {
     const a = aim + spread * (k / (n - 1) - 0.5) + (r() - 0.5) * 0.3;
-    fanOnStalk(out, r, T, a, (30 + r() * 28) * sc, (26 + r() * 12) * sc, g + k * 0.014);
+    fanOnStalk(out, r, T, a, (30 + r() * 28) * sc, (26 + r() * 12) * sc, g + k * 0.006);
   }
 }
 
@@ -76,7 +87,7 @@ function spursOn(out: Out, r: Rng, parent: { res: Limb; g: number[] }, from: num
   for (let i = Math.round(res.n * from), s = side; i <= res.n - 6; i += 15 + Math.floor(r() * 4), s = -s) {
     const a = angleOf(res.pts, i) + s * rad(48 + r() * 30);
     // Stout and ringed with leaf scars, so the spur still reads once its leaves have fallen.
-    const spur = branch(out, r, parent, i / res.n, [polar(8, a), polar(20 + r() * 6, a)], 0.03, { w0: 11, w1: 9, cap: "blunt", lenticels: true, ...BARK });
+    const spur = branch(out, r, parent, i / res.n, [polar(8, a), polar(20 + r() * 6, a)], 0.02, { w0: 11, w1: 9, cap: "blunt", lenticels: true, ...BARK });
     const tip = spur.res.pts[spur.res.n];
     spurLeaves(out, r, tip, angleOf(spur.res.pts, spur.res.n), gate(spur.res, spur.g, spur.res.n) + 0.02, 1);
   }
@@ -86,14 +97,16 @@ function spursOn(out: Out, r: Rng, parent: { res: Limb; g: number[] }, from: num
 // the right, so the page mirrors the tree when it enters from the right.
 export function ginkgo(out: Out, r: Rng, base: Pt) {
   const at = (p: Pt) => add(base, p);
-  const gm = [0, 0.5];
+  // On the year: the wood grows through March, the fans open from late March into April, and the
+  // tree stands in full leaf by late spring.
+  const gm = [0, 0.16];
   const main = grow(out, gm[0], gm[1], () => limb(out, r, [at([-30, 14]), at([80, -8]), at([190, -60]), at([280, -150]), at([330, -262])], { w0: 46, w1: 13, cap: "blunt", ...BARK }));
   const parent = { res: main, g: gm };
 
   const forks = [
-    branch(out, r, parent, 0.3, [[30, -70], [70, -150], [96, -232]], 0.26, { w0: 22, w1: 11, cap: "blunt", ...BARK }),
-    branch(out, r, parent, 0.52, [[40, 8], [130, -6], [222, -44], [280, -104]], 0.26, { w0: 20, w1: 10, cap: "blunt", ...BARK }),
-    branch(out, r, parent, 0.74, [[20, -50], [50, -120], [60, -176]], 0.2, { w0: 16, w1: 9, cap: "blunt", ...BARK }),
+    branch(out, r, parent, 0.3, [[30, -70], [70, -150], [96, -232]], 0.09, { w0: 22, w1: 11, cap: "blunt", ...BARK }),
+    branch(out, r, parent, 0.52, [[40, 8], [130, -6], [222, -44], [280, -104]], 0.09, { w0: 20, w1: 10, cap: "blunt", ...BARK }),
+    branch(out, r, parent, 0.74, [[20, -50], [50, -120], [60, -176]], 0.07, { w0: 16, w1: 9, cap: "blunt", ...BARK }),
   ];
 
   spursOn(out, r, parent, 0.16, 1);
@@ -103,7 +116,7 @@ export function ginkgo(out: Out, r: Rng, base: Pt) {
   for (const f of forks) {
     const i = Math.round(f.res.n * 0.97);
     const a = angleOf(f.res.pts, i);
-    const shoot = branch(out, r, f, 0.97, [polar(22, a - 0.12), polar(50, a - 0.2)], 0.12, { w0: 7, w1: 3.2, cap: "taper", ...BARK });
+    const shoot = branch(out, r, f, 0.97, [polar(22, a - 0.12), polar(50, a - 0.2)], 0.05, { w0: 7, w1: 3.2, cap: "taper", ...BARK });
     let side = 1;
     for (const t of [0.3, 0.58, 0.84]) {
       const j = Math.round(shoot.res.n * t);

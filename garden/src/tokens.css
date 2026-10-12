@@ -273,6 +273,7 @@
 
   /* Species: the East Asian garden */
   --pl-ginkgo: oklch(0.7 0.12 130);
+  --pl-ginkgo-autumn: oklch(0.84 0.15 88);
 
   color-scheme: light;
 }
@@ -529,6 +530,7 @@
 
   /* Species: the East Asian garden, by moonlight */
   --pl-ginkgo: oklch(0.66 0.086 138);
+  --pl-ginkgo-autumn: oklch(0.8 0.108 96);
 
   color-scheme: dark;
 }
