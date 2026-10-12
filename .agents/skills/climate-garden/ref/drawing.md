@@ -34,10 +34,18 @@ Copy a plant's shape of code from the closest existing plant, not its numbers.
 ## Growth markup
 
 The page grows a garden by one progress value, 0 to 1: half on load, the rest with the scroll.
+A garden that shows a year runs the same value through the year (spring to 0.45, summer to 0.65,
+autumn to 0.85, winter to 1; see Seasons in `climates.md`), so there g is a date: open a part
+when the plant opens it, and have the whole plant in leaf by late spring, 0.42.
 
 - `grow(out, g0, g1, fn)` wraps a limb or stem; the page clips it to a rounded shoot that reaches
   its tip at g1. `fn` must return the stem's edges (`limb`, `stalk`, and `skirt` do).
-- `part(out, g, origin, fn)` wraps a leaf, flower, or fruit; it unfolds from `origin` over 0.08.
+- `part(out, g, origin, fn, leave?)` wraps a leaf, flower, or fruit; it unfolds from `origin` over
+  0.08 and, given `leave`, falls from then over 0.03. Take a leaf's `leave` from where it hangs,
+  not from `r()`, so its timing never moves the drawing (the ginkgo's `shed`).
+- A species that turns in autumn gets `turn: [start, end]` in `plants.json` and a
+  `--pl-<key>-autumn` token beside its summer one in both lights; its species-toned leaves mix
+  toward it.
 - `gate(res, g, i)` is the progress at which a grown stem reaches its point i: open parts there.
 - `npm run draw` fails when a part sits on a limb (within its half width) before the limb reaches
   it. Usually a part near a fork is closer to the fork's base than to its own limb: open it a beat

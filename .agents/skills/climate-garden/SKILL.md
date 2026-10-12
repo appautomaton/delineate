@@ -25,10 +25,11 @@ and by moonlight.
 
 - **Real plants.** Every plant exists and is grown in the climate, wild or cultivated alike. How
   it looks is researched before it is drawn; where it is native is not our question.
-- **One moment.** The system grows a garden once; it has no seasons yet. Pick the moment the
-  climate looks most itself (the desert after rain, the alpine at any hour). Four-season climates
-  wait for the seasons system designed in `climates.md`. A garden can have a tide (built, see
-  Water there); a still pond comes with the seasons.
+- **One moment, or a year.** A garden shows the moment its climate looks most itself (the desert
+  after rain, the alpine at any hour), or, marked `year` in `gardens.ts`, a four-season climate's
+  whole year, its leaves opening, turning, and falling as the page scrolls (see Seasons in
+  `climates.md`; parts of it are still to build). A garden can have a tide (see Water there); a
+  still pond comes with the seasons.
 - **Nothing floats.** Whatever hangs (lichen, mistletoe, a vine, spent flowers, fruit) is drawn
   hanging from its host, in the host's drawing: from a branch reaching in, or, in a garden with a
   canopy, from a bough or an arbor beam entering from the top. Open land leaves the top empty.
@@ -38,7 +39,8 @@ and by moonlight.
 ## How the site is built
 
 - `garden/src/garden/plants.json` lists every plant: key, garden, rank (who is dropped first when
-  space runs out), names, and the gallery's words. Its order is paint order.
+  space runs out), names, the gallery's words, and for a plant that turns in autumn its turning
+  window (`turn`). Its order is paint order.
 - `garden/draw/<garden>.ts` draws the plants; `garden/draw/draw.ts` registers each (seed, drawing,
   close-study detail). `npm run draw` writes `garden/public/garden/<key>.svg`, the anchors and
   fields the page uses, and the gallery details, and fails if a leaf would open before its limb

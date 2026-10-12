@@ -9,8 +9,8 @@ The survey was written from memory: research how each plant looks before it ente
 - **Built, 8 of 12:** tropical, Mediterranean, Sonoran Desert, Afroalpine, Cape fynbos, Lowveld
   savanna, Namib and Namaqualand, and the mangrove, the first with water.
 - **In progress:** East Asian, the first four-season garden, with lotus and rabbit-ear iris on a
-  still pond. Scaffolded with its signature plant, the ginkgo, at one moment (late spring), a side
-  tree from the left edge; the seasons system comes next (see Seasons).
+  still pond. Its signature plant, the ginkgo, is drawn through its year, a side tree from the
+  left edge, and the seasons system is built on it (see Seasons); the rest of the roster is next.
 - **Waiting for seasons:** boreal taiga, Eastern North American edge, Northwest European
   woodland.
 
@@ -213,53 +213,55 @@ says where that stands.
 ## Seasons
 
 The gardens built each show one moment. A four-season garden shows a year: its parts arrive and
-leave in their own seasons, its leaves turn, and its wood stands bare in winter. This is the
-design; nothing of it is built yet.
+leave in their own seasons, its leaves turn, and its wood stands bare in winter. Built and proven
+on the ginkgo: the year, parts that fall, turning, and seeing the year in `npm run look`. Still to
+build, each with the first plant that needs it: stems that die back, the check that a part does
+not outlive its stem, and still water.
 
-**One axis, the year.** A seasonal garden's progress u runs from 0 to 1 through the year, on the
-same axis growth already uses (`data-g`): spring 0 to 0.45, summer to 0.65, autumn to 0.85,
-winter to 1. Growth is not only spring's: the spider lily's scape rises in autumn, the plum
-flowers in late winter, pods and seed heads form after the flowers. Each happens where it
-happens on the one axis.
+**One axis, the year.** A garden marked `year` in `gardens.ts` runs its progress u from 0 to 1
+through the year, on the same axis growth uses (`data-g`): spring 0 to 0.45, summer to 0.65,
+autumn to 0.85, winter to 1. Growth is not only spring's: the spider lily's scape rises in
+autumn, the plum flowers in late winter, pods and seed heads form after the flowers. Each happens
+where it happens on the one axis, and a seasonal garden's plants are not staggered, so they keep
+to the calendar.
 
-- **Where the page rests.** The intro grows a seasonal garden to late spring, u = 0.42, its
-  fullest moment, and the scroll carries it from there to winter. Reduced motion rests at 0.42
-  too, where a single-moment garden rests fully grown. Touch autoplay stops at full summer,
-  u = 0.6. Scrolling back runs the year back.
+- **Where the page rests.** The intro grows a seasonal garden to late spring (`SPRING = 0.42` in
+  `main.ts`), its fullest moment, and the scroll carries it from there to winter. Reduced motion
+  rests there too, where a single-moment garden rests fully grown. A plant entering from beyond
+  its place settles by then. Touch autoplay stops in full summer (`SUMMER = 0.6`). Scrolling back
+  runs the year back. The address can pin any moment, `?u=0.82` for late autumn.
 - **Switching in.** A seasonal garden switched into mid-scroll grows in straight to the page's
-  season.
+  season, passing through the year on the way.
 - **The end.** The page ends on winter as the climate has it: bare wood and seed heads, with the
   plum flowering on bare zigzag wood so the end reads as finished.
 
-**A part's life.** Today a part only arrives: it unfolds at g. A seasonal part may also leave,
-and its markup carries both: it arrives at g and, if it leaves, leaves at d. Wood, winter buds,
-and fruit that stays through winter never leave. A herbaceous stem that dies back (the peony,
-the spider lily's scape, the lotus's stalks) leaves too.
+**A part's life.** A part arrives at g and, if it leaves, falls at d (`part`'s `leave`, written
+as `data-d`). Wood, winter buds, and fruit that stays through winter never leave. A herbaceous
+stem that dies back (the peony, the spider lily's scape, the lotus's stalks) will leave too.
 
 **Leaving reads as falling, not as arrival run backward.** A part shrinking back into its bud
-reads as time reversed. A leaf leaves by dropping and tilting as it fades; a petal drops and
-fades; a dying stem bends and fades. Before it falls, a leaf has already turned.
+reads as time reversed. A falling part drops toward the foot of its plant, faster as it goes,
+drifting and tilting, and fades over the second half of its fall. Before it falls, a leaf has
+already turned. A dying stem will bend and fade.
 
-**Turning.** Each species has a summer and an autumn tone, `--pl-<key>` and
-`--pl-<key>-autumn`, in both lights, and a turning window on the year in `plants.json`. The
-page writes each plant's turn (0 to 1) on its bed, stepped, and only when the step changes, as
-everything `renderGarden` draws is; `paint.css` mixes the two tones by it. The ginkgo turns late
-and all at once, the maple early and scarlet.
+**Turning.** A species that turns has an autumn tone, `--pl-<key>-autumn`, beside its summer one
+in both lights, and a turning window on the year in `plants.json` (`turn`). `draw.ts` writes its
+leaf color as a mix of the two by `--turn`; the page writes `--turn` on its bed in tenths, only
+when the step changes. The ginkgo turns late and all at once, the maple early and scarlet.
 
-**Bare winter wood.** Today's trees are drawn for leaves to cover the branch tips. A deciduous
-tree must read bare, so its twigs are drawn to be seen: spur shoots, buds, fine tips. Drawn bare
-first, then leafed.
+**Bare winter wood.** A deciduous tree must read bare, so its twigs are drawn to be seen: spur
+shoots, buds, fine tips. Drawn bare first, then leafed. The ginkgo's spurs are stout and ringed
+with leaf scars for this.
 
-**Still water.** A garden whose water is a pond, not a tide, holds it at full depth: `gardens.ts`
-marks the water still, and `--tide` stays at 1.
+**Still water.** A garden whose water is a pond, not a tide, will hold it at full depth:
+`gardens.ts` marks the water still, and `--tide` stays at 1.
 
-**The tools follow.** `npm run draw` also fails when a part outlives the stem it sits on.
-`npm run look` shows a seasonal garden in each season (late spring, summer, autumn, winter), so
-a layout is judged across the year, not at one moment.
+**The tools follow.** `npm run look` shows a seasonal garden at rest and then at summer, early
+autumn, late autumn, and winter, so a layout is judged across the year. `npm run draw` will also
+fail when a part outlives the stem it sits on.
 
-**Build order.** Research how the East Asian roster looks (done; see §2). Build the
-system with one plant, the ginkgo, which crosses every part of it: fans unfolding, green
-deepening, gold all at once, then bare limbs with spur shoots. Show it, then grow the roster.
+**Build order.** Done: the East Asian roster's research, and the system on the ginkgo. Next: the
+rest of the roster, each bringing the system piece it needs.
 
 The taiga and the two temperate woodlands take the same system, and their rosters get the same
 four columns when their turn comes.

@@ -1,9 +1,10 @@
 // The gardens a visitor can choose, in the switcher's order. Each has an emblem: a line drawing of
 // its signature plant on a 24-unit square, in the garden's own ink. `leaves` are closed shapes,
 // washed with `tone` (a species token in src/tokens.css) while the garden is on show; `lines` are
-// open strokes: ribs, stems, cuts. A garden with water sets `water`, its height in `--u` units.
+// open strokes: ribs, stems, cuts. A garden with water sets `water`, its height in `--u` units; a
+// garden that shows a year rather than one moment sets `year`.
 
-export type Garden = { key: string; name: string; tone: string; water?: number; leaves: string[]; lines: string[] };
+export type Garden = { key: string; name: string; tone: string; water?: number; year?: boolean; leaves: string[]; lines: string[] };
 
 export const GARDENS: Garden[] = [
   {
@@ -129,6 +130,7 @@ export const GARDENS: Garden[] = [
     key: "eastasian",
     name: "East Asian",
     tone: "--pl-ginkgo",
+    year: true,
     // A ginkgo spur: three fan leaves on stalks from one shoot, each notched at its outer edge.
     leaves: [
       "M12 14L4.9 9.9C5.92 7.15 8.82 6.19 12 8.21 15.18 6.19 18.08 7.15 19.1 9.9Z",

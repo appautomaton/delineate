@@ -15,6 +15,7 @@ import "./garden/anchors.css";
 import { animate } from "animejs";
 import { arrange } from "./garden/arrange";
 import { GARDENS } from "./garden/gardens";
+import PLANTS from "./garden/plants.json";
 import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
 
 // The garden is drawn by garden/draw into public/garden/<name>.svg. Each plant this screen
@@ -23,9 +24,15 @@ import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
 // leaves, flowers, and fruit unfold from where they attach. The theme picks the light, and the
 // switcher the garden.
 
-const INTRO = 0.5; // how far the garden grows before the visitor scrolls
+const INTRO = 0.5; // how far a garden grows before the visitor scrolls
+// A garden that shows a year runs its progress through it: spring to 0.45, summer to 0.65,
+// autumn to 0.85, winter to 1. Its intro rests at late spring, and touch autoplay stops in
+// full summer.
+const SPRING = 0.42;
+const SUMMER = 0.6;
 const LOW_TIDE = 0.22; // the share of a water garden's depth shown before scrolling begins
 const UNFOLD = 0.08; // the span of progress a leaf, flower, or fruit takes to open
+const FALL = 0.03; // the span a leaf or petal takes to fall, in a garden that shows a year
 const FPS = 30; // growth is slow, so the garden redraws at most this often
 const LAG = 75; // ms for the smoothed scroll to close about two thirds of the gap to the page
 const AUTOPLAY = 6000; // ms touch screens take to play the scroll part of the growth
@@ -50,7 +57,9 @@ type Limb = {
   last: number;
   clipped: boolean;
 };
-type Part = { el: SVGGElement; g: number; o: string; back: string; turn: number; last: number };
+// A part opens at g and, if it leaves, falls at d: dropping `drop` drawing units to the foot of
+// its plant, drifting `drift` aside and tilting `tilt` degrees as it goes.
+type Part = { el: SVGGElement; g: number; d: number; o: string; back: string; turn: number; drop: number; drift: number; tilt: number; last: number; fell: number };
 type Water = { body: SVGGElement; maskId: string; grad: SVGLinearGradientElement; edge: SVGPathElement; line: SVGPathElement; masked: boolean; wy: number };
 // boost scales a plant's growth: 1 normally, and rising from 0 while its garden grows in.
 // enter is how far, in CSS pixels, a plant starts from its place (null if it starts there), and
@@ -67,6 +76,9 @@ type Plant = {
   limbs: Limb[];
   parts: Part[];
   water: Water | null;
+  // A plant that turns in autumn: its turning window on the year, and the step last written.
+  turn: number[] | null;
+  turned: string;
   enter: number[] | null;
   flip: number;
   shift: string;
@@ -85,7 +97,13 @@ const gardenEl = document.querySelector<HTMLElement>(".garden")!;
 const waterEl = document.querySelector<HTMLElement>(".garden .water");
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const touch = matchMedia("(pointer: coarse)").matches;
-const growth = { intro: still ? 1 : 0, scroll: 0 };
+// intro runs from 0 to 1 as the garden grows to where it rests; scroll is the page's share.
+const growth = { intro: 0, scroll: 0 };
+// The address can pin the progress (`?u=0.8`, a late autumn), to show or share one moment.
+const pinned = (() => {
+  const u = new URLSearchParams(location.search).get("u");
+  return u !== null && u !== "" && Number.isFinite(+u) ? clamp(+u) : null;
+})();
 // A water garden's tide grows in with its plants, so the surface and every plant's waterline
 // rise together.
 const tideIn = { k: 1 };
@@ -104,7 +122,7 @@ setupTheme();
 setupSwitcher(document.querySelector("[data-garden-switch]")!, document.querySelector("[data-garden-list]")!, () => garden, showGarden);
 arrange(beds);
 plantGarden().then(() => {
-  if (!still) animate(growth, { intro: INTRO, duration: 2600, ease: "out(3)", onUpdate: () => requestGarden(), onComplete: () => { if (touch) autoplay(); } });
+  if (!still) animate(growth, { intro: 1, duration: 2600, ease: "out(3)", onUpdate: () => requestGarden(), onComplete: () => { if (touch) autoplay(); } });
 });
 addEventListener(
   "resize",
@@ -156,7 +174,9 @@ function followScroll() {
 // Touch screens play the rest of the growth on their own by easing the page through the scroll
 // track. A touch, wheel, or key hands control back at once.
 function autoplay() {
-  const span = document.querySelector<HTMLElement>(".scroll-track")!.offsetHeight - innerHeight;
+  // A seasonal garden plays on to full summer and leaves autumn and winter to the visitor.
+  const share = seasonal() ? (SUMMER - SPRING) / (1 - SPRING) : 1;
+  const span = (document.querySelector<HTMLElement>(".scroll-track")!.offsetHeight - innerHeight) * share;
   if (scrollY > 4 || span <= 0) return;
   const start = performance.now();
   let stopped = false;
@@ -188,7 +208,9 @@ async function plantGarden(growing = false) {
       const res = await fetch(`/garden/${bed.dataset.plant}.svg`);
       if (!res.ok) return;
       bed.innerHTML = await res.text();
-      const plant = collect(bed, (i % 5) * 0.03);
+      // A seasonal garden keeps every plant on the calendar; others stagger their growth a little.
+      const year = GARDENS.find((g) => g.key === bed.dataset.garden)?.year;
+      const plant = collect(bed, year ? 0 : (i % 5) * 0.03);
       scaleInk(plant, height);
       readEnter(plant);
       plants.push(plant);
@@ -230,11 +252,14 @@ function collect(bed: HTMLElement, lag: number): Plant {
     el.after(tip);
     return { el, id, clip, tip, x, y, w, nx, ny, s, g0: +el.dataset.g0!, g1: +el.dataset.g1!, last: -1, clipped: false };
   });
-  const parts = [...bed.querySelectorAll<SVGGElement>(".gp")].map((el, i) => {
-    const [x, y] = el.dataset.o!.split(" ");
-    return { el, g: +el.dataset.g!, o: `${x} ${y}`, back: `${-x} ${-y}`, turn: i % 2 ? 22 : -22, last: -1 };
-  });
   const box = svg.viewBox.baseVal;
+  const parts = [...bed.querySelectorAll<SVGGElement>(".gp")].map((el, i): Part => {
+    const [x, y] = el.dataset.o!.split(" ");
+    const drop = box.y + box.height - +y;
+    const side = i % 2 ? 1 : -1;
+    const d = el.dataset.d === undefined ? Infinity : +el.dataset.d;
+    return { el, g: +el.dataset.g!, d, o: `${x} ${y}`, back: `${-x} ${-y}`, turn: side * 22, drop, drift: side * drop * (0.1 + ((i * 7) % 10) / 50), tilt: side * (50 + ((i * 37) % 70)), last: -1, fell: -1 };
+  });
   let water: Water | null = null;
   if (GARDENS.find((g) => g.key === bed.dataset.garden)?.water) {
     const body = document.createElementNS(SVG_NS, "g");
@@ -287,7 +312,8 @@ function collect(bed: HTMLElement, lag: number): Plant {
     svg.append(defs, body, cross);
     water = { body, maskId, grad, edge, line, masked: false, wy: NaN };
   }
-  return { bed, garden: bed.dataset.garden!, vb: box.height, vbY: box.y, top: 0, k: 0, lag, boost: 1, limbs, parts, water, enter: null, flip: 1, shift: "" };
+  const turn = (PLANTS.find((p) => p.name === name) as { turn?: number[] } | undefined)?.turn ?? null;
+  return { bed, garden: bed.dataset.garden!, vb: box.height, vbY: box.y, top: 0, k: 0, lag, boost: 1, limbs, parts, water, turn, turned: "", enter: null, flip: 1, shift: "" };
 }
 
 // A plant can enter from beyond its place, so the garden starts open and fills as it grows:
@@ -366,8 +392,10 @@ function growIn(plant: Plant) {
 // Writes only what has changed: a frame whose inputs have not moved is skipped, and each offset,
 // limb, part, and waterline is compared with what it last wrote.
 function renderGarden() {
-  const all = Math.round(Math.min(1, growth.intro + (1 - INTRO) * growth.scroll) * 400) / 400;
-  const tide = waterFull ? tideIn.k * (all <= INTRO ? (all / INTRO) * LOW_TIDE : LOW_TIDE + ((all - INTRO) / (1 - INTRO)) * (1 - LOW_TIDE)) : 0;
+  const all = progress();
+  const year = seasonal();
+  const rest = year ? SPRING : INTRO;
+  const tide = waterFull ? tideIn.k * (all <= rest ? (all / rest) * LOW_TIDE : LOW_TIDE + ((all - rest) / (1 - rest)) * (1 - LOW_TIDE)) : 0;
   let key = `${garden} ${all} ${tide}`;
   for (const plant of plants) if (plant.garden === garden) key += ` ${plant.boost}`;
   if (key === frame) return;
@@ -379,12 +407,19 @@ function renderGarden() {
     const p = clamp((all - plant.lag) / (1 - plant.lag)) * plant.boost;
     let shiftY = 0;
     if (plant.enter) {
-      // Eased: it leaves its start briskly and settles slowly. The transform comes after the
-      // flip, so a mirrored plant's offset is mirrored back.
-      const k = 1 - p * p * (3 - 2 * p);
+      // Eased: it leaves its start briskly and settles slowly, by full growth, or in a garden that
+      // shows a year by late spring, where it rests. The transform comes after the flip, so a
+      // mirrored plant's offset is mirrored back.
+      const e = year ? clamp(p / SPRING) : p;
+      const k = 1 - e * e * (3 - 2 * e);
       shiftY = plant.enter[1] * k;
       const shift = `translate(${(plant.enter[0] * k * plant.flip).toFixed(1)}px, ${shiftY.toFixed(1)}px)`;
       if (shift !== plant.shift) plant.bed.style.transform = plant.shift = shift;
+    }
+    if (plant.turn) {
+      // Stepped in tenths, so a turning crown restyles only when its color visibly moves.
+      const step = String(Math.round(clamp((p - plant.turn[0]) / (plant.turn[1] - plant.turn[0])) * 10) / 10);
+      if (step !== plant.turned) plant.bed.style.setProperty("--turn", (plant.turned = step));
     }
     let moved = false;
     for (const limb of plant.limbs) {
@@ -406,9 +441,18 @@ function renderGarden() {
     }
     for (const part of plant.parts) {
       const t = clamp((p - part.g) / UNFOLD);
-      if (t === part.last) continue;
+      const f = clamp((p - part.d) / FALL);
+      if (t === part.last && f === part.fell) continue;
       part.last = t;
-      part.el.style.visibility = t ? "" : "hidden";
+      part.fell = f;
+      part.el.style.visibility = t && f < 1 ? "" : "hidden";
+      if (f > 0) {
+        // Falling, not arrival run backward: it drops faster as it goes, drifting and tilting,
+        // and fades over the second half.
+        part.el.style.opacity = f < 0.5 ? "" : String((1 - f) * 2);
+        part.el.setAttribute("transform", `translate(${(part.drift * f).toFixed(1)} ${(part.drop * f * f).toFixed(1)}) translate(${part.o}) rotate(${(part.tilt * f).toFixed(1)}) translate(${part.back})`);
+        continue;
+      }
       part.el.style.opacity = t < 0.3 ? String(t / 0.3) : "";
       if (t === 1) part.el.removeAttribute("transform");
       else part.el.setAttribute("transform", `translate(${part.o}) rotate(${(1 - t) * part.turn}) scale(${unfold(t)}) translate(${part.back})`);
@@ -514,6 +558,21 @@ function shoot(limb: Limb, t: number, k: number) {
   const a = (e: number, rr: number) => pt(gx - ty * e * rr, gy + tx * e * rr);
   limb.clip.setAttribute("d", `M${left}L${a(1, gw + ROOM)}L${a(1, r)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 0 ${a(-1, r)}L${a(-1, gw + ROOM)}L${right}Z`);
   limb.tip.setAttribute("d", `M${a(1, gw)}A${gw.toFixed(1)} ${gw.toFixed(1)} 0 0 0 ${a(-1, gw)}`);
+}
+
+// The garden's progress, in 400 steps: a single-moment garden grows half way in the intro and
+// the rest with the scroll; a seasonal one grows to late spring and the scroll carries it through
+// the year. Reduced motion shows where a garden rests: fully grown, or late spring.
+function progress() {
+  if (pinned !== null) return pinned;
+  const year = seasonal();
+  if (still) return year ? SPRING : 1;
+  const rest = year ? SPRING : INTRO;
+  return Math.round(Math.min(1, growth.intro * rest + (1 - rest) * growth.scroll) * 400) / 400;
+}
+
+function seasonal() {
+  return !!GARDENS.find((g) => g.key === garden)?.year;
 }
 
 // Opens past full size a little, then settles, like a leaf relaxing as it unfurls.

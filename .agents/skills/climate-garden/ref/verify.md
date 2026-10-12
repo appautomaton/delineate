@@ -15,8 +15,11 @@
 ## Looking at every layout
 
 `npm run look <key>` (no key: every garden) draws the plants, serves the site, and opens each
-garden fully grown on five screens, one per layout tier (phone, tablet, laptop, wide, short), by
-day and by night. It writes the screenshots to `garden/look/<key>/<screen>-<light>.png` and prints
+garden where it rests (fully grown, or late spring for a garden that shows a year) on five
+screens, one per layout tier (phone, tablet, laptop, wide, short), by day and by night. A garden
+that shows a year is then shown on a laptop at summer, early autumn, late autumn, and winter
+(`laptop-<season>-<light>.png`), pinned through the address; any moment opens the same way,
+`/?garden=<key>&u=0.82`. It writes the screenshots to `garden/look/<key>/` and prints
 what a screenshot hides: how many plants each layout shows, the ones the solver left out, and any
 whose paint reaches the controls. A phone is Chrome at a phone's width: no device emulation, no
 throttling. It drives the system Chrome, which a sandboxed session cannot launch: run it outside
