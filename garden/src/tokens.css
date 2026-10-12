@@ -268,6 +268,12 @@
   --pl-saltwort: oklch(0.68 0.125 122);
   --pl-seapurslane: oklch(0.56 0.11 144);
 
+  /* Materials: the East Asian garden */
+  --bark-ginkgo: oklch(0.6 0.03 70);
+
+  /* Species: the East Asian garden */
+  --pl-ginkgo: oklch(0.7 0.12 130);
+
   color-scheme: light;
 }
 
@@ -517,6 +523,12 @@
   --pl-morningglory: oklch(0.54 0.086 142);
   --pl-saltwort: oklch(0.63 0.09 130);
   --pl-seapurslane: oklch(0.52 0.079 152);
+
+  /* Materials: the East Asian garden, by moonlight */
+  --bark-ginkgo: oklch(0.55 0.023 70);
+
+  /* Species: the East Asian garden, by moonlight */
+  --pl-ginkgo: oklch(0.66 0.086 138);
 
   color-scheme: dark;
 }

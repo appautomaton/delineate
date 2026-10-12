@@ -10,6 +10,7 @@ import "./garden/savanna.css";
 import "./garden/fynbos.css";
 import "./garden/namib.css";
 import "./garden/mangrove.css";
+import "./garden/eastasian.css";
 import "./garden/anchors.css";
 import { animate } from "animejs";
 import { arrange } from "./garden/arrange";

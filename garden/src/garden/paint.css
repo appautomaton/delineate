@@ -32,7 +32,8 @@
 :root[data-garden="savanna"] .garden .plant:not([data-garden="savanna"]),
 :root[data-garden="fynbos"] .garden .plant:not([data-garden="fynbos"]),
 :root[data-garden="namib"] .garden .plant:not([data-garden="namib"]),
-:root[data-garden="mangrove"] .garden .plant:not([data-garden="mangrove"]) {
+:root[data-garden="mangrove"] .garden .plant:not([data-garden="mangrove"]),
+:root[data-garden="eastasian"] .garden .plant:not([data-garden="eastasian"]) {
   display: none;
 }
 

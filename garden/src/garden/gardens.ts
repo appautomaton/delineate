@@ -125,4 +125,16 @@ export const GARDENS: Garden[] = [
       "M3 18.4H21",
     ],
   },
+  {
+    key: "eastasian",
+    name: "East Asian",
+    tone: "--pl-ginkgo",
+    // A ginkgo spur: three fan leaves on stalks from one shoot, each notched at its outer edge.
+    leaves: [
+      "M12 14L4.9 9.9C5.92 7.15 8.82 6.19 12 8.21 15.18 6.19 18.08 7.15 19.1 9.9Z",
+      "M8.6 15.4L2.23 15.96C1.65 13.74 3.07 11.83 6.01 11.7 7.14 8.98 9.42 8.3 11.3 9.6Z",
+      "M15.4 15.4L12.7 9.6C14.58 8.3 16.86 8.98 17.99 11.7 20.93 11.83 22.35 13.74 21.77 15.96Z",
+    ],
+    lines: ["M12 22V14", "M12 17.4Q9.6 17 8.6 15.4", "M12 17.4Q14.4 17 15.4 15.4"],
+  },
 ];

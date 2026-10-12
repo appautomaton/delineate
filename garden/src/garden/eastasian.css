@@ -1,0 +1,21 @@
+/* The East Asian garden's layouts. The ginkgo is the garden's first plant: a side tree that reaches in
+   from the left edge, rising from a base low on the edge and forking into ascending wood, so the
+   open sky stays clear above the crown. */
+
+/* Portrait screens. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 80%; --h: 46; --enter: -0.4 0; }
+}
+
+/* Landscape screens. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 90%; --h: 58; --enter: -0.4 0; }
+}
+
+/* Short landscape phones. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 90%; --h: 66; --enter: -0.4 0; }
+}
