@@ -32,11 +32,3 @@ For what still screenshots cannot show (the growth as the page scrolls, a garden
 the switcher, the tide), use the chrome-devtools tools on the dev server. Open
 `http://localhost:5199/?garden=<key>`, reload with the cache ignored after each change, and scroll
 in an evaluated script. The theme toggle saves its choice in the browser; click it back afterwards.
-
-## Weight
-
-A plant's size is not the cost; the garden's is. Total its gzipped drawings
-(`for f in garden/public/garden/*.svg; do gzip -c $f | wc -c; done`, for the garden's plants) and
-compare with the heaviest gardens already accepted, Afroalpine and the savanna at about 400 KB
-each. Within that, a garden keeps its detail. Only a garden past it needs a closer look: scroll
-it on the dev server and watch for stutter, and name its heaviest plants in the report.

@@ -64,10 +64,9 @@ The page grows a garden by one progress value, 0 to 1: half on load, the rest wi
 - **Tiers or masses with square ends** show seams where they overlap; taper them into lenses.
 - **A fork's neck** must be covered by the limbs drawn over it, starting well inside it, with no
   ink across its top.
-- **Detail no one sees** still costs download and paint. Ten points a leaf are as smooth once the
-  curve runs through them, and a compound leaf seen at a distance needs its pinnae, not its
-  leaflets, in one wash (`bladeBunch`). What a garden can afford is measured, not budgeted per
-  plant: see Weight in `ref/verify.md`.
+- **Detail no one sees** need not be drawn. Ten points a leaf are as smooth once the curve runs
+  through them, and a compound leaf seen at a distance needs its pinnae, not its leaflets, in one
+  wash (`bladeBunch`).
 
 ## Tokens
 
