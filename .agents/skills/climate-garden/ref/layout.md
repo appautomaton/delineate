@@ -36,6 +36,9 @@ Each plant gets `display: block` and four properties:
 - **Keep clear of the controls** at the top right: a side branch there sits a third of the way
   down, not at the top, and on short landscape phones about half way, since its crown rises above
   its base. `npm run look` names any plant that reaches the controls and how far it must move down.
+  One overlap is accepted: on portrait screens the controls span most of the top, so a plant
+  hanging from the top (the tropical and Mediterranean vines, the mangrove's Spanish moss) may
+  pass behind them, and look lists it anyway.
 - **The solver** (`arrange.ts`) slides each plant along its edge (up to 12%) and lets it sink into
   that edge (up to 6%) to reduce overlap, then drops plants more than half covered, highest rank
   number first. Give filler plants the highest ranks. If a plant keeps disappearing, it is placed
