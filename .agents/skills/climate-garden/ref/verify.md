@@ -15,7 +15,7 @@
 ## Looking at every layout
 
 `npm run look <key>` (no key: every garden) draws the plants, serves the site, and opens each
-garden where it rests (fully grown, or late spring for a garden that shows a year) on five
+garden full (fully grown, or in full leaf at late spring for a garden that shows a year) on five
 screens, one per layout tier (phone, tablet, laptop, wide, short), by day and by night. A garden
 that shows a year is then shown on a laptop at summer, early autumn, late autumn, and winter
 (`laptop-<season>-<light>.png`), pinned through the address; any moment opens the same way,

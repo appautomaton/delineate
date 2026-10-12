@@ -225,11 +225,14 @@ autumn, the plum flowers in late winter, pods and seed heads form after the flow
 where it happens on the one axis, and a seasonal garden's plants are not staggered, so they keep
 to the calendar.
 
-- **Where the page rests.** The intro grows a seasonal garden to late spring (`SPRING = 0.42` in
-  `main.ts`), its fullest moment, and the scroll carries it from there to winter. Reduced motion
-  rests there too, where a single-moment garden rests fully grown. A plant entering from beyond
-  its place settles by then. Touch autoplay stops in full summer (`SUMMER = 0.6`). Scrolling back
-  runs the year back. The address can pin any moment, `?u=0.82` for late autumn.
+- **Where the page rests.** The intro grows a seasonal garden into early spring (`BUD = 0.12` in
+  `main.ts`): its wood reaching in, hardly a leaf open. The scroll does the rest, so the first
+  scroll answers at once: the wood reaches in, the leaves open, and by late spring
+  (`SPRING = 0.42`), its fullest moment, the garden is in full leaf and every entering plant has
+  settled. Reduced motion shows that moment, where a single-moment garden shows itself fully
+  grown. Touch autoplay stops in full summer (`SUMMER = 0.6`). Scrolling back runs the year back.
+  The address can pin any moment, `?u=0.8` for late autumn. (An intro that grew the garden to
+  late spring left the first scroll with nothing to do.)
 - **Switching in.** A seasonal garden switched into mid-scroll grows in straight to the page's
   season, passing through the year on the way.
 - **The end.** The page ends on winter as the climate has it: bare wood and seed heads, with the
@@ -240,9 +243,11 @@ as `data-d`). Wood, winter buds, and fruit that stays through winter never leave
 stem that dies back (the peony, the spider lily's scape, the lotus's stalks) will leave too.
 
 **Leaving reads as falling, not as arrival run backward.** A part shrinking back into its bud
-reads as time reversed. A falling part drops toward the foot of its plant, faster as it goes,
-drifting and tilting, and fades over the second half of its fall. Before it falls, a leaf has
-already turned. A dying stem will bend and fade.
+reads as time reversed. A falling part lets go at once and drops toward the foot of its plant,
+faster as it goes, swaying side to side and tilting, and fades over the second half of its fall.
+A tree's shedding is spread over enough of the scroll to watch (the ginkgo's, about a sixth),
+even where the real one sheds in days. Before it falls, a leaf has already turned. A dying stem
+will bend and fade.
 
 **Turning.** A species that turns has an autumn tone, `--pl-<key>-autumn`, beside its summer one
 in both lights, and a turning window on the year in `plants.json` (`turn`). `draw.ts` writes its

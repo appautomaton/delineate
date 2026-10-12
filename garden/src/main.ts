@@ -26,13 +26,15 @@ import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
 
 const INTRO = 0.5; // how far a garden grows before the visitor scrolls
 // A garden that shows a year runs its progress through it: spring to 0.45, summer to 0.65,
-// autumn to 0.85, winter to 1. Its intro rests at late spring, and touch autoplay stops in
-// full summer.
+// autumn to 0.85, winter to 1. Its intro grows it into early spring, its wood reaching in, so
+// the scroll leafs it; it is full by late spring, where reduced motion shows it and entering
+// plants settle; touch autoplay stops in full summer.
+const BUD = 0.12;
 const SPRING = 0.42;
 const SUMMER = 0.6;
+const FALL = 0.08; // the span a leaf or petal takes to fall
 const LOW_TIDE = 0.22; // the share of a water garden's depth shown before scrolling begins
 const UNFOLD = 0.08; // the span of progress a leaf, flower, or fruit takes to open
-const FALL = 0.03; // the span a leaf or petal takes to fall, in a garden that shows a year
 const FPS = 30; // growth is slow, so the garden redraws at most this often
 const LAG = 75; // ms for the smoothed scroll to close about two thirds of the gap to the page
 const AUTOPLAY = 6000; // ms touch screens take to play the scroll part of the growth
@@ -175,7 +177,7 @@ function followScroll() {
 // track. A touch, wheel, or key hands control back at once.
 function autoplay() {
   // A seasonal garden plays on to full summer and leaves autumn and winter to the visitor.
-  const share = seasonal() ? (SUMMER - SPRING) / (1 - SPRING) : 1;
+  const share = seasonal() ? (SUMMER - BUD) / (1 - BUD) : 1;
   const span = (document.querySelector<HTMLElement>(".scroll-track")!.offsetHeight - innerHeight) * share;
   if (scrollY > 4 || span <= 0) return;
   const start = performance.now();
@@ -394,7 +396,7 @@ function growIn(plant: Plant) {
 function renderGarden() {
   const all = progress();
   const year = seasonal();
-  const rest = year ? SPRING : INTRO;
+  const rest = year ? BUD : INTRO;
   const tide = waterFull ? tideIn.k * (all <= rest ? (all / rest) * LOW_TIDE : LOW_TIDE + ((all - rest) / (1 - rest)) * (1 - LOW_TIDE)) : 0;
   let key = `${garden} ${all} ${tide}`;
   for (const plant of plants) if (plant.garden === garden) key += ` ${plant.boost}`;
@@ -447,10 +449,13 @@ function renderGarden() {
       part.fell = f;
       part.el.style.visibility = t && f < 1 ? "" : "hidden";
       if (f > 0) {
-        // Falling, not arrival run backward: it drops faster as it goes, drifting and tilting,
-        // and fades over the second half.
+        // Falling, not arrival run backward: it lets go at once and drops faster as it goes,
+        // swaying side to side as a leaf does, and fades over the second half.
+        const sway = Math.sin(f * Math.PI * 3);
+        const x = part.drift * f + Math.sign(part.drift) * part.drop * 0.06 * sway;
+        const y = part.drop * f * (0.35 + 0.65 * f);
         part.el.style.opacity = f < 0.5 ? "" : String((1 - f) * 2);
-        part.el.setAttribute("transform", `translate(${(part.drift * f).toFixed(1)} ${(part.drop * f * f).toFixed(1)}) translate(${part.o}) rotate(${(part.tilt * f).toFixed(1)}) translate(${part.back})`);
+        part.el.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) translate(${part.o}) rotate(${(part.tilt * f + 18 * sway).toFixed(1)}) translate(${part.back})`);
         continue;
       }
       part.el.style.opacity = t < 0.3 ? String(t / 0.3) : "";
@@ -561,13 +566,13 @@ function shoot(limb: Limb, t: number, k: number) {
 }
 
 // The garden's progress, in 400 steps: a single-moment garden grows half way in the intro and
-// the rest with the scroll; a seasonal one grows to late spring and the scroll carries it through
-// the year. Reduced motion shows where a garden rests: fully grown, or late spring.
+// the rest with the scroll; a seasonal one grows into early spring and the scroll carries it
+// through the year. Reduced motion shows a garden full: fully grown, or late spring.
 function progress() {
   if (pinned !== null) return pinned;
   const year = seasonal();
   if (still) return year ? SPRING : 1;
-  const rest = year ? SPRING : INTRO;
+  const rest = year ? BUD : INTRO;
   return Math.round(Math.min(1, growth.intro * rest + (1 - rest) * growth.scroll) * 400) / 400;
 }
 

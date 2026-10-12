@@ -44,10 +44,10 @@ export function ginkgoFan(out: Out, r: Rng, O: Pt, dir: number, R: number) {
   out.push(`<path class="ink hair vein" d="${veins}"/>`);
 }
 
-// When the ginkgo's leaves fall: gold all at once in late November, the whole tree bare within
-// about two weeks. Each fan's moment comes from where it hangs, not from the random stream, so
-// timing never moves the drawing.
-const shed = ([x, y]: Pt) => 0.835 + (((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 1000;
+// When the ginkgo's leaves fall: gold all at once in late November, then the tree sheds over a
+// stretch of scroll long enough to watch the fans go. Each fan's moment comes from where it
+// hangs, not from the random stream, so timing never moves the drawing.
+const shed = ([x, y]: Pt) => 0.8 + (((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 250;
 
 // A fan on a long stalk from attach point T, leaning toward a direction a. The stalk and the fan
 // open together, from T, at their own gate, and fall together at the shed.
