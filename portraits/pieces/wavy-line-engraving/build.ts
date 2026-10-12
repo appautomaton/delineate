@@ -17,7 +17,7 @@ import { type Affine, warp } from "../../harness/trace/plate.ts";
 import { type Point, distance } from "../../harness/trace/polygon.ts";
 import { type Field, ink, sample, structure, tone } from "./field.ts";
 import { drawn, strokeData } from "./lines.ts";
-import { ANIME, CONTOURS, EDGES, HERE, INK, MAP, PAPER, PATCH, PLATE, TINT, ZIPS } from "./scene.ts";
+import { ANIME, CONTOURS, EDGES, HERE, INK, LINE_TINT, MAP, PAPER, PATCH, PLATE, TINT, ZIPS } from "./scene.ts";
 import { edgeMarkup, weaveMarkup, zipMarkup } from "./hardware.ts";
 
 const STAGE = Number(process.env.STAGE ?? 3);
@@ -27,7 +27,7 @@ const K = 3; // samples per pixel of the ink field, so lines a pixel wide keep t
 const started = Date.now();
 const plate = readPng(fileURLToPath(PLATE));
 const { width: W, height: H } = plate;
-const { dark, alpha, art, light, tint } = tone(plate);
+const { dark, alpha, art, mass, light, tint } = tone(plate);
 
 // Where he is, with a margin.
 let [x0, y0, x1, y1] = [W, H, 0, 0];
@@ -72,8 +72,12 @@ if (STAGE === 1) {
 if (STAGE >= 3) {
   // Where he is light, and in his hair, the plate's ink is line art: features, strands, folds,
   // drawn as the plate draws them, its outlines smoothed and its crumbs left out.
+  // The plate draws its strands and folds in a pale tint of its ink, and only the masses (the
+  // blue lock, pupils, deep shadow under a lock) in the ink itself: so do we.
   const lines = over(K, (x, y) => Math.min(sample(art, x, y), (sample(alpha, x, y) - 0.5) * 0.4));
-  body.push(placed(shapes(lines, K, 0.25, 3), K, INK));
+  body.push(placed(shapes(lines, K, 0.25, 3), K, INK, ` fill-opacity="${LINE_TINT}"`));
+  const masses = over(K, (x, y) => Math.min(sample(mass, x, y), (sample(alpha, x, y) - 0.5) * 0.4));
+  body.push(placed(shapes(masses, K, 0.25, 3), K, INK));
 
   // Where he is dark, his structure comes from the colored original, brought into the plate's
   // frame. Seams and edges are ink, cut free of the waves by a thread of paper either side, as an

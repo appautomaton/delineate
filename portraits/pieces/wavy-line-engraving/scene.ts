@@ -101,6 +101,8 @@ export const FINE = 0.5;
 // Where he is light, the opacity of the lines: the plate's there are pale gray-blue, fine, and
 // unbroken across the skin.
 export const TINT = 0.35;
+// The opacity of the strands and folds in his hair, face and shirt: the plate's are mid gray-blue.
+export const LINE_TINT = 0.6;
 // The least darkness his face takes, so it keeps the faint hairlines the plate draws across it.
 export const SKIN = 0;
 // Lines thinner than this, in pixels, are not drawn: the light breaks them.

@@ -58,7 +58,7 @@ const REACH = 3; // pixels; lines up to twice this wide are found by their contr
 const CONTRAST = 0.085; // OKLab lightness a line lies below its surroundings
 const MASS = 0.38; // OKLab lightness below which ink is line art however wide
 const FOLDS = 0.3; // how far a fold's tone is pushed from its surroundings
-export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; light: Field; tint: Field } {
+export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; mass: Field; light: Field; tint: Field } {
   const { width: w, height: h, data } = plate;
   const [paper, ink] = [luminance(...rgb(PAPER)), luminance(...rgb(INK))];
   const alpha = Float32Array.from({ length: w * h }, (_, p) => data[p * 4 + 3] / 255);
@@ -72,6 +72,8 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; li
   // The neck's shadow is the plate's waves, not line art: the neck is light only in register.
   const { line, depth } = lineField(L, w, h, REACH, CONTRAST, true);
   const art = Float32Array.from(L, (v, p) => (light[p] > 0.5 && neck[p] < 0.5 && alpha[p] > 0.5 ? Math.max(line[p], MASS - v) : -1));
+  // The darkest of it, the masses (the blue lock, pupils, the shadow under a lock), apart.
+  const mass = Float32Array.from(L, (v, p) => (light[p] > 0.5 && neck[p] < 0.5 && alpha[p] > 0.5 ? MASS - v : -1));
   const near = blur(inked, alpha, w, h, 0.9 * SPACING);
   const clean = blur(inked, Float32Array.from(alpha, (a, p) => (light[p] > 0.5 && neck[p] < 0.5 && depth[p] > CONTRAST ? 0 : a)), w, h, 0.6 * SPACING);
   // Where he is dark, the folds are lifted from their surroundings, as an engraver opens the lines
@@ -79,7 +81,7 @@ export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; li
   const broad = blur(near, alpha, w, h, 2 * SPACING);
   const dark = near.map((v, p) => (Math.max(clean[p], SKIN * face[p]) * light[p] + Math.max(0, v + FOLDS * (v - broad[p])) * (1 - light[p])) * (1 - hair[p]));
   const field = (d: Float32Array) => ({ width: w, height: h, data: d });
-  return { dark: field(dark), alpha: field(alpha), art: field(art), light: field(light), tint: field(tint) };
+  return { dark: field(dark), alpha: field(alpha), art: field(art), mass: field(mass), light: field(light), tint: field(tint) };
 }
 
 // The lines in a lightness field, as a field positive on a line: dark lines (a black top-hat), or
