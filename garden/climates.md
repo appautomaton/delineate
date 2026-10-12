@@ -234,10 +234,13 @@ autumn, and the end of the scroll rests on winter; scrolling back runs the year 
 - **A garden's own timeline.** `src/main.ts` grows every garden by one value, the intro plus the
   scroll. A seasonal garden maps the scroll past full growth into the year.
 
-**Open questions:** which season reduced motion shows at rest (late spring is the fullest);
-whether touch autoplay plays the whole year; what switching into a seasonal garden mid-scroll
-shows; how winter rests at the page's end (bare is the climate's truth, and the plum's flowers
-keep it from looking unfinished).
+**Settled:**
+- Reduced motion rests on late spring, the fullest moment, as the single-moment gardens do.
+- Touch autoplay grows the garden to full summer and stops; the visitor scrolls on into autumn
+  and winter.
+- A seasonal garden switched into mid-scroll grows in straight to the season the page is at.
+- The page ends on winter as the climate has it: bare wood and seed heads, with the plum
+  flowering on bare zigzag wood so the end reads as finished.
 
 **East Asian through the year.** The survey's roster, revised: weeping willow replaces Japanese
 cedar, whose spire nears the Mediterranean cypress and pine; plum replaces lotus, which waits for
