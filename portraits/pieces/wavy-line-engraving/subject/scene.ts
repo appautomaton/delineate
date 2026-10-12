@@ -2,10 +2,8 @@
 // a zipped leather jacket, in a city street. This piece draws him alone, from his plate.
 //
 // The reference is generated: an engraving of the whole street (wavy-eng-full.png), its colored
-// original (anime.png), and plates engraved apart, one per depth. The plates agree with the picture
-// in what they show, not in frame: his plate shows him a tenth larger. Anime.png, mapped into the
-// plate's frame (see MAP), lies on it within a few pixels everywhere but the hair, which was
-// generated anew.
+// original (anime.png), and plates engraved apart, one per depth. His plate shows him a tenth
+// larger than the whole does; the whole brings him into its frame (see ../build.ts).
 //
 // The grammar, read from close crops of the plate and the full engraving:
 // - Marks: one family of near-level wavy lines, about 6.8 px apart, everywhere he is drawn. On
@@ -19,15 +17,11 @@
 // deep shadows, where its lines melt into noise; there they only swell.
 // The eye goes to his face, then the zip and the hands.
 
-import type { Affine } from "../../../harness/trace/plate.ts";
 import type { Point } from "../../../harness/trace/polygon.ts";
 import type { Edge, Stud, Tab, Zip } from "./hardware.ts";
 
 const DIR = new URL("../../../references/wavy-line-engraving/", import.meta.url);
 export const PLATE = new URL("wav-subject.png", DIR);
-export const ANIME = new URL("anime.png", DIR);
-// From his plate to anime.png, fitted once by ORB features and RANSAC (trace/plate.ts).
-export const MAP: Affine = [0.913, -0.0028, 53.5199, -0.0125, 0.9184, 145.7893];
 
 // Read by eye off a gridded crop of the plate, as coarse as the lay-in needs. His face, from the
 // hairline beneath the bangs round the jaw; and his head, hair and face, down to the jaw and the

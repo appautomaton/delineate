@@ -6,7 +6,7 @@
 //            woven patch, and big lines (the default)
 //
 // Drawn in his plate's frame, which shows him a tenth larger than the whole does; the whole
-// (../build.ts) brings him into its own by MAP.
+// (../build.ts) brings him into its own.
 //
 //   STAGE=1 OUT=<file.svg> node portraits/pieces/wavy-line-engraving/subject/build.ts
 
