@@ -5,7 +5,7 @@
 import { rgbToLab } from "../../harness/trace/color.ts";
 import type { Raster } from "../../harness/trace/image.ts";
 import { type Point, distance } from "../../harness/trace/polygon.ts";
-import { CURVE, FACE, FINE, FINEST, FULLEST, HEAD, INK, NECK, PAPER, RIPPLE, SKIN, SPACING, WANDER } from "./scene.ts";
+import { FACE, FINE, FINEST, FULLEST, HEAD, INK, NECK, PAPER, RIPPLE, SKIN, SPACING, WANDER } from "./scene.ts";
 
 export type Field = { width: number; height: number; data: Float32Array };
 
@@ -57,7 +57,7 @@ const rgb = (hex: string) => hex.match(/\w\w/g)!.map((c) => parseInt(c, 16)) as 
 const REACH = 3; // pixels; lines up to twice this wide are found by their contrast
 const CONTRAST = 0.085; // OKLab lightness a line lies below its surroundings
 const MASS = 0.38; // OKLab lightness below which ink is line art however wide
-const FOLDS = 0.8; // how far a fold's tone is pushed from its surroundings
+const FOLDS = 0.3; // how far a fold's tone is pushed from its surroundings
 export function tone(plate: Raster): { dark: Field; alpha: Field; art: Field; light: Field } {
   const { width: w, height: h, data } = plate;
   const [paper, ink] = [luminance(...rgb(PAPER)), luminance(...rgb(INK))];
@@ -258,19 +258,18 @@ export function level(x: number, y: number, base: number): number {
   return v;
 }
 
-// A line's width for a darkness: its share of the spacing, so ink covers as much paper as the tone
-// is dark, up to FULLEST. Below the finest line it narrows to nothing rather than stopping short,
-// so where light breaks a line its end tapers to a point.
+// A line's width for a darkness: its share of the spacing is the share of paper the ink must cover
+// (see tone), so seen from afar the drawing gives the plate's light, up to FULLEST. Where light
+// thins a line below half the finest, it stops; as the tone fades toward that, the line tapers to it.
 // Where he is light (skin, shirt), lines keep to a finer register, FINE at most, so a shadow there
 // stays delicate rather than turning to the jacket's weight.
-const lightest = FINEST / SPACING;
-// The plate's own lines are mid-blue and soft-edged; ours are crisp, darker ink on lighter paper,
-// so the eye reads ours as heavier at the same average light. Darkness is eased (CURVE) so the
-// jacket keeps open paper between its lines and its folds keep their light instead of clipping.
+//
+// A line drawn comes out GAIN wider than it is set, as a printed dot does: measured on a dark
+// stretch, gaps set at 0.82 px rendered at 0.34. The gain is taken off every line, so tone is true.
+const GAIN = 0.48;
 export function width_(dark: number, light = 0): number {
-  const most = FULLEST + (FINE - FULLEST) * light;
-  const d = Math.min(most, FULLEST * Math.min(1, dark) ** CURVE);
-  return d <= lightest ? 0 : ((d - lightest) / (FULLEST - lightest)) * FULLEST * SPACING;
+  const width = Math.min(FULLEST + (FINE - FULLEST) * light, Math.max(0, dark)) * SPACING - GAIN;
+  return width < FINEST / 2 ? 0 : width;
 }
 
 // The ink: positive where a line's ink lies, over a box of the frame sampled `k` times per pixel.

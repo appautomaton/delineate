@@ -57,7 +57,7 @@ export const CONTOURS: Record<string, Point[]> = {
 export const PATCH: Point[] = [[760, 513], [792, 502], [841, 510], [882, 527], [890, 546], [874, 578], [830, 597], [792, 608], [765, 600], [757, 578]];
 
 export const PAPER = "#f3e8cc";
-export const INK = "#1a2a56";
+export const INK = "#031731"; // the plate's own ink, measured on its darkest tenth
 
 // The line family: spacing in pixels, and the waves laid over a level line, each an amplitude and
 // a wavelength in pixels. The first is the engraver's ripple, the rest a slower wander, so no two
@@ -70,12 +70,11 @@ export const WANDER = [
 ];
 // Ink covers a line's share of the spacing in proportion to darkness, up to this share, so even the
 // deepest shadow keeps a thread of paper between its lines.
-export const FULLEST = 0.86;
-export const CURVE = 1.2; // darkness eased by this power before it sets a line's width
+export const FULLEST = 0.9;
 // Where he is light (skin, shirt), the most a line may cover: the plate keeps shadow there in fine
 // lines.
 export const FINE = 0.3;
 // The least darkness his face takes, so it keeps the faint hairlines the plate draws across it.
-export const SKIN = 0.2;
+export const SKIN = 0.12;
 // Lines thinner than this, in pixels, are not drawn: the light breaks them.
 export const FINEST = 0.45;
