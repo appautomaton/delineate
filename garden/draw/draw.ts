@@ -611,30 +611,34 @@ function field(markup: string, vb: number[]): [number, number, string] {
   return [cols, rows, hex];
 }
 
-// Parts (leaves, flowers, fruit, thorns) that would appear before the limb they sit on has
-// grown to them. A part counts as sitting on a limb when it attaches within that limb's half
-// width of its spine, past its base.
-function earlyParts(markup: string) {
-  const limbs = [...markup.matchAll(/class="gl" data-g0="([-\d.]+)" data-g1="([-\d.]+)" data-sp="([^"]+)"/g)].map(([, g0, g1, sp]) => {
+// Parts (leaves, flowers, fruit, thorns) whose timing their limb contradicts: one that would
+// appear before the limb it sits on has grown to it, or stay after that limb has died back. A part
+// counts as sitting on a limb when it attaches within that limb's half width of its spine, past
+// its base.
+function mistimedParts(markup: string) {
+  const limbs = [...markup.matchAll(/class="gl" data-g0="([-\d.]+)" data-g1="([-\d.]+)"(?: data-d="([-\d.]+)")? data-sp="([^"]+)"/g)].map(([, g0, g1, d, sp]) => {
     const v = sp.split(" ").map(Number);
     const pts: number[][] = [];
     for (let i = 0; i < v.length; i += 3) pts.push([v[i], v[i + 1], v[i + 2]]);
     let len = 0;
     const along = pts.map((p, i) => (i ? (len += Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1])) : 0));
-    return { g0: +g0, g1: +g1, pts, along, len };
+    return { g0: +g0, g1: +g1, d: d === undefined ? Infinity : +d, pts, along, len };
   });
-  const early: string[] = [];
-  for (const [, g, o] of markup.matchAll(/class="gp" data-g="([-\d.]+)" data-o="([^"]+)"/g)) {
+  const faults: string[] = [];
+  for (const [, g, leave, o] of markup.matchAll(/class="gp" data-g="([-\d.]+)"(?: data-d="([-\d.]+)")? data-o="([^"]+)"/g)) {
     const [x, y] = o.split(" ").map(Number);
-    let best = null as { d: number; arrives: number } | null;
+    let best = null as { dist: number; arrives: number; dies: number } | null;
     for (const limb of limbs)
       limb.pts.forEach((p, i) => {
-        const d = Math.hypot(p[0] - x, p[1] - y);
-        if (i > 0 && d <= p[2] + 6 && (!best || d < best.d)) best = { d, arrives: limb.g0 + (limb.g1 - limb.g0) * (limb.along[i] / limb.len) };
+        const dist = Math.hypot(p[0] - x, p[1] - y);
+        if (i > 0 && dist <= p[2] + 6 && (!best || dist < best.dist)) best = { dist, arrives: limb.g0 + (limb.g1 - limb.g0) * (limb.along[i] / limb.len), dies: limb.d };
       });
-    if (best && +g < best.arrives - 0.01) early.push(`${o} opens at ${g}, its limb arrives at ${best.arrives.toFixed(3)}`);
+    if (!best) continue;
+    if (+g < best.arrives - 0.01) faults.push(`${o} opens at ${g}, before its limb arrives at ${best.arrives.toFixed(3)}`);
+    const goes = leave === undefined ? Infinity : +leave;
+    if (goes > best.dies + 0.01) faults.push(`${o} stays until ${leave ?? "the end"}, after its limb dies back at ${best.dies}`);
   }
-  return early;
+  return faults;
 }
 
 // One drawing as a file: viewBox from the bounding box, path data compacted.
@@ -659,8 +663,8 @@ for (const { name, turn } of REGISTRY) {
   const plant = PLANTS[name];
   if (!plant) throw new Error(`plants.json lists ${name}, but draw.ts has no drawing for it`);
   const { markup, vb, svg } = render(plant.draw, plant.seed);
-  const early = earlyParts(markup);
-  if (early.length) throw new Error(`${name}: ${early.length} parts appear before their limb reaches them, for example ${early[0]}`);
+  const faults = mistimedParts(markup);
+  if (faults.length) throw new Error(`${name}: ${faults.length} parts are timed against their limb, for example ${faults[0]}`);
   writeFileSync(new URL(`${name}.svg`, out), svg);
   writeFileSync(new URL(`${name}.svg`, details), render(plant.detail, plant.seed + 1).svg);
   const bx = (-vb[0] / vb[2]).toFixed(4);

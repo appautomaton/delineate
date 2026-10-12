@@ -482,7 +482,8 @@ function willowWhip(out: Out, r: Rng, parent: { res: Limb; g: number[] }, t: num
   const whip = branch(out, r, parent, t, [[sway * 0.2, len * 0.25], [sway * 0.7, len * 0.6], [sway, len]], 0.06, { w0: 3.2, w1: 1, cap: "taper", ...WILLOW });
   const n = whip.res.n;
   const pts = whip.res.pts;
-  for (let i = 3; i < n; i += 6) {
+  // Starting clear of the bough, so nothing on the whip sits nearer the bough than the whip.
+  for (let i = 6; i < n; i += 6) {
     const p = pts[i];
     const g = gate(whip.res, whip.g, i);
     part(out, g + 0.004, p, () => {
