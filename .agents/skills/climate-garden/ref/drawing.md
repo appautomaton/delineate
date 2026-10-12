@@ -73,8 +73,10 @@ flowers, fruit, lichen; reuse an existing material when it fits) and "Species: t
 `--pl-<key>` per plant; every leaf shifts around it). A species token colors its own plant only:
 a color another plant borrows becomes a material, named by what it is, or retuning one plant
 recolors the other. Write the night values out from the day ones: materials take lightness −0.05
-and chroma ×0.78; species take lightness −0.04, chroma ×0.72, hue +8. Dim large pale areas further, so night paper still reads as night. A new pen (a stroke in a
-material's color) gets a class in `src/garden/paint.css`, as `.ink.wool` and `.ink.spine` do.
+and chroma ×0.78; species take lightness −0.04, chroma ×0.72, hue +8. Dim large pale areas further, so night paper still reads as night. A pen in a material's color
+sets its stroke inline (`style="stroke:var(--bark-thorn)"`); a pen that bundles a color with its
+own width or opacity, and recurs, gets a class in `src/garden/paint.css`, as `.ink.wool` does. Use
+an existing class before writing the same stroke inline.
 
 ## The emblem
 

@@ -796,7 +796,7 @@ export function nara(out: Out, r: Rng, base: Pt) {
           ivory += `M${P1(lerp(p, sTip, 0.55))}L${P1(sTip)}`;
         }
         out.push(`<path class="wash"${vars(tone(r, { dl: 0.05, spread: 0.03 }))} d="${sp}"/><path class="ink hair" d="${sp}"/>`);
-        out.push(`<path class="ink thin" style="stroke:var(--spine)" d="${ivory}"/>`);
+        out.push(`<path class="ink thin spine" d="${ivory}"/>`);
         if (i === 8 || i === 12) {
           const fDir = a + (i === 8 ? -1 : 1) * rad(54);
           naraFlower(out, r, p, fDir, 19);
@@ -1210,7 +1210,7 @@ export function hoodia(out: Out, r: Rng, base: Pt) {
           sp += `M${P1(ep)}L${P1(add(ep, [sg * 7.5, -2.5]))}`;
         }
         sp += `M${P1(p)}L${P1(add(p, [0, -5]))}`;
-        out.push(`<path class="ink thin" style="stroke:var(--spine)" d="${sp}"/>`);
+        out.push(`<path class="ink thin spine" d="${sp}"/>`);
       });
     }
 
@@ -1389,7 +1389,7 @@ export function naraDetail(out: Out, r: Rng) {
     const a = angleOf(spine, i);
     for (const sg of [-1, 1]) {
       const sTip = add(p, polar(28, a + sg * rad(68)));
-      out.push(`<path class="ink mid" style="stroke:var(--spine)" d="M${P1(p)}L${P1(sTip)}"/>`);
+      out.push(`<path class="ink mid spine" d="M${P1(p)}L${P1(sTip)}"/>`);
     }
     if (i === 7) naraFlower(out, r, p, a - rad(58), 24);
   }
