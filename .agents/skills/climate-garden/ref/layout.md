@@ -27,12 +27,17 @@ Each plant gets `display: block` and four properties:
 
 ## Composition
 
-- **Open sky, open ground.** The top stays empty except where a side branch reaches in. Leave at
-  least one stretch of bare ground between bed plants at laptop size; wider screens add plants into
-  it.
+- **Open sky, open ground.** The top stays empty except where a side branch reaches in or, in a
+  garden with a canopy, a hanger enters on its host. Leave at least one stretch of bare ground
+  between bed plants at laptop size; wider screens add plants into it.
+- **Water in front, banks on the sides.** In a water garden, only aquatic or emergent plants root
+  below the bottom edge (`calc(100svh + var(--u) * n)`), rising through the water; terrestrial
+  shore plants and bamboo reach in from the left and right edges (`--x: 0%` and `100%`) above high
+  water (`calc(100svh - var(--u) * <above-water>)`) so no plant base ever floats on the water.
 - **Corners make sides.** A plant at `--x: 0%` or `100%`, rooted past a bottom corner, reads as
   reaching in from that edge, and the solver treats it as a side plant that may sink but never
-  lift its cut base into view. A leaning young tree or a shrub branch fills a thin edge honestly.
+  lift its cut base into view. A leaning young tree or a shrub branch fills a thin edge with real
+  wood.
 - **Keep clear of the controls** at the top right: a side branch there sits a third of the way
   down, not at the top, and on short landscape phones about half way, since its crown rises above
   its base. `npm run look` names any plant that reaches the controls and how far it must move down.

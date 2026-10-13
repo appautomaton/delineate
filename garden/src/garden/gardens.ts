@@ -1,9 +1,14 @@
 // The gardens a visitor can choose, in the switcher's order. Each has an emblem: a line drawing of
 // its signature plant on a 24-unit square, in the garden's own ink. `leaves` are closed shapes,
 // washed with `tone` (a species token in src/tokens.css) while the garden is on show; `lines` are
-// open strokes: ribs, stems, cuts. A garden with water sets `water`, its height in `--u` units.
+// open strokes: ribs, stems, cuts. A garden with water sets `water`, its height in `--u` units; a
+// garden that shows a year rather than one moment sets `year`.
 
-export type Garden = { key: string; name: string; tone: string; water?: number; leaves: string[]; lines: string[] };
+export type Garden = { key: string; name: string; tone: string; water?: number; year?: boolean; leaves: string[]; lines: string[] };
+
+// Where a garden that shows a year is fullest: late spring, every leaf open. Reduced motion and
+// the token gallery show it there.
+export const SPRING = 0.42;
 
 export const GARDENS: Garden[] = [
   {
@@ -124,5 +129,55 @@ export const GARDENS: Garden[] = [
       "M12 14.2C13.8 16 14.6 18.6 14.8 21.6",
       "M3 18.4H21",
     ],
+  },
+  {
+    key: "eastasian",
+    name: "East Asian",
+    tone: "--pl-ginkgo",
+    water: 13.5,
+    year: true,
+    // A ginkgo spur: three fan leaves on stalks from one shoot, each notched at its outer edge.
+    leaves: [
+      "M12 14L4.9 9.9C5.92 7.15 8.82 6.19 12 8.21 15.18 6.19 18.08 7.15 19.1 9.9Z",
+      "M8.6 15.4L2.23 15.96C1.65 13.74 3.07 11.83 6.01 11.7 7.14 8.98 9.42 8.3 11.3 9.6Z",
+      "M15.4 15.4L12.7 9.6C14.58 8.3 16.86 8.98 17.99 11.7 20.93 11.83 22.35 13.74 21.77 15.96Z",
+    ],
+    lines: ["M12 22V14", "M12 17.4Q9.6 17 8.6 15.4", "M12 17.4Q14.4 17 15.4 15.4"],
+  },
+  {
+    key: "taiga",
+    name: "Taiga",
+    tone: "--pl-spruce",
+    year: true,
+    // A Siberian spruce: three swooping whorled tiers tapering to a narrow spire above a trunk.
+    leaves: [
+      "M12 3.2C10.8 5.8 9.2 7.6 7.4 8.6 9.8 8.4 11.1 7.8 12 6.8 12.9 7.8 14.2 8.4 16.6 8.6 14.8 7.6 13.2 5.8 12 3.2Z",
+      "M12 7.4C9.8 10.4 7.4 12.4 5.2 13.4 8.4 13.2 10.6 12.4 12 11.2 13.4 12.4 15.6 13.2 18.8 13.4 16.6 12.4 14.2 10.4 12 7.4Z",
+      "M12 11.8C9 15.2 6 17.4 3.6 18.4 7.6 18.2 10.3 17.2 12 15.8 13.7 17.2 16.4 18.2 20.4 18.4 18 17.4 15 15.2 12 11.8Z",
+    ],
+    lines: ["M12 22V3.2", "M5 22H19"],
+  },
+  {
+    key: "american",
+    name: "North American",
+    tone: "--pl-tuliptree",
+    year: true,
+    // A tulip-tree leaf: four spreading pointed lobes and a broad squared notch across the top.
+    leaves: [
+      "M12 17.6C8.6 17.6 5.8 16.2 3.8 13.8 5.8 12.2 6.8 10.4 6.2 7.8 8.8 8.8 10.6 8.6 12 7.2 13.4 8.6 15.2 8.8 17.8 7.8 17.2 10.4 18.2 12.2 20.2 13.8 18.2 16.2 15.4 17.6 12 17.6Z",
+    ],
+    lines: ["M12 22V7.2", "M12 14.2 5.2 13.2", "M12 14.2 18.8 13.2", "M12 11.2 7.4 8.6", "M12 11.2 16.6 8.6"],
+  },
+  {
+    key: "woodland",
+    name: "Woodland",
+    tone: "--pl-oak",
+    year: true,
+    // A pedunculate oak leaf with rounded wavy lobes and two stalked acorns in their cups.
+    leaves: [
+      "M10.4 18.2C8.2 17.8 7.4 16.2 8.4 14.8 6.2 14 5.6 11.8 7.4 10.4 5.8 9 6.2 6.8 8.2 6 8.4 4.2 10.8 3.6 12 5.2 13.4 4.4 15.2 5.6 14.6 7.4 16.4 8.4 16 10.6 14.2 11.4 15.6 12.8 14.8 14.8 12.8 15.2 13.2 16.8 12 18.2 10.4 18.2Z",
+      "M17.2 15.4A1.7 2.2 25 1 0 19.8 18.8 1.7 2.2 25 1 0 17.2 15.4Z",
+    ],
+    lines: ["M9.2 21.8C10.2 16.4 10.8 10.8 11.4 5.2", "M10.2 16.4C13.6 15.6 16.2 15.4 18.2 15.8", "M16.6 15.6C17.6 14.8 19 15.4 19.6 16.8"],
   },
 ];

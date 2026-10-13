@@ -1,0 +1,61 @@
+/* The Eastern North American edge garden's layouts. Black walnut and tulip tree reach in from the
+   left woodland margin (--x: 0%); sugar maple and eastern redbud reach in from the right margin
+   (--x: 100%) below the top-right controls; Virginia creeper, trumpet vine, and Dutchman's pipe
+   cascade as woody lianas and canes from the overhead canopy edge; and compass plant, purple
+   coneflower, big bluestem, common milkweed, and dense blazing star tower across the tallgrass
+   prairie floor. */
+
+/* Portrait phones: tulip tree and redbud frame the clearing above compass plant, big bluestem, and coneflower. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-tuliptree { display: block; --x: 0%; --y: 34%; --h: 48; --enter: -0.45 0; }
+  .plant.g-redbud { display: block; --x: 100%; --y: 56%; --h: 42; --flip: -1; --enter: 0.42 0; }
+  .plant.g-compassplant { display: block; --x: 20%; --y: calc(100svh + var(--u) * 2); --h: 62; --enter: -0.12 0.36; }
+  .plant.g-bluestem { display: block; --x: 52%; --y: calc(100svh + var(--u) * 2); --h: 58; --enter: 0 0.36; }
+  .plant.g-coneflower { display: block; --x: 82%; --y: calc(100svh + var(--u) * 2); --h: 38; --enter: 0.12 0.35; }
+}
+
+/* Portrait tablets: Virginia creeper, black walnut, sugar maple, and milkweed join the woodland edge. */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-creeper { display: block; --x: 36%; --y: calc(var(--u) * -1); --h: 36; --enter: 0 -0.42; }
+  .plant.g-walnut { display: block; --x: 0%; --y: 26%; --h: 34; --enter: -0.45 0; }
+  .plant.g-tuliptree { --y: 58%; --h: 44; }
+  .plant.g-sugarmaple { display: block; --x: 100%; --y: 42%; --h: 40; --flip: -1; --enter: 0.45 0; }
+  .plant.g-redbud { --y: 70%; --h: 38; }
+  .plant.g-compassplant { --x: 16%; --h: 60; }
+  .plant.g-coneflower { --x: 38%; --h: 36; }
+  .plant.g-bluestem { --x: 62%; --h: 56; }
+  .plant.g-milkweed { display: block; --x: 84%; --y: calc(100svh + var(--u) * 2); --h: 42; --enter: 0.14 0.35; }
+}
+
+/* Landscape screens: canopy limbs flank both margins, vines hang overhead, and prairie herbs line the bed. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-creeper { display: block; --x: 22%; --y: calc(var(--u) * -1); --h: 44; --enter: -0.14 -0.42; }
+  .plant.g-trumpetvine { display: block; --x: 44%; --y: calc(var(--u) * -1); --h: 40; --enter: 0 -0.42; }
+  .plant.g-walnut { display: block; --x: 0%; --y: 24%; --h: 42; --enter: -0.45 -0.05; }
+  .plant.g-tuliptree { display: block; --x: 0%; --y: 58%; --h: 48; --enter: -0.45 0; }
+  .plant.g-sugarmaple { display: block; --x: 100%; --y: 45%; --h: 42; --flip: -1; --enter: 0.45 0; }
+  .plant.g-redbud { display: block; --x: 100%; --y: 74%; --h: 38; --flip: -1; --enter: 0.42 0.05; }
+  .plant.g-compassplant { display: block; --x: 15%; --y: calc(100svh + var(--u) * 2); --h: 66; --enter: -0.14 0.36; }
+  .plant.g-coneflower { display: block; --x: 33%; --y: calc(100svh + var(--u) * 2); --h: 38; --enter: -0.06 0.35; }
+  .plant.g-bluestem { display: block; --x: 52%; --y: calc(100svh + var(--u) * 2); --h: 62; --enter: 0 0.36; }
+  .plant.g-milkweed { display: block; --x: 69%; --y: calc(100svh + var(--u) * 2); --h: 42; --enter: 0.08 0.35; }
+  .plant.g-blazingstar { display: block; --x: 85%; --y: calc(100svh + var(--u) * 2); --h: 50; --enter: 0.14 0.36; }
+}
+
+/* Laptop and wider screens: Dutchman's pipe joins the overhead canopy so all twelve species appear. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-creeper { --x: 20%; --h: 44; }
+  .plant.g-trumpetvine { --x: 39%; --h: 40; }
+  .plant.g-dutchmanspipe { display: block; --x: 56%; --y: calc(var(--u) * -1); --h: 38; --enter: 0.08 -0.42; }
+}
+
+/* Short landscape phones: tulip tree and sugar maple reach in from the sides with compass plant and big bluestem below. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-tuliptree { display: block; --x: 0%; --y: 50%; --h: 48; --enter: -0.45 0; }
+  .plant.g-sugarmaple { display: block; --x: 100%; --y: 54%; --h: 46; --flip: -1; --enter: 0.45 0; }
+  .plant.g-compassplant { display: block; --x: 34%; --y: calc(100svh + var(--u) * 2); --h: 58; --enter: -0.08 0.35; }
+  .plant.g-bluestem { display: block; --x: 66%; --y: calc(100svh + var(--u) * 2); --h: 54; --enter: 0.08 0.35; }
+}

@@ -1,0 +1,62 @@
+/* The Northwest European woodland garden's layouts. Pedunculate oak, common holly,
+   common hazel, and hawthorn reach in from the steep hollow-way banks; common ivy,
+   old man's beard, and honeysuckle cascade from the canopy overhead; and hart's-tongue
+   fern, foxglove, English bluebell, common gorse, and bracken rise along the woodland floor. */
+
+/* Portrait phones: oak and hawthorn arch overhead while hart's-tongue,
+   foxglove, and bluebell anchor the damp woodland floor. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-oak { display: block; --x: 0%; --y: 34%; --h: 46; --enter: -0.45 0; }
+  .plant.g-hawthorn { display: block; --x: 100%; --y: 48%; --h: 40; --flip: -1; --enter: 0.42 0; }
+  .plant.g-hartstongue { display: block; --x: 18%; --y: calc(100svh + var(--u) * 1.5); --h: 32; --enter: -0.12 0.35; }
+  .plant.g-foxglove { display: block; --x: 48%; --y: calc(100svh + var(--u) * 2); --h: 58; --enter: 0 0.36; }
+  .plant.g-bluebell { display: block; --x: 80%; --y: calc(100svh + var(--u) * 1.5); --h: 34; --enter: 0.12 0.35; }
+}
+
+/* Portrait tablets: trailing ivy, hazel catkins, holly, and bracken join the hollow-way. */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-ivy { display: block; --x: 26%; --y: calc(var(--u) * -1); --h: 42; --enter: -0.1 -0.42; }
+  .plant.g-oak { --y: 38%; --h: 46; }
+  .plant.g-holly { display: block; --x: 0%; --y: 68%; --h: 36; --enter: -0.42 0; }
+  .plant.g-hazel { display: block; --x: 100%; --y: 38%; --h: 40; --flip: -1; --enter: 0.45 0; }
+  .plant.g-hawthorn { --y: 66%; --h: 38; }
+  .plant.g-hartstongue { --x: 14%; --h: 32; }
+  .plant.g-foxglove { --x: 36%; --h: 60; }
+  .plant.g-bluebell { --x: 58%; --h: 34; }
+  .plant.g-bracken { display: block; --x: 84%; --y: calc(100svh + var(--u) * 2); --h: 46; --enter: 0.14 0.36; }
+}
+
+/* Landscape screens: overarching hollow-way banks flank both margins, climbers cascade from above,
+   and ferns, foxglove, bluebells, and gorse carpet the floor. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-ivy { display: block; --x: 22%; --y: calc(var(--u) * -1); --h: 44; --enter: -0.14 -0.42; }
+  .plant.g-oldmansbeard { display: block; --x: 52%; --y: calc(var(--u) * -1); --h: 42; --enter: 0.08 -0.42; }
+  .plant.g-oak { display: block; --x: 0%; --y: 38%; --h: 52; --enter: -0.46 0; }
+  .plant.g-holly { display: block; --x: 0%; --y: 72%; --h: 36; --enter: -0.42 0.05; }
+  .plant.g-hazel { display: block; --x: 100%; --y: 36%; --h: 44; --flip: -1; --enter: 0.45 0; }
+  .plant.g-hawthorn { display: block; --x: 100%; --y: 68%; --h: 40; --flip: -1; --enter: 0.42 0.05; }
+  .plant.g-hartstongue { display: block; --x: 12%; --y: calc(100svh + var(--u) * 1.5); --h: 32; --enter: -0.14 0.35; }
+  .plant.g-foxglove { display: block; --x: 28%; --y: calc(100svh + var(--u) * 2); --h: 62; --enter: -0.08 0.36; }
+  .plant.g-bluebell { display: block; --x: 46%; --y: calc(100svh + var(--u) * 1.5); --h: 34; --enter: 0 0.35; }
+  .plant.g-gorse { display: block; --x: 65%; --y: calc(100svh + var(--u) * 1.5); --h: 38; --enter: 0.08 0.35; }
+  .plant.g-bracken { display: block; --x: 86%; --y: calc(100svh + var(--u) * 2); --h: 48; --enter: 0.14 0.36; }
+}
+
+/* Laptop and wider: honeysuckle joins the upper canopy so all twelve species appear. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-ivy { --x: 20%; --h: 46; }
+  .plant.g-honeysuckle { display: block; --x: 38%; --y: calc(var(--u) * -1); --h: 38; --enter: 0 -0.42; }
+  .plant.g-oldmansbeard { --x: 55%; --h: 42; }
+  .plant.g-oak { --y: 40%; --h: 54; }
+}
+
+/* Short landscape phones: oak and hazel reach in from the sides with foxglove and bluebell below. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-oak { display: block; --x: 0%; --y: 52%; --h: 50; --enter: -0.45 0; }
+  .plant.g-hazel { display: block; --x: 100%; --y: 52%; --h: 44; --flip: -1; --enter: 0.45 0; }
+  .plant.g-foxglove { display: block; --x: 32%; --y: calc(100svh + var(--u) * 2); --h: 56; --enter: -0.08 0.35; }
+  .plant.g-bluebell { display: block; --x: 68%; --y: calc(100svh + var(--u) * 1.5); --h: 34; --enter: 0.08 0.35; }
+}

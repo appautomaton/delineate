@@ -1,5 +1,6 @@
-// Looks at the gardens the way a visitor meets them: every layout, by day and by night, fully
-// grown. Saves a screenshot of each to garden/look/<garden>/<screen>-<light>.png and prints what a
+// Looks at the gardens the way a visitor meets them: every layout, by day and by night, with the
+// garden full (fully grown, or in full leaf at late spring for a garden that shows a year), and a
+// seasonal garden through the rest of its year on a laptop. Saves a screenshot of each to garden/look/<garden>/<screen>-<light>.png and prints what a
 // screenshot hides: how many plants each layout shows, which ones the solver left out, and which
 // paint under the controls, with how far down they reach.
 //
@@ -22,6 +23,8 @@ const SCREENS: Record<string, [number, number]> = {
   short: [844, 390],
 };
 const CLEAR = 8; // how close to the controls, in CSS pixels, a plant may paint
+// The moments past late spring that a seasonal garden is shown at, pinned through the address.
+const SEASONS: Record<string, number> = { summer: 0.55, "early-autumn": 0.7, "late-autumn": 0.8, winter: 0.98 };
 
 const keys = process.argv.length > 2 ? process.argv.slice(2) : GARDENS.map((g) => g.key);
 const unknown = keys.filter((key) => !GARDENS.some((g) => g.key === key));
@@ -35,23 +38,36 @@ try {
   for (const key of keys) {
     mkdirSync(`${root}look/${key}`, { recursive: true });
     console.log(key);
-    for (const [screen, [width, height]] of Object.entries(SCREENS)) {
+    for (const [screen, [width, height]] of Object.entries(SCREENS))
       for (const light of ["light", "dark"] as const) {
-        // Reduced motion shows the garden fully grown at once, with nothing still entering.
-        const context = await browser.newContext({ viewport: { width, height }, colorScheme: light, reducedMotion: "reduce" });
-        const page = await context.newPage();
-        await page.goto(`${server.resolvedUrls!.local[0]}?garden=${key}`);
-        await page.waitForFunction(planted);
-        await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
+        const page = await open(key, width, height, light, "");
         await page.screenshot({ path: `${root}look/${key}/${screen}-${light}.png` });
         if (light === "light") report(screen, await page.evaluate(survey, CLEAR));
-        await context.close();
+        await page.context().close();
       }
-    }
+    if (!GARDENS.find((g) => g.key === key)!.year) continue;
+    for (const [season, u] of Object.entries(SEASONS))
+      for (const light of ["light", "dark"] as const) {
+        const page = await open(key, ...SCREENS.laptop, light, `&u=${u}`);
+        await page.screenshot({ path: `${root}look/${key}/laptop-${season}-${light}.png` });
+        await page.context().close();
+      }
+    console.log(`  through the year on a laptop: ${Object.keys(SEASONS).join(", ")}`);
   }
 } finally {
   await browser.close();
   await server.close();
+}
+
+// A fresh page on the garden, every plant drawn. Reduced motion shows it full, with nothing still
+// entering; `pin` can move it to another moment.
+async function open(key: string, width: number, height: number, light: "light" | "dark", pin: string) {
+  const context = await browser.newContext({ viewport: { width, height }, colorScheme: light, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await page.goto(`${server.resolvedUrls!.local[0]}?garden=${key}${pin}`);
+  await page.waitForFunction(planted);
+  await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
+  return page;
 }
 
 function report(screen: string, { shown, crowded, under }: { shown: number; crowded: string[]; under: [string, number][] }) {

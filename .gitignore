@@ -39,6 +39,7 @@ portraits/pieces/*/*.svg
 portraits/pieces/*/index.html
 
 # System and tool litter
+.claude/worktrees/
 .DS_Store
 .cc-writes/
 .claude/settings.local.json

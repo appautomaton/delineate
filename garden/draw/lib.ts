@@ -143,9 +143,12 @@ export function stalk(out: Out, curve: (t: number) => Pt, w0: number, w1: number
 
 // Growth markup. Every plant file is drawn once, and the page then grows it with scroll.
 // grow(): a limb or stem. data-sp lists its spine as x, y, and half width at every other
-// point, and the page clips the limb to a rounded shoot that ends where growth has reached.
-// part(): a leaf, flower, or fruit that unfolds from where it attaches.
-export function grow<T extends { L: Pt[]; R: Pt[] }>(out: Out, g0: number, g1: number, fn: () => T): T {
+// point, and the page clips the limb to a rounded shoot that ends where growth has reached. In a
+// garden that shows a year, a stem that dies back bends and fades at `leave` (data-d).
+// part(): a leaf, flower, or fruit that unfolds from where it attaches at g, and, in a garden
+// that shows a year, falls at `leave` (data-d) if it does not stay, or with `fade` fades where it
+// is (a flower head drying on its stem, uncovering the dry head drawn beneath it).
+export function grow<T extends { L: Pt[]; R: Pt[] }>(out: Out, g0: number, g1: number, fn: () => T, leave?: number): T {
   const start = out.length;
   const res = fn();
   const inner = out.splice(start).join("");
@@ -154,14 +157,16 @@ export function grow<T extends { L: Pt[]; R: Pt[] }>(out: Out, g0: number, g1: n
     const r = res.R[i];
     return [P1(lerp(l, r, 0.5)), f(Math.hypot(l[0] - r[0], l[1] - r[1]) / 2)];
   });
-  out.push(`<g class="gl" data-g0="${num(+g0.toFixed(3))}" data-g1="${num(+g1.toFixed(3))}" data-sp="${sp.join(" ")}">${inner}</g>`);
+  const d = leave === undefined ? "" : ` data-d="${num(+leave.toFixed(3))}"`;
+  out.push(`<g class="gl" data-g0="${num(+g0.toFixed(3))}" data-g1="${num(+g1.toFixed(3))}"${d} data-sp="${sp.join(" ")}">${inner}</g>`);
   return res;
 }
-export function part<T>(out: Out, g: number, origin: Pt, fn: () => T): T {
+export function part<T>(out: Out, g: number, origin: Pt, fn: () => T, leave?: number, fade = false): T {
   const start = out.length;
   const res = fn();
   const inner = out.splice(start).join("");
-  out.push(`<g class="gp" data-g="${num(+Math.max(0, g).toFixed(3))}" data-o="${P1(origin)}">${inner}</g>`);
+  const d = leave === undefined ? "" : ` data-d="${num(+leave.toFixed(3))}"`;
+  out.push(`<g class="gp" data-g="${num(+Math.max(0, g).toFixed(3))}"${d} data-o="${P1(origin)}"${fade ? " data-fade" : ""}>${inner}</g>`);
   return res;
 }
 

@@ -21,8 +21,12 @@ import * as S from "./savanna.ts";
 import * as F from "./fynbos.ts";
 import * as N from "./namib.ts";
 import * as MG from "./mangrove.ts";
+import * as E from "./eastasian.ts";
+import * as TG from "./taiga.ts";
+import * as AM from "./american.ts";
+import * as WL from "./woodland.ts";
 
-const REGISTRY: { name: string }[] = JSON.parse(readFileSync(new URL("../src/garden/plants.json", import.meta.url), "utf8"));
+const REGISTRY: { name: string; garden: string; turn?: [number, number] }[] = JSON.parse(readFileSync(new URL("../src/garden/plants.json", import.meta.url), "utf8"));
 
 // Each plant is drawn with its base (or hanging point) at the origin, from its own seed so its
 // drawing never depends on the order of the list. A detail is a close study of one leaf,
@@ -513,6 +517,242 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     seed: 9123,
     draw: (o, r) => MG.seapurslane(o, r, [0, 0]),
     detail: (o, r) => MG.seapurslaneDetail(o, r),
+  },  ginkgo: {
+    seed: 9411,
+    draw: (o, r) => E.ginkgo(o, r, [0, 0]),
+    detail: (o, r) => E.ginkgoSpurDetail(o, r),
+  },  maple: {
+    seed: 9512,
+    draw: (o, r) => E.maple(o, r, [0, 0]),
+    detail: (o, r) => E.mapleDetail(o, r),
+  },  plum: {
+    seed: 9613,
+    draw: (o, r) => E.plum(o, r, [0, 0]),
+    detail: (o, r) => E.plumDetail(o, r),
+  },  paulownia: {
+    seed: 9714,
+    draw: (o, r) => E.paulownia(o, r, [0, 0]),
+    detail: (o, r) => E.paulowniaDetail(o, r),
+  },  willow: {
+    seed: 9815,
+    draw: (o, r) => E.willow(o, r, [0, 0]),
+    detail: (o, r) => E.willowDetail(o, r),
+  },  moso: {
+    seed: 9916,
+    draw: (o, r) => E.moso(o, r, [0, 0]),
+    detail: (o, r) => E.mosoDetail(o, r),
+  },  wisteria: {
+    seed: 10017,
+    draw: (o, r) => E.wisteria(o, r, [0, 0]),
+    detail: (o, r) => E.wisteriaDetail(o, r),
+  },  akebia: {
+    seed: 10118,
+    draw: (o, r) => E.akebia(o, r, [0, 0]),
+    detail: (o, r) => E.akebiaDetail(o, r),
+  },  peony: {
+    seed: 10219,
+    draw: (o, r) => E.peony(o, r, [0, 0]),
+    detail: (o, r) => E.peonyDetail(o, r),
+  },
+  hydrangea: {
+    seed: 10320,
+    draw: (o, r) => E.hydrangea(o, r, [0, 0]),
+    detail: (o, r) => E.hydrangeaDetail(o, r),
+  },
+  lycoris: {
+    seed: 10421,
+    draw: (o, r) => E.lycoris(o, r, [0, 0]),
+    detail: (o, r) => E.lycorisDetail(o, r),
+  },
+  iris: {
+    seed: 10522,
+    draw: (o, r) => E.iris(o, r, [0, 0]),
+    detail: (o, r) => E.irisDetail(o, r),
+  },
+  lotus: {
+    seed: 10623,
+    draw: (o, r) => E.lotus(o, r, [0, 0]),
+    detail: (o, r) => E.lotusDetail(o, r),
+  },
+  spruce: {
+    seed: 11001,
+    draw: (o, r) => TG.spruce(o, r, [0, 0]),
+    detail: (o, r) => TG.spruceDetail(o, r),
+  },
+  larch: {
+    seed: 11102,
+    draw: (o, r) => TG.larch(o, r, [0, 0]),
+    detail: (o, r) => TG.larchDetail(o, r),
+  },
+  birch: {
+    seed: 11203,
+    draw: (o, r) => TG.birch(o, r, [0, 0]),
+    detail: (o, r) => TG.birchDetail(o, r),
+  },
+  scotspine: {
+    seed: 11304,
+    draw: (o, r) => TG.scotspine(o, r, [0, 0]),
+    detail: (o, r) => TG.scotspineDetail(o, r),
+  },
+  methuselah: {
+    seed: 11405,
+    draw: (o, r) => TG.methuselah(o, r, [0, 0]),
+    detail: (o, r) => TG.methuselahDetail(o, r),
+  },
+  horsehair: {
+    seed: 11506,
+    draw: (o, r) => TG.horsehair(o, r, [0, 0]),
+    detail: (o, r) => TG.horsehairDetail(o, r),
+  },
+  fireweed: {
+    seed: 11607,
+    draw: (o, r) => TG.fireweed(o, r, [0, 0]),
+    detail: (o, r) => TG.fireweedDetail(o, r),
+  },
+  labradortea: {
+    seed: 11708,
+    draw: (o, r) => TG.labradortea(o, r, [0, 0]),
+    detail: (o, r) => TG.labradorteaDetail(o, r),
+  },
+  horsetail: {
+    seed: 11809,
+    draw: (o, r) => TG.horsetail(o, r, [0, 0]),
+    detail: (o, r) => TG.horsetailDetail(o, r),
+  },
+  lingonberry: {
+    seed: 11910,
+    draw: (o, r) => TG.lingonberry(o, r, [0, 0]),
+    detail: (o, r) => TG.lingonberryDetail(o, r),
+  },
+  cloudberry: {
+    seed: 12011,
+    draw: (o, r) => TG.cloudberry(o, r, [0, 0]),
+    detail: (o, r) => TG.cloudberryDetail(o, r),
+  },
+  twinflower: {
+    seed: 12112,
+    draw: (o, r) => TG.twinflower(o, r, [0, 0]),
+    detail: (o, r) => TG.twinflowerDetail(o, r),
+  },
+  tuliptree: {
+    seed: 13001,
+    draw: (o, r) => AM.tuliptree(o, r, [0, 0]),
+    detail: (o, r) => AM.tuliptreeDetail(o, r),
+  },
+  sugarmaple: {
+    seed: 13102,
+    draw: (o, r) => AM.sugarmaple(o, r, [0, 0]),
+    detail: (o, r) => AM.sugarmapleDetail(o, r),
+  },
+  redbud: {
+    seed: 13203,
+    draw: (o, r) => AM.redbud(o, r, [0, 0]),
+    detail: (o, r) => AM.redbudDetail(o, r),
+  },
+  walnut: {
+    seed: 13304,
+    draw: (o, r) => AM.walnut(o, r, [0, 0]),
+    detail: (o, r) => AM.walnutDetail(o, r),
+  },
+  creeper: {
+    seed: 13405,
+    draw: (o, r) => AM.creeper(o, r, [0, 0]),
+    detail: (o, r) => AM.creeperDetail(o, r),
+  },
+  trumpetvine: {
+    seed: 13506,
+    draw: (o, r) => AM.trumpetvine(o, r, [0, 0]),
+    detail: (o, r) => AM.trumpetvineDetail(o, r),
+  },
+  dutchmanspipe: {
+    seed: 13607,
+    draw: (o, r) => AM.dutchmanspipe(o, r, [0, 0]),
+    detail: (o, r) => AM.dutchmanspipeDetail(o, r),
+  },
+  compassplant: {
+    seed: 13708,
+    draw: (o, r) => AM.compassplant(o, r, [0, 0]),
+    detail: (o, r) => AM.compassplantDetail(o, r),
+  },
+  bluestem: {
+    seed: 13809,
+    draw: (o, r) => AM.bluestem(o, r, [0, 0]),
+    detail: (o, r) => AM.bluestemDetail(o, r),
+  },
+  milkweed: {
+    seed: 13910,
+    draw: (o, r) => AM.milkweed(o, r, [0, 0]),
+    detail: (o, r) => AM.milkweedDetail(o, r),
+  },
+  blazingstar: {
+    seed: 14011,
+    draw: (o, r) => AM.blazingstar(o, r, [0, 0]),
+    detail: (o, r) => AM.blazingstarDetail(o, r),
+  },
+  coneflower: {
+    seed: 14112,
+    draw: (o, r) => AM.coneflower(o, r, [0, 0]),
+    detail: (o, r) => AM.coneflowerDetail(o, r),
+  },
+  oak: {
+    seed: 15001,
+    draw: (o, r) => WL.oak(o, r, [0, 0]),
+    detail: (o, r) => WL.oakDetail(o, r),
+  },
+  hazel: {
+    seed: 15102,
+    draw: (o, r) => WL.hazel(o, r, [0, 0]),
+    detail: (o, r) => WL.hazelDetail(o, r),
+  },
+  hawthorn: {
+    seed: 15203,
+    draw: (o, r) => WL.hawthorn(o, r, [0, 0]),
+    detail: (o, r) => WL.hawthornDetail(o, r),
+  },
+  holly: {
+    seed: 15304,
+    draw: (o, r) => WL.holly(o, r, [0, 0]),
+    detail: (o, r) => WL.hollyDetail(o, r),
+  },
+  ivy: {
+    seed: 15405,
+    draw: (o, r) => WL.ivy(o, r, [0, 0]),
+    detail: (o, r) => WL.ivyDetail(o, r),
+  },
+  oldmansbeard: {
+    seed: 15506,
+    draw: (o, r) => WL.oldmansbeard(o, r, [0, 0]),
+    detail: (o, r) => WL.oldmansbeardDetail(o, r),
+  },
+  honeysuckle: {
+    seed: 15607,
+    draw: (o, r) => WL.honeysuckle(o, r, [0, 0]),
+    detail: (o, r) => WL.honeysuckleDetail(o, r),
+  },
+  bracken: {
+    seed: 15708,
+    draw: (o, r) => WL.bracken(o, r, [0, 0]),
+    detail: (o, r) => WL.brackenDetail(o, r),
+  },
+  foxglove: {
+    seed: 15809,
+    draw: (o, r) => WL.foxglove(o, r, [0, 0]),
+    detail: (o, r) => WL.foxgloveDetail(o, r),
+  },
+  gorse: {
+    seed: 15910,
+    draw: (o, r) => WL.gorse(o, r, [0, 0]),
+    detail: (o, r) => WL.gorseDetail(o, r),
+  },
+  hartstongue: {
+    seed: 16011,
+    draw: (o, r) => WL.hartstongue(o, r, [0, 0]),
+    detail: (o, r) => WL.hartstongueDetail(o, r),
+  },
+  bluebell: {
+    seed: 16112,
+    draw: (o, r) => WL.bluebell(o, r, [0, 0]),
+    detail: (o, r) => WL.bluebellDetail(o, r),
   },
 };
 
@@ -571,30 +811,34 @@ function field(markup: string, vb: number[]): [number, number, string] {
   return [cols, rows, hex];
 }
 
-// Parts (leaves, flowers, fruit, thorns) that would appear before the limb they sit on has
-// grown to them. A part counts as sitting on a limb when it attaches within that limb's half
-// width of its spine, past its base.
-function earlyParts(markup: string) {
-  const limbs = [...markup.matchAll(/class="gl" data-g0="([-\d.]+)" data-g1="([-\d.]+)" data-sp="([^"]+)"/g)].map(([, g0, g1, sp]) => {
+// Parts (leaves, flowers, fruit, thorns) whose timing their limb contradicts: one that would
+// appear before the limb it sits on has grown to it, or stay after that limb has died back. A part
+// counts as sitting on a limb when it attaches within that limb's half width of its spine, past
+// its base.
+function mistimedParts(markup: string) {
+  const limbs = [...markup.matchAll(/class="gl" data-g0="([-\d.]+)" data-g1="([-\d.]+)"(?: data-d="([-\d.]+)")? data-sp="([^"]+)"/g)].map(([, g0, g1, d, sp]) => {
     const v = sp.split(" ").map(Number);
     const pts: number[][] = [];
     for (let i = 0; i < v.length; i += 3) pts.push([v[i], v[i + 1], v[i + 2]]);
     let len = 0;
     const along = pts.map((p, i) => (i ? (len += Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1])) : 0));
-    return { g0: +g0, g1: +g1, pts, along, len };
+    return { g0: +g0, g1: +g1, d: d === undefined ? Infinity : +d, pts, along, len };
   });
-  const early: string[] = [];
-  for (const [, g, o] of markup.matchAll(/class="gp" data-g="([-\d.]+)" data-o="([^"]+)"/g)) {
+  const faults: string[] = [];
+  for (const [, g, leave, o] of markup.matchAll(/class="gp" data-g="([-\d.]+)"(?: data-d="([-\d.]+)")? data-o="([^"]+)"/g)) {
     const [x, y] = o.split(" ").map(Number);
-    let best = null as { d: number; arrives: number } | null;
+    let best = null as { dist: number; arrives: number; dies: number } | null;
     for (const limb of limbs)
       limb.pts.forEach((p, i) => {
-        const d = Math.hypot(p[0] - x, p[1] - y);
-        if (i > 0 && d <= p[2] + 6 && (!best || d < best.d)) best = { d, arrives: limb.g0 + (limb.g1 - limb.g0) * (limb.along[i] / limb.len) };
+        const dist = Math.hypot(p[0] - x, p[1] - y);
+        if (i > 0 && dist <= p[2] + 6 && (!best || dist < best.dist)) best = { dist, arrives: limb.g0 + (limb.g1 - limb.g0) * (limb.along[i] / limb.len), dies: limb.d };
       });
-    if (best && +g < best.arrives - 0.01) early.push(`${o} opens at ${g}, its limb arrives at ${best.arrives.toFixed(3)}`);
+    if (!best) continue;
+    if (+g < best.arrives - 0.01) faults.push(`${o} opens at ${g}, before its limb arrives at ${best.arrives.toFixed(3)}`);
+    const goes = leave === undefined ? Infinity : +leave;
+    if (goes > best.dies + 0.01) faults.push(`${o} stays until ${leave ?? "the end"}, after its limb dies back at ${best.dies}`);
   }
-  return early;
+  return faults;
 }
 
 // One drawing as a file: viewBox from the bounding box, path data compacted.
@@ -609,31 +853,53 @@ function render(fn: Drawing, seed: number) {
   return { markup, vb, svg };
 }
 
+function writeIfChanged(url: URL, content: string) {
+  try {
+    if (readFileSync(url, "utf8") === content) return;
+  } catch {}
+  writeFileSync(url, content);
+}
+
+const args = process.argv.slice(2);
+const checkOnly = args.includes("--check");
+const onlyGarden = args.find((a) => !a.startsWith("-"));
+
 const out = new URL("../public/garden/", import.meta.url);
 const details = new URL("../gallery/details/", import.meta.url);
-mkdirSync(out, { recursive: true });
-mkdirSync(details, { recursive: true });
+if (!checkOnly) {
+  mkdirSync(out, { recursive: true });
+  mkdirSync(details, { recursive: true });
+}
 const css = ["/* Generated by garden/draw/draw.ts: each plant's aspect ratio, anchor, and species tone. */"];
 const fields: Record<string, [number, number, string]> = {};
-for (const { name } of REGISTRY) {
+for (const { name, garden, turn } of REGISTRY) {
+  if (onlyGarden && garden !== onlyGarden) continue;
   const plant = PLANTS[name];
   if (!plant) throw new Error(`plants.json lists ${name}, but draw.ts has no drawing for it`);
   const { markup, vb, svg } = render(plant.draw, plant.seed);
-  const early = earlyParts(markup);
-  if (early.length) throw new Error(`${name}: ${early.length} parts appear before their limb reaches them, for example ${early[0]}`);
-  writeFileSync(new URL(`${name}.svg`, out), svg);
-  writeFileSync(new URL(`${name}.svg`, details), render(plant.detail, plant.seed + 1).svg);
+  const faults = mistimedParts(markup);
+  if (faults.length) throw new Error(`${name}: ${faults.length} parts are timed against their limb, for example ${faults[0]}`);
+  const detailSvg = render(plant.detail, plant.seed + 1).svg;
+  if (!checkOnly) {
+    writeIfChanged(new URL(`${name}.svg`, out), svg);
+    writeIfChanged(new URL(`${name}.svg`, details), detailSvg);
+  }
   const bx = (-vb[0] / vb[2]).toFixed(4);
   const by = (-vb[1] / vb[3]).toFixed(4);
-  css.push(`.g-${name} { --ar: ${(vb[2] / vb[3]).toFixed(4)}; --bx: ${bx}; --by: ${by}; --leaf: var(--pl-${name}); }`);
+  // A plant that turns in autumn mixes its autumn tone in by --turn, which the page writes.
+  const leaf = turn ? `color-mix(in oklch, var(--pl-${name}-autumn) calc(var(--turn, 0) * 100%), var(--pl-${name}))` : `var(--pl-${name})`;
+  css.push(`.g-${name} { --ar: ${(vb[2] / vb[3]).toFixed(4)}; --bx: ${bx}; --by: ${by}; --leaf: ${leaf}; }`);
   fields[name] = field(markup, vb);
-  console.log(`${name.padEnd(13)} ${String(markup.length).padStart(7)} bytes  ${vb.join(" ")}`);
+  console.log(`${name.padEnd(14)} ${String(markup.length).padStart(7)} bytes  vb=[${vb.join(" ")}]  ar=${(vb[2] / vb[3]).toFixed(3)} bx=${bx} by=${by}`);
 }
-writeFileSync(new URL("../src/garden/anchors.css", import.meta.url), css.join("\n") + "\n");
-writeFileSync(
-  new URL("../src/garden/fields.ts", import.meta.url),
-  "// Generated by garden/draw/draw.ts: where each plant paints, as [cols, rows, hex bits] over its box.\n" +
-    "export const FIELDS: Record<string, [number, number, string]> = {\n" +
-    Object.entries(fields).map(([k, v]) => `  ${k}: ${JSON.stringify(v)},`).join("\n") +
-    "\n};\n",
-);
+if (!checkOnly && !onlyGarden) {
+  writeIfChanged(new URL("../src/garden/anchors.css", import.meta.url), css.join("\n") + "\n");
+  writeIfChanged(
+    new URL("../src/garden/fields.ts", import.meta.url),
+    "// Generated by garden/draw/draw.ts: where each plant paints, as [cols, rows, hex bits] over its box.\n" +
+      "export const FIELDS: Record<string, [number, number, string]> = {\n" +
+      Object.entries(fields).map(([k, v]) => `  ${k}: ${JSON.stringify(v)},`).join("\n") +
+      "\n};\n",
+  );
+}
+

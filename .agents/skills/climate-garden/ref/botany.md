@@ -1,42 +1,40 @@
-# Verifying a roster
+# Researching the roster
 
-The survey in `climates.md` was written from memory. For Afroalpine, the check replaced six of its
-twelve plants (wrong mountain, wrong altitude, no records) before a line was drawn. Verify first;
-drawing a plant that does not belong is the most expensive mistake available.
+We draw plants; we are not botanists. Research is for one thing: knowing what each plant looks
+like, through the year if the garden has seasons, well enough to draw it right. Where a plant is
+native does not matter: a garden's plants are grown there, and one cultivated in the climate
+belongs as much as a wild one. A plant only needs to be real and grown in the climate.
 
 ## The brief
 
-Spawn a general-purpose agent in the background on Haiku at high effort (lookup work does not
-need a larger model) with this brief, filled in. Spot-check a few of its sources before acting on
-a correction. Draw nothing but scaffolding until it returns.
+Spawn one or two general-purpose agents in the background on Haiku at high effort (lookup work
+does not need a larger model, nor more agents) with this brief, filled in; split a long roster
+between two. Draw nothing but scaffolding until they return.
 
-> You are verifying the botany for an illustrated web garden before any drawing starts. Accuracy
-> matters more than speed: every claim must trace to a source you read (POWO/WCVP, the regional
-> flora, peer-reviewed papers, herbarium and GBIF records, botanical gardens). Use WebSearch and
-> WebFetch. Do not edit files.
+> You are gathering visual reference for an illustrated web garden before any drawing starts.
+> The question is what each plant looks like, not where it comes from: skip native range,
+> distribution, and habitat. Accuracy about appearance matters: base each fact on a description
+> or photographs you read (floras, botanical gardens, horticultural references, photo records).
+> Use WebSearch and WebFetch. Do not edit files.
 >
 > **Context.** The site draws one climate's garden at a time as watercolor-and-ink botanical
 > illustration, about twelve plants in three roles: side (branches reaching in from an edge),
-> hanging (from above), bed (rising from the bottom). A garden must read by silhouette alone.
-> Nothing may hang from the sky: a hanger is honest only if it hangs from a real host plant, and
-> is drawn as part of it. Plants must be real and belong to the climate; they need not share one
-> locality, though plants recorded growing together are a bonus.
+> hanging (from a host above: a bough or an arbor beam), bed (rising from the bottom). A garden
+> must read by silhouette alone.
 >
-> **Garden:** <name, Köppen, region, the moment chosen>. **Proposed roster:** <the survey table>.
+> **Garden:** <name, climate, the moment or the year>. **Roster:** <the table>.
 >
-> **Find out:** (1) the accepted name of each plant, synonyms and recent reclassifications, and
-> anything wrong in the survey; (2) where each grows (range, altitude, habitat), and whether the set
-> can honestly stand together; (3) which plants can honestly fill the hanging role, and on which
-> hosts; (4) drawing facts for each plant, specific enough for an illustrator: height and
-> proportions, branching, leaf shape, size, arrangement and surface, colors of leaves, undersides,
-> bark, flowers and fruit, what persists dead (skirts, spikes, pods), inflorescence structure,
-> behavior worth drawing (closing at night, nodding); (5) gaps, with replacements from the same
-> climate that are distinct in silhouette from each other and from the gardens already built
-> (<list them>).
+> **Find out, per plant:** (1) the name to look it up under, if the table's is outdated;
+> (2) how it looks, specifically enough for an illustrator: height and proportions, branching,
+> leaf shape, size, arrangement and surface, colors of leaves, undersides, bark, stems, flowers
+> and fruit, inflorescence structure, what persists dead (skirts, spikes, pods), behavior worth
+> drawing (closing at night, nodding, how a vine twines and hangs); (3) for a four-season garden,
+> how it looks in each season and roughly when (leaf-out, flowering, fruit, autumn color, leaf
+> fall, what stays through winter); (4) any plant that would look too much like one already drawn
+> on the site (<list them>), with a look-alike-free alternative.
 >
-> **Return:** a roster table (common name, accepted name, role, range, one-line silhouette), drawing
-> notes per plant, corrections to the survey, what remains uncertain (marked, not guessed), and
-> sources as URLs. Keep it tight.
+> **Return:** drawing notes per plant, its seasons if asked, look-alike warnings, what you could
+> not confirm (marked, not guessed), and sources as URLs. Keep it tight: no preamble.
 
 ## Deciding the roster
 

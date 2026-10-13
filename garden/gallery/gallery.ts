@@ -6,7 +6,7 @@ import "./gallery.css";
 import tokens from "../src/tokens.css?raw";
 import paint from "../src/garden/paint.css?raw";
 import PLANTS from "../src/garden/plants.json";
-import { GARDENS } from "../src/garden/gardens";
+import { GARDENS, SPRING } from "../src/garden/gardens";
 import { chosenGarden, emblem, keepGarden, setupSwitcher } from "../src/garden/switcher";
 
 // The token gallery, one garden at a time: its palette, its pen, and its plants, each by day and
@@ -108,8 +108,9 @@ const SHIFTS = [
 ];
 
 // A plant's whole drawing and its close study, by day and by night. The species class sits
-// inside each light, so the plant's tone is read from that light's tokens.
-function renderPlant(plant: Plant, drawing: string, detail: string) {
+// inside each light, so the plant's tone is read from that light's tokens. A plant of a garden
+// that shows a year is shown in full leaf, late spring, without the parts of other seasons.
+function renderPlant(plant: Plant, drawing: string, detail: string, year: boolean) {
   const card = el("article", "plant-card");
   const figures = el("div", "figures");
   for (const light of ["light", "light night"]) {
@@ -121,6 +122,9 @@ function renderPlant(plant: Plant, drawing: string, detail: string) {
     ]) {
       const figure = el("figure", `${cls} g-${plant.name}`);
       figure.innerHTML = svg;
+      if (year)
+        for (const part of figure.querySelectorAll<SVGGElement>(".gp"))
+          if (+part.dataset.g! > SPRING || +(part.dataset.d ?? Infinity) <= SPRING) part.style.display = "none";
       column.append(figure);
     }
     const strip = el("div", `shifts g-${plant.name}`);
@@ -180,7 +184,7 @@ async function show() {
   heading.style.setProperty("--tone", `var(${g.tone})`);
   heading.innerHTML = `${emblem(g)}<span>${g.name} garden</span>`;
   renderPalette(document.querySelector("[data-palette]")!, reached(drawings, plants, !!g.water));
-  document.querySelector("[data-plants]")!.replaceChildren(...plants.map((plant, i) => renderPlant(plant, drawings[i], studies[i])));
+  document.querySelector("[data-plants]")!.replaceChildren(...plants.map((plant, i) => renderPlant(plant, drawings[i], studies[i], !!g.year)));
   scaleInk();
 }
 

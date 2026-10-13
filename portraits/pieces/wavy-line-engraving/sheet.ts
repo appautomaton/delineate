@@ -66,7 +66,7 @@ export function source(name: string): Raster {
   const whole = readPng(fileURLToPath(new URL("wavy-eng-full.png", REFERENCES)));
   const front = new Float32Array(SIZE * SIZE);
   for (const [n, file] of LAYERS.slice(at + 1)) opacity(n, file).forEach((v, p) => (front[p] = Math.max(front[p], v)));
-  const data = Uint8ClampedArray.from(plate.data);
+  const data = Uint8Array.from(plate.data);
   for (let p = 0; p < SIZE * SIZE; p++)
     if (front[p] < 0.5) for (let k = 0; k < 3; k++) data[p * 4 + k] = whole.data[p * 4 + k];
   return { width: SIZE, height: SIZE, data };
