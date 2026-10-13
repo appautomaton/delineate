@@ -1,52 +1,60 @@
-/* The East Asian garden's layouts. A still pond lies across the foreground: the lotus and the
-   rabbit-ear iris stand in it, and the peony, the hydrangea, and the spider lily on the bank
-   beyond (rooted at the waterline, --y: 100svh − 9u). The moso rises at the left edge with the
-   ginkgo before it, the willow's curtain falls from the top left, the wisteria hangs from its
-   arbor beam on the right below the controls, the maple reaches in below it, and the plum leans
-   in from the bottom right corner. Wide screens add the paulownia and the chocolate vine. */
+/* The East Asian garden's layouts. A monsoon pond lies across the foreground: only the true
+   aquatic plants—the sacred lotus and the rabbit-ear iris—rise through the water from the pond bed
+   (--y: 100svh + 1.5u..2u), while the unseen shore banks frame the pond from the left and right
+   edges (--x: 0% and --x: 100%) above summer high water (water: 13.5u). On the left bank, the moso
+   bamboo arches out from the upper-left margin above the paulownia, the ginkgo, and the mophead
+   hydrangea; on the right bank, the weeping willow drapes below the controls above the Japanese
+   maple, the old plum, the red spider lily, and the tree peony. Overhead, twisted wisteria lianas
+   and twining chocolate-vine stems cascade from the top edge. */
 
-/* Portrait screens. */
+/* Portrait phones: kept clear of the top-right controls. */
 @media (max-aspect-ratio: 1/1) {
   .garden { --u: min(0.8svh, 1.15vw); }
-  .plant.g-ginkgo { display: block; --x: 0%; --y: 84%; --h: 56; --enter: -0.4 0; }
-  .plant.g-plum { display: block; --x: 100%; --y: calc(100svh + var(--u) * 2); --h: 48; --flip: -1; --enter: 0.3 0.1; }
-  .plant.g-lotus { display: block; --x: 52%; --y: calc(100svh + var(--u) * 2); --h: 30; --enter: 0 0.3; }
-  .plant.g-iris { display: block; --x: 30%; --y: calc(100svh + var(--u) * 2); --h: 18; --enter: 0 0.3; }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 36%; --h: 48; --enter: -0.42 0; }
+  .plant.g-maple { display: block; --x: 0%; --y: 66%; --h: 36; --enter: -0.4 0; }
+  .plant.g-plum { display: block; --x: 100%; --y: 70%; --h: 44; --flip: -1; --enter: 0.42 0.06; }
+  .plant.g-iris { display: block; --x: 26%; --y: calc(100svh + var(--u) * 1.5); --h: 38; --enter: -0.1 0.35; }
+  .plant.g-lotus { display: block; --x: 66%; --y: calc(100svh + var(--u) * 2); --h: 52; --enter: 0.1 0.35; }
 }
 
-/* Portrait tablets and tall windows: the maple and the willow join. */
+/* Portrait tablets and tall windows: the wisteria, the moso bamboo, the hydrangea, the willow, and the peony join. */
 @media (max-aspect-ratio: 1/1) and (min-width: 600px) {
-  .plant.g-maple { display: block; --x: 100%; --y: 46%; --h: 24; --flip: -1; --enter: 0.4 0; }
-  .plant.g-willow { display: block; --x: 0%; --y: 4%; --h: 34; --enter: -0.3 -0.2; }
+  .plant.g-wisteria { display: block; --x: 34%; --y: calc(var(--u) * -1); --h: 42; --enter: 0 -0.42; }
+  .plant.g-moso { display: block; --x: 0%; --y: 38%; --h: 46; --enter: -0.42 0.06; }
+  .plant.g-ginkgo { --y: 62%; --h: 40; }
+  .plant.g-hydrangea { display: block; --x: 0%; --y: calc(100svh - var(--u) * 14.2); --h: 26; --enter: -0.35 0; }
+  .plant.g-willow { display: block; --x: 100%; --y: 22%; --h: 40; --flip: -1; --enter: 0.42 -0.05; }
+  .plant.g-maple { --x: 100%; --y: 46%; --h: 32; --flip: -1; --enter: 0.4 0; }
+  .plant.g-plum { --y: 66%; --h: 38; }
+  .plant.g-peony { display: block; --x: 100%; --y: calc(100svh - var(--u) * 14); --h: 26; --flip: -1; --enter: 0.35 0; }
 }
 
 /* Landscape screens. */
 @media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
   .garden { --u: min(1svh, 0.6vw); }
-  .plant.g-moso { display: block; --x: 1%; --y: calc(100svh + var(--u) * 3); --h: 150; --enter: 0 0.3; }
-  .plant.g-willow { display: block; --x: 0%; --y: 6%; --h: 50; --enter: -0.3 -0.2; }
-  .plant.g-ginkgo { display: block; --x: 0%; --y: 92%; --h: 72; --enter: -0.4 0; }
-  .plant.g-wisteria { display: block; --x: 100%; --y: 16%; --h: 30; --flip: -1; --enter: 0.3 -0.3; }
-  .plant.g-maple { display: block; --x: 100%; --y: 58%; --h: 28; --flip: -1; --enter: 0.4 0; }
-  .plant.g-plum { display: block; --x: 100%; --y: calc(100svh + var(--u) * 2); --h: 60; --flip: -1; --enter: 0.3 0.1; }
-  .plant.g-hydrangea { display: block; --x: 33%; --y: calc(100svh - var(--u) * 9); --h: 26; --enter: 0 0.3; }
-  .plant.g-iris { display: block; --x: 44%; --y: calc(100svh + var(--u) * 2); --h: 28; --enter: 0 0.3; }
-  .plant.g-lotus { display: block; --x: 56%; --y: calc(100svh + var(--u) * 2); --h: 42; --enter: 0 0.3; }
-  .plant.g-peony { display: block; --x: 67%; --y: calc(100svh - var(--u) * 9); --h: 22; --enter: 0 0.3; }
-  .plant.g-lycoris { display: block; --x: 77%; --y: calc(100svh - var(--u) * 9); --h: 18; --enter: 0 0.3; }
+  .plant.g-moso { display: block; --x: 0%; --y: 34%; --h: 48; --enter: -0.45 0.06; }
+  .plant.g-paulownia { display: block; --x: 0%; --y: 50%; --h: 28; --enter: -0.42 0; }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 70%; --h: 38; --enter: -0.45 0; }
+  .plant.g-lycoris { display: block; --x: 0%; --y: calc(100svh - var(--u) * 22); --h: 20; --enter: -0.35 0; }
+  .plant.g-hydrangea { display: block; --x: 0%; --y: calc(100svh - var(--u) * 14.2); --h: 24; --enter: -0.36 0; }
+  .plant.g-wisteria { display: block; --x: 48%; --y: calc(var(--u) * -1); --h: 44; --enter: 0 -0.42; }
+  .plant.g-willow { display: block; --x: 100%; --y: 20%; --h: 32; --flip: -1; --enter: 0.45 -0.05; }
+  .plant.g-maple { display: block; --x: 100%; --y: 52%; --h: 30; --flip: -1; --enter: 0.42 0; }
+  .plant.g-plum { display: block; --x: 100%; --y: 76%; --h: 34; --flip: -1; --enter: 0.42 0.06; }
+  .plant.g-peony { display: block; --x: 100%; --y: calc(100svh - var(--u) * 14); --h: 24; --flip: -1; --enter: 0.36 0; }
+  .plant.g-iris { display: block; --x: 34%; --y: calc(100svh + var(--u) * 1.5); --h: 40; --enter: -0.08 0.35; }
+  .plant.g-lotus { display: block; --x: 58%; --y: calc(100svh + var(--u) * 2); --h: 58; --enter: 0.06 0.36; }
 }
 
-/* Wider screens: the paulownia below the wisteria and the chocolate vine on the left. */
-@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1600px) {
-  .plant.g-wisteria { --y: 21%; }
-  .plant.g-paulownia { display: block; --x: 100%; --y: 40%; --h: 26; --flip: -1; --enter: 0.4 0; }
-  .plant.g-akebia { display: block; --x: 0%; --y: 32%; --h: 20; --enter: -0.4 0; }
+/* Laptop and wider screens: the chocolate vine cascades on the upper left. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-akebia { display: block; --x: 24%; --y: calc(var(--u) * -1); --h: 36; --enter: -0.12 -0.4; }
 }
 
 /* Short landscape phones: the ginkgo, the lotus, and the plum. */
 @media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
   .garden { --u: min(1svh, 0.5vw); }
-  .plant.g-ginkgo { display: block; --x: 0%; --y: 92%; --h: 72; --enter: -0.4 0; }
-  .plant.g-lotus { display: block; --x: 50%; --y: calc(100svh + var(--u) * 2); --h: 40; --enter: 0 0.3; }
-  .plant.g-plum { display: block; --x: 100%; --y: calc(100svh + var(--u) * 2); --h: 66; --flip: -1; --enter: 0.3 0.1; }
+  .plant.g-ginkgo { display: block; --x: 0%; --y: 68%; --h: 52; --enter: -0.42 0; }
+  .plant.g-lotus { display: block; --x: 50%; --y: calc(100svh + var(--u) * 2); --h: 50; --enter: 0 0.35; }
+  .plant.g-plum { display: block; --x: 100%; --y: 72%; --h: 48; --flip: -1; --enter: 0.42 0; }
 }

@@ -915,8 +915,8 @@
     "rank": 6,
     "common": "Moso bamboo",
     "latin": "Phyllostachys edulis",
-    "note": "Tall green culms rising out of the frame, ringed at every node and white-powdered below each ring, fine branches from the upper nodes holding sprays of narrow drooping leaves.",
-    "enters": "Rises from below the left edge",
+    "note": "Tall green culms arching in from the margin, ringed at every node and white-powdered below each ring, fine branches from the upper nodes holding sprays of narrow drooping leaves.",
+    "enters": "Arches in from the upper left edge",
     "grows": "The standing culms are evergreen; in April a new shoot rises in brown spotted sheaths, grows into a culm, and lets the sheaths fall"
   },
   {
@@ -957,8 +957,8 @@
     ],
     "common": "Plum",
     "latin": "Prunus mume",
-    "note": "A bent, knotted trunk leaning in from the corner, zigzag twigs, white five-petaled flowers on bare wood, oval leaves after them, and green plums that yellow in the June rain.",
-    "enters": "Leans in from the bottom right corner",
+    "note": "A bent, knotted trunk leaning in from the right margin, zigzag twigs, white five-petaled flowers on bare wood, oval leaves after them, and green plums that yellow in the June rain.",
+    "enters": "Leans in from the right edge",
     "grows": "Still in flower as spring opens, the petals falling as the leaves come; plums swell and yellow in summer; the leaves yellow and fall; and the flowers open again on bare wood at the year's end"
   },
   {
@@ -972,8 +972,8 @@
     "common": "Paulownia",
     "latin": "Paulownia tomentosa",
     "note": "Coarse stout limbs, upright panicles of pale violet trumpets on bare wood, plate-sized velvety hearts in opposite pairs, and brown capsules hanging on through winter beside next year's furred buds.",
-    "enters": "Reaches in from a side",
-    "grows": "Violet panicles open on bare wood and drop as the great hearts unfold; the leaves fall dull in autumn, and the capsules and furred buds stand through winter"
+    "enters": "Reaches in from the left edge",
+    "grows": "Violet panicles open on bare wood and drop after the great hearts unfold; the leaves fall dull in autumn, and the capsules and furred buds stand through winter"
   },
   {
     "name": "willow",
@@ -986,7 +986,7 @@
     "common": "Weeping willow",
     "latin": "Salix babylonica",
     "note": "A bough reaching in from the edge, long whips falling from it in a curtain, narrow leaves along them, and yellow-green catkins on the bare whips as spring opens.",
-    "enters": "Reaches in from a side",
+    "enters": "Reaches in from the upper right edge",
     "grows": "Catkins hang on the bare whips, then the first green; the curtain fills by summer, yellows in October and sheds, and the bare whips still hang through winter"
   },
   {
@@ -999,8 +999,8 @@
     ],
     "common": "Japanese wisteria",
     "latin": "Wisteria floribunda",
-    "note": "Old twisted vines wound along a timber arbor beam, long violet racemes falling from it, pinnate leaves, and velvety pods hanging on into winter.",
-    "enters": "Hangs from an arbor beam reaching in from a side",
+    "note": "Old twisted vines wound along an overhead timber arbor beam, long violet racemes falling from it, pinnate leaves, and velvety pods hanging on into winter.",
+    "enters": "Hangs from an overhead timber arbor beam along the top edge",
     "grows": "The racemes fall from the beam and open from base to tip; the leaves follow, pods hang from summer, the leaves yellow and fall, and the bare vines hold their pods through winter"
   },
   {
@@ -1009,8 +1009,8 @@
     "rank": 9,
     "common": "Chocolate vine",
     "latin": "Akebia quinata",
-    "note": "Thin stems twining along a bamboo pole, five-leaflet palms, dangling purple-brown flowers in early spring, and plump purple sausage pods in autumn.",
-    "enters": "Hangs from a bamboo pole reaching in from a side",
+    "note": "Thin stems twining along an overhead bamboo trellis pole, five-leaflet palms, dangling purple-brown flowers in early spring, and plump purple sausage pods in autumn.",
+    "enters": "Hangs from an arched bamboo trellis along the top edge",
     "grows": "Purple-brown flowers dangle before the leaves; the five-leaflet palms follow; purple pods hang in autumn; about half the leaves fall and the rest thin through winter"
   },
   {
@@ -1023,8 +1023,8 @@
     ],
     "common": "Lotus",
     "latin": "Nelumbo nucifera",
-    "note": "Shield leaves on tall stalks over the still water, pink flowers standing above them, flat-topped seed pods, and in winter dry pods on broken stalks bent to the water.",
-    "enters": "Rises from the pond",
+    "note": "Shield leaves on tall stalks over the monsoon pond, pink flowers standing above them, flat-topped seed pods, and in winter dry pods on broken stalks bent toward the low water.",
+    "enters": "Rises from the pond bed",
     "grows": "Rolled leaves rise from the water and open into shields; pink flowers stand above them and leave their pods; the leaves brown and the stalks bend over; dry pods stay on broken stalks through winter"
   },
   {
@@ -1051,9 +1051,9 @@
     ],
     "common": "Peony",
     "latin": "Paeonia lactiflora",
-    "note": "A clump of stems with leaves twice divided in threes and great pink ball flowers late in spring, then green seed follicles.",
-    "enters": "Rises from the bed",
-    "grows": "Red shoots rise, the leaves unfold, ball flowers open and drop their petals, follicles form, and the stems redden, bend over, and die back"
+    "note": "A clump of stems arching over the shore bank with leaves twice divided in threes and great pink ball flowers late in spring, then green seed follicles.",
+    "enters": "Arches in from the lower right bank above high water",
+    "grows": "Red shoots arch in, the leaves unfold, ball flowers open and drop their petals, follicles form, and the stems redden, bend over, and die back"
   },
   {
     "name": "hydrangea",
@@ -1065,8 +1065,8 @@
     ],
     "common": "Hydrangea",
     "latin": "Hydrangea macrophylla",
-    "note": "A mound of woody stems with broad leaves in opposite pairs and mopheads of four-sepalled florets, blue-violet in the plum rain.",
-    "enters": "Rises from the bed",
+    "note": "A cascading mound of woody stems on the shore bank with broad leaves in opposite pairs and mopheads of four-sepalled florets, blue-violet in the plum rain.",
+    "enters": "Arches in from the lower left bank above high water",
     "grows": "The leaves open in pairs, mopheads open blue-violet in the plum rain, fade on the stem to antique green and rose, and stay dry on the bare stems through winter"
   },
   {
@@ -1075,8 +1075,461 @@
     "rank": 13,
     "common": "Red spider lily",
     "latin": "Lycoris radiata",
-    "note": "Bare scapes crowned with scarlet flowers, their narrow tepals curled back and their stamens far out; narrow dark leaves only after the flowers.",
+    "note": "Bare scapes arching in from the bank crowned with scarlet flowers, their narrow tepals curled back and their stamens far out; arching dark strap leaves only after the flowers.",
+    "enters": "Arches in from the right bank above the peony",
+    "grows": "Last autumn's leaves wither in spring; bare scapes arch out late in summer and open scarlet umbels; after the flowers fade, the arching dark leaves come and stay through winter"
+  },
+  {
+    "name": "spruce",
+    "garden": "taiga",
+    "rank": 1,
+    "common": "Siberian spruce",
+    "latin": "Picea obovata",
+    "note": "Sweeping whorled boughs hung with curtains of pendulous branchlets, bristling four-angled dark blue-green needles, erect crimson spring conelets, and glossy brown pendulous cones with smooth rounded scales.",
+    "enters": "Reaches in from the left edge",
+    "grows": "Lime-green shoot tips and erect crimson conelets open in spring, darken into evergreen tiers through summer, and hold their pendulous glossy brown cones through the long winter"
+  },
+  {
+    "name": "larch",
+    "garden": "taiga",
+    "rank": 2,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Siberian larch",
+    "latin": "Larix sibirica",
+    "note": "Pale buff-grey branches studded with dark woody spur pegs, soft rosettes of twenty-five to forty bright green needles per spur, and small ovoid cones standing strictly erect above the twigs.",
+    "enters": "Reaches in from the upper right edge",
+    "grows": "Emerald needle tufts and rose-pink conelets burst from the spurs in May, turn brilliant amber-gold in September, and shed in October to leave bare peg-studded twigs with erect brown cones"
+  },
+  {
+    "name": "birch",
+    "garden": "taiga",
+    "rank": 3,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Silver birch",
+    "latin": "Betula pendula",
+    "note": "A chalk-white trunk peeling in horizontal strips over black diamond fissures, ascending limbs, and long weeping reddish-brown twigs hung with doubly serrate diamond leaves and dangling catkins.",
+    "enters": "Leans in from the lower right edge",
+    "grows": "Yellow-brown male tassels elongate as the diamond leaves unfold, the weeping curtain turns butter-gold in autumn and sheds, and bare twigs tipped with rigid winter catkins hang against the white bark"
+  },
+  {
+    "name": "scotspine",
+    "garden": "taiga",
+    "rank": 4,
+    "common": "Scots pine",
+    "latin": "Pinus sylvestris",
+    "note": "Flaky salmon-orange upper limbs, stiff twisted blue-green needles in pairs, upright golden spring candles at the shoot tips, and pointed conical cones pointing backward along the branch.",
+    "enters": "Reaches in from the lower left edge",
+    "grows": "Golden-brown candles rise at the shoot tips in late spring, twisted blue-green needle pairs spread, and dull ochre-brown cones stay closed on the orange limbs through winter"
+  },
+  {
+    "name": "methuselah",
+    "garden": "taiga",
+    "rank": 6,
+    "common": "Methuselah's beard",
+    "latin": "Usnea longissima",
+    "note": "Long pale chartreuse-grey garlands draped unattached over a dipping Siberian spruce bough, each main strand clothed perpendicularly in dense horizontal fishbone fibrils.",
+    "enters": "Hangs from a Siberian spruce bough along the top edge",
+    "grows": "The spruce host bough reaches in along the top border and the long fishbone-fibrilled lichen garlands unfurl and sway through all four seasons"
+  },
+  {
+    "name": "horsehair",
+    "garden": "taiga",
+    "rank": 8,
+    "common": "Horsehair lichen",
+    "latin": "Bryoria fremontii",
+    "note": "Cascading chocolate-black horsehair locks hanging from an orange-barked Scots pine bough, branching dichotomously at acute angles into fine capillary threads.",
+    "enters": "Hangs from a Scots pine bough along the top edge",
+    "grows": "The orange-barked pine bough extends along the top border and dark dichotomous horsehair skeins cascade downward through the year"
+  },
+  {
+    "name": "fireweed",
+    "garden": "taiga",
+    "rank": 5,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Fireweed",
+    "latin": "Chamaenerion angustifolium",
+    "note": "Tall unbranched reddish stems clothed in spirally alternate willow-like lance leaves and crowned by tapering racemes of four-petalled magenta-rose flowers opening from base to tip.",
     "enters": "Rises from the bed",
-    "grows": "Last autumn's leaves wither in spring; bare scapes rise late in summer and open scarlet umbels; after the flowers fade, the narrow dark leaves come and stay through winter"
+    "grows": "Reddish shoots rise in spring, magenta-rose racemes open from base to tip in summer, the leaves turn fiery crimson in autumn as the lower pods split into four curling valves with white silk plumes, and the curled pods stand through winter"
+  },
+  {
+    "name": "labradortea",
+    "garden": "taiga",
+    "rank": 7,
+    "common": "Labrador tea",
+    "latin": "Rhododendron tomentosum",
+    "note": "An evergreen bog shrub with rusty-woolly twigs, narrow rolled leaves coated in dense rust-orange felt beneath, and terminal domes of five-petalled white star flowers.",
+    "enters": "Rises from the bed",
+    "grows": "White-felted new leaves unfold and turn rusty beneath, white star corymbs bloom in early summer, five-valved brown capsules curve downward in autumn, and the evergreen leaves fold down against the stem in winter"
+  },
+  {
+    "name": "horsetail",
+    "garden": "taiga",
+    "rank": 11,
+    "turn": [
+      0.64,
+      0.72
+    ],
+    "common": "Wood horsetail",
+    "latin": "Equisetum sylvaticum",
+    "note": "Jointed hollow stems ringed with reddish-brown papery sheaths and tiered lacy horizontal umbrellas of compound drooping branch whorls.",
+    "enters": "Rises from the bed",
+    "grows": "Pale fertile stems tipped with spore cones rise in spring, compound green whorls arch out in lacy tiers through summer, bleach to yellow-straw in autumn, and die back after frost"
+  },
+  {
+    "name": "lingonberry",
+    "garden": "taiga",
+    "rank": 9,
+    "common": "Lingonberry",
+    "latin": "Vaccinium vitis-idaea",
+    "note": "Low evergreen clumps of glossy oval leathery leaves, nodding terminal racemes of pale-pink urn bells in late spring, and heavy clusters of glossy scarlet-red berries.",
+    "enters": "Rises low in the bed",
+    "grows": "Nodding pale-pink urn bells open in late spring, green berries swell in summer and ripen bright scarlet in autumn, and the glossy evergreen clumps hold their red berries through winter"
+  },
+  {
+    "name": "cloudberry",
+    "garden": "taiga",
+    "rank": 10,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Cloudberry",
+    "latin": "Rubus chamaemorus",
+    "note": "Low stems bearing pleated five-to-seven-lobed kidney leaves, a solitary white five-petalled flower per stem, and a single plump aggregate berry ripening from ruby-red to golden-amber.",
+    "enters": "Rises low in the bed",
+    "grows": "Pleated lobed leaves and a single white blossom open in spring, the berry swells ruby-red then golden-amber in summer, the leaves turn burgundy-bronze in autumn, and dry calyx stars remain in winter"
+  },
+  {
+    "name": "twinflower",
+    "garden": "taiga",
+    "rank": 12,
+    "common": "Twinflower",
+    "latin": "Linnaea borealis",
+    "note": "Trailing woody stolons with opposite pairs of small evergreen crenate leaves, sending up thread-like forked stalks that dangle paired nodding fragrant pale-pink bells.",
+    "enters": "Creeps low in the front of the bed",
+    "grows": "Evergreen stolons trail across the floor, thread-like stalks rise in summer to dangle paired pink bells, and the low evergreen leaf pairs stay through winter after the stalks wither"
+  },
+  {
+    "name": "tuliptree",
+    "garden": "american",
+    "rank": 1,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Tulip tree",
+    "latin": "Liriodendron tulipifera",
+    "note": "Lustrous reddish-brown limbs with duck-bill stipules, four-lobed leaves notched flat across the top, upright chartreuse-and-orange cup flowers, and cone-like samara aggregates.",
+    "enters": "Reaches in from the left edge",
+    "grows": "Squared four-lobed leaves unfold from duck-bill stipules, green-and-orange cup flowers open in May, the crown turns chrome-yellow and sheds in autumn, and pale wooden samara-cone candelabras stand upright all winter"
+  },
+  {
+    "name": "sugarmaple",
+    "garden": "american",
+    "rank": 2,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Sugar maple",
+    "latin": "Acer saccharum",
+    "note": "Opposite brown twigs with sharp conical buds, broad five-lobed palmate leaves with deep U-shaped sinuses, drooping chartreuse flower tassels, and paired horseshoe samaras.",
+    "enters": "Reaches in from the right edge",
+    "grows": "Chartreuse flower tassels dangle on bare twigs, broad five-lobed leaves open and hang horseshoe keys, the crown flares yellow, tangerine, and scarlet in October, and fine opposite twigs stand bare in winter"
+  },
+  {
+    "name": "redbud",
+    "garden": "american",
+    "rank": 3,
+    "turn": [
+      0.64,
+      0.71
+    ],
+    "common": "Eastern redbud",
+    "latin": "Cercis canadensis",
+    "note": "Dark crooked limbs and slender black zigzag twigs studded in early spring with cauliflorous magenta-pink pea clusters before the broad entire heart leaves and flat purple-brown pods.",
+    "enters": "Leans in from the lower right edge",
+    "grows": "Magenta-pink pea clusters burst directly from bare black zigzag wood in early spring, tawny heart leaves unfold as the flowers drop, flat pods ripen purple-brown, and twisted pods hang on bare twigs all winter"
+  },
+  {
+    "name": "walnut",
+    "garden": "american",
+    "rank": 4,
+    "turn": [
+      0.6,
+      0.68
+    ],
+    "common": "Black walnut",
+    "latin": "Juglans nigra",
+    "note": "Stout dark-ridged limbs with notched leaf scars, long odd-pinnate fronds of fifteen to twenty-three falcate leaflets, drooping green catkins, and paired warty lime-green nuts.",
+    "enters": "Reaches in from the upper left edge",
+    "grows": "Pinnate shoots and green catkins open late in spring, warty green nuts swell in pairs through summer, the yellow fronds drop early in autumn, and darkening nuts cling briefly to the bare stout wood"
+  },
+  {
+    "name": "creeper",
+    "garden": "american",
+    "rank": 6,
+    "turn": [
+      0.6,
+      0.68
+    ],
+    "common": "Virginia creeper",
+    "latin": "Parthenocissus quinquefolia",
+    "note": "A woody vine clinging to an upper canopy limb by disk-tipped tendrils, bearing five-leaflet palmate leaves that turn crimson-scarlet early and drop to reveal blue-black berries on carmine-red stalks.",
+    "enters": "Hangs from a host limb along the top edge",
+    "grows": "Bronze-tinged five-leaflet palms unfold along the tendril vine, turn flaming crimson-scarlet in early autumn, and shed to leave pruinose blue-black berries on bright carmine-red branched pedicels"
+  },
+  {
+    "name": "trumpetvine",
+    "garden": "american",
+    "rank": 8,
+    "turn": [
+      0.64,
+      0.72
+    ],
+    "common": "Trumpet vine",
+    "latin": "Campsis radicans",
+    "note": "Arching woody stems on a weathered split-rail beam, opposite coarsely serrated pinnate leaves, summer clusters of orange-scarlet tubular trumpets, and long curved cigar capsules.",
+    "enters": "Hangs from a timber rail along the top edge",
+    "grows": "Opposite pinnate leaves unfold in late spring, terminal clusters of orange-scarlet trumpets flare in summer, leaves yellow and drop in autumn, and curved brown capsules split into two boat valves in winter"
+  },
+  {
+    "name": "dutchmanspipe",
+    "garden": "american",
+    "rank": 10,
+    "turn": [
+      0.64,
+      0.72
+    ],
+    "common": "Dutchman's pipe",
+    "latin": "Aristolochia macrophylla",
+    "note": "Twining stems shingled with oversized kidney-heart leaves, pendulous U-bent yellow-green and maroon smoking-pipe flowers in late spring, and six-ribbed charcoal-black hanging basket capsules.",
+    "enters": "Hangs from a canopy limb along the top edge",
+    "grows": "Velvety kidney-heart leaves overlap into a dense shingle concealing U-curved pipe flowers in May, turn yellow-brown and fall in autumn, and leave six-valved basket capsules split from the base in winter"
+  },
+  {
+    "name": "compassplant",
+    "garden": "american",
+    "rank": 5,
+    "turn": [
+      0.65,
+      0.73
+    ],
+    "common": "Compass plant",
+    "latin": "Silphium laciniatum",
+    "note": "Stiff vertical deeply pinnatifid oak-like basal leaves aligned north–south, and a tall rough-haired resinous stalk tiered with large chrome-yellow sunflower heads.",
+    "enters": "Rises from the bed",
+    "grows": "Deeply cut pinnatifid leaves rise vertically in spring, tall resinous stems lift tiers of yellow sunflower heads in summer, and blackened stalks with dark involucral cups stand rigid through winter"
+  },
+  {
+    "name": "bluestem",
+    "garden": "american",
+    "rank": 7,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Big bluestem",
+    "latin": "Andropogon gerardii",
+    "note": "A tall prairie tussock of glaucous blue-green culms with purplish nodes, crowned in late summer by digitate three-parted turkey-foot racemes and turning copper-burgundy in autumn.",
+    "enters": "Rises from the bed",
+    "grows": "Blue-green blades arch out in spring, tall culms lift three-toed turkey-foot racemes in late summer, and the whole tussock cures to flame copper and wine-burgundy for the winter"
+  },
+  {
+    "name": "milkweed",
+    "garden": "american",
+    "rank": 11,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Common milkweed",
+    "latin": "Asclepias syriaca",
+    "note": "Stout downy stems with opposite broad oblong leaves, spherical axillary umbels of dusty rose-pink crowned flowers, and warty grey follicles splitting to spill white silk comas.",
+    "enters": "Rises from the bed",
+    "grows": "Stout stems with opposite oblong leaves open spherical umbels of dusty-rose flowers in summer, warty pods swell and grey, and after the yellow leaves drop the split pods spill white silk through winter"
+  },
+  {
+    "name": "blazingstar",
+    "garden": "american",
+    "rank": 12,
+    "turn": [
+      0.65,
+      0.73
+    ],
+    "common": "Dense blazing star",
+    "latin": "Liatris spicata",
+    "note": "A fountain of narrow grass-like basal blades sending up strict unbranched leafy wands packed with sessile magenta-purple button heads that open from the top downward.",
+    "enters": "Rises from the bed",
+    "grows": "Grass-like blades tuft in spring, tall wands rise and open fuzzy magenta button heads strictly from top to bottom in late summer, and tawny pappus spikes stand through winter"
+  },
+  {
+    "name": "coneflower",
+    "garden": "american",
+    "rank": 9,
+    "turn": [
+      0.65,
+      0.73
+    ],
+    "common": "Purple coneflower",
+    "latin": "Echinacea purpurea",
+    "note": "Rough dark-green three-veined ovate leaves and stout stems crowned by prominent coppery-orange spiny cones ringed with drooping rose-purple strap rays.",
+    "enters": "Rises from the bed",
+    "grows": "Coarse leaves and stout stems lift coppery spiny cones with drooping rose-purple rays in summer; in autumn the rays drop and the coal-black spiky cones stand all winter"
+  },
+  {
+    "name": "oak",
+    "garden": "woodland",
+    "rank": 1,
+    "turn": [
+      0.64,
+      0.72
+    ],
+    "common": "Pedunculate oak",
+    "latin": "Quercus robur",
+    "note": "Gnarled wide-spreading fissured limbs, clustered ovoid terminal buds, short-stalked eared leaves with rounded wavy lobes, and acorns in scaly cups borne on long slender stalks.",
+    "enters": "Reaches in from the left edge",
+    "grows": "Bronze-pink lobed leaves and yellow-green catkins open in spring, long-stalked acorns swell in summer and drop in autumn as the crown turns ochre-russet, leaving gnarled limbs with empty stalked cups and marble galls"
+  },
+  {
+    "name": "hazel",
+    "garden": "woodland",
+    "rank": 2,
+    "turn": [
+      0.63,
+      0.71
+    ],
+    "common": "Common hazel",
+    "latin": "Corylus avellana",
+    "note": "Shining coppery-brown coppice rods hung in late winter and early spring with dangling sulphur-yellow lamb's-tail catkins, followed by pleated round doubly-toothed leaves and cobnuts in leafy ragged husks.",
+    "enters": "Reaches in from the right edge",
+    "grows": "Yellow lamb's-tail catkins dangle on bare coppery rods in early spring before the round leaves unfold; cobnuts swell in leafy husks in summer, the leaves turn clear butter-yellow and fall, and new winter catkins form"
+  },
+  {
+    "name": "hawthorn",
+    "garden": "woodland",
+    "rank": 3,
+    "turn": [
+      0.63,
+      0.71
+    ],
+    "common": "Common hawthorn",
+    "latin": "Crataegus monogyna",
+    "note": "Dense gnarled thorny twigs, deeply lobed forward-pointing leaves, snowy corymbs of five-petalled white May blossoms with pink anthers, and clusters of deep crimson-red haws.",
+    "enters": "Leans in from the lower right edge",
+    "grows": "Deeply cut leaves unfold first, snowy masses of white May blossom cover the branches in late spring, haws swell green then ripen crimson in autumn, and bare thorny twigs hold red haws through winter"
+  },
+  {
+    "name": "holly",
+    "garden": "woodland",
+    "rank": 4,
+    "common": "English holly",
+    "latin": "Ilex aquifolium",
+    "note": "Smooth pale-grey branches clothed in thick glossy dark-green undulating leaves armed with alternating marginal spines, small white four-petalled spring flowers, and tight axil clusters of scarlet winter berries.",
+    "enters": "Reaches in from the lower left edge",
+    "grows": "Evergreen spiny leaves open white axillary blossoms in May, green berries swell in summer and turn bright scarlet in autumn, holding fast among the dark glossy leaves all winter"
+  },
+  {
+    "name": "ivy",
+    "garden": "woodland",
+    "rank": 6,
+    "common": "English ivy",
+    "latin": "Hedera helix",
+    "note": "Rootlet-clinging stems with pale-veined five-lobed juvenile leaves on a mossy bough, thrusting out unlobed diamond-leaved adult shoots crowned by spherical chartreuse autumn flower umbels and ink-black winter berries.",
+    "enters": "Hangs from a mossy bough along the top edge",
+    "grows": "Evergreen juvenile and adult shoots cloak the host bough all year, opening spherical umbels of chartreuse-yellow flowers in autumn that ripen into round clusters of dull ink-black berries in winter"
+  },
+  {
+    "name": "oldmansbeard",
+    "garden": "woodland",
+    "rank": 8,
+    "turn": [
+      0.63,
+      0.71
+    ],
+    "common": "Old man's beard",
+    "latin": "Clematis vitalba",
+    "note": "Ribbed buff stems scrambling from an upper bough by tendril-twisted leaf-stalks, opposite five-leaflet pinnate leaves, greenish-cream summer panicles, and billowing silver-white feathery winter seed wigs.",
+    "enters": "Hangs from a canopy bough along the top edge",
+    "grows": "Five-leaflet pinnate leaves climb by twisting petioles in spring, fragrant greenish-cream panicles open in summer, and as the yellow leaves fall in autumn the achenes spin out billowing silver-white plumes that stay all winter"
+  },
+  {
+    "name": "honeysuckle",
+    "garden": "woodland",
+    "rank": 10,
+    "turn": [
+      0.64,
+      0.72
+    ],
+    "common": "European honeysuckle",
+    "latin": "Lonicera periclymenum",
+    "note": "Clockwise-twining woody stems with opposite blue-backed oval leaves, terminal whorls of long curved two-lipped creamy-white and rose-carmine trumpets aging warm yellow, and tight clusters of translucent crimson berries.",
+    "enters": "Hangs from a host bough along the top edge",
+    "grows": "Opposite oval leaves unfold in early spring, terminal crowns of rose-and-cream two-lipped trumpets open in summer, translucent crimson berry clusters ripen in autumn, and bare spiralled ropes remain in winter"
+  },
+  {
+    "name": "bracken",
+    "garden": "woodland",
+    "rank": 9,
+    "turn": [
+      0.62,
+      0.7
+    ],
+    "common": "Bracken",
+    "latin": "Pteridium aquilinum",
+    "note": "Stiffly erect grooved stems unrolling from silver-furry shepherd's-crook fiddleheads into broad horizontal triangular three-pinnate fronds that turn glowing copper-russet in autumn.",
+    "enters": "Rises from the bed",
+    "grows": "Silver-felted crosiers rise and unroll into horizontal triangular fronds by summer, flare butter-gold and copper-russet in October, and collapse into warm bronze winter drifts"
+  },
+  {
+    "name": "foxglove",
+    "garden": "woodland",
+    "rank": 5,
+    "common": "Common foxglove",
+    "latin": "Digitalis purpurea",
+    "note": "A downy basal rosette of wrinkled ovate leaves sending up a tall unbranched spire hung on one side with pendulous purple-pink thimbles spotted dark crimson inside white-rimmed speckles.",
+    "enters": "Rises from the bed",
+    "grows": "A tall spike rises from the downy rosette in spring, pendulous spotted purple-pink bells open from bottom to top in early summer, and a stiff brown stalk of split ovoid capsules stands over the rosette in winter"
+  },
+  {
+    "name": "gorse",
+    "garden": "woodland",
+    "rank": 12,
+    "common": "Common gorse",
+    "latin": "Ulex europaeus",
+    "note": "A dense evergreen mound of furrowed dark-green stems armed with branched green spines, ablaze in spring and again from late autumn with golden-yellow pea flowers cupped in velvety brown calyces.",
+    "enters": "Rises in the lower corner of the bed",
+    "grows": "Golden-yellow pea flowers blaze across the green spines in spring, dark shaggy pods ripen and pop open in summer, and a fresh winter flush of golden blossoms opens from November onward"
+  },
+  {
+    "name": "hartstongue",
+    "garden": "woodland",
+    "rank": 11,
+    "common": "Hart's-tongue fern",
+    "latin": "Asplenium scolopendrium",
+    "note": "An evergreen shuttlecock rosette of undivided glossy emerald strap fronds with ruffled undulating margins, eared cordate bases, and paired diagonal rows of rust-brown herringbone sori beneath.",
+    "enters": "Rises low in the bed",
+    "grows": "Pale-green crosiers unroll from rusty-scaled crowns in spring into glossy ruffled straps, herringbone sori darken beneath in summer, and the evergreen clump holds its gloss through winter"
+  },
+  {
+    "name": "bluebell",
+    "garden": "woodland",
+    "rank": 7,
+    "common": "English bluebell",
+    "latin": "Hyacinthoides non-scripta",
+    "note": "Glossy linear channelled leaves and gracefully nodding shepherd's-crook scapes hung along the underside with narrow parallel-sided violet-blue bells with rolled-back tips and cream anthers.",
+    "enters": "Rises low in the front of the bed",
+    "grows": "Linear leaves and nodding violet-blue racemes carpet the spring floor before the canopy closes, erect three-lobed capsules ripen in June, and the whole plant vanishes underground by midsummer"
   }
 ]
+

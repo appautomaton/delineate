@@ -11,6 +11,9 @@ import "./garden/fynbos.css";
 import "./garden/namib.css";
 import "./garden/mangrove.css";
 import "./garden/eastasian.css";
+import "./garden/taiga.css";
+import "./garden/american.css";
+import "./garden/woodland.css";
 import "./garden/anchors.css";
 import { animate } from "animejs";
 import { arrange } from "./garden/arrange";
@@ -26,10 +29,10 @@ import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
 
 const INTRO = 0.5; // how far a garden grows before the visitor scrolls
 // A garden that shows a year runs its progress through it: spring to 0.45, summer to 0.65,
-// autumn to 0.85, winter to 1. Its intro grows it into early spring, its wood reaching in, so
-// the scroll leafs it; it is full by late spring, where reduced motion shows it and entering
-// plants settle; touch autoplay stops in full summer.
-const BUD = 0.12;
+// autumn to 0.85, winter to 1. Its intro grows it into early bud, its base wood peeking in, so
+// the scroll shoots the branches and leafs the crown; it is full by late spring, where reduced
+// motion shows it and entering plants settle; touch autoplay stops in full summer.
+const BUD = 0.05;
 const SUMMER = 0.6;
 const FALL = 0.08; // the span a leaf or petal takes to fall
 const LOW_TIDE = 0.22; // the share of a water garden's depth shown before scrolling begins
@@ -400,9 +403,22 @@ function renderGarden() {
   const all = progress();
   const year = seasonal();
   const rest = year ? BUD : INTRO;
-  // A pond stands full; a tide rests low and rises with the scroll.
-  const pond = GARDENS.find((g) => g.key === garden)?.still;
-  const tide = !waterFull ? 0 : pond ? tideIn.k : tideIn.k * (all <= rest ? (all / rest) * LOW_TIDE : LOW_TIDE + ((all - rest) / (1 - rest)) * (1 - LOW_TIDE));
+  // A single-moment water garden rises from low tide over the scroll; a seasonal pond rises
+  // gently in spring, swells with the plum rains to full summer depth, and recedes into winter.
+  const tide = !waterFull
+    ? 0
+    : tideIn.k *
+      (all <= rest
+        ? (all / rest) * LOW_TIDE
+        : !year
+          ? LOW_TIDE + ((all - rest) / (1 - rest)) * (1 - LOW_TIDE)
+          : all <= SPRING
+            ? LOW_TIDE + ((all - rest) / (SPRING - rest)) * (0.52 - LOW_TIDE)
+            : all <= 0.54
+              ? 0.52 + ((all - SPRING) / (0.54 - SPRING)) * 0.48
+              : all <= 0.66
+                ? 1
+                : Math.max(0.26, 1 - ((all - 0.66) / 0.26) * 0.74));
   let key = `${garden} ${all} ${tide}`;
   for (const plant of plants) if (plant.garden === garden) key += ` ${plant.boost}`;
   if (key === frame) return;
@@ -497,7 +513,7 @@ function waterPlant(plant: Plant, wy: number) {
   w.wy = wy;
   const k = plant.k;
   const bot = plant.vbY + plant.vb;
-  if (wy >= bot - k) {
+  if (wy >= -2 * k || wy >= bot - k) {
     if (w.masked) {
       w.body.removeAttribute("mask");
       w.edge.removeAttribute("d");
@@ -515,7 +531,7 @@ function waterPlant(plant: Plant, wy: number) {
 
   const spans: [number, number][] = [];
   for (const limb of plant.limbs) {
-    if (limb.last <= 0) continue;
+    if (limb.last <= 0 || limb.fell >= 1) continue;
     const { x, y, w: rw, s } = limb;
     const at = limb.last * s[s.length - 1];
     for (let i = 0; i < y.length - 1 && s[i] <= at; i++) {

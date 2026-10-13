@@ -22,8 +22,11 @@ import * as F from "./fynbos.ts";
 import * as N from "./namib.ts";
 import * as MG from "./mangrove.ts";
 import * as E from "./eastasian.ts";
+import * as TG from "./taiga.ts";
+import * as AM from "./american.ts";
+import * as WL from "./woodland.ts";
 
-const REGISTRY: { name: string; turn?: [number, number] }[] = JSON.parse(readFileSync(new URL("../src/garden/plants.json", import.meta.url), "utf8"));
+const REGISTRY: { name: string; garden: string; turn?: [number, number] }[] = JSON.parse(readFileSync(new URL("../src/garden/plants.json", import.meta.url), "utf8"));
 
 // Each plant is drawn with its base (or hanging point) at the origin, from its own seed so its
 // drawing never depends on the order of the list. A detail is a close study of one leaf,
@@ -571,14 +574,186 @@ const PLANTS: Record<string, { seed: number; draw: Drawing; detail: Drawing }> =
     draw: (o, r) => E.lotus(o, r, [0, 0]),
     detail: (o, r) => E.lotusDetail(o, r),
   },
-
-
-
-
-
-
-
-
+  spruce: {
+    seed: 11001,
+    draw: (o, r) => TG.spruce(o, r, [0, 0]),
+    detail: (o, r) => TG.spruceDetail(o, r),
+  },
+  larch: {
+    seed: 11102,
+    draw: (o, r) => TG.larch(o, r, [0, 0]),
+    detail: (o, r) => TG.larchDetail(o, r),
+  },
+  birch: {
+    seed: 11203,
+    draw: (o, r) => TG.birch(o, r, [0, 0]),
+    detail: (o, r) => TG.birchDetail(o, r),
+  },
+  scotspine: {
+    seed: 11304,
+    draw: (o, r) => TG.scotspine(o, r, [0, 0]),
+    detail: (o, r) => TG.scotspineDetail(o, r),
+  },
+  methuselah: {
+    seed: 11405,
+    draw: (o, r) => TG.methuselah(o, r, [0, 0]),
+    detail: (o, r) => TG.methuselahDetail(o, r),
+  },
+  horsehair: {
+    seed: 11506,
+    draw: (o, r) => TG.horsehair(o, r, [0, 0]),
+    detail: (o, r) => TG.horsehairDetail(o, r),
+  },
+  fireweed: {
+    seed: 11607,
+    draw: (o, r) => TG.fireweed(o, r, [0, 0]),
+    detail: (o, r) => TG.fireweedDetail(o, r),
+  },
+  labradortea: {
+    seed: 11708,
+    draw: (o, r) => TG.labradortea(o, r, [0, 0]),
+    detail: (o, r) => TG.labradorteaDetail(o, r),
+  },
+  horsetail: {
+    seed: 11809,
+    draw: (o, r) => TG.horsetail(o, r, [0, 0]),
+    detail: (o, r) => TG.horsetailDetail(o, r),
+  },
+  lingonberry: {
+    seed: 11910,
+    draw: (o, r) => TG.lingonberry(o, r, [0, 0]),
+    detail: (o, r) => TG.lingonberryDetail(o, r),
+  },
+  cloudberry: {
+    seed: 12011,
+    draw: (o, r) => TG.cloudberry(o, r, [0, 0]),
+    detail: (o, r) => TG.cloudberryDetail(o, r),
+  },
+  twinflower: {
+    seed: 12112,
+    draw: (o, r) => TG.twinflower(o, r, [0, 0]),
+    detail: (o, r) => TG.twinflowerDetail(o, r),
+  },
+  tuliptree: {
+    seed: 13001,
+    draw: (o, r) => AM.tuliptree(o, r, [0, 0]),
+    detail: (o, r) => AM.tuliptreeDetail(o, r),
+  },
+  sugarmaple: {
+    seed: 13102,
+    draw: (o, r) => AM.sugarmaple(o, r, [0, 0]),
+    detail: (o, r) => AM.sugarmapleDetail(o, r),
+  },
+  redbud: {
+    seed: 13203,
+    draw: (o, r) => AM.redbud(o, r, [0, 0]),
+    detail: (o, r) => AM.redbudDetail(o, r),
+  },
+  walnut: {
+    seed: 13304,
+    draw: (o, r) => AM.walnut(o, r, [0, 0]),
+    detail: (o, r) => AM.walnutDetail(o, r),
+  },
+  creeper: {
+    seed: 13405,
+    draw: (o, r) => AM.creeper(o, r, [0, 0]),
+    detail: (o, r) => AM.creeperDetail(o, r),
+  },
+  trumpetvine: {
+    seed: 13506,
+    draw: (o, r) => AM.trumpetvine(o, r, [0, 0]),
+    detail: (o, r) => AM.trumpetvineDetail(o, r),
+  },
+  dutchmanspipe: {
+    seed: 13607,
+    draw: (o, r) => AM.dutchmanspipe(o, r, [0, 0]),
+    detail: (o, r) => AM.dutchmanspipeDetail(o, r),
+  },
+  compassplant: {
+    seed: 13708,
+    draw: (o, r) => AM.compassplant(o, r, [0, 0]),
+    detail: (o, r) => AM.compassplantDetail(o, r),
+  },
+  bluestem: {
+    seed: 13809,
+    draw: (o, r) => AM.bluestem(o, r, [0, 0]),
+    detail: (o, r) => AM.bluestemDetail(o, r),
+  },
+  milkweed: {
+    seed: 13910,
+    draw: (o, r) => AM.milkweed(o, r, [0, 0]),
+    detail: (o, r) => AM.milkweedDetail(o, r),
+  },
+  blazingstar: {
+    seed: 14011,
+    draw: (o, r) => AM.blazingstar(o, r, [0, 0]),
+    detail: (o, r) => AM.blazingstarDetail(o, r),
+  },
+  coneflower: {
+    seed: 14112,
+    draw: (o, r) => AM.coneflower(o, r, [0, 0]),
+    detail: (o, r) => AM.coneflowerDetail(o, r),
+  },
+  oak: {
+    seed: 15001,
+    draw: (o, r) => WL.oak(o, r, [0, 0]),
+    detail: (o, r) => WL.oakDetail(o, r),
+  },
+  hazel: {
+    seed: 15102,
+    draw: (o, r) => WL.hazel(o, r, [0, 0]),
+    detail: (o, r) => WL.hazelDetail(o, r),
+  },
+  hawthorn: {
+    seed: 15203,
+    draw: (o, r) => WL.hawthorn(o, r, [0, 0]),
+    detail: (o, r) => WL.hawthornDetail(o, r),
+  },
+  holly: {
+    seed: 15304,
+    draw: (o, r) => WL.holly(o, r, [0, 0]),
+    detail: (o, r) => WL.hollyDetail(o, r),
+  },
+  ivy: {
+    seed: 15405,
+    draw: (o, r) => WL.ivy(o, r, [0, 0]),
+    detail: (o, r) => WL.ivyDetail(o, r),
+  },
+  oldmansbeard: {
+    seed: 15506,
+    draw: (o, r) => WL.oldmansbeard(o, r, [0, 0]),
+    detail: (o, r) => WL.oldmansbeardDetail(o, r),
+  },
+  honeysuckle: {
+    seed: 15607,
+    draw: (o, r) => WL.honeysuckle(o, r, [0, 0]),
+    detail: (o, r) => WL.honeysuckleDetail(o, r),
+  },
+  bracken: {
+    seed: 15708,
+    draw: (o, r) => WL.bracken(o, r, [0, 0]),
+    detail: (o, r) => WL.brackenDetail(o, r),
+  },
+  foxglove: {
+    seed: 15809,
+    draw: (o, r) => WL.foxglove(o, r, [0, 0]),
+    detail: (o, r) => WL.foxgloveDetail(o, r),
+  },
+  gorse: {
+    seed: 15910,
+    draw: (o, r) => WL.gorse(o, r, [0, 0]),
+    detail: (o, r) => WL.gorseDetail(o, r),
+  },
+  hartstongue: {
+    seed: 16011,
+    draw: (o, r) => WL.hartstongue(o, r, [0, 0]),
+    detail: (o, r) => WL.hartstongueDetail(o, r),
+  },
+  bluebell: {
+    seed: 16112,
+    draw: (o, r) => WL.bluebell(o, r, [0, 0]),
+    detail: (o, r) => WL.bluebellDetail(o, r),
+  },
 };
 
 // Bounding box from the absolute coordinates in path data, read before it is compacted.
@@ -678,33 +853,53 @@ function render(fn: Drawing, seed: number) {
   return { markup, vb, svg };
 }
 
+function writeIfChanged(url: URL, content: string) {
+  try {
+    if (readFileSync(url, "utf8") === content) return;
+  } catch {}
+  writeFileSync(url, content);
+}
+
+const args = process.argv.slice(2);
+const checkOnly = args.includes("--check");
+const onlyGarden = args.find((a) => !a.startsWith("-"));
+
 const out = new URL("../public/garden/", import.meta.url);
 const details = new URL("../gallery/details/", import.meta.url);
-mkdirSync(out, { recursive: true });
-mkdirSync(details, { recursive: true });
+if (!checkOnly) {
+  mkdirSync(out, { recursive: true });
+  mkdirSync(details, { recursive: true });
+}
 const css = ["/* Generated by garden/draw/draw.ts: each plant's aspect ratio, anchor, and species tone. */"];
 const fields: Record<string, [number, number, string]> = {};
-for (const { name, turn } of REGISTRY) {
+for (const { name, garden, turn } of REGISTRY) {
+  if (onlyGarden && garden !== onlyGarden) continue;
   const plant = PLANTS[name];
   if (!plant) throw new Error(`plants.json lists ${name}, but draw.ts has no drawing for it`);
   const { markup, vb, svg } = render(plant.draw, plant.seed);
   const faults = mistimedParts(markup);
   if (faults.length) throw new Error(`${name}: ${faults.length} parts are timed against their limb, for example ${faults[0]}`);
-  writeFileSync(new URL(`${name}.svg`, out), svg);
-  writeFileSync(new URL(`${name}.svg`, details), render(plant.detail, plant.seed + 1).svg);
+  const detailSvg = render(plant.detail, plant.seed + 1).svg;
+  if (!checkOnly) {
+    writeIfChanged(new URL(`${name}.svg`, out), svg);
+    writeIfChanged(new URL(`${name}.svg`, details), detailSvg);
+  }
   const bx = (-vb[0] / vb[2]).toFixed(4);
   const by = (-vb[1] / vb[3]).toFixed(4);
   // A plant that turns in autumn mixes its autumn tone in by --turn, which the page writes.
   const leaf = turn ? `color-mix(in oklch, var(--pl-${name}-autumn) calc(var(--turn, 0) * 100%), var(--pl-${name}))` : `var(--pl-${name})`;
   css.push(`.g-${name} { --ar: ${(vb[2] / vb[3]).toFixed(4)}; --bx: ${bx}; --by: ${by}; --leaf: ${leaf}; }`);
   fields[name] = field(markup, vb);
-  console.log(`${name.padEnd(13)} ${String(markup.length).padStart(7)} bytes  ${vb.join(" ")}`);
+  console.log(`${name.padEnd(14)} ${String(markup.length).padStart(7)} bytes  vb=[${vb.join(" ")}]  ar=${(vb[2] / vb[3]).toFixed(3)} bx=${bx} by=${by}`);
 }
-writeFileSync(new URL("../src/garden/anchors.css", import.meta.url), css.join("\n") + "\n");
-writeFileSync(
-  new URL("../src/garden/fields.ts", import.meta.url),
-  "// Generated by garden/draw/draw.ts: where each plant paints, as [cols, rows, hex bits] over its box.\n" +
-    "export const FIELDS: Record<string, [number, number, string]> = {\n" +
-    Object.entries(fields).map(([k, v]) => `  ${k}: ${JSON.stringify(v)},`).join("\n") +
-    "\n};\n",
-);
+if (!checkOnly && !onlyGarden) {
+  writeIfChanged(new URL("../src/garden/anchors.css", import.meta.url), css.join("\n") + "\n");
+  writeIfChanged(
+    new URL("../src/garden/fields.ts", import.meta.url),
+    "// Generated by garden/draw/draw.ts: where each plant paints, as [cols, rows, hex bits] over its box.\n" +
+      "export const FIELDS: Record<string, [number, number, string]> = {\n" +
+      Object.entries(fields).map(([k, v]) => `  ${k}: ${JSON.stringify(v)},`).join("\n") +
+      "\n};\n",
+  );
+}
+

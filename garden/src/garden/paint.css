@@ -33,7 +33,10 @@
 :root[data-garden="fynbos"] .garden .plant:not([data-garden="fynbos"]),
 :root[data-garden="namib"] .garden .plant:not([data-garden="namib"]),
 :root[data-garden="mangrove"] .garden .plant:not([data-garden="mangrove"]),
-:root[data-garden="eastasian"] .garden .plant:not([data-garden="eastasian"]) {
+:root[data-garden="eastasian"] .garden .plant:not([data-garden="eastasian"]),
+:root[data-garden="taiga"] .garden .plant:not([data-garden="taiga"]),
+:root[data-garden="american"] .garden .plant:not([data-garden="american"]),
+:root[data-garden="woodland"] .garden .plant:not([data-garden="woodland"]) {
   display: none;
 }
 
