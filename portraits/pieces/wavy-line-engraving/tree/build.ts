@@ -13,22 +13,19 @@
 // structure as models placed by eye (see scene.ts). Dropped: the crumbs of leaves inside the
 // shrubs' shadows, and the bricks' joints, which read only as the blocks' wavy hatching.
 
+import { fileURLToPath } from "node:url";
+import { readPng } from "../../../harness/trace/image.ts";
 import { type Point, distance, pathOf } from "../../../harness/trace/polygon.ts";
-import { type Box, type Field, blur, ink, luminance, over, placed, rgb, sample, shapes, smoothstep, waves } from "../engrave.ts";
-import { PAPER, SPACING, STREET_INK, run, source } from "../sheet.ts";
+import { type Box, type Field, blur, ink, luminance, over, placed, rgb, sample, shapes, waves } from "../engrave.ts";
+import { PAPER, REFERENCES, SPACING, STREET_INK, run, source } from "../sheet.ts";
 import { drawn, strokeData } from "../subject/lines.ts";
 import { BACK_LAMPS, BLOCKS, FRONT_LAMPS, HANDRAIL, HANDRAIL_POSTS, LAMP_BASES, type Lamp, POSTS, RAILS, TRUNKS } from "./scene.ts";
 
+const PLATE = new URL("wav-tree.png", REFERENCES);
 const BOX: Box = [0, 160, 1254, 1070];
 const K = 2; // samples per pixel of the foliage field
 const level = waves({ ripple: { amplitude: 1.1, wavelength: 26 }, wander: [{ amplitude: 0.6, scale: 34 }, { amplitude: 1.2, scale: 140 }], seed: 31 });
 
-// Seeded noise, one value per (cell, salt).
-const hash = (a: number, b: number, salt: number) => {
-  let s = Math.imul(a * 73856093 ^ b * 19349663 ^ salt * 83492791, 0x9e3779b1);
-  s = Math.imul(s ^ (s >>> 15), 0x85ebca6b);
-  return ((s ^ (s >>> 13)) >>> 0) / 4294967296;
-};
 const f = (v: number) => (Math.round(v * 10) / 10).toString();
 const line = (pts: Point[]) => "M" + pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L");
 
@@ -45,7 +42,7 @@ function toLine(pts: Point[], x: number, y: number): number {
 }
 
 // How far (px) a point lies inside the drawn structure: blocks, poles, rails; negative outside.
-// Foliage is not placed there. Trunks are not structure: the foliage hides them.
+// Foliage is not placed there; trunks and branches come directly from the plate's ink.
 function structure(x: number, y: number): number {
   let d = -Infinity;
   for (const b of BLOCKS) d = Math.max(d, distance(b, x, y));
@@ -55,79 +52,48 @@ function structure(x: number, y: number): number {
   return d;
 }
 
-// The foliage, as the plate engraves it: a mass of ink wherever the canopy is (the plate's tone
-// blurred past its leaves), its edge broken into star-shaped leaf clusters where that tone fades;
-// and inside it, the light cut out as leaves: star-shaped leaves of paper where the sun falls,
-// short curved ticks in the shade, as many as the plate's local tone asks, so the canopy reads
-// mid-dark and leafy rather than black. Returns the mass (for a paper ground) and the inked mass.
-const CANOPY = 0.48; // the broad tone above which the canopy is
-const STAR = 3.6; // px: a fleck cell's side
-// A star-shaped leaf: five pointed lobes of radius r, turned by phi; signed distance, + inside.
-const star = (r: number, phi: number) => (dx: number, dy: number) => {
-  const lobes = 0.42 + 0.58 * Math.abs(Math.cos(2.5 * (Math.atan2(dy, dx) - phi))) ** 2.2;
-  return r * lobes - Math.hypot(dx, dy);
-};
-// A tick: a thin crescent, `a` long and `b` across, bent by `bend`, turned by phi.
-const tick = (a: number, b: number, bend: number, phi: number) => (dx: number, dy: number) => {
-  const [u, v] = [dx * Math.cos(phi) + dy * Math.sin(phi), -dx * Math.sin(phi) + dy * Math.cos(phi)];
-  const w = v - (bend * (u * u)) / (a * a);
-  return (1 - Math.hypot(u / a, w / b)) * b;
-};
-function foliage(tone: Field, broad: Field, alpha: Field, solid: Field): { mass: Field; inked: Field } {
+// The foliage, trunks, and branches, read directly from the tree plate and the whole:
+// - Ink: wherever the tree plate is dark (leaves, limbs, trunks, and the forks between them),
+//   carved open wherever either the tree plate or the whole engraving is locally lighter than its
+//   surroundings (sunlit leaves, pale leaf veins, and the bright edges separating limbs from the
+//   canopy) or open to the sky and buildings behind.
+// - Paper backing (`ground`): only where the foliage is dense enough to hide the buildings behind,
+//   while staying open in the gaps between branches and trunks so the buildings' lines show through
+//   just as they do in the whole engraving, and bright inside the lit leaf cutouts.
+function foliage(treeInk: Field, wholeInk: Field, around: Field, broad: Field, alpha: Field, solid: Field): { ground: Field; inked: Field } {
   const [x0, y0, x1, y1] = BOX;
   const [w, h] = [(x1 - x0) * K, (y1 - y0) * K];
-  const free = (x: number, y: number) => sample(alpha, x, y) > 0.5 && sample(solid, x, y) < 0.5;
-  const G = new Float32Array(w * h);
+  const ground = new Float32Array(w * h);
+  const inked = new Float32Array(w * h);
   for (let gy = 0; gy < h; gy++)
     for (let gx = 0; gx < w; gx++) {
       const [x, y] = [x0 + (gx + 0.5) / K, y0 + (gy + 0.5) / K];
-      G[gy * w + gx] = free(x, y) ? Math.max(-3, Math.min(3, (sample(broad, x, y) - CANOPY) * 30)) : -3;
-    }
-  const splat = (cx: number, cy: number, reach: number, sdf: (dx: number, dy: number) => number, carve: boolean) => {
-    const [gx0, gx1] = [Math.max(0, Math.floor((cx - reach - x0) * K)), Math.min(w - 1, Math.ceil((cx + reach - x0) * K))];
-    const [gy0, gy1] = [Math.max(0, Math.floor((cy - reach - y0) * K)), Math.min(h - 1, Math.ceil((cy + reach - y0) * K))];
-    for (let gy = gy0; gy <= gy1; gy++)
-      for (let gx = gx0; gx <= gx1; gx++) {
-        const v = sdf(x0 + (gx + 0.5) / K - cx, y0 + (gy + 0.5) / K - cy);
-        const i = gy * w + gx;
-        G[i] = carve ? Math.min(G[i], -v) : Math.max(G[i], v);
+      // Inside the gaps between his arms and waist (y > 820, x in 432..474 or 788..830), the whole
+      // shows the sunlit plaza and distant railing rather than the tree plate's overpainted shrub.
+      const inArmGap = y > 820 && ((x > 432 && x < 474) || (x > 788 && x < 830));
+      if (inArmGap || sample(alpha, x, y) < 0.5 || sample(solid, x, y) > 0.5) {
+        ground[gy * w + gx] = -1;
+        inked[gy * w + gx] = -1;
+        continue;
       }
-  };
-  // The edge: star leaves where the broad tone fades and the plate's own is still dark.
-  const CELL = 5;
-  for (let j = Math.floor(y0 / CELL); j * CELL < y1; j++)
-    for (let i = 0; i * CELL < x1; i++) {
-      const [cx, cy] = [(i + hash(i, j, 1)) * CELL, (j + hash(i, j, 2)) * CELL];
-      if (!free(cx, cy)) continue;
-      const [t, b] = [sample(tone, cx, cy), sample(broad, cx, cy)];
-      if (t < 0.45 || b < 0.2 || b > CANOPY + 0.15) continue;
-      const r = 4 + 3 * hash(i, j, 3);
-      splat(cx, cy, r + 1, star(r, hash(i, j, 4) * 2 * Math.PI), false);
+      const t = sample(treeInk, x, y);
+      const fw = sample(wholeInk, x, y);
+      const loc = sample(around, x, y);
+      const b = sample(broad, x, y);
+      const dark = Math.min(t, fw);
+      // Carve open wherever dark < 0.46 (sunlit leaves and sky/building gaps) or where the pixel is
+      // locally lighter than its 3px neighborhood by more than 0.14 (mid-tone leaf flecks and limb rims).
+      const inkVal = Math.min(dark - 0.46, dark - (loc - 0.14));
+      // Paper ground where the canopy is a dense cluster (b > 0.54) or where a sunlit leaf is carved
+      // inside the canopy (dark < 0.44 and b > 0.42), except at the upper-left tower edge (x < 140,
+      // y < 380) where the left near tower's sunlit floor lines show through the upper crown.
+      const openTower = x < 140 && y < 380;
+      const litLeaf = !openTower && b > 0.42 ? 0.44 - dark : -1;
+      const gVal = openTower ? inkVal : Math.max(inkVal, b - 0.54, litLeaf);
+      ground[gy * w + gx] = gVal;
+      inked[gy * w + gx] = inkVal;
     }
-  const mass = Float32Array.from(G);
-  // The light inside: each cell asks for the paper the plate shows there, 1 - t, and gets a leaf
-  // of paper often enough to give it on average; a star where the leaves are lit (the plate's
-  // tone lighter), a tick in the shade.
-  for (let j = Math.floor(y0 / STAR); j * STAR < y1; j++)
-    for (let i = 0; i * STAR < x1; i++) {
-      const [cx, cy] = [(i + hash(i, j, 11)) * STAR, (j + hash(i, j, 12)) * STAR];
-      const gi = Math.floor((cy - y0) * K) * w + Math.floor((cx - x0) * K);
-      if (gi < 0 || gi >= G.length || mass[gi] < 1) continue;
-      const t = sample(tone, cx, cy);
-      const paper = Math.max(0, Math.min(1, 1.08 - t));
-      const lit = smoothstep(0.85, 0.6, t);
-      const phi = hash(i, j, 14) * 2 * Math.PI;
-      if (hash(i, j, 16) < lit) {
-        const r = 2.6 + 2.2 * hash(i, j, 15);
-        if (hash(i, j, 13) > (paper * STAR * STAR) / (1.25 * r * r)) continue;
-        splat(cx, cy, r + 1, star(r, phi), true);
-      } else {
-        const a = 1.8 + 1.6 * hash(i, j, 15);
-        if (hash(i, j, 13) > (paper * STAR * STAR) / (Math.PI * a * 0.6)) continue;
-        splat(cx, cy, a + 1, tick(a, 0.6, 0.7 * (hash(i, j, 17) - 0.5), phi), true);
-      }
-    }
-  return { mass: { width: w, height: h, data: mass }, inked: { width: w, height: h, data: G } };
+  return { ground: { width: w, height: h, data: ground }, inked: { width: w, height: h, data: inked } };
 }
 
 // A lamp: pole with a lit left edge, the arm, the saucer and its lens.
@@ -155,25 +121,28 @@ const postMarkup = (posts: [Point, Point][], width: number) =>
   `<path fill="none" stroke="${STREET_INK}" stroke-width="${f(width)}" d="${posts.map((p) => line(p)).join("")}"/>`;
 
 export async function draw(): Promise<string> {
+  const rawPlate = readPng(fileURLToPath(PLATE));
   const plate = source("tree");
   const { width: W, height: H, data } = plate;
   const [p, i] = [luminance(...rgb(PAPER)), luminance(...rgb(STREET_INK))];
-  const alphaData = Float32Array.from({ length: W * H }, (_, q) => data[q * 4 + 3] / 255);
+  const alphaData = Float32Array.from({ length: W * H }, (_, q) => rawPlate.data[q * 4 + 3] / 255);
+  const rawShare = Float32Array.from({ length: W * H }, (_, q) => (p - luminance(rawPlate.data[q * 4], rawPlate.data[q * 4 + 1], rawPlate.data[q * 4 + 2])) / (p - i));
   const share = Float32Array.from({ length: W * H }, (_, q) => (p - luminance(data[q * 4], data[q * 4 + 1], data[q * 4 + 2])) / (p - i));
   const alpha: Field = { width: W, height: H, data: alphaData };
-  const leafTone: Field = { width: W, height: H, data: blur(share, alphaData, W, H, 3) };
+  const treeInk: Field = { width: W, height: H, data: blur(rawShare, alphaData, W, H, 0.5) };
+  const wholeInk: Field = { width: W, height: H, data: blur(share, alphaData, W, H, 0.5) };
+  const around: Field = { width: W, height: H, data: blur(rawShare, alphaData, W, H, 3) };
   const hatchTone: Field = { width: W, height: H, data: blur(share, alphaData, W, H, 0.9 * SPACING) };
   const out: string[] = [];
 
-  // Back to front: trunks, the foliage over them, the lamps behind the wall.
-  out.push(`<path fill="${STREET_INK}" d="${strokeData(TRUNKS.map((t) => drawn(t.line, t.width)))}"/>`);
   // What the structure covers, where no foliage is placed, at a pixel.
   const solid: Field = over([0, 0, W, H], 1, () => 0);
   for (let y = BOX[1]; y < BOX[3]; y++) for (let x = 0; x < W; x++) solid.data[y * W + x] = structure(x + 0.5, y + 0.5) > -1 ? 1 : 0;
-  const broad: Field = { width: W, height: H, data: blur(share, alphaData, W, H, 6) };
-  const { mass, inked } = foliage(leafTone, broad, alpha, solid);
-  out.push(placed(BOX, shapes(mass, K, 0.3, 1), K, PAPER));
-  out.push(placed(BOX, shapes(inked, K, 0.25, 0.5), K, STREET_INK));
+  const broad: Field = { width: W, height: H, data: blur(rawShare, alphaData, W, H, 5) };
+  const { ground, inked } = foliage(treeInk, wholeInk, around, broad, alpha, solid);
+  out.push(placed(BOX, shapes(ground, K, 0.35, 2.5), K, PAPER));
+  out.push(`<path fill="${STREET_INK}" d="${strokeData(TRUNKS.map((t) => drawn(t.line, t.width)))}"/>`);
+  out.push(placed(BOX, shapes(inked, K, 0.3, 1.2), K, STREET_INK));
   for (const l of BACK_LAMPS) out.push(lampMarkup(l));
 
   // The blocks, back to front: a paper ground, the level lines at the plate's tone, an ink

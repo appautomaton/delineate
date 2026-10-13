@@ -41,6 +41,6 @@ export function structures(joints: [Point, Point][]): string {
   // A joint's width follows its depth: fine at the horizon, about 2 px at the frame's foot.
   const at = (y: number) => 0.7 + 1.3 * Math.min(1, Math.max(0, (y - HORIZON) / (1254 - HORIZON)));
   const d = joints.map((j) => wedge(j, at(j[0][1]), at(j[1][1]))).join("");
-  const horizon = wedge([[362, HORIZON], [957, HORIZON]], 1.2, 1.2);
+  const horizon = wedge([[362, HORIZON], [957, HORIZON]], 1.2, 1.2) + wedge([[795, 875], [822, 875]], 0.9, 0.9);
   return `<path fill="${STREET_INK}" d="${d}${horizon}"/>`;
 }

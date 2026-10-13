@@ -40,14 +40,17 @@ const PALE = 0.3;
 const TINT = 0.5;
 
 // The plate's tone, as the share of paper our ink must cover; its own horizon line is left out,
-// as ours is drawn.
+// as ours is drawn. Where the whole engraving shows distant plaza paving through the gaps between
+// his arms and waist (y = 820..923), `source("ground")` already carries the whole's tone; we keep
+// its weight positive inside those two windows so the paving lines continue behind his arms.
+const inGap = (x: number, y: number) => y >= 820 && y <= HORIZON && ((x >= 435 && x <= 472) || (x >= 790 && x <= 828));
 function tone(): Field {
   const { width: w, height: h, data } = source("ground");
   const [p, i] = [luminance(...rgb(PAPER)), luminance(...rgb(STREET_INK))];
-  const alpha = Float32Array.from({ length: w * h }, (_, q) => data[q * 4 + 3] / 255);
+  const alpha = Float32Array.from({ length: w * h }, (_, q) => (inGap(q % w, Math.floor(q / w)) ? 1 : data[q * 4 + 3] / 255));
   const value = Float32Array.from({ length: w * h }, (_, q) => {
-    const y = Math.floor(q / w);
-    if (Math.abs(y - HORIZON) < 3) return 0;
+    const [x, y] = [q % w, Math.floor(q / w)];
+    if (!inGap(x, y) && Math.abs(y - HORIZON) < 3) return 0;
     return (p - luminance(data[q * 4], data[q * 4 + 1], data[q * 4 + 2])) / (p - i);
   });
   return { width: w, height: h, data: blur(value, alpha, w, h, 0.9 * SPACING) };
@@ -55,14 +58,15 @@ function tone(): Field {
 
 export async function draw(): Promise<string> {
   const dark = tone();
-  const pale = (x: number, y: number) => smoothstep(PALE + 0.05, PALE - 0.05, sample(dark, x, y));
+  const pale = (x: number, y: number) => (inGap(x, y) ? 1 : smoothstep(PALE + 0.05, PALE - 0.05, sample(dark, x, y)));
   // Widths are in level units, as the ink measures across the level: page px over share(y).
   const width = (x: number, y: number) => {
-    const d = Math.max(0, sample(dark, x, y));
+    if (y < HORIZON && !inGap(x, y)) return 0;
+    const d = Math.max(0, inGap(x, y) ? Math.min(0.22, sample(dark, x, y)) : sample(dark, x, y));
     const w = (pale(x, y) > 0.5 ? Math.min(0.4, d / TINT) : Math.min(FULLEST, d)) * SPACING - GAIN / share(y);
     return w < FINEST / share(y) ? 0 : w;
   };
-  const box: Box = [0, HORIZON, SIZE, SIZE];
+  const box: Box = [0, 820, SIZE, SIZE];
   const field = ink(width, { level, spacing: SPACING, cut: { paper: true, ink: 0.55 } }, null, box, K);
   const at = (i: number): [number, number] => [box[0] + ((i % field.width) + 0.5) / K, box[1] + (Math.floor(i / field.width) + 0.5) / K];
   const part = (sign: number) => ({ ...field, data: field.data.map((v, i) => Math.min(v, sign * (pale(...at(i)) - 0.5) * 4)) });

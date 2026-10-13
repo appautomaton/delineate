@@ -15,9 +15,9 @@ import { readPng } from "../../../harness/trace/image.ts";
 import { type Box, extent, ink, over, placed, sample, shapes } from "../engrave.ts";
 import { run } from "../sheet.ts";
 import { level, tone, width_ } from "./field.ts";
-import { cuffMarkup, edgeMarkup, studMarkup, tabMarkup, weaveMarkup, zipMarkup } from "./hardware.ts";
+import { cuffMarkup, edgeMarkup, studMarkup, tabMarkup, weaveMarkup, weltMarkup, zipMarkup } from "./hardware.ts";
 import { drawn, strokeData } from "./lines.ts";
-import { CONTOURS, CUFFS, EDGES, INK, LINE_TINT, PAPER, PATCH, PLATE, SPACING, STUDS, TABS, TINT, ZIPS } from "./scene.ts";
+import { CONTOURS, CUFFS, EDGES, INK, LINE_TINT, PAPER, PATCH, PATCH_SEAM, PLATE, SPACING, STUDS, TABS, TINT, WELTS, ZIPS } from "./scene.ts";
 
 const K = 3; // samples per pixel of the ink field, so lines a pixel wide keep their shape
 
@@ -28,6 +28,7 @@ export async function draw(stage = Number(process.env.STAGE ?? 3)): Promise<stri
   // His silhouette, in paper first: in the whole he stands in front of the street, which must not
   // show through where he is light.
   const outline = shapes(over(box, 1, (x, y) => sample(alpha, x, y) - 0.5), 1, 0.5, 20);
+  const outer = outline.split(/(?=M)/)[0] ?? outline;
   const body: string[] = [placed(box, outline, 1, PAPER)];
   if (stage === 1) {
     // Four steps of tone, each a flat ink at its share, stacked light to dark inside him.
@@ -50,13 +51,14 @@ export async function draw(stage = Number(process.env.STAGE ?? 3)): Promise<stri
     // its strands and folds in a pale tint of its ink, and only the masses (the blue lock, pupils,
     // deep shadow under a lock) in the ink itself: so do we.
     const lines = over(box, K, (x, y) => Math.min(sample(art, x, y), (sample(alpha, x, y) - 0.5) * 0.4));
-    body.push(placed(box, shapes(lines, K, 0.25, 3), K, INK, ` fill-opacity="${LINE_TINT}"`));
+    body.push(placed(box, shapes(lines, K, 0.25, 6), K, INK, ` fill-opacity="${LINE_TINT}"`));
     const masses = over(box, K, (x, y) => Math.min(sample(mass, x, y), (sample(alpha, x, y) - 0.5) * 0.4));
-    body.push(placed(box, shapes(masses, K, 0.25, 3), K, INK));
+    body.push(placed(box, shapes(masses, K, 0.25, 4), K, INK));
 
     // Where he is dark, his structure is drawn as models (see hardware.ts), each placed by eye off
     // the plate: the woven patch, the leather's edges and stitching, the zips, tabs and studs.
-    body.push(weaveMarkup(PATCH, INK, PAPER));
+    body.push(weaveMarkup(PATCH, PATCH_SEAM, INK, PAPER));
+    body.push(weltMarkup(WELTS, INK, PAPER));
     body.push(edgeMarkup(EDGES, INK, PAPER));
     body.push(zipMarkup(ZIPS, INK, PAPER));
     body.push(tabMarkup(TABS, INK, PAPER));
@@ -70,8 +72,8 @@ export async function draw(stage = Number(process.env.STAGE ?? 3)): Promise<stri
   }
   if (stage >= 2) {
     // His outline: a fine ink line round the silhouette, over the ends of the waves, with a rim of
-    // paper inside it, as the plate lights every edge of the jacket.
-    body.push(placed(box, outline, 1, "none", ` stroke="${PAPER}" stroke-width="4.4"`));
+    // paper inside the outer silhouette where the sun catches the jacket's outer edge.
+    body.push(placed(box, outer, 1, "none", ` stroke="${PAPER}" stroke-width="4.4"`));
     body.push(placed(box, outline, 1, "none", ` stroke="${INK}" stroke-width="1.3"`));
   }
   return body.join("\n");

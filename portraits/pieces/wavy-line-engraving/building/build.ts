@@ -2,9 +2,11 @@
 // toned by the engraving's level waves read off the plate as a field, outlined in fine ink, with
 // its window columns, masts and plant; the near towers' floors run to the vanishing point.
 
+import { fileURLToPath } from "node:url";
+import { readPng } from "../../../harness/trace/image.ts";
 import type { Point } from "../../../harness/trace/polygon.ts";
 import { type Box, GAIN, blur, ink, inked, luminance, placed, rgb, sample, shapes, waves } from "../engrave.ts";
-import { PAPER, SIZE, SPACING, STREET_INK, run, source } from "../sheet.ts";
+import { PAPER, REFERENCES, SIZE, SPACING, STREET_INK, run, source } from "../sheet.ts";
 import { type Block, FAR, GROUND, MASTS, NEAR, PLANT, VANISH } from "./scene.ts";
 
 const K = 3;
@@ -14,9 +16,9 @@ const far = waves({ ripple: { amplitude: 0.35, wavelength: 30 }, wander: [{ ampl
 const near = waves({ ripple: { amplitude: 1.1, wavelength: 30 }, wander: [{ amplitude: 0.6, scale: 50 }, { amplitude: 1.6, scale: 220 }], seed: 29 });
 // A line covers its share of the spacing in proportion to darkness, up to FULLEST, so a face in
 // shadow keeps slits of paper; lines thinner than FINEST px are not drawn.
-const FULLEST = 0.9;
-const FINEST = 0.25;
-const FACE_BLUR = 7; // px: past a window, short of a face
+const FULLEST = 0.92;
+const FINEST = 0.22;
+const FACE_BLUR = 4.5; // px: past a window, short of a face
 
 const f = (v: number) => (Math.round(v * 10) / 10).toString();
 const pathOf = (pts: Point[]) => "M" + pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L") + "Z";
@@ -65,11 +67,13 @@ function group(name: string, blocks: Block[], level: (x: number, y: number) => n
   const shapes_ = blocks.map(outline);
   const all = shapes_.map((s) => `<path d="${pathOf(s)}"/>`).join("");
   const width = (x: number, y: number) => {
-    const w = Math.min(FULLEST, Math.max(0, tone(x, y))) * spacing - GAIN;
+    const t = Math.max(0, tone(x, y));
+    // Gentle S-curve around 0.42 so sunlit faces and shaded faces separate cleanly while keeping mean tone true.
+    const c = t < 0.4 ? t * 0.94 : Math.min(1, 0.376 + (t - 0.4) * 1.06);
+    const w = Math.min(FULLEST, c) * spacing - GAIN;
     return w < FINEST ? 0 : w;
   };
-  // A face's lines run unbroken, the paper between them even, as the plate's; a lit face's
-  // thin lines break into dashes, its windows.
+  // A face's lines run unbroken in shade, while a lit face's thin lines break into dashes, its windows.
   const lines = ink(width, { level, spacing, cut: { paper: false, ink: true } }, null, box, K);
   const out: string[] = [
     `<clipPath id="${name}">${all}</clipPath>`,
@@ -86,10 +90,10 @@ function group(name: string, blocks: Block[], level: (x: number, y: number) => n
       let d = "";
       for (let x = columns.x[0]; x <= columns.x[1]; x += columns.every) d += `M${f(x)} ${f(columns.from)}V${f(ground(x) + 2)}`;
       out.push(`<clipPath id="${name}-${i}-face"><path d="${pathOf(s)}"/></clipPath>`);
-      marks.push(`<path clip-path="url(#${name}-${i}-face)" fill="none" stroke="${STREET_INK}" stroke-width="0.75" d="${d}"/>`);
+      marks.push(`<path clip-path="url(#${name}-${i}-face)" fill="none" stroke="${STREET_INK}" stroke-width="0.85" stroke-opacity="0.75" d="${d}"/>`);
     }
-    marks.push(`<path fill="none" stroke="${PAPER}" stroke-width="2.2" stroke-linejoin="round" d="${pathOf(s)}"/>`);
-    marks.push(`<path fill="none" stroke="${STREET_INK}" stroke-width="0.9" stroke-linejoin="round" d="${pathOf(s)}"/>`);
+    marks.push(`<path fill="none" stroke="${PAPER}" stroke-width="2" stroke-linejoin="round" d="${pathOf(s)}"/>`);
+    marks.push(`<path fill="none" stroke="${STREET_INK}" stroke-width="0.95" stroke-linejoin="round" d="${pathOf(s)}"/>`);
     out.push(`<g${mask}>${marks.join("")}</g>`);
   });
   return out.join("\n");
@@ -97,7 +101,9 @@ function group(name: string, blocks: Block[], level: (x: number, y: number) => n
 
 export async function draw(): Promise<string> {
   const plate = source("building");
-  const { dark } = inked(plate, PAPER, STREET_INK, 0.8 * FAR_SPACING);
+  const rawPlate = readPng(fileURLToPath(new URL("wav-building.png", REFERENCES)));
+  const { dark } = inked(plate, PAPER, STREET_INK, 0.75 * FAR_SPACING);
+  const { dark: rawDark } = inked(rawPlate, PAPER, STREET_INK, 0.75 * FAR_SPACING);
   // A far face keeps to its own tone: the plate's darkness blurred within the part of the face
   // that shows, past its windows, so a face's light and shade carry but never bleed into its
   // neighbor's.
@@ -135,21 +141,27 @@ export async function draw(): Promise<string> {
   // Masts and plant on the far roofs.
   out.push(`<path fill="none" stroke="${STREET_INK}" stroke-width="1" stroke-linecap="round" d="${MASTS.map(([x, a, b]) => `M${x} ${a}V${b}`).join("")}"/>`);
   out.push(`<path fill="${PAPER}" stroke="${STREET_INK}" stroke-width="0.8" d="${PLANT.map(([a, b, top, roof]) => `M${a} ${roof}V${top}H${b}V${roof}Z`).join("")}"/>`);
-  // The near towers, in front of all; their floors run to the vanishing point.
+  // The near towers, in front of all; their floors run across their sunlit faces to the vanishing point.
   const [vx, vy] = VANISH;
-  NEAR.forEach(({ blocks, edge, floors }, t) => {
+  NEAR.forEach(({ blocks, edge, span: [sa, sb], floors }, t) => {
     const xs = blocks.flatMap((b) => outline(b).map(([x]) => x));
     const ys = blocks.flatMap((b) => outline(b).map(([, y]) => y));
     const [a, b] = [Math.min(...xs), Math.max(...xs)];
     const box: Box = [Math.floor(a), 0, Math.ceil(b), Math.ceil(Math.max(...ys)) + 2];
-    out.push(group(`near${t}`, blocks, near, SPACING, (x, y) => sample(dark, x, y), box));
+    const nearTone = (x: number, y: number) => (t === 0 && y > 180 ? sample(rawDark, x, y) : sample(dark, x, y));
+    out.push(group(`near${t}`, blocks, near, SPACING, nearTone, box));
     let d = "";
     for (const y of floors) {
       const along = (x: number) => vy + ((y - vy) * (x - vx)) / (edge - vx);
-      d += `M${f(a)} ${f(along(a))}L${f(b)} ${f(along(b))}`;
+      d += `M${f(sa)} ${f(along(sa))}L${f(sb)} ${f(along(sb))}`;
     }
-    out.push(`<g clip-path="url(#near${t})"><path fill="none" stroke="${PAPER}" stroke-width="2.6" d="${d}"/><path fill="none" stroke="${STREET_INK}" stroke-width="1.1" d="${d}"/></g>`);
+    out.push(`<g clip-path="url(#near${t})"><path fill="none" stroke="${PAPER}" stroke-width="2" d="${d}"/><path fill="none" stroke="${STREET_INK}" stroke-width="0.95" d="${d}"/></g>`);
   });
+  // Right near tower's structural overhang, balcony bands, and soffit pillars, read off wav-building.png.
+  const rightArch =
+    `M1105 316L1254 176M1105 388L1254 275M1168 0L1178 240` +
+    `M1146 390L1154 740M1196 365L1204 738`;
+  out.push(`<g clip-path="url(#near1)"><path fill="none" stroke="${PAPER}" stroke-width="2.6" d="${rightArch}"/><path fill="none" stroke="${STREET_INK}" stroke-width="1.3" d="${rightArch}"/></g>`);
   return out.join("\n");
 }
 

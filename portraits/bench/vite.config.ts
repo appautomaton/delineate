@@ -19,7 +19,7 @@ import { type ViteDevServer, defineConfig } from "vite";
 
 const PORTRAITS = fileURLToPath(new URL("..", import.meta.url));
 const VERSIONS = fileURLToPath(new URL("../../.cache/bench/", import.meta.url));
-const TYPES: Record<string, string> = { ".png": "image/png", ".svg": "image/svg+xml", ".html": "text/html" };
+const TYPES: Record<string, string> = { ".png": "image/png", ".svg": "image/svg+xml", ".html": "text/html", ".webp": "image/webp", ".mp4": "video/mp4" };
 
 type Build = { piece: string; version?: string; ok: boolean; seconds: number; log: string };
 const last = new Map<string, Build>();

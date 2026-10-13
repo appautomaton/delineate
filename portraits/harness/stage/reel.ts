@@ -62,12 +62,21 @@ function mix(a: Raster, b: Raster, w: number): Raster {
 // them; WebP 5.7 MB; GIF 8.1 MB, dithered to 256 colors. MP4 is a video, though, and loops only
 // where its player is told to (<video autoplay loop muted playsinline>); where only an image will
 // do, WebP.
-const ENCODERS: Record<string, (frames: string[], out: string) => [string, string[]]> = {
-  ".mp4": (frames, out) => ["ffmpeg", ["-y", "-v", "error", "-framerate", `${FPS}`, "-i", join(dirname(frames[0]), "%03d.png"), "-c:v", "libx264", "-preset", "veryslow", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out]],
+type FrameRun = { file: string; ms: number };
+
+const ENCODERS: Record<string, (frames: string[], runs: FrameRun[], out: string) => [string, string[]]> = {
+  ".mp4": (frames, _runs, out) => [
+    "ffmpeg",
+    ["-y", "-v", "error", "-framerate", `${FPS}`, "-i", join(dirname(frames[0]), "%03d.png"), "-c:v", "libx264", "-preset", "veryslow", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out],
+  ],
   // Every frame a key frame, whole in itself: a frame drawn as changes over the last keeps the
-  // last's near misses, and the moving stack leaves them as smears on the dark ground.
-  ".webp": (frames, out) => ["img2webp", ["-loop", "0", "-kmax", "1", "-sharp_yuv", "-lossy", "-q", "80", "-m", "6", "-d", `${1000 / FPS}`, ...frames, "-o", out]],
-  ".gif": (frames, out) => ["gifski", ["--quiet", "--fps", `${FPS}`, "--quality", "80", "--width", `${VIEW.width}`, "-o", out, ...frames]],
+  // last's near misses, and the moving stack leaves them as smears on the dark ground. Consecutive
+  // identical frames share a single key frame with their durations summed.
+  ".webp": (_frames, runs, out) => [
+    "img2webp",
+    ["-loop", "0", "-kmax", "1", "-sharp_yuv", "-lossy", "-q", "42", "-m", "6", ...runs.flatMap(({ file, ms }) => ["-d", `${ms}`, file]), "-o", out],
+  ],
+  ".gif": (frames, _runs, out) => ["gifski", ["--quiet", "--fps", `${FPS}`, "--quality", "80", "--width", `${VIEW.width}`, "-o", out, ...frames]],
 };
 
 const [file, ...asked] = process.argv.slice(2);
@@ -81,6 +90,7 @@ try {
   await page.addStyleTag({ content: "*, *::before, *::after { transition: none !important }" });
   await page.evaluate(() => document.fonts.ready);
 
+  const hasMotion = await page.evaluate(() => document.getAnimations().length > 0);
   // When the drawing first blinks, and how often, in seconds: where the blink's keyframes leave rest.
   const blink = await page.evaluate(() => {
     const a = document.getAnimations().find((a) => a instanceof CSSAnimation && a.animationName === "blink");
@@ -93,13 +103,16 @@ try {
   // The motion's clock at the first frame, late enough for the dissolve to reach back from it.
   const start = blink ? blink.begin + blink.period * Math.ceil((SEAM + LEAD - blink.begin) / blink.period) - LEAD : SEAM;
 
+  const byStep = new Map<number, Raster>();
   // The page apart by `apart`, through its own slider, with every animation paused at `moment`
   // seconds, and the moments among them at `own`.
   const shot = async (apart: number, moment: number, own = moment): Promise<Raster> => {
+    const step = Math.round(apart * 100);
+    if (!hasMotion && byStep.has(step)) return byStep.get(step)!;
     await page.evaluate(
-      ({ apart, ms, own, moments }) => {
+      ({ step, ms, own, moments }) => {
         const slider = document.getElementById("apart") as HTMLInputElement;
-        slider.value = String(Math.round(apart * 100));
+        slider.value = String(step);
         slider.dispatchEvent(new Event("input"));
         for (const a of document.getAnimations()) {
           a.pause();
@@ -107,25 +120,42 @@ try {
         }
         return new Promise(requestAnimationFrame);
       },
-      { apart, ms: moment * 1000, own: own * 1000, moments: MOMENTS },
+      { step, ms: moment * 1000, own: own * 1000, moments: MOMENTS },
     );
-    return reduce(decodePng(await page.screenshot()), SCALE);
+    const raster = reduce(decodePng(await page.screenshot()), SCALE);
+    if (!hasMotion) byStep.set(step, raster);
+    return raster;
   };
 
   const count = Math.round(SECONDS * FPS);
   const blend = Math.round(SEAM * FPS);
+  const frameMs = Math.round(1000 / FPS);
   const frames: string[] = [];
+  const runs: FrameRun[] = [];
+  let prevStep = -1;
   for (let i = 0; i < count; i++) {
     const t = i / FPS;
-    let frame = await shot(apartAt(t), start + t);
+    const apart = apartAt(t);
+    const step = Math.round(apart * 100);
+    let frame = await shot(apart, start + t);
     const k = i - (count - blend); // frames into the dissolve
-    if (k >= 0) frame = mix(frame, await shot(apartAt(t), start + t - SECONDS, start + t), (k + 1) / (blend + 1));
-    frames.push(join(dir, `${String(i).padStart(3, "0")}.png`));
-    writePng(frames[i], frame);
+    if (k >= 0 && hasMotion) frame = mix(frame, await shot(apart, start + t - SECONDS, start + t), (k + 1) / (blend + 1));
+    const file = join(dir, `${String(i).padStart(3, "0")}.png`);
+    frames.push(file);
+    writePng(file, frame);
+    if (!hasMotion && runs.length > 0 && step === prevStep) {
+      runs[runs.length - 1].ms += frameMs;
+    } else {
+      runs.push({ file, ms: frameMs });
+      prevStep = step;
+    }
+  }
+  if (!hasMotion && runs.length > 1 && prevStep === Math.round(apartAt(0) * 100)) {
+    runs[0].ms += runs.pop()!.ms;
   }
   for (const out of outs) {
-    execFileSync(...ENCODERS[extname(out)](frames, out), { stdio: "pipe" });
-    console.log(`${out}: ${count} frames at ${FPS} fps, ${VIEW.width}×${VIEW.height}, ${(statSync(out).size / 1048576).toFixed(1)} MB`);
+    execFileSync(...ENCODERS[extname(out)](frames, runs, out), { stdio: "pipe" });
+    console.log(`${out}: ${count} frames at ${FPS} fps, ${VIEW.width}×${VIEW.height}, ${(statSync(out).size / 1048576).toFixed(2)} MB`);
   }
 } finally {
   await browser.close();

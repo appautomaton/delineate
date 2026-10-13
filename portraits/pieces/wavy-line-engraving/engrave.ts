@@ -213,7 +213,7 @@ export function over([x0, y0, x1, y1]: Box, k: number, f: (x: number, y: number)
 
 // A path traced over a box at k samples per pixel, placed back in the frame.
 export const placed = ([x0, y0]: Box, d: string, k: number, fill: string, extra = "") =>
-  `<path fill="${fill}"${extra} transform="translate(${x0} ${y0}) scale(${1 / k})" d="${d}"/>`;
+  `<path fill="${fill}" fill-rule="evenodd"${extra} transform="translate(${x0} ${y0}) scale(${1 / k})" d="${d}"/>`;
 
 // Where a field is above `at`, with a margin, clipped to the frame.
 export function extent({ width: w, height: h, data }: Field, at = 0.5, margin = 4): Box {

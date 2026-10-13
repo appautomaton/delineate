@@ -34,7 +34,12 @@ export async function draw(): Promise<string> {
   const box: Box = [0, 0, SIZE, SIZE];
   const field = ink(width, { level, spacing: SPACING, cut: { paper: true, ink: true } }, null, box, K);
   const part = (sign: number) => ({ ...field, data: field.data.map((v, i) => Math.min(v, sign * (pale(((i % field.width) + 0.5) / K, (Math.floor(i / field.width) + 0.5) / K) - 0.5) * 4)) });
-  return placed(box, shapes(part(-1), K, 0.2, 0.3), K, STREET_INK) + "\n" + placed(box, shapes(part(1), K, 0.2, 0.3), K, STREET_INK, ` fill-opacity="${TINT}"`);
+  return (
+    `<rect width="${SIZE}" height="${SIZE}" fill="${PAPER}"/>\n` +
+    placed(box, shapes(part(-1), K, 0.2, 0.3), K, STREET_INK) +
+    "\n" +
+    placed(box, shapes(part(1), K, 0.2, 0.3), K, STREET_INK, ` fill-opacity="${TINT}"`)
+  );
 }
 
 export const title = "The sky over a city street, as a wavy-line engraving";

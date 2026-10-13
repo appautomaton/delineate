@@ -26,7 +26,7 @@ export type Layer = { title: string; draw: () => Promise<string> };
 // top left corner: fitted by eye, overlaid at 2x.
 export const FRAMES: Record<string, Affine> = {
   subject: [0.9116, 0.0001, 53.969, 0.0008, 0.9155, 133.8677],
-  leaves: [0.4, 0, 0, 0, 0.4, 0],
+  leaves: [0.402, 0, -7, 0, 0.402, -3],
 };
 
 // The layers back to front, each with its plate. The ground lies under the trees' layer, whose
