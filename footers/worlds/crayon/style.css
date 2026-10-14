@@ -24,12 +24,16 @@
   --c-moon: #EFE6C4;
   --c-pine: #2F5A2E; --c-rust: #B5652A; --c-cloud: #C8D3E6; --c-mist: #8E9DBA; --c-lilac: #A99BD8;
   --c-sage: #9DB08A; --c-wheat: #E3C26A;
+  /* Names that change more than their tone: the haze is warm by day and a moonlit mist by night; stars and
+     lit windows show only by night. */
+  --c-haze: #F0CF9E; --c-star: transparent; --c-lamp: #6E5B47;
 }
 [data-theme="night"] .sky, [data-theme="night"] .scene {
   --c-blue: #8098F2; --c-deep: #BFC9FF; --c-ochre: #F3D27A; --c-red: #F27E66; --c-maroon: #EFA996;
   --c-green: #8FCB7A; --c-olive: #C9D27A; --c-pink: #F5ACBE; --c-violet: #B9A8F4; --c-graphite: #ECE7DA;
   --c-pine: #A8DA94; --c-rust: #F2A66B; --c-cloud: #464F78; --c-mist: #7F8BB3; --c-lilac: #8E82C4;
   --c-sage: #7E9874; --c-wheat: #CDB463;
+  --c-haze: #3B4675; --c-star: #F4EFE0; --c-lamp: #FFD978;
 }
 .k-blue { stroke: var(--c-blue); } .k-deep { stroke: var(--c-deep); } .k-ochre { stroke: var(--c-ochre); }
 .k-red { stroke: var(--c-red); } .k-maroon { stroke: var(--c-maroon); } .k-green { stroke: var(--c-green); }
@@ -37,7 +41,8 @@
 .k-graphite { stroke: var(--c-graphite); } .k-moon { stroke: var(--c-moon); }
 .k-pine { stroke: var(--c-pine); } .k-rust { stroke: var(--c-rust); } .k-cloud { stroke: var(--c-cloud); }
 .k-mist { stroke: var(--c-mist); } .k-lilac { stroke: var(--c-lilac); } .k-sage { stroke: var(--c-sage); }
-.k-wheat { stroke: var(--c-wheat); }
+.k-wheat { stroke: var(--c-wheat); } .k-haze { stroke: var(--c-haze); } .k-star { stroke: var(--c-star); }
+.k-lamp { stroke: var(--c-lamp); }
 
 /* Drawing on: each strand draws in the time the hand took over it, stepped by the footer's film clock
    like all its idle life. Once drawn, the strands stop and the paper's tooth comes up through the wax: each
@@ -61,6 +66,17 @@
 
 .orb--sun { width: 150px; }
 .orb--moon { width: 136px; }
+/* The glow is light, not wax: a soft gradient of the orb's own colour behind its disc. */
+.orb { isolation: isolate; }
+.orb::before {
+  content: ""; position: absolute; inset: -35%; z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--glow) 30%, transparent), transparent);
+}
+.orb--sun { --glow: var(--c-ochre); }
+.orb--moon { --glow: var(--c-moon); }
+/* On a wide footer the land is never cropped at the sides, so the hamlet stands two thirds across: the sun or
+   the moon hangs over it there. Narrower, the footer's own corner placement holds. */
+@media (min-width: 1100px) { & { --orb-x: 65%; } }
 
 .cr-clouds { position: absolute; inset: 0 0 auto; width: 100%; height: auto; aspect-ratio: 16 / 9; opacity: .55; }
 .cr-range  { --rise: 24px; }

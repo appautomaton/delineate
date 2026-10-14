@@ -53,7 +53,7 @@ build needs the piece's region maps, which are media and stay local.
 - **Checks.** The opening is checked from `375x667` to `1920x1080`, by day and by night; the rest of the page
   at desktop width only. Performance was last traced before the grain became
   a mask. When the planes part mid-scroll, the festival plane's left edge and the sky's top still show.
-- **Weight.** `index.html` is 6.5 MB, 1.6 MB gzipped; 3.7 MB of it is the kit's seven worlds, inlined as
+- **Weight.** `index.html` is 7.0 MB, 1.7 MB gzipped; 3.7 MB of it is the kit's seven worlds, inlined as
   templates. Fetching a world when it is chosen would take that off the first load.
 - **Language.** The generators are Python, as the Footers' are; the rest of the repository is TypeScript run by
   Node.

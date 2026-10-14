@@ -3,9 +3,15 @@
 A site's footer as a small illustrated world, one of seven, each drawn in its own medium, entered by scroll
 in parallax planes, and shown by day or by night. It is a component: the Automaton demo page wears it, and
 delineate's own page shows it as its Footers section (see `site/notes.md`). `npm run footers` writes the demo
-as one self-contained file, `footers/automaton.html` (about 3.7 MB, not tracked); open it with `?world=<id>` to
+as one self-contained file, `footers/automaton.html` (about 3.9 MB, not tracked); open it with `?world=<id>` to
 choose a world. `python3 -I footers/build.py --kit <site> <out.html>` writes the footer alone for a site to
 embed. The generators are Python 3 with the standard library only, run with `-I`.
+
+## The bar
+
+Effortless to look at, exacting beneath. A visitor should meet an easy hand and never the labour behind it,
+and nothing they do see may be slack: no stray mark, no seam that gives the method away, no detail without a
+job. Judge a world as a visitor meets it, at their width and their pace of scroll, by day and by night.
 
 ## How it is built
 
@@ -50,7 +56,7 @@ out, for parts drawn through `<use>`, whose shadow tree no ancestor selector rea
 | `alfama` | Urban sketch in fineliner and watercolour, from the Portas do Sol over the roofs to the Tejo. |
 | `glasshouse` | Copperplate engraving, hand-tinted by day; by night the same drawing lit from within the house. |
 | `observatory` | A sheet of working drawings in technical pen on drafting film; a cyanotype by night. |
-| `crayon` | Crayon on paper: ridges, a bed of flowers, grass. By night the same strands on dark paper, where wax reads as pastel. It draws itself each time it comes into view. |
+| `crayon` | Crayon on paper: an evening valley, a lane climbing through fields to a hamlet under a low sun. By night the same strands on dark paper, where wax reads as pastel, with stars and lit windows. It draws itself each time it comes into view. |
 
 Each `gen.py` opens with the reasoning behind its medium; read it before changing the world.
 
@@ -84,6 +90,12 @@ about 33 ms a second on Alfama, 220 on Desert and 130 to 218 on the Deep; scroll
 - **A component's keyframes carry its name.** Keyframe names belong to the whole page: the footer's `rise`
   once replaced delineate's own, and the page's foot stopped moving without a word. They are `footer-rise` and
   `footer-reveal` now.
+- **A colour name can do more than tint.** The crayon world's `haze` is warm by day and a moonlit mist by night;
+  `star` is clear by day and `lamp` is a dark pane by day, so the stars and the hamlet's lit windows come out
+  only at night, from the one drawing.
+- **Lay an open wash as long strokes, not a fill.** A fill tilts its passes a little and turns them back where
+  they meet the shape's edge; over a band of sky those turns left small bars in the middle of it. The haze is
+  rows of long, overlapping strokes run past the sheet's edges instead.
 - **Draw at scale.** Alfama's landmarks read only once placed at their true size and distance (`sk.place`);
   the observatory sheet reads as a drawing because every line weight and section symbol has a job.
 
