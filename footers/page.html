@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en" data-theme="night" data-world="{{DEFAULT_WORLD}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automaton</title>
+<script>
+{{EARLY}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+{{FOOTER_CSS}}
+  /* The demo page above the footer: a product's home whose one long sky deepens into the footer's horizon. */
+
+  :root {
+    --gutter: clamp(24px, 5.2vw, 96px);
+    --measure: 1240px;
+    --pad-top: clamp(56px, 6.5vw, 104px);
+    --land: max(280px, 35vw);
+    --t-theme: 1.8s;
+    --ease-orbit: cubic-bezier(.55, 0, .25, 1);
+    --orb-x: 37%;
+    --orb-y: calc(var(--pad-top) + 12.5rem);
+    --orb-r: min(560px, 46vw);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--body-day);
+    font: 400 1.09375rem/1.5 "Alegreya Sans", "Gill Sans", system-ui, sans-serif;
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color var(--t-theme) ease;
+  }
+  [data-theme="night"] body { background: var(--body-night); }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    height: 48px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: translate .25s ease, background-color .25s ease, box-shadow .25s ease;
+  }
+  .btn--solid { background: var(--ink); color: var(--paper); }
+  .btn--solid:hover { translate: 0 -1px; box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--ink) 70%, transparent); }
+  .btn--quiet { color: var(--ink); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent); }
+  .btn--quiet:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+
+  /* The page above is one long sky that deepens into the footer's horizon. Each world paints its own. */
+
+  .page-sky { position: relative; isolation: isolate; }
+  .page-sky::before, .page-sky::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .page-sky::before { background: var(--page-day); background-blend-mode: var(--page-blend, normal); }
+  .page-sky::after {
+    background: var(--page-night);
+    background-blend-mode: var(--page-blend, normal);
+    opacity: 0;
+    transition: opacity var(--t-theme) ease;
+  }
+  [data-theme="night"] .page-sky::after { opacity: 1; }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    max-width: calc(var(--measure) + 2 * var(--gutter));
+    margin: 0 auto;
+    padding: 28px var(--gutter);
+  }
+  .site-nav .wordmark { font-size: 1.5rem; }
+  .nav-links { display: flex; gap: 2rem; margin: 0; padding: 0; list-style: none; }
+  .nav-links a, .nav-signin {
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--ink) 84%, transparent);
+    text-decoration: none;
+    transition: color .25s ease;
+  }
+  .nav-links a:hover, .nav-signin:hover { color: var(--ink); }
+  .nav-end { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
+  .nav-end .btn { height: 42px; padding: 0 20px; }
+
+  .section {
+    max-width: calc(var(--measure) + 2 * var(--gutter));
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .hero { padding-top: clamp(72px, 13vh, 168px); padding-bottom: clamp(140px, 22vh, 260px); }
+  .hero h1 {
+    max-width: 10em;
+    margin: 0;
+    font: 500 clamp(3.5rem, 1.6rem + 6.4vw, 8.25rem)/.95 "Alegreya", Georgia, serif;
+    letter-spacing: -.025em;
+    text-wrap: balance;
+  }
+  .hero-lede {
+    max-width: 31em;
+    margin: 2.25rem 0 0;
+    font-size: clamp(1.1875rem, 1.05rem + .45vw, 1.4375rem);
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--ink) 86%, transparent);
+  }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2.75rem; }
+
+  .features { padding-bottom: clamp(140px, 20vh, 240px); }
+  .section-title {
+    max-width: 13em;
+    margin: 0;
+    font: 500 clamp(2.4rem, 1.6rem + 2.6vw, 3.75rem)/1.04 "Alegreya", Georgia, serif;
+    letter-spacing: -.015em;
+    text-wrap: balance;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(32px, 4.5vw, 72px);
+    margin-top: clamp(48px, 6vw, 80px);
+  }
+  .feature { padding-top: 1.75rem; border-top: 1px solid color-mix(in srgb, var(--ink) 24%, transparent); }
+  .feature svg {
+    width: 44px;
+    height: 44px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .feature h3 { margin: 1.5rem 0 .6rem; font-size: 1.3125rem; font-weight: 700; }
+  .feature p { margin: 0; max-width: 24em; line-height: 1.6; color: color-mix(in srgb, var(--ink) 86%, transparent); }
+
+  .quote { padding-bottom: clamp(140px, 20vh, 240px); }
+  .quote blockquote {
+    max-width: 17em;
+    margin: 0;
+    font: italic 400 clamp(2.2rem, 1.4rem + 2.8vw, 4rem)/1.12 "Alegreya", Georgia, serif;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+  }
+  .quote-by { margin: 2rem 0 0; color: color-mix(in srgb, var(--ink) 84%, transparent); }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem 4rem;
+    padding-bottom: clamp(160px, 26vh, 300px);
+  }
+  .cta p { margin: 1.25rem 0 0; color: color-mix(in srgb, var(--ink) 86%, transparent); }
+
+  /* A small traveller crosses the page as you read, and rests when the footer arrives. Each world sends its own. */
+
+  .journey { display: none; }
+  @supports (animation-timeline: scroll()) {
+    body { timeline-scope: --page; }
+    .page-sky { view-timeline: --page block; }
+    .journey {
+      display: block;
+      position: fixed;
+      left: var(--gutter);
+      right: var(--gutter);
+      bottom: 14px;
+      z-index: 20;
+      height: 30px;
+      pointer-events: none;
+      color: var(--journey-day);
+      animation: journey-fade linear both;
+      animation-timeline: --page;
+      animation-range: exit 0% exit 16%;
+      transition: color 1.2s ease;
+    }
+    [data-theme="night"] .journey { color: var(--journey-night); }
+    .journey::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 2px;
+      height: 1px;
+      background: currentColor;
+      opacity: .22;
+    }
+    .walkers {
+      position: absolute;
+      bottom: 2px;
+      height: 30px;
+      fill: currentColor;
+      animation: journey-walk linear both;
+      animation-timeline: --page;
+      animation-range: contain 0% contain 100%;
+    }
+    .is-walking .walker { animation: bob .36s ease-in-out infinite alternate; }
+    .is-walking .walker:nth-child(2) { animation-delay: -.12s; }
+    .is-walking .walker:nth-child(3) { animation-delay: -.24s; }
+  }
+  @keyframes journey-walk { from { left: 0%; } to { left: 100%; translate: -100% 0; } }
+  @keyframes journey-fade { from { opacity: .62; } to { opacity: 0; } }
+  .journey { opacity: .62; }
+  @keyframes bob { to { translate: 0 -2px; } }
+
+  @keyframes lift-away { to { opacity: .25; translate: 0 -72px; } }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-inner {
+        animation: lift-away linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 90%;
+      }
+      .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 60%;
+      }
+      .feature:nth-child(2) { animation-range: entry 8% entry 68%; }
+      .feature:nth-child(3) { animation-range: entry 16% entry 76%; }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .journey { display: none; }
+  }
+
+  @media (max-width: 1239px) {
+    .site-nav .picker-name { display: none; }
+  }
+  @media (max-width: 1199px) {
+    .nav-links { display: none; }
+  }
+  @media (max-width: 860px) {
+    .nav-signin { display: none; }
+    .feature-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 639px) {
+    .site-nav { flex-wrap: wrap; gap: 1.25rem 1rem; }
+    .nav-end { gap: .75rem; }
+    .nav-end .btn { display: none; }
+    .site-nav .scene-picker { order: 3; width: 100%; gap: .5rem; }
+    .site-nav .picker-name { display: block; min-width: 0; }
+  }
+
+  /* Worlds */
+
+{{WORLD_CSS}}
+</style>
+</head>
+<body>
+
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+      <g id="mark">
+        <circle cx="7" cy="7" r="5.2"/><circle cx="17" cy="7" r="5.2"/>
+        <circle cx="7" cy="17" r="5.2"/><circle cx="17" cy="17" r="5.2"/>
+        <rect x="7" y="7" width="10" height="10"/>
+      </g>
+  </defs>
+</svg>
+
+<div class="page-sky">
+  <header class="site-nav ink">
+    <a class="wordmark" href="#" aria-label="Automaton home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#mark"/></svg>
+      Automaton
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">Product</a></li>
+      <li><a href="#">Workflows</a></li>
+      <li><a href="#">Pricing</a></li>
+      <li><a href="#">Docs</a></li>
+    </ul>
+    <div class="nav-end">
+      {{PICKER}}
+      <button class="theme-toggle" type="button" role="switch" aria-checked="true" aria-label="Night sky">
+        <span class="toggle-track">
+          <span class="toggle-knob"></span>
+          <svg class="icon-sun" viewBox="0 0 16 16" aria-hidden="true"><use href="#icon-sun"/></svg>
+          <svg class="icon-moon" viewBox="0 0 16 16" aria-hidden="true"><use href="#icon-moon"/></svg>
+        </span>
+      </button>
+      <a class="nav-signin" href="#">Sign in</a>
+      <a class="btn btn--solid" href="#">Start free</a>
+    </div>
+  </header>
+
+  <main class="ink">
+    <section class="section hero">
+      <div class="hero-inner">
+        <h1>Let the work carry itself.</h1>
+        <p class="hero-lede">Automaton turns the repetitive parts of creative work into quiet, dependable workflows, so you can stay with the craft.</p>
+        <div class="hero-actions">
+          <a class="btn btn--solid" href="#">Start free</a>
+          <a class="btn btn--quiet" href="#">See how it works</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section features">
+      <h2 class="section-title reveal">Built for the long road</h2>
+      <div class="feature-grid">
+        <article class="feature reveal">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17"/><path d="M22 9.5l4 12.5-4 12.5-4-12.5z"/><path d="M22 9.5l4 12.5h-8z" fill="currentColor"/><path d="M22 3v3M22 38v3M3 22h3M38 22h3"/></svg>
+          <h3>Triggers that listen</h3>
+          <p>Start a run from a new file, a form, a calendar event or a message. Automaton waits so you don’t have to.</p>
+        </article>
+        <article class="feature reveal">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M7 36C16 36 13 22 22 22S28 8 37 8" stroke-dasharray="2.5 3.5"/><circle cx="7" cy="36" r="3.2"/><circle cx="22" cy="22" r="3.2"/><circle cx="37" cy="8" r="3.2" fill="currentColor"/></svg>
+          <h3>Steps that remember</h3>
+          <p>Every step keeps its own history. When something fails, retry from where it stopped instead of starting over.</p>
+        </article>
+        <article class="feature reveal">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M15 38h14M16 38l1-5h10l1 5"/><path d="M17 33l-1-15h12l-1 15z"/><path d="M15 18c0-6 4-8 7-12 3 4 7 6 7 12z"/><circle cx="22" cy="4" r="1.6"/><path d="M22 30c-2 0-3-1.5-3-3.2 0-2.4 3-5.3 3-5.3s3 2.9 3 5.3c0 1.7-1 3.2-3 3.2z" fill="currentColor"/></svg>
+          <h3>Runs you can see</h3>
+          <p>Each run leaves a clear trail of what happened, when and why. Nothing happens in the dark.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section quote reveal">
+      <blockquote>“It feels like the work keeps travelling while the studio sleeps.”</blockquote>
+      <p class="quote-by">Lina Haddad, studio lead at Northwind</p>
+    </section>
+
+    <section class="section cta reveal">
+      <div>
+        <h2 class="section-title">Ready when you are.</h2>
+        <p>Free for your first 1,000 runs every month. No card required.</p>
+      </div>
+      <a class="btn btn--solid" href="#">Start free</a>
+    </section>
+  </main>
+</div>
+
+<div class="journey-stage"></div>
+
+{{FOOTER}}
+
+{{WORLD_TEMPLATES}}
+
+<script>
+{{FOOTER_JS}}
+  // The traveller only moves while the page is moving.
+  (() => {
+    const stage = document.querySelector('.journey-stage');
+    let resting = 0;
+    addEventListener('scroll', () => {
+      stage.classList.add('is-walking');
+      clearTimeout(resting);
+      resting = setTimeout(() => stage.classList.remove('is-walking'), 160);
+    }, { passive: true });
+  })();
+</script>
+</body>
+</html>

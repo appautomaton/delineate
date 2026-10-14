@@ -1,0 +1,168 @@
+<div class="world world--glasshouse">
+  <div class="sky">
+    <div class="sky-paint sky-paint--day"></div>
+    <div class="sky-paint sky-paint--night"></div>
+    <div class="sky-drift" data-sway="3">
+      <svg class="gh-stars" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMin slice">{{STARS}}</svg>
+      <div class="orbit">
+        <div class="orb orb--sun">
+          <svg viewBox="0 0 200 200">
+            <g fill="none" stroke="#3A332C" stroke-linecap="round">
+              <circle cx="100" cy="100" r="22" stroke-width="1.2"/>
+              <path d="M100 66v-16M100 134v16M66 100h-16M134 100h16M76 76l-11-11M124 124l11 11M76 124l-11 11M124 76l11-11" stroke-width="1.1"/>
+              <path d="M87 68l-4-10M113 68l4-10M87 132l-4 10M113 132l4 10M68 87l-10-4M68 113l-10 4M132 87l10-4M132 113l10 4" stroke-width=".7"/>
+              <path d="M84 92h32M82 98h36M82 104h36M84 110h32M88 86h24M88 116h24" stroke-width=".6" opacity=".6"/>
+            </g>
+          </svg>
+        </div>
+        <div class="orb orb--moon">
+          <svg viewBox="0 0 200 200">
+            <defs><mask id="gh-moon-cut"><rect width="200" height="200" fill="#fff"/><circle cx="112" cy="90" r="22" fill="#000"/></mask></defs>
+            <circle cx="100" cy="100" r="24" fill="#EDE6D3" mask="url(#gh-moon-cut)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="land-anchor"></div>
+
+    <div class="depth gh-far" data-sway="4">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-far-day"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-far-night"/></svg>
+      </div>
+    </div>
+
+    <div class="depth gh-mid" data-sway="9">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-mid-day"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-mid-night"/></svg>
+        <svg class="art gh-glow" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-glow-art"/></svg>
+      </div>
+    </div>
+
+    <div class="depth gh-ground" data-sway="16">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-ground-day"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-butterflies"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-ground-night"/></svg>
+        <svg class="art gh-glow" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-spill-art"/></svg>
+        <svg class="art gh-glow" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-lamp-glow"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#gh-moths"/></svg>
+      </div>
+    </div>
+
+    <div class="depth gh-near" data-sway="28">
+      <div class="pane pane--day art-day">
+        <svg class="art art--live gh-plants" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">{{PLANTS_DAY}}<g class="gh-labels">{{LABELS}}</g></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art art--live gh-plants" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">{{PLANTS_NIGHT}}</svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="gh-plate"></div>
+  <div class="texture gh-paper"></div>
+
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- By night. The glass, lit from within: brightest low in the centre, warming to amber at the ends. -->
+      <radialGradient id="gh-glass-glow" gradientUnits="userSpaceOnUse" cx="800" cy="452" r="470" fx="800" fy="440">
+        <stop offset="0" stop-color="#FFF6DE"/>
+        <stop offset=".24" stop-color="#FADDA7"/>
+        <stop offset=".52" stop-color="#E7AE67"/>
+        <stop offset=".82" stop-color="#B77A3F"/>
+        <stop offset="1" stop-color="#8A582C"/>
+      </radialGradient>
+      <!-- Clouds by night: dark, a little paler where the moon above them reaches. -->
+      <linearGradient id="gh-night-cloud" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2B3449"/>
+        <stop offset=".55" stop-color="#1B2234"/>
+        <stop offset="1" stop-color="#131928"/>
+      </linearGradient>
+      <!-- A low haze along the horizon, so the far trees stand dark against it. -->
+      <linearGradient id="gh-night-haze" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="0" y2="486">
+        <stop offset="0" stop-color="#2A3550" stop-opacity="0"/>
+        <stop offset="1" stop-color="#2E3A57" stop-opacity=".8"/>
+      </linearGradient>
+      <!-- The lawn by night: a little moonlight on the far grass, none on the near. -->
+      <linearGradient id="gh-night-lawn" gradientUnits="userSpaceOnUse" x1="0" y1="482" x2="0" y2="600">
+        <stop offset="0" stop-color="#18202C"/>
+        <stop offset="1" stop-color="#090C12"/>
+      </linearGradient>
+      <!-- The house's light where it falls on what is near it. -->
+      <radialGradient id="gh-spill">
+        <stop offset="0" stop-color="#FFC77E" stop-opacity=".6"/>
+        <stop offset=".5" stop-color="#F0A85C" stop-opacity=".22"/>
+        <stop offset="1" stop-color="#E09048" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="gh-veil" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation=".9"/></filter>
+      <filter id="gh-soften" x="-100" y="0" width="1800" height="640" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="2.4"/></filter>
+      <g id="gh-spill-art">
+        <ellipse cx="800" cy="492" rx="520" ry="58" fill="url(#gh-spill)"/>
+        <ellipse cx="800" cy="512" rx="300" ry="30" fill="url(#gh-spill)" opacity=".7"/>
+      </g>
+
+      <!-- The colourist's sky: a pale wash, strongest just above the trees, gone before the words. -->
+      <linearGradient id="gh-sky-tint" gradientUnits="userSpaceOnUse" x1="0" y1="150" x2="0" y2="486">
+        <stop offset=".12" stop-color="#C9DCE8" stop-opacity="0"/>
+        <stop offset=".55" stop-color="#C9DCE8" stop-opacity=".75"/>
+        <stop offset="1" stop-color="#E6ECE4" stop-opacity=".6"/>
+      </linearGradient>
+      <clipPath id="gh-pond-clip"><path d="{{POND_CLIP}}"/></clipPath>
+
+      {{FAR_DEFS}}
+      {{MID_DEFS}}
+      {{GROUND_DEFS}}
+      {{PLANT_DEFS}}
+
+      <radialGradient id="gh-amber">
+        <stop offset="0" stop-color="#FFD48A" stop-opacity=".8"/>
+        <stop offset=".45" stop-color="#FFB45E" stop-opacity=".28"/>
+        <stop offset="1" stop-color="#FFA04A" stop-opacity="0"/>
+      </radialGradient>
+      <!-- The house's bloom in the night air around it. -->
+      <g id="gh-glow-art">
+        <ellipse cx="800" cy="380" rx="460" ry="170" fill="url(#gh-amber)" opacity=".42"/>
+        <ellipse cx="800" cy="300" rx="170" ry="110" fill="url(#gh-amber)" opacity=".4"/>
+      </g>
+      <g id="gh-lamp-glow">
+        <circle cx="{{LAMP_X}}" cy="{{LAMP_Y}}" r="80" fill="url(#gh-amber)"/>
+      </g>
+      <g id="gh-moths" fill="#EDE6D3">
+        <g transform="translate({{LAMP_X}} {{LAMP_Y}})">
+          <g class="gh-moth" style="--orbit:16s; --r:30px; --d:0s"><path d="M0 -2l-4-3-1 4ZM0 -2l4-3 1 4Z"/></g>
+          <g class="gh-moth" style="--orbit:11s; --r:20px; --d:-4s"><path d="M0 0l-3-2-1 3ZM0 0l3-2 1 3Z"/></g>
+          <g class="gh-moth" style="--orbit:19s; --r:42px; --d:-9s"><path d="M0 -4l-4-3-1 4ZM0 -4l4-3 1 4Z"/></g>
+        </g>
+      </g>
+      <g id="gh-butterflies">
+        <g class="gh-flit" style="--flit:14s; --d:0s">
+          <g transform="translate(360 532)"><path class="gh-wing" d="M0 0C-6 -8 -12 -6 -10 0C-12 4 -6 6 0 0Z" fill="#FBF8EE" stroke="#231E1A" stroke-width=".6"/><path class="gh-wing gh-wing--r" d="M0 0C6 -8 12 -6 10 0C12 4 6 6 0 0Z" fill="#FBF8EE" stroke="#231E1A" stroke-width=".6"/></g>
+        </g>
+        <g class="gh-flit gh-flit--b" style="--flit:17s; --d:-6s">
+          <g transform="translate(1250 530)"><path class="gh-wing" d="M0 0C-6 -8 -12 -6 -10 0C-12 4 -6 6 0 0Z" fill="#F6E7A6" stroke="#231E1A" stroke-width=".6"/><path class="gh-wing gh-wing--r" d="M0 0C6 -8 12 -6 10 0C12 4 6 6 0 0Z" fill="#F6E7A6" stroke="#231E1A" stroke-width=".6"/></g>
+        </g>
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<div class="journey journey--glasshouse" aria-hidden="true">
+  <svg class="walkers" viewBox="0 0 150 64" style="aspect-ratio: 150 / 64">
+    <g class="walker">
+      <path d="M40 60V30C40 18 52 8 66 8S92 18 92 30V60Z M44 56V31C44 21 54 12 66 12S88 21 88 31V56Z" fill-rule="evenodd"/>
+      <path d="M66 12V56M55 15V56M77 15V56M44 34H88" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <path d="M100 60C104 46 112 36 120 30C116 40 112 50 110 60ZM110 60C114 50 124 44 132 42C126 48 120 54 118 60Z"/>
+    </g>
+  </svg>
+</div>

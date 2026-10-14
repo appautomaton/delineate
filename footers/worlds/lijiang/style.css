@@ -1,0 +1,330 @@
+/* Li River: blue-green landscape on silk. Ink contours and lotus-leaf strokes, ochre climbing into
+   malachite and azurite, moss dots on the ridges, and mist where the towers meet the water. */
+
+:root[data-world="lijiang"] {
+  --page-day:
+    url("{{TEX_SILK_PAGE}}") 0 0 / 256px,
+    linear-gradient(to bottom, #E8E5D7 0%, #E4DECB 45%, #DDD3B6 100%);
+  --page-night:
+    url("{{TEX_SILK_PAGE}}") 0 0 / 256px,
+    {{PAGE_STARS}},
+    linear-gradient(to bottom, #0E121D 0%, #121827 45%, #161D2E 100%);
+  --page-blend: soft-light, normal;
+  --body-day: #E8E5D7;
+  --body-night: #0E121D;
+  --ink-day: #1E2928;
+  --paper-day: #EAE3CD;
+  --ink-night: #ECE4CF;
+  --paper-night: #141A28;
+  --journey-day: #1E2928;
+  --journey-night: #ECE4CF;
+}
+
+.sky-paint--day {
+  background: linear-gradient(to top,
+    #EEE6D0 0, #EEE6D0 calc(var(--land) * .35),
+    #E7DEC5 calc(var(--land) * .8), #E1D7BB 70%, #DDD3B6 100%);
+}
+.sky-paint--night {
+  background: linear-gradient(to top,
+    #2C3753 0, #2C3753 calc(var(--land) * .35),
+    #222C44 calc(var(--land) * .8), #1A2236 70%, #161D2E 100%);
+  opacity: 0;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .sky-paint--night { opacity: 1; }
+
+.lj-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #F2EAD4;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+[data-theme="night"] .lj-stars { opacity: 1; transition-delay: .6s; }
+.lj-tw { opacity: var(--a); animation: lj-twinkle var(--t) ease-in-out infinite var(--d); animation-play-state: var(--play); }
+@keyframes lj-twinkle { 0%, 100% { opacity: var(--a); } 50% { opacity: calc(var(--a) * .3); } }
+
+.orb--sun { width: 150px; }
+.orb--moon { width: 160px; }
+
+.lj-far    { --rise: 36px; }
+.lj-mid    { --rise: 96px; }
+.lj-hills  { --rise: 170px; }
+.lj-ground { --rise: 230px; }
+.lj-near   { --rise: 320px; }
+.sky-drift { --rise: 140px; }
+
+.art-day {
+  --lj-mist: #EEE6D0;
+  --lj-water-fill: url(#lj-g-water-day);
+  --lj-reflect: #5E8F86;
+  --lj-wave: rgb(52 92 96 / .55);
+  --lj-under: rgb(48 80 86 / .24);
+  --lj-bamboo: #BFA866;
+  --lj-bamboo-dark: #8C7A42;
+  --lj-rattan: #7A5A30;
+  --lj-line: #24231D;
+  --lj-indigo: #34477C;
+  --lj-indigo-dark: #26345A;
+  --lj-skin: #D6A27A;
+  --lj-skin-dark: #B98560;
+  --lj-straw: #A88A56;
+  --lj-straw-dark: #6E5530;
+  --lj-hat: #D2B477;
+  --lj-beard: #EFEADB;
+  --lj-bird: #1E2224;
+  --lj-bird-sheen: #4B5536;
+  --lj-bill: #4A4A42;
+  --lj-bird-face: #E2B24A;
+  --lj-bird-cheek: #ECE6D4;
+  --lj-bird-eye: #3FA08A;
+  --lj-lantern: #B9472F;
+  --lj-lantern-rib: rgb(60 20 10 / .5);
+  --lj-seal: #B8382A;
+  --lj-seal-paper: #EDE4CC;
+  --lj-bank-fill: url(#lj-g-bank-day);
+  --lj-bank-shade: #1E5068;
+  --lj-bank-glow: rgb(242 234 210 / .45);
+  --lj-bank-ink: #1F201B;
+  --lj-bank-vein: rgb(18 44 48 / .6);
+  --lj-bank-moss: #1A3326;
+  --lj-bark: #6E5A3E;
+  --lj-needle: #3E7F68;
+  --lj-reed: #5F6F45;
+  --lj-plume: rgb(214 202 170 / .85);
+  --lj-far-fill: url(#lj-g-far-day);
+  --lj-far-shade: #8FAAB0;
+  --lj-far-glow: rgb(240 233 212 / .5);
+  --lj-far-ink: rgb(58 72 72 / .38);
+  --lj-far-vein: rgb(70 104 108 / .3);
+  --lj-far-moss: rgb(56 88 78 / .42);
+  --lj-mid-fill: url(#lj-g-mid-day);
+  --lj-mid-shade: #2F6478;
+  --lj-mid-glow: rgb(240 232 208 / .5);
+  --lj-mid-ink: rgb(36 38 32 / .78);
+  --lj-mid-vein: rgb(24 58 64 / .5);
+  --lj-mid-moss: rgb(30 56 42 / .85);
+  --lj-hill-fill: url(#lj-g-hill-day);
+  --lj-hill-shade: #1C4E66;
+  --lj-hill-glow: rgb(242 234 210 / .5);
+  --lj-hill-ink: #1F201B;
+  --lj-hill-vein: rgb(18 44 48 / .58);
+  --lj-hill-moss: #1A3326;
+}
+.art-night {
+  --lj-mist: #2C3753;
+  --lj-water-fill: url(#lj-g-water-night);
+  --lj-reflect: #3A5272;
+  --lj-wave: rgb(120 140 186 / .32);
+  --lj-under: rgb(6 10 20 / .4);
+  --lj-bamboo: #4A4640;
+  --lj-bamboo-dark: #2C2A28;
+  --lj-rattan: #3A2E24;
+  --lj-line: #07090E;
+  --lj-indigo: #1C2440;
+  --lj-indigo-dark: #141A30;
+  --lj-skin: #6C5248;
+  --lj-skin-dark: #4E3C38;
+  --lj-straw: #4C4236;
+  --lj-straw-dark: #2A241E;
+  --lj-hat: #5E5244;
+  --lj-beard: #A8A4A0;
+  --lj-bird: #0B0D12;
+  --lj-bird-sheen: #1E2620;
+  --lj-bill: #22221F;
+  --lj-bird-face: #6A5A30;
+  --lj-bird-cheek: #6E6C72;
+  --lj-bird-eye: #3A7A6E;
+  --lj-lantern: url(#lj-lantern-lit);
+  --lj-lantern-rib: rgb(170 70 20 / .55);
+  --lj-seal: #7A2A26;
+  --lj-seal-paper: #2A3044;
+  --lj-bank-fill: url(#lj-g-bank-night);
+  --lj-bank-shade: #111B2E;
+  --lj-bank-glow: rgb(118 140 190 / .28);
+  --lj-bank-ink: #070A11;
+  --lj-bank-vein: rgb(10 16 28 / .6);
+  --lj-bank-moss: #09101A;
+  --lj-bark: #24222A;
+  --lj-needle: #1A2C30;
+  --lj-reed: #1E2630;
+  --lj-plume: rgb(84 94 116 / .8);
+  --lj-far-fill: url(#lj-g-far-night);
+  --lj-far-shade: #2A3650;
+  --lj-far-glow: rgb(110 128 170 / .35);
+  --lj-far-ink: rgb(14 18 30 / .35);
+  --lj-far-vein: rgb(20 28 46 / .3);
+  --lj-far-moss: rgb(18 24 38 / .45);
+  --lj-mid-fill: url(#lj-g-mid-night);
+  --lj-mid-shade: #1A2840;
+  --lj-mid-glow: rgb(120 140 186 / .32);
+  --lj-mid-ink: rgb(10 14 22 / .8);
+  --lj-mid-vein: rgb(14 22 36 / .55);
+  --lj-mid-moss: rgb(12 18 30 / .9);
+  --lj-hill-fill: url(#lj-g-hill-night);
+  --lj-hill-shade: #111B2E;
+  --lj-hill-glow: rgb(118 140 190 / .3);
+  --lj-hill-ink: #070A11;
+  --lj-hill-vein: rgb(10 16 28 / .6);
+  --lj-hill-moss: #09101A;
+}
+
+.lj-silk {
+  background: url("{{TEX_SILK}}") 0 0 / 256px;
+  mix-blend-mode: soft-light;
+  opacity: .42;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .lj-silk { opacity: .24; }
+.lj-age {
+  background: url("{{TEX_AGE}}") 0 0 / 640px;
+  mix-blend-mode: multiply;
+  opacity: .07;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .lj-age { opacity: .14; }
+/* Ease in from the page's lighter silk, so the seam never shows. */
+.lj-silk {
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / .78), #000 240px);
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / .78), #000 240px);
+}
+.lj-age {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 360px);
+  mask-image: linear-gradient(to bottom, transparent, #000 360px);
+}
+
+/* Light from the lantern, night only. */
+.lj-light {
+  mix-blend-mode: screen;
+  animation: lj-flicker 2.8s ease-in-out infinite;
+  animation-play-state: var(--play);
+}
+@keyframes lj-flicker {
+  0%, 100% { opacity: 1; }
+  18% { opacity: .88; }
+  34% { opacity: .97; }
+  52% { opacity: .8; }
+  70% { opacity: .95; }
+  84% { opacity: .86; }
+}
+
+/* The painter's seal, stamped on the silk in the corner. */
+.lj-seal {
+  position: absolute;
+  right: calc(var(--gutter) * .5);
+  bottom: 22px;
+  width: 30px;
+  height: 30px;
+  opacity: .9;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .lj-seal { opacity: .55; }
+
+.lj-glints, .lj-flies { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* Mist drifts on its own layer, so the painted towers behind it never repaint. */
+.lj-mist {
+  position: absolute;
+  inset: 0;
+  animation: lj-mist 38s ease-in-out infinite alternate;
+  animation-play-state: var(--play);
+  will-change: transform;
+}
+.lj-mist--slow { animation-duration: 52s; animation-direction: alternate-reverse; }
+.lj-mist--shore { animation-duration: 30s; }
+@keyframes lj-mist { from { translate: -40px 0; } to { translate: 40px 0; } }
+
+/* Egrets cross the day sky now and then. */
+.lj-egrets {
+  position: absolute;
+  bottom: calc(var(--land) * .6);
+  left: 0;
+  width: 96px;
+  translate: -160px 0;
+  animation: lj-fly 46s linear infinite 6s;
+  animation-play-state: var(--play);
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .lj-egrets { opacity: 0; }
+@keyframes lj-fly { 0% { translate: -160px 0; } 55%, 100% { translate: calc(100vw + 60px) -60px; } }
+:global .lj-egret-wing { transform-origin: 0 0; animation: lj-flap 1.4s ease-in-out infinite alternate var(--egret-delay, 0s); }
+@keyframes lj-flap { to { scale: 1 -.55; } }
+
+/* Idle life on the river. Pivots are in each figure's own drawing units. */
+:global .lj-bob    { transform-origin: 131px 0; animation: lj-bob 5.8s ease-in-out infinite; }
+:global .lj-pole   { transform-origin: 0 -31px; animation: lj-pole 7.5s ease-in-out infinite; }
+:global .lj-look   { transform-origin: -3px -27px; animation: lj-look 12s ease-in-out infinite 1.5s; }
+:global .lj-wing-l { transform-origin: -5px -25px; animation: lj-wing-l 3.6s ease-in-out infinite alternate; }
+:global .lj-wing-r { transform-origin: 5px -25px; animation: lj-wing-r 3.6s ease-in-out infinite alternate; }
+:global .lj-diver  { transform-origin: 512px 514px; animation: lj-dive 32s ease-in-out infinite; }
+:global .lj-paddle { animation: lj-paddle 2.6s ease-in-out infinite alternate; }
+:global .lj-ring   { transform-box: fill-box; transform-origin: center; animation: lj-ring 4.4s ease-out infinite; }
+:global .lj-splash { transform-box: fill-box; transform-origin: center; opacity: 0; animation: lj-splash-a 32s ease-out infinite; }
+:global .lj-splash--up { animation-name: lj-splash-b; }
+:global .lj-reed   { animation: lj-sway var(--sway-t) ease-in-out infinite alternate var(--sway-d); }
+:global .lj-bob, :global .lj-pole, :global .lj-look, :global .lj-wing-l, :global .lj-wing-r, :global .lj-paddle, :global .lj-ring, :global .lj-reed, :global .lj-egret-wing {
+  animation-play-state: var(--play, running);
+}
+/* The diving cormorant travels, so both panes keep the same clock. */
+:global .lj-diver, :global .lj-splash { animation-play-state: var(--footer-play, running); }
+
+@keyframes lj-bob    { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 1.3px; rotate: -.4deg; } }
+@keyframes lj-pole   { 0%, 100% { rotate: 0deg; } 40%, 55% { rotate: -3.2deg; } }
+@keyframes lj-look   { 0%, 26% { rotate: 0deg; } 32%, 44% { rotate: -9deg; } 50%, 58% { rotate: 34deg; } 64%, 100% { rotate: 0deg; } }
+@keyframes lj-wing-l { from { rotate: -2deg; } to { rotate: 8deg; } }
+@keyframes lj-wing-r { from { rotate: 2deg; } to { rotate: -8deg; } }
+@keyframes lj-paddle { to { translate: 0 .8px; } }
+@keyframes lj-ring   { from { scale: .55; opacity: .8; } to { scale: 1.5; opacity: 0; } }
+@keyframes lj-sway   { from { rotate: -1deg; } to { rotate: 4deg; } }
+/* Two dives per cycle. All travel happens under water, so the bird never swims backwards. */
+@keyframes lj-dive {
+  0%, 16% { translate: 0 0; rotate: 0deg; opacity: 1; }
+  18% { translate: -3px 1px; rotate: -16deg; opacity: 1; }
+  21% { translate: -12px 20px; rotate: -40deg; opacity: 1; }
+  22% { translate: -12px 30px; rotate: -40deg; opacity: 0; }
+  30% { translate: -64px 26px; rotate: 0deg; opacity: 0; }
+  31% { translate: -64px 22px; rotate: 0deg; opacity: 1; }
+  34%, 62% { translate: -64px 0; rotate: 0deg; opacity: 1; }
+  64% { translate: -67px 1px; rotate: -16deg; opacity: 1; }
+  67% { translate: -76px 20px; rotate: -40deg; opacity: 1; }
+  68% { translate: -76px 30px; rotate: -40deg; opacity: 0; }
+  79% { translate: 0 26px; rotate: 0deg; opacity: 0; }
+  80% { translate: 0 22px; rotate: 0deg; opacity: 1; }
+  83%, 100% { translate: 0 0; rotate: 0deg; opacity: 1; }
+}
+@keyframes lj-splash-a {
+  0%, 20.5% { scale: .3; opacity: 0; }
+  21% { scale: .4; opacity: .9; }
+  27% { scale: 1.6; opacity: 0; }
+  80.5% { scale: .3; opacity: 0; }
+  81% { scale: .4; opacity: .9; }
+  87%, 100% { scale: 1.6; opacity: 0; }
+}
+@keyframes lj-splash-b {
+  0%, 31.5% { scale: .3; opacity: 0; }
+  32% { scale: .4; opacity: .9; }
+  38% { scale: 1.6; opacity: 0; }
+  66.5% { scale: .3; opacity: 0; }
+  67% { scale: .4; opacity: .9; }
+  73%, 100% { scale: 1.6; opacity: 0; }
+}
+
+/* As the footer arrives, the mist sits thick and high, then settles so the towers rise through it. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .lj-mist > svg {
+      transform-origin: 50% 82%;
+      animation: lj-settle linear both;
+      animation-timeline: --land;
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+@keyframes lj-settle { from { transform: translateY(-34px) scaleY(2.1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lj-glints, .lj-flies, .lj-egrets { display: none; }
+}

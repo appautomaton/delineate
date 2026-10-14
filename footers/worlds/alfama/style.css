@@ -1,0 +1,240 @@
+/* Alfama: an urban sketch in pen and watercolour, from the Portas do Sol over the roofs to the Tejo.
+   Fineliner lines that run past their corners, hatched shadows, loose washes that pool at their edges
+   and bloom into each other, all on cold-pressed paper. */
+
+:root[data-world="alfama"] {
+  --page-day:
+    url("{{TEX_PAPER_PAGE}}") 0 0 / 300px,
+    url("{{TEX_SKYWASH}}") 50% 0 / 100% auto no-repeat,
+    linear-gradient(#F6F5F0, #F6F5F0);
+  --page-night:
+    url("{{TEX_PAPER_PAGE}}") 0 0 / 300px,
+    {{PAGE_STARS}},
+    linear-gradient(to bottom, #151B33 0%, #19203A 60%, #1C2340 100%);
+  --page-blend: soft-light, normal, normal;
+  --body-day: #F6F5F0;
+  --body-night: #151B33;
+  --ink-day: #2C2622;
+  --paper-day: #F6F5F0;
+  --ink-night: #EFE8D8;
+  --paper-night: #171D36;
+  --journey-day: #2C2622;
+  --journey-night: #EFE8D8;
+}
+
+.sky-paint--day { background: #F6F5F0; }
+.sky-paint--night {
+  background: linear-gradient(to top,
+    #2A3462 0, #2A3462 calc(var(--land) * .3),
+    #232B52 calc(var(--land) * .85), #1E2547 70%, #1C2340 100%);
+  opacity: 0;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .sky-paint--night { opacity: 1; }
+
+.orb--sun { width: 150px; }
+.orb--moon { width: 140px; }
+
+.al-far    { --rise: 40px; }
+.al-mid    { --rise: 110px; }
+.al-ground { --rise: 200px; }
+.al-near   { --rise: 320px; }
+.sky-drift { --rise: 150px; }
+
+/* Washes darken where they overlap, as watercolour does. */
+:global .al-w { mix-blend-mode: multiply; }
+
+.art-day {
+  --al-paper: #F6F5F0;
+  --al-ink: #2C2622;
+  --al-ochre: rgb(236 186 84 / .7);
+  --al-rose: rgb(234 156 150 / .68);
+  --al-salmon: rgb(240 168 124 / .66);
+  --al-cream: rgb(242 214 160 / .68);
+  --al-blue: rgb(134 176 220 / .62);
+  --al-sage: rgb(172 196 150 / .64);
+  --al-white: rgb(226 222 212 / .5);
+  --al-azulejo: url(#al-azulejo-day);
+  --al-roof: rgb(206 104 64 / .8);
+  --al-roof-lit: rgb(226 146 96 / .7);
+  --al-roof-dark: rgb(160 74 54 / .82);
+  --al-terrace: rgb(214 206 190 / .55);
+  --al-shade: rgb(110 116 180 / .36);
+  --al-violet: rgb(96 84 160 / .42);
+  --al-glass: rgb(62 74 98 / .62);
+  --al-door: rgb(110 70 50 / .65);
+  --al-green: rgb(62 128 98 / .75);
+  --al-teal: rgb(52 120 128 / .72);
+  --al-brown: rgb(132 84 56 / .7);
+  --al-blue-dark: rgb(52 84 150 / .7);
+  --al-geranium: rgb(222 52 62 / .85);
+  --al-leaf: rgb(92 150 82 / .72);
+  --al-leaf-dark: rgb(52 100 64 / .6);
+  --al-cypress: rgb(56 96 70 / .78);
+  --al-limestone: rgb(232 228 214 / .55);
+  --al-lead: rgb(118 136 158 / .62);
+  --al-river: rgb(112 164 210 / .5);
+  --al-river-deep: rgb(80 128 190 / .3);
+  --al-haze: rgb(214 180 150 / .38);
+  --al-shore: rgb(150 162 186 / .45);
+  --al-sail: rgb(250 248 240 / .9);
+  --al-ferry: rgb(232 112 52 / .9);
+  --al-wall: rgb(220 214 200 / .6);
+  --al-street: rgb(196 186 170 / .45);
+  --al-bougainvillea: rgb(222 92 160 / .58);
+  --al-bougainvillea-deep: rgb(160 40 112 / .45);
+  --al-bark: rgb(120 92 70 / .6);
+  --al-lamp: rgb(240 226 180 / .7);
+  --al-tram: rgb(244 196 48 / .9);
+  --al-tram-top: rgb(246 240 222 / .8);
+  --al-cloth-a: rgb(206 64 62 / .8);
+  --al-cloth-b: rgb(250 250 246 / .9);
+  --al-cloth-c: rgb(96 140 210 / .75);
+  --al-cloth-d: rgb(242 196 72 / .85);
+  --al-cat: #2E2A2C;
+  --al-cat-light: #F2EEE6;
+}
+.art-night {
+  --al-paper: #262E58;
+  --al-ink: #0E1020;
+  --al-ochre: rgb(84 88 132 / .9);
+  --al-rose: rgb(96 84 128 / .9);
+  --al-salmon: rgb(100 86 124 / .9);
+  --al-cream: rgb(90 96 140 / .9);
+  --al-blue: rgb(56 72 128 / .9);
+  --al-sage: rgb(70 88 120 / .9);
+  --al-white: rgb(96 104 148 / .85);
+  --al-azulejo: url(#al-azulejo-night);
+  --al-roof: rgb(110 70 96 / .9);
+  --al-roof-lit: rgb(124 88 112 / .85);
+  --al-roof-dark: rgb(80 50 76 / .9);
+  --al-terrace: rgb(90 96 140 / .8);
+  --al-shade: rgb(20 24 60 / .5);
+  --al-violet: rgb(24 22 60 / .55);
+  --al-glass: rgb(20 24 48 / .85);
+  --al-door: rgb(30 26 44 / .85);
+  --al-green: rgb(36 60 72 / .9);
+  --al-teal: rgb(32 58 76 / .9);
+  --al-brown: rgb(50 40 56 / .9);
+  --al-blue-dark: rgb(30 40 84 / .9);
+  --al-geranium: rgb(120 40 70 / .9);
+  --al-leaf: rgb(36 60 64 / .9);
+  --al-leaf-dark: rgb(20 36 44 / .8);
+  --al-cypress: rgb(18 30 36 / .9);
+  --al-limestone: rgb(130 136 176 / .85);
+  --al-lead: rgb(64 76 116 / .9);
+  --al-river: rgb(36 54 112 / .85);
+  --al-river-deep: rgb(20 30 76 / .5);
+  --al-haze: rgb(60 50 80 / .7);
+  --al-shore: rgb(46 52 92 / .8);
+  --al-sail: rgb(120 126 160 / .9);
+  --al-ferry: rgb(130 70 70 / .9);
+  --al-wall: rgb(80 86 126 / .85);
+  --al-street: rgb(60 64 104 / .7);
+  --al-bougainvillea: rgb(96 40 90 / .9);
+  --al-bougainvillea-deep: rgb(60 20 60 / .7);
+  --al-bark: rgb(30 26 40 / .9);
+  --al-lamp: rgb(255 226 150 / .95);
+  --al-tram: rgb(170 130 60 / .95);
+  --al-tram-top: rgb(110 110 140 / .85);
+  --al-cloth-a: rgb(110 50 70 / .9);
+  --al-cloth-b: rgb(150 150 176 / .9);
+  --al-cloth-c: rgb(60 76 130 / .9);
+  --al-cloth-d: rgb(130 110 70 / .9);
+  --al-cat: #0C0D16;
+  --al-cat-light: #6A6C80;
+}
+
+/* The tram climbs into place along its rails as the footer arrives. */
+.al-tram { position: absolute; inset: 0; }
+/* The tram rocks on its bogies. The whole drawing moves, never a part of it, so nothing is repainted. */
+.al-tram > svg { animation: al-bounce .5s ease-in-out infinite alternate; animation-play-state: var(--play); will-change: transform; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .al-tram {
+      animation: al-climb linear both;
+      animation-timeline: --land;
+      animation-range: entry 0% entry 100%;
+    }
+    /* Windows switch on one by one, each at its own point of the arrival. */
+    .al-window {
+      opacity: 0;
+      animation: al-switch linear both;
+      animation-timeline: --land;
+      animation-range: entry var(--on) entry calc(var(--on) + 4%);
+    }
+  }
+}
+@keyframes al-climb { from { translate: -52% 7%; } }
+@keyframes al-switch { to { opacity: 1; } }
+.al-window--sleeper { opacity: 0; animation: none; transition: opacity .5s ease; }
+.al-window--sleeper.is-lit { opacity: 1; }
+/* A lit window: the pane itself, and a faint halo of the same light round it. */
+.al-lights { mix-blend-mode: normal; }
+.al-lights rect { stroke-width: 3.2; stroke-opacity: .26; stroke-linejoin: round; paint-order: stroke; }
+.al-glow { mix-blend-mode: screen; animation: al-flicker 3s ease-in-out infinite; animation-play-state: var(--play); }
+@keyframes al-flicker { 0%, 100% { opacity: 1; } 40% { opacity: .9; } 60% { opacity: .96; } }
+
+/* Gulls cross the day sky now and then, low over the roofs, under the words. */
+.al-gulls {
+  position: absolute;
+  bottom: calc(var(--land) * .5);
+  left: 0;
+  width: 100px;
+  translate: -140px 0;
+  animation: al-fly 40s linear infinite 3s;
+  animation-play-state: var(--play);
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .al-gulls { opacity: 0; }
+@keyframes al-fly { 0% { translate: -140px 0; } 60%, 100% { translate: calc(100vw + 60px) -30px; } }
+
+.al-paper {
+  background: url("{{TEX_PAPER}}") 0 0 / 300px;
+  mix-blend-mode: soft-light;
+  opacity: .6;
+  transition: opacity var(--t-theme) ease;
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / .45), #000 300px);
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / .45), #000 300px);
+}
+[data-theme="night"] .al-paper { opacity: .2; }
+
+.al-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #FFFBEE;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+[data-theme="night"] .al-stars { opacity: .9; transition-delay: .6s; }
+.al-star { animation: al-twinkle 4.4s ease-in-out infinite var(--d); animation-play-state: var(--play); }
+@keyframes al-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* Life. Pivots are in each part's own drawing units. */
+:global .al-cloth { animation: al-cloth 2.8s ease-in-out infinite alternate var(--cloth-d, 0s); }
+:global .al-tail { transform-origin: 11px -2px; animation: al-tail 5s ease-in-out infinite; }
+:global .al-head { transform-origin: 2px -18px; animation: al-look 11s ease-in-out infinite 2s; }
+:global .al-ear  { transform-origin: -3px -31px; animation: al-twitch 6.2s ease-in-out infinite; }
+:global .al-spark { animation: al-spark 3.4s steps(1) infinite; }
+:global .al-gull-wing { transform-origin: 0 0; animation: al-flap 1.6s ease-in-out infinite alternate var(--gull-d, 0s); }
+:global .al-ferry-run { animation: al-ferry 90s ease-in-out infinite alternate; }
+:global .al-cloth, :global .al-tail, :global .al-head, :global .al-ear, :global .al-spark,
+:global .al-gull-wing, :global .al-ferry-run {
+  animation-play-state: var(--play, running);
+}
+@keyframes al-cloth  { from { rotate: -3deg; } to { rotate: 5deg; } }
+@keyframes al-bounce { to { translate: 0 -.6px; } }
+@keyframes al-tail   { 0%, 100% { rotate: 0deg; } 30% { rotate: 14deg; } 60% { rotate: -6deg; } }
+@keyframes al-look   { 0%, 30% { rotate: 0deg; } 38%, 60% { rotate: -12deg; } 68%, 100% { rotate: 0deg; } }
+@keyframes al-twitch { 0%, 88%, 100% { rotate: 0deg; } 91% { rotate: -18deg; } 94% { rotate: 6deg; } }
+@keyframes al-spark  { 0%, 92%, 100% { opacity: 0; } 94% { opacity: 1; } 96% { opacity: .2; } 97% { opacity: 1; } }
+@keyframes al-flap   { to { rotate: 18deg; } }
+@keyframes al-ferry  { from { translate: -520px 0; } to { translate: 60px 0; } }
+:global .al-gull-wing--r { animation-name: al-flap-r; }
+@keyframes al-flap-r { to { rotate: -18deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .al-gulls { display: none; }
+}

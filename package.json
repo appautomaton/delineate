@@ -22,7 +22,8 @@
     "memories": "node portraits/pieces/memories/build.ts",
     "memories-girl:segment": "node portraits/pieces/memories-girl/segment.ts",
     "memories-girl": "node portraits/pieces/memories-girl/build.ts",
-    "wavy-line-engraving": "node portraits/pieces/wavy-line-engraving/build.ts"
+    "wavy-line-engraving": "node portraits/pieces/wavy-line-engraving/build.ts",
+    "footers": "python3 -I footers/build.py footers/automaton.html"
   },
   "devDependencies": {
     "@huggingface/transformers": "4.3.0",

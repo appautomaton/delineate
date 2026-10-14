@@ -1,0 +1,653 @@
+<div class="world world--desert">
+  <div class="sky" aria-hidden="true">
+    <div class="sky-paint sky-paint--day"></div>
+    <div class="sky-paint sky-paint--night"></div>
+    <div class="sky-drift" data-sway="3">
+      <svg class="stars" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMin slice">{{STARS}}</svg>
+      <i class="meteor meteor--a"></i>
+      <i class="meteor meteor--b"></i>
+      <div class="clouds">
+        <svg class="cloud cloud--a" viewBox="0 0 220 72"><use href="#cloud-a"/></svg>
+        <svg class="cloud cloud--b" viewBox="0 0 140 56"><use href="#cloud-b"/></svg>
+        <svg class="cloud cloud--c" viewBox="0 0 220 72"><use href="#cloud-a"/></svg>
+      </div>
+      <svg class="birds" viewBox="0 0 72 30">
+        <g transform="translate(4 16)"><path class="wing" d="M0 0C4-4 7-4 9 0C11-4 14-4 18 0"/></g>
+        <g transform="translate(28 7) scale(.85)"><path class="wing wing--b" d="M0 0C4-4 7-4 9 0C11-4 14-4 18 0"/></g>
+        <g transform="translate(50 20) scale(.75)"><path class="wing wing--c" d="M0 0C4-4 7-4 9 0C11-4 14-4 18 0"/></g>
+      </svg>
+      <div class="orbit">
+        <div class="orb orb--sun">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="sun-bloom">
+                <stop offset="0" stop-color="#FFF6DD" stop-opacity=".95"/>
+                <stop offset=".2" stop-color="#FFE7AE" stop-opacity=".55"/>
+                <stop offset=".5" stop-color="#FFE2A6" stop-opacity=".16"/>
+                <stop offset="1" stop-color="#FFE2A6" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="100" fill="url(#sun-bloom)"/>
+            <circle cx="100" cy="100" r="21" fill="#FFF4D6"/>
+          </svg>
+        </div>
+        <div class="orb orb--moon">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="moon-halo">
+                <stop offset="0" stop-color="#F6DCA0" stop-opacity=".3"/>
+                <stop offset=".45" stop-color="#F6DCA0" stop-opacity=".08"/>
+                <stop offset="1" stop-color="#F6DCA0" stop-opacity="0"/>
+              </radialGradient>
+              <mask id="moon-cut">
+                <rect width="200" height="200" fill="#000"/>
+                <circle cx="100" cy="100" r="29" fill="#fff"/>
+                <circle cx="114" cy="87" r="27" fill="#000"/>
+              </mask>
+            </defs>
+            <circle cx="100" cy="100" r="100" fill="url(#moon-halo)"/>
+            <circle cx="100" cy="100" r="29" fill="#F5D99B" mask="url(#moon-cut)"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" aria-hidden="true">
+    <div class="land-anchor"></div>
+
+    <div class="depth depth--far" data-sway="4">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#far-art" filter="url(#f-paint)"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#far-art" filter="url(#f-paint)"/></svg>
+      </div>
+      <canvas class="wind" data-band="far"></canvas>
+    </div>
+
+    <div class="depth depth--mid" data-sway="9">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#mid-art" filter="url(#f-paint)"/></svg>
+        <div class="drift drift--mid"><i></i></div>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#mid-art" filter="url(#f-paint)"/></svg>
+        <div class="drift drift--mid"><i></i></div>
+      </div>
+      <canvas class="wind" data-band="mid"></canvas>
+    </div>
+
+    <div class="depth depth--ground" data-sway="16">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ground-art" filter="url(#f-paint)"/></svg>
+        <svg class="art shade" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#shadow-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#life-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ground-wind"/></svg>
+        <div class="drift drift--ground"><i></i><i></i></div>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ground-art" filter="url(#f-paint)"/></svg>
+        <svg class="art light" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#light-pool"/></svg>
+        <svg class="art shade" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#shadow-art"/></svg>
+        <svg class="art shade shade--lantern" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#lantern-shadow-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#life-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ground-wind"/></svg>
+        <svg class="art light" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#light-halo"/></svg>
+        <div class="drift drift--ground"><i></i><i></i></div>
+      </div>
+      <canvas class="wind" data-band="ground"></canvas>
+    </div>
+
+    <div class="depth depth--near" data-sway="28">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#near-art" filter="url(#f-paint)"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#near-life"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#near-art" filter="url(#f-paint)"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#near-life"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="texture texture--relief" aria-hidden="true"></div>
+  <div class="texture texture--curl" aria-hidden="true"></div>
+
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="cloud-a">
+        <path d="M18 68C4 68 2 50 18 48C20 34 38 28 50 36C56 18 82 12 96 26C108 10 138 10 148 30C162 22 182 28 184 44C202 42 212 56 202 68Z" fill="#FFFFFF" fill-opacity=".94"/>
+        <path d="M12 63C60 55 150 55 208 63L202 68H18Z" fill="#C9D3EC" fill-opacity=".9"/>
+      </g>
+      <g id="cloud-b">
+        <path d="M14 52C2 52 2 38 14 37C16 26 30 22 40 28C46 14 66 10 76 22C88 12 108 14 112 30C126 28 134 40 126 52Z" fill="#FFFFFF" fill-opacity=".94"/>
+        <path d="M8 48C40 42 100 42 132 48L126 52H14Z" fill="#C9D3EC" fill-opacity=".9"/>
+      </g>
+
+      <!-- Texture -->
+      <filter id="f-dust" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".62" numOctaves="1" seed="11" result="noise"/>
+        <feColorMatrix in="noise" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="speck"/>
+        <feComposite in="speck" in2="SourceAlpha" operator="arithmetic" k2="2" k3="1.2" k4="-1.5" result="density"/>
+        <feComponentTransfer in="density" result="dots"><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer>
+        <feColorMatrix in="SourceGraphic" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0 1" result="solid"/>
+        <feComposite in="solid" in2="dots" operator="in"/>
+      </filter>
+      <filter id="f-sand" x="-3%" y="-15%" width="106%" height="130%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="1" seed="21" result="noise"/>
+        <feColorMatrix in="noise" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 9 -5.2" result="spots"/>
+        <feColorMatrix in="SourceGraphic" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -.6 -.9 -.3 0 1.3" result="dark"/>
+        <feComposite in="spots" in2="dark" operator="arithmetic" k1="1.1" k2=".28" result="mask"/>
+        <feFlood flood-color="#1F0E35" flood-opacity=".34"/>
+        <feComposite in2="mask" operator="in"/>
+        <feComposite in2="SourceAlpha" operator="in" result="speckle"/>
+        <feMerge result="textured"><feMergeNode in="SourceGraphic"/><feMergeNode in="speckle"/></feMerge>
+        <feTurbulence type="fractalNoise" baseFrequency=".028" numOctaves="3" seed="4" result="warp"/>
+        <feDisplacementMap in="textured" in2="warp" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="f-paint" x="-2%" y="-2%" width="104%" height="104%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="1" seed="17" result="jitter"/>
+        <feDisplacementMap in="SourceGraphic" in2="jitter" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="f-fluff" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".13" numOctaves="2" seed="8" result="warp"/>
+        <feDisplacementMap in="SourceGraphic" in2="warp" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="f-fluff-s" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".3" numOctaves="2" seed="3" result="warp"/>
+        <feDisplacementMap in="SourceGraphic" in2="warp" scale="3.5" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="f-form" x="-15%" y="-15%" width="130%" height="130%">
+        <feGaussianBlur stdDeviation="4"/>
+      </filter>
+      <filter id="f-fur" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".08 .8" numOctaves="2" seed="5" result="noise"/>
+        <feColorMatrix in="noise" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.4 1.45" result="streak"/>
+        <feFlood flood-color="#2A1630" flood-opacity=".1"/>
+        <feComposite in2="streak" operator="in"/>
+        <feComposite in2="SourceAlpha" operator="in" result="fur"/>
+        <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="fur"/></feMerge>
+      </filter>
+      <filter id="f-soft" x="-10%" y="-10%" width="120%" height="120%">
+        <feGaussianBlur stdDeviation="1.4"/>
+      </filter>
+      <filter id="f-cast-day" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#6B68B0"/>
+        <feComposite in2="SourceAlpha" operator="in"/>
+        <feGaussianBlur stdDeviation="1.1"/>
+      </filter>
+      <filter id="f-cast-night" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#161232"/>
+        <feComposite in2="SourceAlpha" operator="in"/>
+        <feGaussianBlur stdDeviation="1.4"/>
+      </filter>
+      <filter id="f-cast-lantern" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#140A1C"/>
+        <feComposite in2="SourceAlpha" operator="in"/>
+        <feGaussianBlur stdDeviation="2.2"/>
+      </filter>
+      <filter id="f-streaks" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".0032 .028" numOctaves="3" seed="5"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+
+      <linearGradient id="g-dust-day" x2="0" y2="1">
+        <stop offset="0" stop-color="#ECCDA2" stop-opacity="0"/>
+        <stop offset="1" stop-color="#ECCDA2"/>
+      </linearGradient>
+      <linearGradient id="g-dust-night" x2="0" y2="1">
+        <stop offset="0" stop-color="#7C76A2" stop-opacity="0"/>
+        <stop offset="1" stop-color="#7C76A2"/>
+      </linearGradient>
+      <linearGradient id="g-haze-day" x2="0" y2="1">
+        <stop offset="0" stop-color="#F6E7CF" stop-opacity=".3"/>
+        <stop offset="1" stop-color="#F6E7CF" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="g-haze-night" x2="0" y2="1">
+        <stop offset="0" stop-color="#6E80CC" stop-opacity=".3"/>
+        <stop offset="1" stop-color="#6E80CC" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="g-far-day" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="0" y2="380">
+        <stop offset="0" stop-color="#EBCBA3"/>
+        <stop offset="1" stop-color="#DDB489"/>
+      </linearGradient>
+      <linearGradient id="g-far-night" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="0" y2="380">
+        <stop offset="0" stop-color="#8E88AA"/>
+        <stop offset="1" stop-color="#726A8E"/>
+      </linearGradient>
+      <linearGradient id="g-mid-day" gradientUnits="userSpaceOnUse" x1="0" y1="340" x2="0" y2="480">
+        <stop offset="0" stop-color="#F2C68F"/>
+        <stop offset="1" stop-color="#DBA672"/>
+      </linearGradient>
+      <linearGradient id="g-mid-night" gradientUnits="userSpaceOnUse" x1="0" y1="340" x2="0" y2="480">
+        <stop offset="0" stop-color="#8A7880"/>
+        <stop offset="1" stop-color="#625464"/>
+      </linearGradient>
+      <linearGradient id="g-ground-day" gradientUnits="userSpaceOnUse" x1="0" y1="448" x2="0" y2="580">
+        <stop offset="0" stop-color="#E6B67E"/>
+        <stop offset="1" stop-color="#F2CF99"/>
+      </linearGradient>
+      <linearGradient id="g-ground-night" gradientUnits="userSpaceOnUse" x1="0" y1="448" x2="0" y2="580">
+        <stop offset="0" stop-color="#6C5C68"/>
+        <stop offset="1" stop-color="#584858"/>
+      </linearGradient>
+      <radialGradient id="g-glow-pool">
+        <stop offset="0" stop-color="#FFC46A" stop-opacity=".95"/>
+        <stop offset=".3" stop-color="#FFB352" stop-opacity=".5"/>
+        <stop offset=".65" stop-color="#FFA040" stop-opacity=".14"/>
+        <stop offset="1" stop-color="#FFA040" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="g-glow-halo">
+        <stop offset="0" stop-color="#FFCB80" stop-opacity=".9"/>
+        <stop offset=".3" stop-color="#FFB95C" stop-opacity=".34"/>
+        <stop offset="1" stop-color="#FFB24D" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="g-glow-core">
+        <stop offset="0" stop-color="#FFF2CC"/>
+        <stop offset=".35" stop-color="#FFDFA0" stop-opacity=".5"/>
+        <stop offset="1" stop-color="#FFDFA0" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- Terrain -->
+      <linearGradient id="g-face" gradientUnits="userSpaceOnUse" x1="0" y1="350" x2="0" y2="490">
+        <stop offset="0" stop-color="#fff"/>
+        <stop offset=".55" stop-color="#fff" stop-opacity=".8"/>
+        <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+      <mask id="m-face" maskUnits="userSpaceOnUse" x="-100" y="300" width="1800" height="240">
+        <rect x="-100" y="300" width="1800" height="240" fill="url(#g-face)"/>
+      </mask>
+      <path id="far-dune" d="M-60 336C80 324 170 316 262 320C344 324 388 334 456 330C546 324 606 304 704 306C794 308 846 324 934 322C1024 320 1086 304 1184 308C1274 312 1334 328 1424 324C1504 320 1556 312 1660 314L1660 620-60 620Z"/>
+      <path id="fg" d="M-60 472C180 452 400 444 620 450C750 454 860 456 990 452C1190 446 1400 444 1660 452L1660 620-60 620Z"/>
+      <clipPath id="clip-far"><use href="#far-dune"/></clipPath>
+      <clipPath id="clip-fg"><use href="#fg"/></clipPath>
+      <path id="ripples" d="{{RIPPLES}}"/>
+
+      <!-- Dromedary, standing, facing left. Ground at y = 300. The head is separate so it can move. -->
+      <path id="c-body" d="M23 123C22 140 26 160 36 176C46 190 64 198 84 202C104 207 140 208 172 204C186 202 196 196 204 192C212 196 218 206 222 220L244 224C250 206 252 186 250 166C249 150 246 138 240 130C234 124 226 120 218 118C206 112 196 98 186 88C176 80 160 76 146 80C132 86 122 100 112 116C100 128 88 142 74 150C62 156 52 150 44 138C36 126 34 108 30 96C24 98 20 106 21 114C21.4 118 22.3 121 23 123Z"/>
+      <path id="c-head" d="M30 96C28 90 24 87 19 88C12 89 6 91-2 94C-10 97-18 100-24 103C-29 105-31 110-28 114C-26 117-22 118-19 118C-16 121-11 122-6 121C2 120 10 119 16 116C21 114 24 117 23 123C28 121 34 113 35 105C35.5 100 33 97 30 96Z"/>
+      <path id="c-ear" d="M25.5 91.5C25 86.5 27.6 83.4 30.8 84.2C32.8 85.8 31.4 89.4 28.4 92.4Z"/>
+      <path id="c-tail" d="M240 132C248 146 250 168 247 188C246 196 241 198 240 192C242 172 241 152 236 136Z"/>
+      <path id="c-leg-front" d="M96 188C98 206 100 222 100 236C97 240 97 250 100 254C102 264 103 276 103 284C101 290 94 294 88 296C84 297 84 300 88 300L114 300C117 300 117 296 114 293C112 290 111 287 111 284C111 274 111 264 112 256C116 252 116 242 113 238C115 222 120 206 124 192Z"/>
+      <path id="c-leg-hind" d="M220 214C222 226 224 236 226 244C226 258 226 272 226 284C224 290 218 294 212 296C208 297 208 300 212 300L238 300C241 300 241 296 238 293C236 290 235 287 235 284C235 272 236 260 238 250C244 246 247 238 245 232C246 222 248 214 250 200Z"/>
+      <path id="c-blanket" d="M120 106C132 90 150 78 166 78C184 78 200 88 212 104C214 122 216 140 218 156C186 164 152 164 118 156C118 138 119 122 120 106Z"/>
+      <path id="c-hem" d="M118 156C152 164 186 164 218 156"/>
+      <path id="c-bag" d="M187 121L229 126L227 163C214 167 200 167 186 163Z"/>
+      <path id="tassel" d="M0 0v5M-2.6 5h5.2l1.6 12c-2.2 1.7-6.2 1.7-8.4 0Z"/>
+      <clipPath id="c-clip-body"><use href="#c-body"/></clipPath>
+      <clipPath id="c-clip-head"><use href="#c-head"/></clipPath>
+      <clipPath id="c-clip-legF"><use href="#c-leg-front"/></clipPath>
+      <clipPath id="c-clip-legH"><use href="#c-leg-hind"/></clipPath>
+      <clipPath id="c-clip-blanket"><use href="#c-blanket"/></clipPath>
+      <clipPath id="c-clip-bag"><use href="#c-bag"/></clipPath>
+
+      <g id="camel">
+        <g filter="url(#f-fur)">
+          <g style="fill:var(--c-far)">
+            <use href="#c-leg-front" x="16" y="-1"/>
+            <use href="#c-leg-hind" x="-15" y="-1"/>
+          </g>
+        </g>
+        <g class="c-tail">
+          <use href="#c-tail" style="fill:var(--c-mid)"/>
+          <ellipse cx="244.5" cy="194" rx="3.4" ry="5.4" style="fill:var(--c-hair)"/>
+        </g>
+        <g filter="url(#f-fur)">
+          <g clip-path="url(#c-clip-legF)">
+            <use href="#c-leg-front" style="fill:var(--c-shade)"/>
+            <use href="#c-leg-front" x="-4" style="fill:var(--c-base)"/>
+            <path d="M94 239C98 236 112 236 116 240C116 248 112 254 104 254C98 254 94 248 94 239Z" style="fill:var(--c-mid)" opacity=".55"/>
+            <path d="M84 290C92 292 106 292 118 290L118 302 84 302Z" style="fill:var(--c-mid)" opacity=".6"/>
+          </g>
+          <g clip-path="url(#c-clip-legH)">
+            <use href="#c-leg-hind" style="fill:var(--c-shade)"/>
+            <use href="#c-leg-hind" x="-4" style="fill:var(--c-base)"/>
+            <path d="M224 238C230 234 244 234 248 240C246 248 240 252 232 252C226 250 224 246 224 238Z" style="fill:var(--c-mid)" opacity=".55"/>
+            <path d="M208 290C216 292 230 292 242 290L242 302 208 302Z" style="fill:var(--c-mid)" opacity=".6"/>
+          </g>
+          <g clip-path="url(#c-clip-body)">
+            <use href="#c-body" style="fill:var(--c-lit)"/>
+            <use href="#c-body" x="2.5" y="3" style="fill:var(--c-base)"/>
+            <path d="M60 192C110 202 160 202 206 190C228 184 242 168 252 146L272 146 272 240 40 240Z" style="fill:var(--c-shade)" opacity=".85" filter="url(#f-form)"/>
+            <path d="M236 118C250 140 256 170 252 200L272 200 272 110Z" style="fill:var(--c-shade)" opacity=".7" filter="url(#f-form)"/>
+            <path d="M24 160C36 186 60 198 92 204L92 224 10 224Z" style="fill:var(--c-mid)" opacity=".6" filter="url(#f-form)"/>
+            <path d="M84 146C68 158 52 154 44 140" fill="none" style="stroke:var(--c-mid)" stroke-width="6" opacity=".5" filter="url(#f-soft)"/>
+            <path d="M92 206C124 210 164 209 198 199" fill="none" style="stroke:var(--c-reflect)" stroke-width="3.5" opacity=".7" filter="url(#f-soft)"/>
+          </g>
+        </g>
+
+        <path d="M170 160C170 176 169 192 168 206" fill="none" style="stroke:var(--wood)" stroke-width="3.5"/>
+        <g clip-path="url(#c-clip-blanket)">
+          <use href="#c-blanket" style="fill:var(--madder)"/>
+          <g fill="none">
+            <use href="#c-hem" y="-3" style="stroke:var(--indigo)" stroke-width="5"/>
+            <use href="#c-hem" y="-8.5" style="stroke:var(--cream)" stroke-width="1.1"/>
+            <use href="#c-hem" y="-12.5" style="stroke:var(--gold)" stroke-width="2.6" stroke-dasharray="2 2.6"/>
+            <use href="#c-hem" y="-16.5" style="stroke:var(--cream)" stroke-width="1.1"/>
+            <use href="#c-hem" y="-25" style="stroke:var(--indigo)" stroke-width="7"/>
+            <use href="#c-hem" y="-25" style="stroke:var(--cream)" stroke-width="1.4" stroke-dasharray="1.4 2.8"/>
+            <use href="#c-hem" y="-34" style="stroke:var(--cream)" stroke-width="1"/>
+            <use href="#c-hem" y="-38" style="stroke:var(--gold)" stroke-width="1"/>
+          </g>
+          <path d="M120 106C132 90 150 78 166 78C184 78 200 88 212 104" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="5"/>
+          <path d="M96 140C140 156 190 150 236 120L236 184 96 184Z" fill="#1A0E33" opacity=".32" filter="url(#f-form)"/>
+        </g>
+        <use href="#c-hem" y="3" fill="none" style="stroke:var(--cream)" stroke-width="5" stroke-dasharray="1 1.6"/>
+        <g style="fill:var(--madder); stroke:var(--madder)" stroke-width="1.1">
+          <use class="tassel" href="#tassel" x="119" y="156" style="transform-origin:119px 156px; --tassel-delay:-.4s"/>
+        </g>
+        <g clip-path="url(#c-clip-bag)">
+          <use href="#c-bag" style="fill:var(--indigo)"/>
+          <path d="M186 132L230 136M186 154L230 157" fill="none" style="stroke:var(--madder)" stroke-width="2.6"/>
+          <path d="M186 145l4.4-5 4.4 5 4.4-5 4.4 5 4.4-5 4.4 5 4.4-5 4.4 5 4.4-5 4.4 5" fill="none" style="stroke:var(--cream)" stroke-width="1.1"/>
+          <path d="M186 121L230 126L230 131C216 130 200 129 186 128Z" fill="#000" opacity=".22"/>
+          <path d="M200 120L210 168" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="10" filter="url(#f-soft)"/>
+        </g>
+        <g style="fill:var(--madder); stroke:var(--madder)" stroke-width="1.1">
+          <use class="tassel" href="#tassel" x="188" y="163" style="transform-origin:188px 163px; --tassel-delay:-1.3s"/>
+          <use class="tassel" href="#tassel" x="226.5" y="163" style="transform-origin:226.5px 163px; --tassel-delay:-.8s"/>
+          <use class="tassel" href="#tassel" x="218" y="156" style="transform-origin:218px 156px; --tassel-delay:-2s"/>
+        </g>
+        <path d="M134 92C150 80 182 80 198 92C182 88 152 88 134 96Z" style="fill:var(--cream)" filter="url(#f-fluff-s)"/>
+        <g fill="none" style="stroke:var(--wood)" stroke-width="3.2" stroke-linecap="round">
+          <path d="M136 94C135 86 135 80 136 74"/>
+          <path d="M196 94C197 87 198 81 199 76"/>
+        </g>
+        <g style="fill:var(--wood)">
+          <circle cx="136" cy="71.4" r="2.8"/><circle cx="199.2" cy="73.4" r="2.8"/>
+          <path d="M133 75.4h6M196.2 77.4h6" style="stroke:var(--wood)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <path d="M136 76C132 90 130 102 129 112" fill="none" style="stroke:var(--wood)" stroke-width="1.2"/>
+        <path d="M129 112C123 120 120 132 122 140C124 148 134 148 136 140C138 132 135 120 129 112Z" style="fill:var(--wood)"/>
+        <path d="M125 128C124 133 124 137 125 140" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1.6" stroke-linecap="round"/>
+
+        <g class="c-look">
+          <g filter="url(#f-fur)" clip-path="url(#c-clip-head)">
+            <use href="#c-head" style="fill:var(--c-lit)"/>
+            <use href="#c-head" x="2.5" y="3" style="fill:var(--c-base)"/>
+            <path d="M-26 117C-8 123 8 122 24 115L28 132-26 132Z" style="fill:var(--c-mid)" opacity=".75" filter="url(#f-soft)"/>
+            <path d="M24 100C30 106 32 116 26 124L40 124 40 96Z" style="fill:var(--c-mid)" opacity=".5" filter="url(#f-soft)"/>
+          </g>
+          <use class="c-ear" href="#c-ear" style="fill:var(--c-ear)"/>
+          <g class="c-blink">
+            <path d="M2.4 97.2C4.6 95.6 8.4 95.6 10.6 97.4" fill="none" style="stroke:var(--c-mid)" stroke-width="1.6" stroke-linecap="round"/>
+            <ellipse cx="6.6" cy="98.6" rx="2.1" ry="1.35" style="fill:var(--c-dark)"/>
+          </g>
+          <path d="M-23 105.5C-21 104.5-19 105-18 106.8M-27 114C-21 115.5-16 117-11 119.5" fill="none" style="stroke:var(--c-dark)" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+          <g fill="none" style="stroke:var(--madder)" stroke-width="2" stroke-linecap="round">
+            <path d="M-21 101C-20 108-17 115-12 121"/>
+            <path d="M-19 108C-4 106 12 101 26 91"/>
+          </g>
+          <circle cx="-19.5" cy="109" r="2.2" style="fill:var(--gold)"/>
+          <path class="rope" d="M-12 121C-16 160-8 200 0 238C6 266 2 290-12 297C-26 302-46 300-60 298" fill="none" style="stroke:var(--madder)" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <!-- Dromedary, couched, facing left. Ground at y = 300. -->
+      <path id="k-body" d="M23 177C22 196 28 216 40 232C50 246 62 256 70 266C62 272 58 282 62 290C66 298 74 300 84 300L222 300C236 300 246 296 248 288C250 280 246 272 240 268C248 256 250 238 246 222C242 210 234 202 224 198C212 186 196 170 176 166C160 162 146 166 136 176C126 186 114 196 100 202C88 208 74 210 62 204C50 198 42 186 38 172C34 162 32 156 30 150C24 152 20 160 21 168C21.4 172 22.3 175 23 177Z"/>
+      <path id="k-head" d="M30 150C28 144 24 141 19 142C12 143 6 145-2 148C-10 151-18 154-24 157C-29 159-31 164-28 168C-26 171-22 172-19 172C-16 175-11 176-6 175C2 174 10 173 16 170C21 168 24 171 23 177C28 175 34 167 35 159C35.5 154 33 151 30 150Z"/>
+      <path id="k-cloth" d="M128 180C140 167 164 159 186 164C202 168 214 180 222 194L228 230C200 238 166 238 134 230Z"/>
+      <path id="k-hem" d="M134 230C166 238 200 238 228 230"/>
+      <clipPath id="k-clip-body"><use href="#k-body"/></clipPath>
+      <clipPath id="k-clip-head"><use href="#k-head"/></clipPath>
+      <clipPath id="k-clip-cloth"><use href="#k-cloth"/></clipPath>
+
+      <g id="couched">
+        <g filter="url(#f-fur)" clip-path="url(#k-clip-body)">
+          <use href="#k-body" style="fill:var(--c-lit)"/>
+          <use href="#k-body" x="2.5" y="3" style="fill:var(--c-base)"/>
+          <path d="M40 276C100 294 180 296 256 278L270 320 20 320Z" style="fill:var(--c-shade)" opacity=".85" filter="url(#f-form)"/>
+          <path d="M234 204C250 236 252 270 238 304L272 304 272 196Z" style="fill:var(--c-shade)" opacity=".75" filter="url(#f-form)"/>
+          <path d="M24 214C36 240 54 256 74 264L74 284 10 284Z" style="fill:var(--c-mid)" opacity=".55" filter="url(#f-form)"/>
+          <path d="M84 200C68 212 52 208 44 194" fill="none" style="stroke:var(--c-mid)" stroke-width="6" opacity=".5" filter="url(#f-soft)"/>
+          <path d="M58 292C74 283 112 283 138 289C143 292 141 300 134 300L66 300C59 300 55 297 58 292Z" style="fill:var(--c-reflect)"/>
+          <path d="M61 295C77 286 115 286 141 292C146 295 144 303 137 303L69 303C62 303 58 300 61 295Z" style="fill:var(--c-base)"/>
+          <path d="M62 288C80 282 116 282 140 288" fill="none" style="stroke:var(--c-shade)" stroke-width="3.5" opacity=".45" filter="url(#f-soft)"/>
+        </g>
+        <g clip-path="url(#k-clip-cloth)">
+          <use href="#k-cloth" style="fill:var(--wool)"/>
+          <g fill="none">
+            <use href="#k-hem" y="-4" style="stroke:var(--indigo)" stroke-width="5"/>
+            <use href="#k-hem" y="-10" style="stroke:var(--madder)" stroke-width="2"/>
+            <use href="#k-hem" y="-14" style="stroke:var(--indigo)" stroke-width="1.6" stroke-dasharray="2 2.6"/>
+            <use href="#k-hem" y="-26" style="stroke:var(--indigo)" stroke-width="1.2"/>
+            <use href="#k-hem" y="-40" style="stroke:var(--madder)" stroke-width="1.2"/>
+          </g>
+          <path d="M104 206C150 226 204 218 236 196L236 246 104 246Z" fill="#1A0E33" opacity=".3" filter="url(#f-form)"/>
+        </g>
+        <use href="#k-hem" y="3" fill="none" style="stroke:var(--wool)" stroke-width="5" stroke-dasharray="1 1.6"/>
+        <g class="k-doze">
+          <g filter="url(#f-fur)" clip-path="url(#k-clip-head)">
+            <use href="#k-head" style="fill:var(--c-lit)"/>
+            <use href="#k-head" x="2.5" y="3" style="fill:var(--c-base)"/>
+            <path d="M-26 171C-8 177 8 176 24 169L28 186-26 186Z" style="fill:var(--c-mid)" opacity=".75" filter="url(#f-soft)"/>
+            <path d="M24 154C30 160 32 170 26 178L40 178 40 150Z" style="fill:var(--c-mid)" opacity=".5" filter="url(#f-soft)"/>
+          </g>
+          <use class="k-ear" href="#c-ear" y="54" style="fill:var(--c-ear)"/>
+          <path d="M3 152.4C5 154 8.6 154 10.6 152.4" fill="none" style="stroke:var(--c-dark)" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M-23 159.5C-21 158.5-19 159-18 160.8M-27 168C-21 169.5-16 171-11 173.5" fill="none" style="stroke:var(--c-dark)" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+        </g>
+      </g>
+
+      <!-- Alpaca, facing right. Ground at y = 300. Colours come from --fl, --fb, --fs, --lg, --lf, --fc, --dk. -->
+      <path id="a-body" d="M24 226C22 210 34 200 52 200L92 198C108 198 118 208 118 224C118 240 110 252 94 254L46 254C32 254 24 242 24 226Z"/>
+      <path id="a-neck" d="M88 214C90 194 96 176 100 162C103 154 109 151 116 152C123 153 127 159 126 167C125 183 121 199 118 216Z"/>
+      <path id="a-thighs" d="M96 240C96 235 112 235 112 242L110 266C108 270 100 270 98 266ZM30 238C30 232 50 232 50 240L48 266C46 270 36 270 34 266Z"/>
+      <path id="a-tail" d="M26 216C18 214 14 206 17 199C22 200 27 206 30 212Z"/>
+      <path id="a-head" d="M101 152C101 144 108 138 116 139C124 140 130 146 136 151C141 154 145 157 145 162C145 167 141 170 135 170C128 170 122 170 118 168C110 166 102 160 101 152Z"/>
+      <path id="a-ear-near" d="M106 143C102 135 102 126 106 119C110 123 111 133 110 142Z"/>
+      <path id="a-ear-far" d="M114 141C113 133 115 125 120 120C122 126 121 134 118 142Z"/>
+      <path id="a-leg-f" d="M99 244L110 244C110 262 108 278 108 289C108 293 111 295 115 296C118 297 117 300 113 300L101 300C100 296 100 291 100 285C100 272 99 258 99 244Z"/>
+      <path id="a-leg-h" d="M34 244L46 244C47 256 47 266 45 274C44 280 44 288 45 293C47 295 50 296 50 298C50 300 47 300 45 300L37 300C37 294 37 288 37 282C37 272 36 260 34 244Z"/>
+      <path id="a-curls" d="{{CURLS}}"/>
+      <clipPath id="a-clip-fleece"><use href="#a-body"/><use href="#a-neck"/><use href="#a-thighs"/><use href="#a-tail"/></clipPath>
+      <clipPath id="a-clip-rest"><use href="#a-body" y="40"/><use href="#a-neck" y="40"/><use href="#a-tail" y="40"/></clipPath>
+      <clipPath id="a-clip-head"><use href="#a-head"/></clipPath>
+      <clipPath id="a-clip-legF"><use href="#a-leg-f"/></clipPath>
+      <clipPath id="a-clip-legH"><use href="#a-leg-h"/></clipPath>
+
+      <g id="a-head-art">
+        <g class="a-look">
+          <g class="a-ear-f">
+            <use href="#a-ear-far" style="fill:var(--fs)"/>
+            <circle cx="117.6" cy="130.4" r="2.2" style="fill:var(--madder)"/>
+          </g>
+          <g clip-path="url(#a-clip-head)">
+            <rect x="96" y="134" width="54" height="40" style="fill:var(--fl)"/>
+            <use href="#a-head" x="2" y="2" style="fill:var(--fc)"/>
+            <ellipse cx="141" cy="161" rx="7" ry="5.5" style="fill:var(--fs)" opacity=".3"/>
+            <path d="M108 164C120 170 134 172 150 164L150 178 100 178Z" style="fill:var(--fs)" opacity=".7"/>
+          </g>
+          <g class="a-ear-n">
+            <use href="#a-ear-near" style="fill:var(--fb)"/>
+            <path d="M106.8 138C105.4 132 105.6 127 107 123" fill="none" style="stroke:var(--fs)" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>
+            <path d="M103.6 135l-1.2 7M105 135.4l-.2 7.4M106.6 135l.8 6.6" fill="none" style="stroke:var(--madder)" stroke-width=".9" stroke-linecap="round"/>
+            <circle cx="104.8" cy="133" r="2.7" style="fill:var(--madder)"/>
+            <circle cx="108.8" cy="131.4" r="2.2" style="fill:var(--gold)"/>
+          </g>
+          <g filter="url(#f-fluff-s)"><ellipse cx="111" cy="143" rx="10" ry="6" style="fill:var(--fl)"/></g>
+          <g class="a-blink">
+            <ellipse cx="125" cy="151" rx="2.8" ry="3" style="fill:var(--dk)"/>
+            <circle cx="125.9" cy="150" r=".85" fill="#FFF6E6"/>
+            <path d="M121.8 148.4C123.4 147 126.2 146.8 128 148" fill="none" style="stroke:var(--dk)" stroke-width=".9" stroke-linecap="round"/>
+          </g>
+          <path d="M141.5 157.5C143 157 144.5 158 144.6 159.6M134 166.2C137.5 167 140.5 166.5 143 164.6" fill="none" style="stroke:var(--dk)" stroke-width="1.2" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <g id="alpaca">
+        <g style="fill:var(--lf)"><use href="#a-leg-f" x="-9" y="-3"/><use href="#a-leg-h" x="10" y="-3"/></g>
+        <g clip-path="url(#a-clip-legF)"><use href="#a-leg-f" style="fill:var(--lf)"/><use href="#a-leg-f" x="-3" style="fill:var(--lg)"/></g>
+        <g clip-path="url(#a-clip-legH)"><use href="#a-leg-h" style="fill:var(--lf)"/><use href="#a-leg-h" x="-3" style="fill:var(--lg)"/></g>
+        <g filter="url(#f-fluff)">
+          <g clip-path="url(#a-clip-fleece)">
+            <rect x="0" y="140" width="150" height="140" style="fill:var(--fl)"/>
+            <g transform="translate(3 2.5)" style="fill:var(--fb)"><use href="#a-body"/><use href="#a-neck"/><use href="#a-thighs"/><use href="#a-tail"/></g>
+            <use href="#a-curls" fill="none" style="stroke:var(--fs)" stroke-width=".9" opacity=".55"/>
+            <path d="M16 234C48 252 92 250 126 226L136 226 136 280 6 280ZM121 160C125 182 123 202 119 222L136 222 136 160Z" style="fill:var(--fs)" opacity=".85" filter="url(#f-form)"/>
+          </g>
+        </g>
+        <path d="M91.5 201C101 206 113 206 123 201" fill="none" style="stroke:var(--madder)" stroke-width="3.6" stroke-linecap="round"/>
+        <path d="M92 201.2C101 205.6 113 205.6 122.6 201.2" fill="none" style="stroke:var(--gold)" stroke-width=".9" stroke-dasharray="1.4 1.8"/>
+        <use href="#a-head-art"/>
+      </g>
+
+      <g id="alpaca-rest">
+        <g filter="url(#f-fluff)">
+          <g clip-path="url(#a-clip-rest)">
+            <rect x="0" y="180" width="150" height="130" style="fill:var(--fl)"/>
+            <g transform="translate(3 42.5)" style="fill:var(--fb)"><use href="#a-body"/><use href="#a-neck"/><use href="#a-tail"/></g>
+            <use href="#a-curls" y="40" fill="none" style="stroke:var(--fs)" stroke-width=".9" opacity=".55"/>
+            <path d="M16 274C48 292 92 290 126 266L136 266 136 320 6 320ZM121 200C125 222 123 242 119 262L136 262 136 200Z" style="fill:var(--fs)" opacity=".85" filter="url(#f-form)"/>
+          </g>
+        </g>
+        <path d="M92 287C100 282 116 284 124 290C128 294 124 298 118 298L96 298C90 298 88 291 92 287Z" style="fill:var(--lg)"/>
+        <path d="M94 289C100 286 112 287 118 291" fill="none" style="stroke:var(--fs)" stroke-width="1.2" opacity=".6"/>
+        <use href="#a-head-art" y="40"/>
+      </g>
+
+      <!-- Brass lantern. Base centre at the origin. -->
+      <g id="lantern">
+        <path d="M-7.5 0h15l-1.6-3.2H-5.9Z" style="fill:var(--brass-dark)"/>
+        <path d="M-6 -3.2L-5 -19H5L6 -3.2Z" style="fill:var(--glass)"/>
+        <path class="flame" d="M-3 -9C-3 -12 0 -15.5 0 -15.5S3 -12 3 -9C3 -7 1.6-6 0-6S-3-7-3-9Z" style="fill:var(--flame); opacity:var(--flame-o)"/>
+        <path d="M-6 -3.2L-5 -19M0 -3.2V-19M6 -3.2L5 -19M-5.6 -11H5.6" fill="none" style="stroke:var(--brass)" stroke-width=".9"/>
+        <path d="M-6.6 -19C-6.2 -24.6 -2.4 -27.6 0 -31C2.4 -27.6 6.2 -24.6 6.6 -19Z" style="fill:var(--brass)"/>
+        <path d="M-4.6 -20.4C-4.2 -23.6 -2 -26 -.4 -28" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".9" stroke-linecap="round"/>
+        <g style="fill:var(--brass-dark)"><circle cx="-2.4" cy="-22" r=".7"/><circle cx="0" cy="-24.4" r=".7"/><circle cx="2.4" cy="-22" r=".7"/></g>
+        <circle cy="-33.2" r="2" fill="none" style="stroke:var(--brass)" stroke-width="1"/>
+      </g>
+
+      <!-- Depth planes: still layers -->
+      <g id="far-art">
+        <rect x="-60" y="232" width="1720" height="124" style="fill:var(--dust-fill)" filter="url(#f-dust)"/>
+        <use href="#far-dune" style="fill:var(--far-fill)" filter="url(#f-sand)"/>
+        <rect x="-60" y="296" width="1720" height="124" style="fill:var(--haze-fill)" clip-path="url(#clip-far)"/>
+        <path d="M-60 352C60 344 140 338 230 342C320 346 380 360 470 356C560 352 640 334 740 336C840 338 900 352 1000 350C1100 348 1180 334 1280 338C1380 342 1460 356 1560 352C1600 350 1630 348 1660 348L1660 620-60 620Z" style="fill:var(--far2)" filter="url(#f-sand)"/>
+      </g>
+
+      <g id="mid-art" filter="url(#f-sand)">
+        <path d="M-60 400C60 382 168 360 288 356C360 354 420 368 480 392C560 424 640 452 720 462L720 620-60 620Z" style="fill:var(--mid-lit-fill)"/>
+        <path d="M288 356C360 354 420 368 480 392C560 424 640 452 720 462L720 486C610 482 500 476 418 472C392 446 380 418 352 394C334 378 312 364 288 356Z" style="fill:var(--mid-shade)" mask="url(#m-face)"/>
+        <path d="M860 476C980 458 1110 404 1226 368C1276 352 1310 344 1342 344C1410 346 1470 360 1530 380C1580 396 1620 404 1660 408L1660 620 860 620Z" style="fill:var(--mid-lit-fill)"/>
+        <path d="M1342 344C1410 346 1470 360 1530 380C1580 396 1620 404 1660 408L1660 486C1600 482 1540 478 1484 476C1462 446 1446 412 1418 386C1396 366 1370 352 1342 344Z" style="fill:var(--mid-shade)" mask="url(#m-face)"/>
+        <g fill="none" stroke-linecap="round" style="stroke:var(--crest)">
+          <path d="M288 356C312 364 334 378 352 394C380 418 392 446 418 472" stroke-width="1.8" opacity=".8"/>
+          <path d="M1342 344C1370 352 1396 366 1418 386C1446 412 1462 446 1484 476" stroke-width="1.8" opacity=".8"/>
+          <path d="M110 374C170 362 236 354 288 356" stroke-width="1.3" opacity=".45"/>
+          <path d="M1210 373C1262 354 1306 344 1342 344" stroke-width="1.3" opacity=".45"/>
+        </g>
+      </g>
+
+      <g id="ground-art">
+        <use href="#fg" style="fill:var(--ground-fill)" filter="url(#f-sand)"/>
+        <rect x="-60" y="430" width="1720" height="190" filter="url(#f-streaks)" clip-path="url(#clip-fg)" style="mix-blend-mode:soft-light" opacity=".5"/>
+        <g clip-path="url(#clip-fg)" fill="none" stroke-width="1.1" stroke-linecap="round">
+          <use href="#ripples" y="1.6" style="stroke:var(--ripple-light)"/>
+          <use href="#ripples" style="stroke:var(--ripple-dark)"/>
+        </g>
+        <!-- The caravan sits on the centre line so narrow screens keep every animal. -->
+        <g transform="translate(-52 0)">
+          <path d="{{PRINTS}}" style="fill:var(--print)"/>
+          <path d="{{PEBBLES}}" style="fill:var(--pebble)"/>
+          <path d="{{PEBBLE_LIGHTS}}" style="fill:var(--pebble-lit)"/>
+        </g>
+      </g>
+
+      <g id="near-art">
+        <g filter="url(#f-sand)">
+          <path d="M-60 503C100 493 240 501 350 525C410 538 452 553 470 620L-60 620Z" style="fill:var(--corner-rim)"/>
+          <path d="M-60 507C100 497 240 505 350 529C410 542 452 557 470 620L-60 620Z" style="fill:var(--corner)"/>
+          <path d="M1660 509C1490 503 1350 515 1250 541C1220 550 1200 563 1190 620L1660 620Z" style="fill:var(--corner-rim)"/>
+          <path d="M1660 513C1490 507 1350 519 1250 545C1220 554 1200 567 1190 620L1660 620Z" style="fill:var(--corner)"/>
+        </g>
+      </g>
+
+      <!-- Depth planes: live layers -->
+
+      <g id="shadow-art" data-still>
+        <g transform="translate(-52 0)">
+          <g style="transform:matrix(1, 0, calc(-1 * var(--cast-a)), calc(-1 * var(--cast-b)), calc(var(--cast-a) * 460), calc((1 + var(--cast-b)) * 460))">
+            <use href="#couched" transform="translate(1050 244) scale(.72)" style="filter:var(--cast-filter)"/>
+          </g>
+          <g style="transform:matrix(1, 0, calc(-1 * var(--cast-a)), calc(-1 * var(--cast-b)), calc(var(--cast-a) * 474), calc((1 + var(--cast-b)) * 474))">
+            <use href="#camel" transform="translate(767 204) scale(.9)" style="filter:var(--cast-filter)"/>
+          </g>
+          <g style="transform:matrix(1, 0, calc(-1 * var(--cast-a)), calc(-1 * var(--cast-b)), calc(var(--cast-a) * 482), calc((1 + var(--cast-b)) * 482))">
+            <use href="#alpaca-rest" transform="translate(480 272) scale(.7)" style="filter:var(--cast-filter)"/>
+          </g>
+          <g style="transform:matrix(1, 0, calc(-1 * var(--cast-a)), calc(-1 * var(--cast-b)), calc(var(--cast-a) * 492), calc((1 + var(--cast-b)) * 492))">
+            <use href="#lantern" transform="translate(710 492) scale(1.5)" style="filter:var(--cast-filter)"/>
+          </g>
+          <g style="transform:matrix(1, 0, calc(-1 * var(--cast-a)), calc(-1 * var(--cast-b)), calc(var(--cast-a) * 494), calc((1 + var(--cast-b)) * 494))">
+            <use href="#alpaca" transform="translate(572 260) scale(.78)" style="filter:var(--cast-filter)"/>
+          </g>
+          <path d="{{PEBBLE_SHADOWS}}" style="fill:var(--cast-color)"/>
+        </g>
+      </g>
+
+      <!-- Shadows thrown away from the lantern, for the animals inside its pool. -->
+      <g id="lantern-shadow-art" data-still>
+        <g transform="translate(-52 0)">
+          <g transform="matrix(1 0 .75 -.05 -370.5 518.7)">
+            <use href="#alpaca" transform="translate(572 260) scale(.78)" filter="url(#f-cast-lantern)"/>
+          </g>
+          <g transform="matrix(1 0 .9 -.04 -433.8 501.3)">
+            <use href="#alpaca-rest" transform="translate(480 272) scale(.7)" filter="url(#f-cast-lantern)"/>
+          </g>
+          <g transform="matrix(1 0 -.5 -.05 237 497.7)">
+            <use href="#camel" transform="translate(767 204) scale(.9)" filter="url(#f-cast-lantern)"/>
+          </g>
+        </g>
+      </g>
+
+      <g id="light-pool">
+        <ellipse cx="658" cy="496" rx="300" ry="58" fill="url(#g-glow-pool)"/>
+      </g>
+      <g id="light-halo">
+        <circle cx="658" cy="462" r="195" fill="url(#g-glow-halo)"/>
+        <circle cx="658" cy="476" r="28" fill="url(#g-glow-core)"/>
+      </g>
+
+      <!-- Grass lives apart from the animals, so its constant motion
+           never forces the animals' fur and fleece filters to run again. -->
+      <g id="ground-wind">
+        <g fill="none" stroke-linecap="round">{{TUFTS_GROUND}}</g>
+      </g>
+
+      <g id="life-art">
+        <g transform="translate(-52 0)">
+          <use href="#couched" transform="translate(1050 244) scale(.72)"/>
+          <use href="#camel" transform="translate(767 204) scale(.9)"/>
+          <use href="#alpaca-rest" transform="translate(480 272) scale(.7)"
+               style="--fl:var(--ab-fl); --fb:var(--ab-fb); --fs:var(--ab-fs); --lg:var(--ab-lg); --lf:var(--ab-lf); --fc:var(--ab-fc); --dk:var(--ab-dk); --look-delay:5s; --ear-delay:2.2s; --blink-delay:1.4s"/>
+          <use href="#lantern" transform="translate(710 492) scale(1.5)"/>
+          <use href="#alpaca" transform="translate(572 260) scale(.78)"
+               style="--fl:var(--ac-fl); --fb:var(--ac-fb); --fs:var(--ac-fs); --lg:var(--ac-lg); --lf:var(--ac-lf); --fc:var(--ac-fc); --dk:var(--ac-dk); --look-delay:0s; --ear-delay:.4s; --blink-delay:2.6s"/>
+        </g>
+      </g>
+
+      <g id="near-life">
+        <g fill="none" stroke-linecap="round">{{TUFTS_NEAR}}</g>
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<div class="journey journey--desert" aria-hidden="true">
+  <svg class="walkers" viewBox="0 0 150 64">
+    <g class="walker"><g transform="translate(4 8) scale(.18)">
+      <use href="#a-leg-f" x="-9" y="-3"/><use href="#a-leg-h" x="10" y="-3"/><use href="#a-leg-f"/><use href="#a-leg-h"/>
+      <use href="#a-body"/><use href="#a-neck"/><use href="#a-thighs"/><use href="#a-tail"/><use href="#a-head"/><use href="#a-ear-near"/><use href="#a-ear-far"/>
+    </g></g>
+    <g class="walker"><g transform="translate(110 -14) scale(-.26 .26)">
+      <use href="#c-leg-front" x="16" y="-1"/><use href="#c-leg-hind" x="-15" y="-1"/><use href="#c-leg-front"/><use href="#c-leg-hind"/>
+      <use href="#c-body"/><use href="#c-head"/><use href="#c-tail"/><use href="#c-ear"/>
+    </g></g>
+    <g class="walker"><g transform="translate(118 4) scale(.2)">
+      <use href="#a-leg-f" x="-9" y="-3"/><use href="#a-leg-h" x="10" y="-3"/><use href="#a-leg-f"/><use href="#a-leg-h"/>
+      <use href="#a-body"/><use href="#a-neck"/><use href="#a-thighs"/><use href="#a-tail"/><use href="#a-head"/><use href="#a-ear-near"/><use href="#a-ear-far"/>
+    </g></g>
+  </svg>
+</div>

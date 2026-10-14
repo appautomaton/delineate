@@ -1,0 +1,249 @@
+/* The Deep: a sunlit reef as a papercut diorama. Flat sheets, knife-cut edges, lace made of holes,
+   and depth from the shadow each sheet throws on the one behind it. By night the sheets are lit from behind. */
+
+:root[data-world="deep"] {
+  --page-day:
+    url("{{TEX_PAPER_PAGE}}") 0 0 / 256px,
+    linear-gradient(to bottom, #E6F7F3 0%, #CDEEEC 34%, #A8DDE2 78%, #93D2DB 100%);
+  --page-night:
+    {{PAGE_SNOW}},
+    linear-gradient(to bottom, #0B2234 0%, #091C2D 50%, #07182A 100%);
+  --page-blend: soft-light, normal;
+  --body-day: #E6F7F3;
+  --body-night: #0B2234;
+  --ink-day: #0B2C3B;
+  --paper-day: #E7F7F4;
+  --ink-night: #DDF3EF;
+  --paper-night: #071A28;
+  --journey-day: #0B2C3B;
+  --journey-night: #BFEFE8;
+}
+
+.sky-paint--day {
+  background: linear-gradient(to top,
+    #4FA7BD 0, #5AAFC4 calc(var(--land) * .5),
+    #79C2D1 calc(var(--land) * .95), #8ACCD8 70%, #93D2DB 100%);
+}
+.sky-paint--night {
+  background: linear-gradient(to top,
+    #0C2C42 0, #0B2A40 calc(var(--land) * .5),
+    #09223A calc(var(--land) * .95), #081D31 70%, #07182A 100%);
+  opacity: 0;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .sky-paint--night { opacity: 1; }
+
+/* Light from the surface: strips of vellum that sway, by day. */
+.dp-rays {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #FFFFFF;
+  opacity: .1;
+  mix-blend-mode: soft-light;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 10%, #000 60%);
+  mask-image: linear-gradient(to bottom, transparent 10%, #000 60%);
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .dp-rays { opacity: 0; }
+.dp-ray { animation: dp-ray 9s ease-in-out infinite alternate var(--ray-d); animation-play-state: var(--play); }
+@keyframes dp-ray { from { rotate: -2.2deg; } to { rotate: 2.2deg; } }
+
+.orb--sun { width: 190px; }
+.orb--moon { width: 150px; }
+
+.dp-far    { --rise: 40px; }
+.dp-back   { --rise: 80px; }
+.dp-mid    { --rise: 130px; }
+.dp-ground { --rise: 200px; }
+.dp-near   { --rise: 320px; }
+.sky-drift { --rise: 150px; }
+
+.art-day {
+  --dp-far: #84C3CD;
+  --dp-far-2: #70B6C5;
+  --dp-back: #5AA5B8;
+  --dp-rock: #3A8BA0;
+  --dp-fan-a: #8C7BC4;
+  --dp-fan-b: #E8918C;
+  --dp-fan-c: #F0BB5C;
+  --dp-stag-a: #F2A98E;
+  --dp-stag-b: #E9C46C;
+  --dp-brain: #C7A2D8;
+  --dp-brain-groove: #9D79B5;
+  --dp-kelp-mid: #3E9070;
+  --dp-sand-back: #D7CCA2;
+  --dp-sand: #EADFB6;
+  --dp-ripple: #D6C696;
+  --dp-sand-near: #DECD9C;
+  --dp-near-rock: #1F4F61;
+  --dp-near-rock-lit: #3B7B8E;
+  --dp-kelp: #2C7A56;
+  --dp-caustic: rgb(255 255 240 / .55);
+  --dp-shadow: rgb(20 70 80 / .35);
+  --dp-bubble: rgb(255 255 255 / .75);
+  --dp-turtle-skin: #A6BD8A;
+  --dp-turtle-skin-dark: #7F9A6A;
+  --dp-shell: #6F8D4E;
+  --dp-shell-dark: #4E6A38;
+  --dp-scute: #94AF64;
+  --dp-eye: #12232A;
+  --dp-jelly: rgb(236 222 246 / .72);
+  --dp-jelly-inner: rgb(250 242 252 / .8);
+  --dp-jelly-arm: rgb(226 196 236 / .7);
+  --dp-jelly-line: rgb(190 150 210 / .8);
+  --dp-anemone: #C599D8;
+  --dp-anemone-back: #9468B4;
+  --dp-anemone-tip: #EDB4D8;
+  --dp-anemone-base: #8E6AA8;
+  --dp-clown: #F28A3A;
+  --dp-clown-band: #FFF8EE;
+  --dp-crab: #E4664A;
+  --dp-crab-dark: #B4462F;
+  --dp-star: #F3A45A;
+  --dp-star-dot: #D97F38;
+  --dp-shell-paper: #F6E9D4;
+  --dp-shell-line: #D6C2A2;
+}
+.art-night {
+  --dp-far: #0F3047;
+  --dp-far-2: #0D2A40;
+  --dp-back: #0B263B;
+  --dp-rock: #0A2336;
+  --dp-fan-a: #261F4A;
+  --dp-fan-b: #2E1E36;
+  --dp-fan-c: #2A2A2E;
+  --dp-stag-a: #2A2030;
+  --dp-stag-b: #262A2C;
+  --dp-brain: #231E3A;
+  --dp-brain-groove: #3E3470;
+  --dp-kelp-mid: #0B2A28;
+  --dp-sand-back: #11293B;
+  --dp-sand: #132C3F;
+  --dp-ripple: #183650;
+  --dp-sand-near: #102638;
+  --dp-near-rock: #051521;
+  --dp-near-rock-lit: #0A2232;
+  --dp-kelp: #06201C;
+  --dp-caustic: transparent;
+  --dp-shadow: rgb(0 0 0 / .4);
+  --dp-bubble: rgb(150 240 230 / .7);
+  --dp-turtle-skin: #23382E;
+  --dp-turtle-skin-dark: #1A2A24;
+  --dp-shell: #1C2E24;
+  --dp-shell-dark: #121E18;
+  --dp-scute: #2A4232;
+  --dp-eye: #9FF2E6;
+  --dp-jelly: rgb(196 178 255 / .5);
+  --dp-jelly-inner: rgb(226 214 255 / .6);
+  --dp-jelly-arm: rgb(180 160 255 / .5);
+  --dp-jelly-line: rgb(170 230 255 / .8);
+  --dp-anemone: #4A3B7A;
+  --dp-anemone-back: #31275A;
+  --dp-anemone-tip: #8FF4E4;
+  --dp-anemone-base: #2E2550;
+  --dp-clown: #5C3A2A;
+  --dp-clown-band: #7A8A8A;
+  --dp-crab: #4A2A2A;
+  --dp-crab-dark: #2E1A1C;
+  --dp-star: #3A2E2A;
+  --dp-star-dot: #6FE8D8;
+  --dp-shell-paper: #2A3440;
+  --dp-shell-line: #3E4C5A;
+}
+
+/* The sheets part as the footer arrives: their shadows lengthen behind them. */
+.dp-lift { translate: 6px 13px; }
+.dp-lift--near { translate: 10px 20px; }
+.dp-glow { mix-blend-mode: screen; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .dp-lift {
+      animation: dp-part linear both;
+      animation-timeline: --land;
+      animation-range: entry 0% entry 100%;
+    }
+    .dp-lift--near { animation-name: dp-part-near; }
+  }
+}
+@keyframes dp-part { from { translate: 0 0; opacity: .3; } to { translate: 6px 13px; opacity: 1; } }
+@keyframes dp-part-near { from { translate: 0 0; opacity: .3; } to { translate: 10px 20px; opacity: 1; } }
+
+/* Caustics drift slowly over the sand by day. */
+.dp-caustics {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: soft-light;
+  animation: dp-caustics 14s ease-in-out infinite alternate;
+  animation-play-state: var(--play);
+  will-change: transform;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 70%, #000 82%);
+  mask-image: linear-gradient(to bottom, transparent 70%, #000 82%);
+}
+@keyframes dp-caustics { from { translate: -18px 0; scale: 1 1; } to { translate: 18px 2px; scale: 1.03 1; } }
+
+.dp-school, .dp-plankton { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.dp-light { mix-blend-mode: screen; }
+
+.dp-paper {
+  background: url("{{TEX_PAPER}}") 0 0 / 256px;
+  mix-blend-mode: soft-light;
+  opacity: .32;
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / .6), #000 240px);
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / .6), #000 240px);
+}
+[data-theme="night"] .dp-paper { opacity: .3; }
+
+/* Life. Pivots are in each part's own drawing units. */
+:global .dp-sway       { animation: dp-sway 5.4s ease-in-out infinite alternate var(--sway-d, 0s); }
+:global .dp-turtle-swim { animation: dp-swim 72s linear infinite -20s; }
+:global .dp-turtle-bob { animation: dp-bob 6s ease-in-out infinite alternate; }
+:global .dp-flip-near  { transform-origin: 24px 12px; animation: dp-flip 3.4s ease-in-out infinite alternate; }
+:global .dp-flip-far   { transform-origin: 20px -26px; animation: dp-flip-far 3.4s ease-in-out infinite alternate; }
+:global .dp-jelly-drift { animation: dp-drift var(--jelly-t) linear infinite var(--jelly-d); }
+:global .dp-jelly-glow { animation: dp-drift var(--jelly-t) linear infinite var(--jelly-d); }
+:global .dp-pulse      { transform-origin: 0 0; animation: dp-pulse 2.6s ease-in-out infinite var(--pulse-d, 0s); }
+:global .dp-jelly-arms { animation: dp-trail 2.6s ease-in-out infinite; transform-origin: 0 0; }
+:global .dp-tentacles  { transform-origin: 0 -22px; animation: dp-wave 3.8s ease-in-out infinite alternate; }
+:global .dp-clown--a   { animation: dp-dart-a 9s ease-in-out infinite; }
+:global .dp-clown--b   { animation: dp-dart-b 11s ease-in-out infinite -3s; }
+:global .dp-bubble     { transform-box: fill-box; transform-origin: center; animation: dp-rise 4.2s ease-in infinite; }
+:global .dp-crab-walk  { animation: dp-scuttle 24s ease-in-out infinite; }
+:global .dp-legs       { animation: dp-legs .32s ease-in-out infinite alternate; transform-origin: 0 0; }
+:global .dp-sway, :global .dp-flip-near, :global .dp-flip-far, :global .dp-pulse,
+:global .dp-jelly-arms, :global .dp-tentacles, :global .dp-bubble, :global .dp-legs {
+  animation-play-state: var(--play, running);
+}
+/* Travellers keep one clock across both panes, so day and night never show two of them. */
+:global .dp-turtle-swim, :global .dp-turtle-bob, :global .dp-jelly-drift, :global .dp-jelly-glow,
+:global .dp-clown--a, :global .dp-clown--b, :global .dp-crab-walk {
+  animation-play-state: var(--footer-play, running);
+}
+
+@keyframes dp-sway  { from { rotate: calc(var(--sway-a, 2deg) * -1); } to { rotate: var(--sway-a, 2deg); } }
+@keyframes dp-swim  { from { translate: -260px 0; } to { translate: 1880px -40px; } }
+@keyframes dp-bob   { from { translate: 0 -4px; rotate: -1.5deg; } to { translate: 0 5px; rotate: 1.5deg; } }
+@keyframes dp-flip  { from { rotate: -26deg; } to { rotate: 14deg; } }
+@keyframes dp-flip-far { from { rotate: 18deg; } to { rotate: -14deg; } }
+@keyframes dp-drift { 0% { translate: 0 70px; opacity: 0; } 10% { opacity: 1; } 78% { opacity: 1; } 100% { translate: 24px -150px; opacity: 0; } }
+@keyframes dp-pulse { 0%, 100% { scale: 1 1; } 35% { scale: 1.1 .82; } 60% { scale: .96 1.06; } }
+@keyframes dp-trail { 0%, 100% { scale: 1 1; } 35% { scale: .94 1.08; } 60% { scale: 1.02 .96; } }
+@keyframes dp-wave  { from { rotate: -4deg; } to { rotate: 5deg; } }
+@keyframes dp-dart-a {
+  0%, 100% { translate: 0 0; } 20% { translate: -18px -10px; } 34% { translate: -22px -4px; }
+  52% { translate: 6px -16px; } 70% { translate: 14px -2px; } 84% { translate: 2px 4px; }
+}
+@keyframes dp-dart-b {
+  0%, 100% { translate: 0 0; } 24% { translate: 16px -12px; } 40% { translate: 22px -6px; }
+  58% { translate: -6px -18px; } 76% { translate: -14px -4px; }
+}
+@keyframes dp-rise  { 0% { translate: 0 0; opacity: 0; } 10% { opacity: 1; } 100% { translate: 6px -150px; opacity: 0; } }
+@keyframes dp-scuttle {
+  0%, 12% { translate: 0 0; } 30%, 52% { translate: 96px 0; } 70%, 84% { translate: 40px 0; } 100% { translate: 0 0; }
+}
+@keyframes dp-legs  { from { translate: 0 0; } to { translate: 0 -1.2px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-school, .dp-plankton { display: none; }
+}

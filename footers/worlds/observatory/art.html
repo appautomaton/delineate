@@ -1,0 +1,276 @@
+<div class="world world--observatory">
+  <div class="sky">
+    <div class="sky-paint sky-paint--day"></div>
+    <div class="sky-paint sky-paint--night"></div>
+    <div class="sky-drift" data-sway="3">
+      <svg class="ob-stars" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMin slice">{{STARS}}</svg>
+      <div class="orbit">
+        <div class="orb orb--sun">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#1C2836" stroke-linecap="round">
+            <circle cx="100" cy="100" r="20" stroke-width="1.1"/>
+            <path d="M100 70V54M100 130v16M70 100H54M130 100h16" stroke-width=".7"/>
+            <path d="M100 40V160M40 100H160" stroke-width=".35" stroke-dasharray="10 3 2 3"/>
+            <text x="126" y="76" fill="#1C2836" stroke="none" font-size="8" font-family="Alegreya Sans, sans-serif" letter-spacing=".08em">SOL</text>
+          </svg>
+        </div>
+        <div class="orb orb--moon">
+          <svg viewBox="0 0 200 200" fill="none" stroke="#E8F1F8" stroke-linecap="round">
+            <circle cx="100" cy="100" r="20" stroke-width="1.1"/>
+            <path d="M100 80a20 20 0 0 0 0 40a12 20 0 0 1 0-40Z" fill="#E8F1F8" stroke="none" opacity=".85"/>
+            <path d="M100 40V160M40 100H160" stroke-width=".35" stroke-dasharray="10 3 2 3"/>
+            <text x="126" y="76" fill="#E8F1F8" stroke="none" font-size="8" font-family="Alegreya Sans, sans-serif" letter-spacing=".08em">LUNA</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="land-anchor"></div>
+
+    <div class="depth ob-far" data-sway="4">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-far-art"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-far-art"/></svg>
+      </div>
+    </div>
+
+    <div class="depth ob-mid" data-sway="9">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-building"/></svg>
+        <svg class="art art--live ob-mech" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">{{MECH}}</svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-building"/></svg>
+        <svg class="art art--live ob-mech" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">{{MECH}}</svg>
+      </div>
+    </div>
+
+    <div class="depth ob-ground" data-sway="16">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-ground-art"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-ground-art"/></svg>
+      </div>
+    </div>
+
+    <div class="depth ob-near" data-sway="24">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-sheet"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#ob-sheet"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="texture ob-cyano"></div>
+
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- Section symbols, one set inked for the film and one for the cyanotype. -->
+      <pattern id="ob-brick-day" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 1.6H3.2" stroke="#1C2836" stroke-width=".4"/></pattern>
+      <pattern id="ob-brick-night" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 1.6H3.2" stroke="#E8F1F8" stroke-width=".4"/></pattern>
+      <pattern id="ob-block-day" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 2.5H5M2.5 0V5" stroke="#1C2836" stroke-width=".35"/></pattern>
+      <pattern id="ob-block-night" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 2.5H5M2.5 0V5" stroke="#E8F1F8" stroke-width=".35"/></pattern>
+      <pattern id="ob-concrete-day" width="16" height="14" patternUnits="userSpaceOnUse">
+        <g fill="#1C2836"><circle cx="2" cy="3" r=".45"/><circle cx="9" cy="1.6" r=".4"/><circle cx="13" cy="7" r=".45"/><circle cx="5.4" cy="9.6" r=".4"/><circle cx="11" cy="12" r=".35"/><circle cx="1.4" cy="12.6" r=".35"/><circle cx="7.4" cy="5.4" r=".3"/></g>
+        <path d="M3.6 5.2l2.2-.6-.8 2Z M10.4 9l1.8 1.2-2 .4Z" fill="none" stroke="#1C2836" stroke-width=".35"/>
+      </pattern>
+      <pattern id="ob-concrete-night" width="16" height="14" patternUnits="userSpaceOnUse">
+        <g fill="#E8F1F8"><circle cx="2" cy="3" r=".45"/><circle cx="9" cy="1.6" r=".4"/><circle cx="13" cy="7" r=".45"/><circle cx="5.4" cy="9.6" r=".4"/><circle cx="11" cy="12" r=".35"/><circle cx="1.4" cy="12.6" r=".35"/><circle cx="7.4" cy="5.4" r=".3"/></g>
+        <path d="M3.6 5.2l2.2-.6-.8 2Z M10.4 9l1.8 1.2-2 .4Z" fill="none" stroke="#E8F1F8" stroke-width=".35"/>
+      </pattern>
+      <pattern id="ob-hardcore-day" width="12" height="10" patternUnits="userSpaceOnUse">
+        <path d="M1 3c1-2 4-2 4 0s-3 3-4 0ZM7 7c1-2 4-1.6 4 .4s-3 2.4-4-.4ZM6 1.4c.6-1 2-1 2.4 0" fill="none" stroke="#1C2836" stroke-width=".35"/>
+      </pattern>
+      <pattern id="ob-hardcore-night" width="12" height="10" patternUnits="userSpaceOnUse">
+        <path d="M1 3c1-2 4-2 4 0s-3 3-4 0ZM7 7c1-2 4-1.6 4 .4s-3 2.4-4-.4ZM6 1.4c.6-1 2-1 2.4 0" fill="none" stroke="#E8F1F8" stroke-width=".35"/>
+      </pattern>
+      <pattern id="ob-steel-day" width="1.6" height="1.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 .8H1.6" stroke="#1C2836" stroke-width=".55"/></pattern>
+      <pattern id="ob-steel-night" width="1.6" height="1.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 .8H1.6" stroke="#E8F1F8" stroke-width=".55"/></pattern>
+      <pattern id="ob-hatch-day" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 2.5H5" stroke="#1C2836" stroke-width=".45"/></pattern>
+      <pattern id="ob-hatch-night" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 2.5H5" stroke="#E8F1F8" stroke-width=".45"/></pattern>
+      <marker id="ob-arrow-day" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 2L10 5L0 8Z" fill="#1C2836"/>
+      </marker>
+      <marker id="ob-arrow-night" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 2L10 5L0 8Z" fill="#E8F1F8"/>
+      </marker>
+      <clipPath id="ob-detail-clip"><circle cx="1286" cy="330" r="85.4"/></clipPath>
+
+      <!-- Beyond the drawing: the sky the telescope is pointed into, and the construction behind the views. -->
+      <g id="ob-far-art">
+        <g fill="none" class="ob-con">
+          <path d="M40 262Q800 70 1560 262"/>
+          <path d="{{ENVELOPE}}"/>
+        </g>
+        <g fill="none" class="ob-con ob-con--star"><path d="{{CONST_LINES}}"/></g>
+        <g class="ob-starfill">{{CONST_STARS}}</g>
+        <circle cx="772" cy="165" r="7" fill="none" class="ob-fine"/>
+        <path d="M779 160l40-12h60" fill="none" class="ob-fine"/>
+        <g class="ob-label ob-label--small">
+          <text x="150" y="214">CASSIOPEIA</text><text x="1420" y="250">URSA MAJOR</text><text x="1030" y="170">CYGNUS</text>
+          <text x="822" y="144">α LYRAE, VEGA</text><text x="822" y="155">RA 18H 37M, DEC +38° 47′</text>
+          <text x="92" y="244">CELESTIAL EQUATOR</text>
+          <text x="960" y="264">SWEPT ENVELOPE R 7 800</text>
+        </g>
+      </g>
+
+      <!-- Section A-A, the plan at the observing floor, and Detail B, each with its own title. -->
+      <g id="ob-building">
+        {{FILLS}}
+        <path class="ob-cut" fill="none" d="{{CUT}}"/>
+        <path class="ob-see" fill="none" d="{{SEE}}"/>
+        <path class="ob-fine" fill="none" d="{{FINE}}"/>
+        <path class="ob-con" fill="none" d="{{CON}}" opacity=".7"/>
+        <path class="ob-center" fill="none" d="{{CENTRE}}"/>
+        <!-- Callout for Detail B round the right-hand bogie, and its leader to the detail. -->
+        <circle cx="974" cy="370" r="20" fill="none" class="ob-con"/>
+        <path d="M993 364L1200 330" fill="none" class="ob-fine"/>
+
+        <!-- Plan at +4.500, 1:100. -->
+        <path style="fill:var(--ob-brick)" d="{{PLAN_WALLS}}"/>
+        <path class="ob-cut" fill="none" d="{{PLAN_WALLS}}"/>
+        <path class="ob-fine" fill="none" d="{{PLAN_CAVITY}}"/>
+        <path style="fill:var(--ob-concrete)" d="{{PLAN_PIER}}"/>
+        <path class="ob-cut" fill="none" d="{{PLAN_PIER}}"/>
+        <path class="ob-see" fill="none" d="{{PLAN_STAIR}}{{PLAN_DOOR}}{{PLAN_BOGIES}}{{PLAN_SCOPE}}"/>
+        <path class="ob-dim" fill="none" d="{{PLAN_ARROW}}"/>
+        <path class="ob-con" fill="none" d="{{PLAN_DOME}}{{PLAN_SLIT}}"/>
+        <path class="ob-center" fill="none" d="{{PLAN_CUT}}"/>
+        <path class="ob-cut" fill="none" d="{{PLAN_ENDS}}"/>
+        <path class="ob-dim" fill="none" d="{{PLAN_ARROWS}}"/>
+        <g class="ob-label ob-label--small">
+          <text x="270" y="434">UP</text><text x="336" y="356">SLIT</text>
+        </g>
+        <g class="ob-label ob-label--big"><text x="196" y="414" text-anchor="end">A</text><text x="464" y="414">A</text></g>
+        <g class="ob-label">
+          <text x="330" y="537" text-anchor="middle" class="ob-label--title">PLAN AT +4.500</text>
+          <text x="330" y="549" text-anchor="middle">1:100</text>
+        </g>
+        <path class="ob-fine" fill="none" d="M270 541H390"/>
+        <g class="ob-see" fill="none"><circle cx="452" cy="346" r="12"/><path d="M452 330V362M452 330l-4 10h8Z"/></g>
+        <g class="ob-label ob-label--small"><text x="452" y="326" text-anchor="middle">N</text></g>
+
+        <!-- Detail B: dome drive, 1:5. -->
+        {{DETAIL}}
+        <g class="ob-fine" fill="none">
+          <path d="M1350 306L1384 288H1390M1366 320L1384 302H1390M1324 330L1384 316H1390M1336 362L1384 352H1390M1366 392H1390"/>
+          <path d="M1226 326L1196 262H1190M1240 404L1196 410H1190"/>
+        </g>
+        <g class="ob-label ob-label--small">
+          <text x="1394" y="291">BASE RING, 150 PFC</text>
+          <text x="1394" y="305">RING GEAR, MODULE 4</text>
+          <text x="1394" y="319">DRIVE PINION, 10 T</text>
+          <text x="1394" y="355">REDUCTION GEAR, 22 T</text>
+          <text x="1394" y="395">GEARMOTOR, 0.37 KW</text>
+          <text x="1186" y="265" text-anchor="end">BOGIE Ø300 ON RAIL</text>
+          <text x="1186" y="413" text-anchor="end">RING BEAM, RC</text>
+        </g>
+        <circle cx="1286" cy="424" r="8" class="ob-balloon"/>
+        <g class="ob-label ob-label--num"><text x="1286" y="427">B</text></g>
+        <g class="ob-label">
+          <text x="1300" y="428" class="ob-label--title">DETAIL B</text>
+          <text x="1300" y="440">DOME DRIVE, 1:5</text>
+        </g>
+      </g>
+
+      <!-- The section's ground, earth, dimensions, levels, keyed callouts and section marks. -->
+      <g id="ob-ground-art">
+        <path d="M548 520H1052" class="ob-cut" fill="none"/>
+        <path d="{{EARTH}}" class="ob-fine" fill="none"/>
+        <!-- Overall dimensions. -->
+        <g class="ob-fine" fill="none"><path d="M616 528V544M984 528V544M576 186H612M576 430H630M576 368H612M576 520H600"/></g>
+        <path d="M620 540H980" class="ob-dim" fill="none"/>
+        <path d="M584 190V366M584 370V428M584 432V518" class="ob-dim" fill="none"/>
+        <g class="ob-label">
+          <text x="704" y="537" text-anchor="middle">18 400</text>
+          <text x="580" y="280" text-anchor="middle" transform="rotate(-90 580 280)">9 100</text>
+          <text x="580" y="400" text-anchor="middle" transform="rotate(-90 580 400)">3 100</text>
+          <text x="580" y="476" text-anchor="middle" transform="rotate(-90 580 476)">4 500</text>
+        </g>
+        <!-- Levels. -->
+        <g class="ob-fine" fill="none" stroke-dasharray="3 2"><path d="M800 186H1004M988 368H1004M966 430H1004M1052 520H1004"/></g>
+        <g class="ob-see" fill="none"><path d="M1008 186l-4-6h8ZM1008 368l-4-6h8ZM1008 430l-4-6h8ZM1008 520l-4-6h8Z"/></g>
+        <g class="ob-label">
+          <text x="1016" y="184">+16.700 APEX</text>
+          <text x="1016" y="366">+7.600 SPRING</text>
+          <text x="1016" y="428">+4.500 FFL</text>
+          <text x="1016" y="518">±0.000 GL</text>
+        </g>
+        <!-- Keyed callouts. -->
+        <g class="ob-fine" fill="none">
+          <path d="M633 236L654 262M944 204L908 214M744 300L798 318M884 352L826 384M856 486L818 478M1004 336L988 354M930 456L912 438M688 452L708 468"/>
+        </g>
+        <g class="ob-balloon">
+          <circle cx="626" cy="228" r="8"/><circle cx="952" cy="200" r="8"/><circle cx="736" cy="298" r="8"/><circle cx="892" cy="348" r="8"/>
+          <circle cx="864" cy="488" r="8"/><circle cx="1010" cy="330" r="8"/><circle cx="938" cy="462" r="8"/><circle cx="680" cy="446" r="8"/>
+        </g>
+        <g class="ob-label ob-label--num">
+          <text x="626" y="231">1</text><text x="952" y="203">2</text><text x="736" y="301">3</text><text x="892" y="351">4</text>
+          <text x="864" y="491">5</text><text x="1010" y="333">6</text><text x="938" y="465">7</text><text x="680" y="449">8</text>
+        </g>
+        <!-- Section A-A. -->
+        <g class="ob-cut" fill="none"><path d="M556 506V534M1044 506V534"/></g>
+        <path d="M556 512H576M1044 512H1024" class="ob-dim" fill="none"/>
+        <g class="ob-label ob-label--big"><text x="548" y="502" text-anchor="end">A</text><text x="1052" y="502">A</text></g>
+        <g class="ob-label"><text x="706" y="554" text-anchor="middle" class="ob-label--title">SECTION A–A, 1:50</text></g>
+      </g>
+
+      <!-- The sheet: its key, notes and scale bar on the left; revisions and title block on the right. -->
+      <g id="ob-sheet">
+        <g class="ob-label">
+          <text x="80" y="300" class="ob-label--title">KEY</text>
+          <text x="80" y="315">1  DOME SHELL, AL ON STEEL RIBS</text>
+          <text x="80" y="327">2  SHUTTER, TWO LEAVES</text>
+          <text x="80" y="339">3  REFRACTOR 200 / 3000</text>
+          <text x="80" y="351">4  GERMAN EQUATORIAL MOUNT</text>
+          <text x="80" y="363">5  PIER, ISOLATED FROM FLOORS</text>
+          <text x="80" y="375">6  DOME DRIVE, SEE DETAIL B</text>
+          <text x="80" y="387">7  OBSERVING FLOOR, TIMBER</text>
+          <text x="80" y="399">8  STAIR, NINE RISERS</text>
+          <text x="80" y="428" class="ob-label--title">NOTES</text>
+          <text x="80" y="443">1  DIMENSIONS IN MILLIMETRES</text>
+          <text x="80" y="455">2  LEVELS IN METRES ABOVE GL</text>
+          <text x="80" y="467">3  DO NOT SCALE FROM THIS SHEET</text>
+        </g>
+        <g class="ob-label ob-label--small">
+          <text x="80" y="492">0</text><text x="120" y="492">2</text><text x="180" y="492">5 M</text>
+        </g>
+        <path d="M80 496h20v4H80ZM120 496h20v4h-20Z" class="ob-starfill"/>
+        <path d="M80 496h100v4H80Z" class="ob-see" fill="none"/>
+        <g class="ob-label ob-label--small"><text x="80" y="512">SCALE 1:50</text></g>
+
+        <path d="M1296 454H1520V476H1296ZM1296 461H1520M1296 468.5H1520M1314 454V476M1370 454V476" class="ob-fine" fill="none"/>
+        <g class="ob-label ob-label--tiny">
+          <text x="1300" y="459.4">C</text><text x="1318" y="459.4">14.10.2026</text><text x="1374" y="459.4">SHUTTER LEAVES REVISED</text>
+          <text x="1300" y="466.8">B</text><text x="1318" y="466.8">02.09.2026</text><text x="1374" y="466.8">PIER ISOLATED FROM SLAB</text>
+          <text x="1300" y="474.2">A</text><text x="1318" y="474.2">21.07.2026</text><text x="1374" y="474.2">FIRST ISSUE</text>
+        </g>
+        <path d="M1296 480H1520V556H1296ZM1296 500H1520M1296 518H1520M1296 537H1520M1424 518V556" class="ob-see" fill="none"/>
+        <g class="ob-label">
+          <text x="1302" y="494" class="ob-label--title">AUTOMATON OBSERVATORY</text>
+          <text x="1302" y="513">SECTION A–A, PLAN, DETAIL B</text>
+          <text x="1302" y="531">SCALES 1:50, 1:100, 1:5</text>
+          <text x="1430" y="531">SHEET 6 OF 6</text>
+          <text x="1302" y="550">DRAWN APPAUTOMATON</text>
+          <text x="1430" y="550">REV C</text>
+        </g>
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<div class="journey journey--observatory" aria-hidden="true">
+  <svg class="walkers" viewBox="0 0 150 64" style="aspect-ratio: 150 / 64">
+    <g class="walker">
+      <circle cx="110" cy="32" r="7"/>
+      <path d="M104 28C80 22 50 22 14 30C50 30 80 32 103 37Z" opacity=".55"/>
+      <path d="M104 31C86 30 64 33 40 38C64 36 86 36 104 35Z" opacity=".35"/>
+    </g>
+  </svg>
+</div>

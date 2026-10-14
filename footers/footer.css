@@ -1,0 +1,388 @@
+/* The footer component: the foot of a site, drawn as a small world that rises in depth as the reader
+   arrives, by day or by night, with a picker between worlds. The demo page (page.html) and any site that
+   embeds it (build.py --kit) share this one stylesheet; each world adds its own, scoped to it.
+
+   A host page sets --footer-sans and --footer-serif to give the footer its type; the footer's measures live
+   on .site-footer, so the host keeps its root to itself. The footer reads data-world and data-theme from the
+   root element, which early.js settles before the first paint. */
+
+  /* Registered so ink and paper interpolate, and everything mixed from them follows. */
+  @property --ink { syntax: '<color>'; inherits: true; initial-value: #FBF4E6; }
+  @property --paper { syntax: '<color>'; inherits: true; initial-value: #0B1230; }
+
+  .ink {
+    --ink: var(--ink-day);
+    --paper: var(--paper-day);
+    color: var(--ink);
+    transition: --ink 1.2s ease, --paper 1.2s ease;
+  }
+  [data-theme="night"] .ink { --ink: var(--ink-night); --paper: var(--paper-night); }
+
+  .site-footer a:focus-visible, .site-footer button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: .4em;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: -.012em;
+    line-height: 1;
+  }
+  .wordmark svg { width: 1.1em; height: 1.1em; fill: currentColor; }
+
+  /* Day / night switch */
+
+  .theme-toggle { all: unset; cursor: pointer; border-radius: 999px; }
+  .toggle-track {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 60px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 34%, transparent);
+  }
+  .toggle-knob {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: currentColor;
+    transition: translate .6s cubic-bezier(.5, 0, .2, 1);
+  }
+  [data-theme="night"] .toggle-knob { translate: 28px 0; }
+  .toggle-track svg {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    transition: color .6s ease;
+  }
+  [data-theme="day"] .icon-sun { color: var(--paper); }
+  [data-theme="night"] .icon-moon { color: var(--paper); }
+  .icon-moon { fill: currentColor; stroke: none; }
+
+
+  /* Scene picker: one knob slides between the worlds, the same gesture as the day and night switch. */
+
+  .scene-picker { display: flex; align-items: center; gap: .75rem; }
+  .picker-track {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 34%, transparent);
+  }
+  .picker-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: currentColor;
+    translate: calc(var(--world-i, 0) * 30px) 0;
+    transition: translate .6s cubic-bezier(.5, 0, .2, 1);
+  }
+  .site-nav .picker-knob { view-transition-name: knob-nav; }
+  .footer-view .picker-knob { view-transition-name: knob-footer; }
+  .picker-track button {
+    all: unset;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    transition: color .3s ease;
+  }
+  .picker-track button:hover { color: var(--ink); }
+  .picker-track button[aria-checked="true"] { color: var(--paper); }
+  .picker-track button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .picker-track svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .picker-name {
+    min-width: 6.5em;
+    font: italic 400 1.0625rem/1 var(--footer-serif, "Alegreya", Georgia, serif);
+    color: color-mix(in srgb, var(--ink) 90%, transparent);
+    white-space: nowrap;
+  }
+
+  /* Changing worlds: the new landscape rises over the old one like a tide. */
+  ::view-transition-old(root) { animation: none; }
+  ::view-transition-new(root) {
+    animation: world-in 1.15s cubic-bezier(.6, 0, .25, 1) both;
+    -webkit-mask: linear-gradient(to top, #000 45%, transparent 55%) 0 0 / 100% 220% no-repeat;
+    mask: linear-gradient(to top, #000 45%, transparent 55%) 0 0 / 100% 220% no-repeat;
+  }
+  ::view-transition-group(knob-nav), ::view-transition-group(knob-footer) {
+    animation-duration: .6s;
+    animation-timing-function: cubic-bezier(.5, 0, .2, 1);
+  }
+  @keyframes world-in {
+    from { -webkit-mask-position: 0 0; mask-position: 0 0; }
+    to { -webkit-mask-position: 0 100%; mask-position: 0 100%; }
+  }
+
+  /* Footer shell */
+
+  .site-footer {
+    --gutter: clamp(24px, 5.2vw, 96px);
+    --pad-top: clamp(56px, 6.5vw, 104px);
+    --land: max(280px, 35vw);
+    --t-theme: 1.8s;
+    --ease-orbit: cubic-bezier(.55, 0, .25, 1);
+    --orb-x: 37%;
+    --orb-y: calc(var(--pad-top) + 12.5rem);
+    --orb-r: min(560px, 46vw);
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    font: 400 1.09375rem/1.5 var(--footer-sans, "Alegreya Sans", "Gill Sans", system-ui, sans-serif);
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased;
+    /* Idle life is held still by its CSS and stepped forward by a clock in the script below. */
+    --footer-play: paused;
+  }
+
+  .world-stage, .world, .sky, .scene, .texture, .sky-paint, .sky-drift {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .sky { --play: var(--footer-play); }
+
+  /* Sun and moon share one wheel; a theme change turns it half a revolution. */
+  .orbit {
+    position: absolute;
+    left: var(--orb-x);
+    top: calc(var(--orb-y) + var(--orb-r));
+    rotate: var(--turn, 0deg);
+  }
+  .orb {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 168px;
+    rotate: calc(var(--turn, 0deg) * -1);
+  }
+  .orb svg { display: block; width: 100%; height: auto; }
+  .orb--sun { translate: -50% calc(-50% - var(--orb-r)); }
+  .orb--moon { translate: -50% calc(-50% + var(--orb-r)); width: 150px; }
+  [data-theme="day"] .orb--moon,
+  [data-theme="night"] .orb--sun { opacity: 0; }
+  .is-ready .orbit { transition: rotate var(--t-theme) var(--ease-orbit); }
+  .is-ready .orb { transition: rotate var(--t-theme) var(--ease-orbit), opacity .9s ease .2s; }
+  .is-ready[data-theme="day"] .orb--moon,
+  .is-ready[data-theme="night"] .orb--sun {
+    transition: rotate var(--t-theme) var(--ease-orbit), opacity .7s ease 1.1s;
+  }
+
+  /* Landscape: four depth planes. Each holds a day and a night pane of the same drawing,
+     split into a still layer (heavy texture, rendered once) and live layers (cheap to repaint). */
+
+  .land-anchor { position: absolute; inset: auto 0 0; height: var(--land); }
+  .depth {
+    position: absolute;
+    left: -56px;
+    right: -56px;
+    bottom: calc(var(--land) * -.0714);
+    height: calc(var(--land) * 1.0714);
+    will-change: transform;
+  }
+  .pane { position: absolute; inset: 0; --play: var(--footer-play); }
+  /* Whichever pane is fully covered stops painting. When a theme changes, the planes wake one after
+     another, a few frames apart, so their first paint is spread out instead of landing in one frame. */
+  .depth + .depth { --wake: 50ms; }
+  .depth + .depth + .depth { --wake: 100ms; }
+  .depth + .depth + .depth + .depth { --wake: 150ms; }
+  .depth + .depth + .depth + .depth + .depth { --wake: 200ms; }
+  .pane--day { transition: visibility 0s var(--wake, 0s); }
+  .pane--night { opacity: 0; transition: opacity var(--t-theme) ease var(--wake, 0s), visibility 0s var(--wake, 0s); }
+  [data-theme="night"] .pane--night { opacity: 1; }
+  [data-theme="night"] .pane--day,
+  [data-theme="day"] .pane--night { visibility: hidden; transition: opacity var(--t-theme) ease, visibility 0s var(--t-theme); }
+  /* Drawings that move get a layer of their own, so the heavy still art beneath is never repainted. */
+  .art--live { will-change: transform; }
+  [data-theme="night"] .pane--day,
+  [data-theme="day"] .pane--night { --play: paused; }
+  .art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* The originals that <use> clones are never drawn, so they never move: only their clones in the scene do.
+     Left running, every frame of theirs would restyle every clone. */
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; --play: paused; }
+
+  /* Footer content */
+
+  .footer-body {
+    position: relative;
+    padding: var(--pad-top) var(--gutter) calc(var(--land) * .58 + clamp(48px, 7vw, 120px));
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: "brand nav" "sign view";
+    column-gap: clamp(40px, 5vw, 96px);
+    row-gap: clamp(48px, 5vw, 72px);
+  }
+  .footer-top .brand { grid-area: brand; }
+  .sitemap { grid-area: nav; }
+  .footer-body .wordmark { font-size: 1.75rem; }
+  .tagline {
+    max-width: 21em;
+    margin: 1.5rem 0 0;
+    font-family: var(--footer-serif, "Alegreya", Georgia, serif);
+    font-style: italic;
+    font-size: 1.3125rem;
+    line-height: 1.38;
+    color: color-mix(in srgb, var(--ink) 94%, transparent);
+    text-wrap: pretty;
+  }
+  .social { display: flex; gap: .25rem; margin: 1.75rem 0 0 -.6rem; padding: 0; list-style: none; }
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    color: color-mix(in srgb, var(--ink) 90%, transparent);
+    transition: color .25s ease, background-color .25s ease;
+  }
+  .social a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 9%, transparent); }
+  .social svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sitemap {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    justify-content: space-between;
+    column-gap: 2rem;
+    align-content: start;
+    padding-top: .15rem;
+  }
+  .sitemap h2 { margin: 0 0 .85rem; font-size: 1.09375rem; font-weight: 700; line-height: 1.5; }
+  .sitemap ul { margin: 0; padding: 0; list-style: none; }
+  .sitemap li { line-height: 2.05; }
+  .sitemap a, .credit a {
+    color: color-mix(in srgb, var(--ink) 90%, transparent);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: .24em;
+    transition: color .25s ease, text-decoration-color .25s ease;
+  }
+  .sitemap a:hover, .credit a:hover { color: var(--ink); text-decoration-color: currentColor; }
+  .credit a { color: var(--ink); text-decoration-color: color-mix(in srgb, var(--ink) 50%, transparent); }
+  /* The block's foot: the sign-off closes the brand column, the view controls close the sitemap.
+     No rule across the page, so nothing stands between the words and the landscape. */
+  .signoff {
+    grid-area: sign;
+    align-self: end;
+    margin: 0;
+    font-size: .96875rem;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--ink) 86%, transparent);
+  }
+  .credit { color: color-mix(in srgb, var(--ink) 86%, transparent); }
+  .footer-view {
+    grid-area: view;
+    align-self: end;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  /* Set flush right, the name reads as the pill's caption and the pill never shifts when the name changes. */
+  .footer-view .picker-name { order: -1; min-width: 0; text-align: right; }
+
+  /* Scroll choreography */
+
+  @keyframes rise { from { translate: 0 var(--rise); } }
+  @keyframes reveal { from { opacity: 0; translate: 0 32px; } }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .site-footer { view-timeline: --footer block; timeline-scope: --land; }
+      .land-anchor { view-timeline: --land block; }
+      .depth {
+        animation: rise linear both;
+        animation-timeline: --land;
+        animation-range: entry 0% entry 100%;
+      }
+      /* The sky settles as the footer arrives: the moon climbs while the ground rises in layers. */
+      .sky-drift {
+        animation: rise linear both;
+        animation-timeline: --footer;
+        animation-range: entry 0% entry 100%;
+      }
+      .footer-body .brand, .sitemap > div, .signoff, .footer-view {
+        animation: reveal linear both;
+        animation-timeline: --footer;
+      }
+      .footer-body .brand { animation-range: entry 8% entry 40%; }
+      .sitemap > div:nth-child(1) { animation-range: entry 12% entry 44%; }
+      .sitemap > div:nth-child(2) { animation-range: entry 16% entry 48%; }
+      .sitemap > div:nth-child(3) { animation-range: entry 20% entry 52%; }
+      .sitemap > div:nth-child(4) { animation-range: entry 24% entry 56%; }
+      .signoff, .footer-view { animation-range: entry 30% entry 62%; }
+
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-footer { --footer-play: paused; }
+  }
+
+  /* Narrow layouts */
+
+  @media (max-width: 1099px) {
+    .site-footer {
+      --orb-x: calc(100% - 72px);
+      --orb-y: 76px;
+      --orb-r: 340px;
+    }
+    .footer-top { grid-template-columns: 1fr auto; grid-template-areas: "brand brand" "nav nav" "sign view"; row-gap: 3.5rem; }
+    .orb--sun { width: 132px; }
+    .orb--moon { width: 120px; }
+  }
+  /* On the narrowest screens the footer keeps the pill and the switch; the scene's name is in the nav above. */
+  @media (max-width: 439px) {
+    .footer-view .picker-name { display: none; }
+  }
+  @media (max-width: 639px) {
+    .sitemap { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 2.5rem; }
+    .footer-top { grid-template-columns: 1fr; grid-template-areas: "brand" "nav" "view" "sign"; row-gap: 2.75rem; }
+    .footer-view { justify-self: stretch; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    /* A wider band of open sky, so the low clouds pass beneath the words, not behind them. */
+    .footer-body { padding-bottom: calc(var(--land) * .58 + 128px); }
+  }

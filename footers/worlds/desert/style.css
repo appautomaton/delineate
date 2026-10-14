@@ -1,0 +1,323 @@
+/* Desert: gouache poster. Flat painted planes, a curled relief pressed into everything, grain on top. */
+
+:root[data-world="desert"] {
+  --page-day: linear-gradient(to bottom, #F3F6FA 0%, #E3ECF5 34%, #B7D2EE 70%, #5F9BE0 93%, #5F9BE0 100%);
+  --page-night:
+    {{PAGE_STARS}},
+    linear-gradient(to bottom, #070B20 0%, #0C1436 40%, #15255E 76%, #1E3378 100%);
+  --body-day: #F3F6FA;
+  --body-night: #070B20;
+  --ink-day: #111D52;
+  --paper-day: #F3F6FA;
+  --ink-night: #FBF4E6;
+  --paper-night: #0B1230;
+  --journey-day: #111D52;
+  --journey-night: #FBF4E6;
+}
+.journey--desert .walkers { aspect-ratio: 150 / 64; }
+
+  .sky-paint--day {
+    background: linear-gradient(to top,
+      #F3E3C8 0, #F3E3C8 calc(var(--land) * .3),
+      #CFE1EE calc(var(--land) * .72), #94C0EC 60%, #5F9BE0 88%, #5F9BE0 100%);
+  }
+  .sky-paint--night {
+    background: linear-gradient(to top,
+      #3F58A8 0, #3F58A8 calc(var(--land) * .3),
+      #31499E calc(var(--land) * .72), #263E92 62%, #1E3378 100%);
+    opacity: 0;
+    transition: opacity var(--t-theme) ease;
+  }
+  [data-theme="night"] .sky-paint--night { opacity: 1; }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: #FFF4DC;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  [data-theme="night"] .stars { opacity: 1; transition-delay: .6s; }
+  .stars .tw { animation: twinkle var(--t) ease-in-out infinite var(--d); animation-play-state: var(--play); }
+  @keyframes twinkle { 0%, 100% { opacity: var(--a); } 50% { opacity: calc(var(--a) * .22); } }
+
+  .meteor {
+    position: absolute;
+    width: 150px;
+    height: 1.6px;
+    border-radius: 2px;
+    background: linear-gradient(to right, #FFF8E8, rgb(255 248 232 / 0));
+    rotate: -26.57deg;
+    opacity: 0;
+    animation: meteor 11s linear infinite 3s;
+    animation-play-state: var(--play);
+  }
+  .meteor--a { right: 14%; top: 11%; }
+  .meteor--b { right: 46%; top: 6%; width: 110px; animation-duration: 17s; animation-delay: 9s; }
+  [data-theme="day"] .meteor { visibility: hidden; }
+  @keyframes meteor {
+    0%, 90% { opacity: 0; translate: 0 0; }
+    91% { opacity: 1; }
+    97%, 100% { opacity: 0; translate: -300px 150px; }
+  }
+
+  .clouds { position: absolute; inset: 0; transition: opacity var(--t-theme) ease; }
+  [data-theme="night"] .clouds { opacity: 0; }
+  .cloud {
+    position: absolute;
+    left: 0;
+    animation: cloud linear infinite;
+    animation-play-state: var(--play);
+  }
+  .cloud--a { width: 172px; bottom: calc(var(--land) * .5 + 52px); animation-duration: 150s; animation-delay: -30s; }
+  .cloud--b { width: 108px; bottom: calc(var(--land) * .5 + 84px); animation-duration: 190s; animation-delay: -125s; opacity: .85; }
+  .cloud--c { width: 140px; bottom: calc(var(--land) * .5 + 40px); animation-duration: 170s; animation-delay: -84s; opacity: .92; }
+  @keyframes cloud { from { translate: -260px 0; } to { translate: calc(100vw + 40px) 0; } }
+
+  .birds {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 72px;
+    fill: none;
+    stroke: #33406F;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    translate: -120px 0;
+    animation: fly 38s linear infinite 4s;
+    animation-play-state: var(--play);
+    transition: opacity var(--t-theme) ease;
+  }
+  [data-theme="night"] .birds { opacity: 0; }
+  .wing { transform-origin: 9px 0; animation: flap .55s ease-in-out infinite alternate; animation-play-state: var(--play); }
+  .wing--b { animation-delay: -.2s; }
+  .wing--c { animation-delay: -.38s; }
+  @keyframes fly { 0% { translate: -120px 0; } 60%, 100% { translate: calc(100vw + 40px) -70px; } }
+  @keyframes flap { to { scale: 1 -.45; } }
+
+
+  .shade { mix-blend-mode: multiply; opacity: var(--cast-o); --play: paused; }
+  .shade--lantern { opacity: .6; }
+  .light {
+    mix-blend-mode: screen;
+    animation: flicker 2.6s ease-in-out infinite;
+    animation-play-state: var(--play);
+  }
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    17% { opacity: .9; }
+    31% { opacity: .98; }
+    46% { opacity: .82; }
+    61% { opacity: .96; }
+    79% { opacity: .87; }
+  }
+
+  .wind { position: absolute; left: 0; width: 100%; pointer-events: none; }
+
+  .drift {
+    position: absolute;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    opacity: var(--drift-o);
+    -webkit-mask-image: linear-gradient(to top, transparent, #000 30%, #000 62%, transparent);
+    mask-image: linear-gradient(to top, transparent, #000 30%, #000 62%, transparent);
+  }
+  .drift--ground { bottom: 0; height: 30%; }
+  .drift--mid { bottom: 21%; height: 24%; opacity: calc(var(--drift-o) * .55); }
+  .drift > i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -512px;
+    width: calc(100% + 512px);
+    background: var(--drift-color);
+    -webkit-mask: url("{{TEX_DRIFT}}") 0 0 / 512px 100% repeat-x;
+    mask: url("{{TEX_DRIFT}}") 0 0 / 512px 100% repeat-x;
+    animation: drift 6.5s linear infinite;
+    animation-play-state: var(--play);
+    will-change: transform;
+  }
+  .drift--mid > i { animation-duration: 15s; }
+  .drift--ground > i + i { opacity: .6; animation-duration: 4.4s; -webkit-mask-position: 180px 30%; mask-position: 180px 30%; }
+  @keyframes drift { to { translate: 512px 0; } }
+
+  .depth--far    { --rise: 48px; }
+  .depth--mid    { --rise: 120px; }
+  .depth--ground { --rise: 200px; }
+  .depth--near   { --rise: 320px; }
+  .sky-drift     { --rise: 160px; }
+
+  .texture--relief {
+    background: url("{{TEX_RELIEF}}") 0 0 / 256px;
+    mix-blend-mode: soft-light;
+    opacity: .32;
+  }
+  .texture--curl {
+    background: url("{{TEX_CURL}}") 0 0 / 256px;
+    mix-blend-mode: soft-light;
+    opacity: .9;
+  }
+  .texture {
+    transition: opacity var(--t-theme) ease;
+    /* Full texture on the land; under half behind the words. */
+    -webkit-mask-image: linear-gradient(to top,
+      #000 0, #000 calc(var(--land) * .5),
+      rgb(0 0 0 / .4) calc(var(--land) * .5 + 110px), rgb(0 0 0 / .4) calc(100% - 160px), transparent 100%);
+    mask-image: linear-gradient(to top,
+      #000 0, #000 calc(var(--land) * .5),
+      rgb(0 0 0 / .4) calc(var(--land) * .5 + 110px), rgb(0 0 0 / .4) calc(100% - 160px), transparent 100%);
+  }
+  [data-theme="night"] .texture--curl {
+    -webkit-mask-image: linear-gradient(to top,
+      rgb(0 0 0 / .42) 0, rgb(0 0 0 / .42) calc(var(--land) * .42),
+      #000 calc(var(--land) * .58), rgb(0 0 0 / .4) calc(var(--land) * .5 + 150px), rgb(0 0 0 / .4) calc(100% - 160px), transparent 100%);
+    mask-image: linear-gradient(to top,
+      rgb(0 0 0 / .42) 0, rgb(0 0 0 / .42) calc(var(--land) * .42),
+      #000 calc(var(--land) * .58), rgb(0 0 0 / .4) calc(var(--land) * .5 + 150px), rgb(0 0 0 / .4) calc(100% - 160px), transparent 100%);
+  }
+  [data-theme="night"] .texture--relief { opacity: .26; }
+  [data-theme="day"] .texture--relief { opacity: .2; }
+  [data-theme="day"] .texture--curl { opacity: .7; }
+
+  /* Idle life inside the drawing. Each loop is mostly stillness: a twitch, a glance,
+     a swish, then quiet. Pivots are in each part's own drawing coordinates. */
+
+  :global .a-look  { transform-origin: 114px 160px; animation: a-look 13s ease-in-out infinite var(--look-delay, 0s); }
+  :global .a-ear-n { transform-origin: 106px 142px; animation: twitch 5.3s ease-in-out infinite var(--ear-delay, 0s); }
+  :global .a-ear-f { transform-origin: 116px 141px; animation: twitch 7.4s ease-in-out infinite calc(var(--ear-delay, 0s) + 1.7s); }
+  :global .a-blink { transform-origin: 125px 151px; animation: blink 4.7s linear infinite var(--blink-delay, 0s); }
+  :global .c-look  { transform-origin: 28px 112px; animation: c-look 15s ease-in-out infinite 2s; }
+  :global .c-ear   { transform-origin: 29px 90px; animation: flick 8.3s ease-in-out infinite 1s; }
+  :global .c-blink { transform-origin: 6.6px 98.6px; animation: blink 5.9s linear infinite .6s; }
+  :global .c-tail  { transform-origin: 238px 132px; animation: swish 6.6s ease-in-out infinite 3s; }
+  :global .k-doze  { transform-origin: 28px 166px; animation: doze 11s ease-in-out infinite; }
+  :global .k-ear   { transform-origin: 29px 144px; animation: flick 9.4s ease-in-out infinite 4s; }
+  :global .tassel  { animation: tassel 2.6s ease-in-out infinite alternate var(--tassel-delay, 0s); }
+  :global .rope    { animation: rope 4.6s ease-in-out infinite alternate; }
+  :global .flame   { transform-origin: 0 -6px; animation: flame .9s ease-in-out infinite; }
+  :global .tuft    { animation: sway var(--sway-t) ease-in-out infinite alternate var(--sway-d); }
+  :global .a-look, :global .a-ear-n, :global .a-ear-f, :global .a-blink, :global .c-look, :global .c-ear, :global .c-blink, :global .c-tail,
+  :global .k-doze, :global .k-ear, :global .tassel, :global .rope, :global .flame, :global .tuft {
+    animation-play-state: var(--play, running);
+  }
+
+  @keyframes twitch { 0%, 82%, 100% { rotate: 0deg; } 85% { rotate: -16deg; } 88% { rotate: 7deg; } 91% { rotate: -4deg; } 94% { rotate: 0deg; } }
+  @keyframes flick  { 0%, 86%, 100% { rotate: 0deg; } 89% { rotate: 22deg; } 93% { rotate: 0deg; } }
+  @keyframes blink  { 0%, 95%, 100% { scale: 1 1; } 97% { scale: 1 .08; } }
+  @keyframes a-look { 0%, 18% { rotate: 0deg; } 26%, 44% { rotate: 8deg; } 52%, 62% { rotate: -6deg; } 70%, 100% { rotate: 0deg; } }
+  @keyframes c-look { 0%, 30% { rotate: 0deg; } 40%, 54% { rotate: -4deg; } 64%, 72% { rotate: 2.5deg; } 82%, 100% { rotate: 0deg; } }
+  @keyframes doze   { 0%, 34% { rotate: 0deg; } 50%, 72% { rotate: -7deg; } 76% { rotate: -1.5deg; } 84%, 100% { rotate: 0deg; } }
+  @keyframes swish  { 0%, 70%, 100% { rotate: 0deg; } 75% { rotate: 16deg; } 80% { rotate: -8deg; } 85% { rotate: 10deg; } 90% { rotate: 0deg; } }
+  @keyframes tassel { from { rotate: 3deg; } to { rotate: -8deg; } }
+  @keyframes sway   { from { rotate: 1deg; } to { rotate: 6deg; } }
+  @keyframes flame  { 0%, 100% { scale: 1 1; } 25% { scale: .9 1.1; } 50% { scale: 1.06 .92; } 75% { scale: .95 1.06; } }
+  @keyframes rope {
+    from { d: path("M-12 121C-16 160-8 200 0 238C6 266 2 290-12 297C-26 302-46 300-60 298"); }
+    to   { d: path("M-12 121C-9 160-1 200 6 238C11 266 4 290-12 297C-26 302-46 300-60 298"); }
+  }
+
+  /* Day and night palettes for the drawing. Night is moonlit and cool, so the lantern reads as the only warm light. */
+
+  .art-day {
+    --dust-fill: url(#g-dust-day);
+    --far-fill: url(#g-far-day);
+    --far2: #E2B888;
+    --haze-fill: url(#g-haze-day);
+    --mid-lit-fill: url(#g-mid-day);
+    --mid-shade: #C59C9B;
+    --crest: #FFEBC6;
+    --ground-fill: url(#g-ground-day);
+    --ripple-dark: rgb(170 116 76 / .22);
+    --ripple-light: rgb(255 240 210 / .4);
+    --print: rgb(165 112 74 / .3);
+    --cast-a: .6;
+    --cast-b: .09;
+    --cast-o: .55;
+    --cast-filter: url(#f-cast-day);
+    --cast-color: #6B68B0;
+    --corner: #E7B983;
+    --corner-rim: #F5D7A6;
+    --grass-dark: #8E6A4B;
+    --grass-light: #D9B27C;
+    --pebble: #A98872;
+    --pebble-lit: #EACBA4;
+    --drift-color: #FFF6E6;
+    --drift-o: .5;
+    --c-lit: #F7D49E;
+    --c-base: #DAA267;
+    --c-mid: #BC8762;
+    --c-shade: #A8828E;
+    --c-far: #957885;
+    --c-reflect: #E9B677;
+    --c-hair: #A8775A;
+    --c-ear: #BE8559;
+    --c-dark: #3A2630;
+    --madder: #B33A40;
+    --indigo: #3A4A8E;
+    --cream: #F4E6C8;
+    --wool: #E9D4B0;
+    --wood: #5E3D2E;
+    --gold: #E3AB48;
+    --brass: #A87F40;
+    --brass-dark: #6E5028;
+    --glass: #E6DECB;
+    --flame: #FFF4D6;
+    --flame-o: 0;
+    --ac-fl: #FCF6EA; --ac-fb: #EFE2CB; --ac-fs: #B7A6B6; --ac-lg: #EAD9BF; --ac-lf: #BBA9AE; --ac-fc: #F4E8D2; --ac-dk: #3A2C33;
+    --ab-fl: #E7B17B; --ab-fb: #C78D5B; --ab-fs: #8F6B7A; --ab-lg: #B17B50; --ab-lf: #7F6171; --ab-fc: #CE9563; --ab-dk: #2E2026;
+  }
+  .art-night {
+    --dust-fill: url(#g-dust-night);
+    --far-fill: url(#g-far-night);
+    --far2: #6C6286;
+    --haze-fill: url(#g-haze-night);
+    --mid-lit-fill: url(#g-mid-night);
+    --mid-shade: #383255;
+    --crest: #8F88B8;
+    --ground-fill: url(#g-ground-night);
+    --ripple-dark: rgb(28 22 44 / .32);
+    --ripple-light: rgb(200 194 236 / .16);
+    --print: rgb(28 22 44 / .38);
+    --cast-a: 1.1;
+    --cast-b: .15;
+    --cast-o: .62;
+    --cast-filter: url(#f-cast-night);
+    --cast-color: #161232;
+    --corner: #463C58;
+    --corner-rim: #5A5074;
+    --grass-dark: #2A2432;
+    --grass-light: #686078;
+    --pebble: #3A3244;
+    --pebble-lit: #78708E;
+    --drift-color: #A49CC8;
+    --drift-o: .13;
+    --c-lit: #9A889C;
+    --c-base: #6E5452;
+    --c-mid: #5A4448;
+    --c-shade: #3A3050;
+    --c-far: #322A44;
+    --c-reflect: #6E5450;
+    --c-hair: #4A3838;
+    --c-ear: #624A48;
+    --c-dark: #120C12;
+    --madder: #6E2836;
+    --indigo: #222A54;
+    --cream: #A098AC;
+    --wool: #7C7084;
+    --wood: #2A1E22;
+    --gold: #8A6A3C;
+    --brass: #C69A52;
+    --brass-dark: #6A4C2C;
+    --glass: #FFD98A;
+    --flame: #FFF4D6;
+    --flame-o: 1;
+    --ac-fl: #C4BCC8; --ac-fb: #A099AC; --ac-fs: #55506E; --ac-lg: #968CA0; --ac-lf: #524C66; --ac-fc: #B6ADBA; --ac-dk: #100C14;
+    --ab-fl: #846258; --ab-fb: #664A46; --ab-fs: #352C44; --ab-lg: #54403A; --ab-lf: #2E2638; --ab-fc: #725650; --ab-dk: #0E0A0C;
+  }
+
+@media (prefers-reduced-motion: reduce) {
+  .wind, .meteor, .birds { display: none; }
+}

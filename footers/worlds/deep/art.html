@@ -1,0 +1,390 @@
+<div class="world world--deep">
+  <div class="sky">
+    <div class="sky-paint sky-paint--day"></div>
+    <div class="sky-paint sky-paint--night"></div>
+    <div class="sky-drift" data-sway="3">
+      <svg class="dp-rays" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">{{RAYS}}</svg>
+      <div class="orbit">
+        <div class="orb orb--sun">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="dp-sun">
+                <stop offset="0" stop-color="#FFFBEA" stop-opacity=".95"/>
+                <stop offset=".3" stop-color="#F2FBF4" stop-opacity=".45"/>
+                <stop offset="1" stop-color="#E8FAF6" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="100" fill="url(#dp-sun)"/>
+            <ellipse cx="100" cy="100" rx="26" ry="24" fill="#FFFDF0" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="orb orb--moon">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="dp-moon">
+                <stop offset="0" stop-color="#DDEFF5" stop-opacity=".55"/>
+                <stop offset=".35" stop-color="#BFE2EE" stop-opacity=".16"/>
+                <stop offset="1" stop-color="#BFE2EE" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="100" fill="url(#dp-moon)"/>
+            <ellipse cx="100" cy="100" rx="22" ry="20" fill="#E3F2F2" opacity=".75"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="land-anchor"></div>
+
+    <div class="depth dp-far" data-sway="4">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-far-art" filter="url(#dp-cut)"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-far-art" filter="url(#dp-rim)"/><use href="#dp-far-art" filter="url(#dp-cut)"/></svg>
+      </div>
+    </div>
+
+    <div class="depth dp-back" data-sway="6">
+      <div class="pane pane--day art-day">
+        <svg class="art dp-lift" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-back-art" filter="url(#dp-drop)"/></svg>
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-back-art" filter="url(#dp-cut)"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art dp-glow" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-back-art" filter="url(#dp-rim)"/></svg>
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-back-art" filter="url(#dp-cut)"/></svg>
+      </div>
+    </div>
+
+    <div class="depth dp-mid" data-sway="9">
+      <div class="pane pane--day art-day">
+        <svg class="art dp-lift" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-mid-art" filter="url(#dp-drop)"/></svg>
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-mid-art" filter="url(#dp-cut)"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-mid-life"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art dp-glow" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-mid-art" filter="url(#dp-rim)"/></svg>
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-mid-art" filter="url(#dp-cut)"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-mid-life"/></svg>
+      </div>
+      <canvas class="dp-school"></canvas>
+    </div>
+
+    <div class="depth dp-ground" data-sway="16">
+      <div class="pane pane--day art-day">
+        <svg class="art dp-lift" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-ground-art" filter="url(#dp-drop)"/></svg>
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-ground-art" filter="url(#dp-cut)"/></svg>
+        <div class="dp-caustics"><svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" overflow="visible"><use href="#dp-caustic-net"/></svg></div>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-ground-life"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-ground-art" filter="url(#dp-cut)"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-ground-life"/></svg>
+        <svg class="art dp-light" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-glows"/></svg>
+      </div>
+    </div>
+
+    <div class="depth dp-near" data-sway="28">
+      <div class="pane pane--day art-day">
+        <svg class="art dp-lift dp-lift--near" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-near-still" filter="url(#dp-drop)"/></svg>
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-near-still" filter="url(#dp-cut)"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-near-kelp"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art dp-glow" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-near-still" filter="url(#dp-rim)"/></svg>
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-near-still" filter="url(#dp-cut)"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#dp-near-kelp"/></svg>
+      </div>
+      <canvas class="dp-plankton"></canvas>
+    </div>
+  </div>
+
+  <div class="texture dp-paper"></div>
+
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- A sheet of cut paper: a knife's whisper in the edge, a lit lip above and a dark one below,
+           and a few fibres in the body. -->
+      <filter id="dp-cut" x="-2%" y="-4%" width="104%" height="108%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".32" numOctaves="1" seed="3" result="jit"/>
+        <feDisplacementMap in="SourceGraphic" in2="jit" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="cut"/>
+        <feColorMatrix in="cut" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="a"/>
+        <feOffset in="a" dx="1.1" dy="1.4" result="down"/>
+        <feComposite in="a" in2="down" operator="out" result="lip"/>
+        <feFlood flood-color="#FFFFFF" flood-opacity=".42"/>
+        <feComposite in2="lip" operator="in" result="lit"/>
+        <feOffset in="a" dx="-1" dy="-1.3" result="up"/>
+        <feComposite in="a" in2="up" operator="out" result="under"/>
+        <feFlood flood-color="#062430" flood-opacity=".3"/>
+        <feComposite in2="under" operator="in" result="dark"/>
+        <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="1" seed="11" result="fib"/>
+        <feColorMatrix in="fib" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 2.6 -1.78" result="fibre"/>
+        <feComposite in="fibre" in2="a" operator="in" result="fibres"/>
+        <feMerge><feMergeNode in="cut"/><feMergeNode in="fibres"/><feMergeNode in="lit"/><feMergeNode in="dark"/></feMerge>
+      </filter>
+      <!-- The shadow a sheet throws on the sheets behind it. Drawn on its own, so it can slide as the sheets part. -->
+      <filter id="dp-drop" x="-4%" y="-6%" width="108%" height="116%" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#062A36" flood-opacity=".58"/>
+        <feComposite in2="SourceAlpha" operator="in"/>
+        <feGaussianBlur stdDeviation="6.5"/>
+      </filter>
+      <!-- At night the sheets are lit from behind: light leaks round every edge. -->
+      <filter id="dp-rim" x="-6%" y="-10%" width="112%" height="120%" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#5FE6E0" flood-opacity=".5"/>
+        <feComposite in2="SourceAlpha" operator="in"/>
+        <feGaussianBlur stdDeviation="6"/>
+      </filter>
+      <filter id="dp-blur" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+      <filter id="dp-piece" x="-12%" y="-12%" width="130%" height="135%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="b"/>
+        <feOffset in="b" dx="1.3" dy="2.3" result="o"/>
+        <feFlood flood-color="#05222C" flood-opacity=".4"/>
+        <feComposite in2="o" operator="in" result="shade"/>
+        <feOffset in="SourceAlpha" dx=".7" dy=".9" result="down"/>
+        <feComposite in="SourceAlpha" in2="down" operator="out" result="lip"/>
+        <feFlood flood-color="#FFFFFF" flood-opacity=".5"/>
+        <feComposite in2="lip" operator="in" result="lit"/>
+        <feMerge><feMergeNode in="shade"/><feMergeNode in="SourceGraphic"/><feMergeNode in="lit"/></feMerge>
+      </filter>
+
+      <!-- Far plane: a pale reef against the blue, with two small fans. -->
+      <g id="dp-far-art">
+        <path d="{{FAR_REEF}}" style="fill:var(--dp-far)"/>
+        <path d="{{FAN_FAR}}" fill-rule="evenodd" style="fill:var(--dp-far-2)"/>
+        <path d="{{FAR_REEF_2}}" style="fill:var(--dp-far-2)"/>
+      </g>
+      <g id="dp-back-art">
+        <path d="{{BACK_ROCK_L}}" style="fill:var(--dp-back)"/>
+        <path d="{{BACK_ROCK_R}}" style="fill:var(--dp-back)"/>
+      </g>
+
+      <!-- Mid plane: rock, lace fans, branching and brain corals, a few young kelp. -->
+      <g id="dp-mid-art">
+        <path d="{{MID_ROCK_L}}" style="fill:var(--dp-rock)"/>
+        <path d="{{MID_ROCK_R}}" style="fill:var(--dp-rock)"/>
+        <g filter="url(#dp-piece)">
+          <path d="{{FAN_A}}" fill-rule="evenodd" style="fill:var(--dp-fan-a)"/>
+          <path d="{{FAN_B}}" fill-rule="evenodd" style="fill:var(--dp-fan-b)"/>
+          <path d="{{FAN_C}}" fill-rule="evenodd" style="fill:var(--dp-fan-c)"/>
+        </g>
+        <g filter="url(#dp-piece)">
+          <path d="{{STAG_A}}" style="fill:var(--dp-stag-a)"/>
+          <path d="{{STAG_B}}" style="fill:var(--dp-stag-b)"/>
+          <path d="{{STAG_C}}" style="fill:var(--dp-stag-b)"/>
+        </g>
+        <path d="{{SAND_BACK}}" style="fill:var(--dp-sand-back)"/>
+        <g filter="url(#dp-piece)">
+          <path d="{{BRAIN_A}}" style="fill:var(--dp-brain)"/>
+          <path d="{{BRAIN_B}}" style="fill:var(--dp-brain)"/>
+        </g>
+        <path d="{{BRAIN_A_GROOVES}}{{BRAIN_B_GROOVES}}" style="fill:var(--dp-brain-groove)"/>
+      </g>
+      <g id="dp-mid-life">
+        <g style="fill:var(--dp-kelp-mid)">{{KELP_MID}}</g>
+        <g class="dp-jelly-drift" style="--jelly-t:46s; --jelly-d:-8s">
+          <use href="#dp-jelly" transform="translate(700 330) scale(1.1)"/>
+        </g>
+        <g class="dp-jelly-drift" style="--jelly-t:58s; --jelly-d:-31s">
+          <use href="#dp-jelly" transform="translate(1180 360) scale(.8)" style="--pulse-d:-.9s"/>
+        </g>
+      </g>
+
+      <!-- Ground plane: the sand floor, its ripples, and the life that sits on it. -->
+      <g id="dp-ground-art">
+        <path d="{{SAND_FLOOR}}" style="fill:var(--dp-sand)"/>
+        <path d="{{SAND_RIPPLES}}" style="fill:var(--dp-ripple)"/>
+        <g filter="url(#dp-piece)">
+          <g transform="translate(948 524)"><use href="#dp-star"/></g>
+          <g transform="translate(330 540) rotate(-14) scale(.8)"><use href="#dp-star"/></g>
+          <g transform="translate(1242 538) scale(.9)"><use href="#dp-shell"/></g>
+          <g transform="translate(612 548) rotate(10) scale(.7)"><use href="#dp-shell"/></g>
+        </g>
+      </g>
+      <g id="dp-caustic-net">
+        <path d="{{CAUSTICS}}" fill="none" style="stroke:var(--dp-caustic)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <g id="dp-ground-life">
+        <g class="dp-turtle-swim"><ellipse cx="0" cy="556" rx="70" ry="9" fill="url(#dp-turtle-shadow)"/></g>
+        <g transform="translate(790 518)"><use href="#dp-anemone"/></g>
+        <g class="dp-clown dp-clown--a"><use href="#dp-clownfish" transform="translate(774 470)"/></g>
+        <g class="dp-clown dp-clown--b"><use href="#dp-clownfish" transform="translate(812 486) scale(-.8 .8)"/></g>
+        <g class="dp-bubbles" style="fill:none; stroke:var(--dp-bubble)" stroke-width="1.2">
+          <circle class="dp-bubble" cx="824" cy="506" r="3.2"/>
+          <circle class="dp-bubble" cx="828" cy="506" r="2.2" style="animation-delay:-1.4s"/>
+          <circle class="dp-bubble" cx="820" cy="506" r="2.6" style="animation-delay:-2.7s"/>
+          <circle class="dp-bubble" cx="1246" cy="530" r="2.4" style="animation-delay:-.6s; animation-duration:5.2s"/>
+          <circle class="dp-bubble" cx="1250" cy="530" r="1.8" style="animation-delay:-3.1s; animation-duration:5.2s"/>
+        </g>
+        <g class="dp-crab-walk"><g transform="translate(1050 548)"><use href="#dp-crab"/></g></g>
+        <g class="dp-turtle-swim"><g class="dp-turtle-bob"><use href="#dp-turtle" transform="translate(0 392) scale(1.15)"/></g></g>
+      </g>
+      <g id="dp-glows">
+        <circle class="dp-jelly-glow" cx="700" cy="330" r="70" fill="url(#dp-glow-violet)" style="--jelly-t:46s; --jelly-d:-8s"/>
+        <circle class="dp-jelly-glow" cx="1180" cy="360" r="52" fill="url(#dp-glow-violet)" style="--jelly-t:58s; --jelly-d:-31s"/>
+        <ellipse cx="790" cy="500" rx="80" ry="44" fill="url(#dp-glow-cyan)"/>
+      </g>
+      <radialGradient id="dp-turtle-shadow">
+        <stop offset="0" stop-color="#0A3442" stop-opacity=".32"/>
+        <stop offset="1" stop-color="#0A3442" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="dp-glow-violet">
+        <stop offset="0" stop-color="#C9B8FF" stop-opacity=".7"/>
+        <stop offset=".35" stop-color="#9F86F5" stop-opacity=".22"/>
+        <stop offset="1" stop-color="#9F86F5" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="dp-glow-cyan">
+        <stop offset="0" stop-color="#8FF8E8" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#5FE6E0" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- Near plane: the sand's near ridge, dark rocks at the corners, and the tall kelp that frames the view. -->
+      <g id="dp-near-still">
+        <path d="{{SAND_NEAR}}" style="fill:var(--dp-sand-near)"/>
+        <path d="{{CAVE_L_LIP}}" style="fill:var(--dp-near-rock-lit)"/>
+        <path d="{{CAVE_R_LIP}}" style="fill:var(--dp-near-rock-lit)"/>
+        <path d="{{CAVE_L}}" style="fill:var(--dp-near-rock)"/>
+        <path d="{{CAVE_R}}" style="fill:var(--dp-near-rock)"/>
+      </g>
+      <g id="dp-near-kelp">
+        <g style="fill:var(--dp-kelp)">{{KELP_L}}</g>
+        <g style="fill:var(--dp-kelp)">{{KELP_R}}</g>
+      </g>
+
+      <!-- Green sea turtle, swimming right, cut in pieces: far flippers, shell, plates, head, near flipper.
+           Centre of the shell at the origin. -->
+      <g id="dp-turtle">
+        <g filter="url(#dp-piece)">
+          <path class="dp-flip-far" d="M24 -22C32 -36 34 -54 26 -70C22 -66 18 -54 15 -42C13 -34 12 -28 11 -24Z" style="fill:var(--dp-turtle-skin-dark)"/>
+          <path d="M-38 -10C-48 -18 -60 -20 -68 -16C-62 -10 -52 -4 -42 -2Z" style="fill:var(--dp-turtle-skin-dark)"/>
+        </g>
+        <g filter="url(#dp-piece)">
+          <path d="M-46 0C-48 -18 -28 -32 0 -32C28 -32 48 -20 50 -3C48 14 28 22 0 22C-28 22 -46 15 -46 0Z" style="fill:var(--dp-shell-dark)"/>
+        </g>
+        <g filter="url(#dp-piece)" style="fill:var(--dp-shell)">
+          <path d="M-10 -25L8 -27L18 -15L8 -5L-10 -5L-20 -15Z"/>
+          <path d="M22 -24L36 -17L38 -6L26 -2L20 -14Z"/>
+          <path d="M-23 -22L-26 -7L-37 -3L-41 -11L-35 -19Z"/>
+          <path d="M-10 -1L8 -1L16 9L6 16L-12 16L-19 8Z"/>
+          <path d="M23 1L36 -1L41 5L28 14L18 10Z"/>
+          <path d="M-26 1L-21 10L-30 15L-39 8Z"/>
+        </g>
+        <path d="M-6 -21l6-1.4 5 3.6-2 4.6-7 .4-3.4-3.6ZM-6 3l6-1 5 3.6-2 4.4-7 .2-3.4-3.4Z" style="fill:var(--dp-scute)"/>
+        <g filter="url(#dp-piece)">
+          <path d="M46 -6C54 -13 68 -14 77 -7C80 -1 76 7 66 7C58 8 52 5 47 2Z" style="fill:var(--dp-turtle-skin)"/>
+          <path d="M-40 10C-48 19 -58 24 -68 22C-62 15 -54 9 -46 6Z" style="fill:var(--dp-turtle-skin)"/>
+        </g>
+        <path d="M58 -7l5-2 4 3-3 4-5-1ZM51 -2l4-1 2 3-3 2Z" style="fill:var(--dp-turtle-skin-dark)"/>
+        <circle cx="69" cy="-4" r="1.7" style="fill:var(--dp-eye)"/>
+        <path d="M71 2.6C73.5 2.8 75.6 2.2 77 .8" fill="none" style="stroke:var(--dp-eye)" stroke-width=".9" stroke-linecap="round"/>
+        <g class="dp-flip-near" filter="url(#dp-piece)">
+          <path d="M30 8C44 16 56 36 54 62C46 56 37 43 31 34C26 27 20 19 16 12Z" style="fill:var(--dp-turtle-skin)"/>
+          <path d="M35 22l5 1 2 5-5 0ZM41 35l4 2 1 5-4-1ZM31 14l4 1 1 4-4-1ZM45 47l3 2v4l-3-1Z" style="fill:var(--dp-turtle-skin-dark)"/>
+        </g>
+      </g>
+
+      <!-- Moon jelly: a bell of thin vellum over a paler inner dome, four rings cut through it, frilled arms below.
+           The top of the bell at the origin. -->
+      <g id="dp-jelly">
+        <g class="dp-jelly-arms" fill="none" style="stroke:var(--dp-jelly-line)" stroke-width=".8" stroke-linecap="round">
+          <path d="M-15 1C-17 14 -11 24 -15 36C-18 46 -12 54 -16 64"/>
+          <path d="M-9 2C-11 16 -6 28 -9 42C-11 52 -6 60 -9 72"/>
+          <path d="M9 2C11 16 6 28 9 42C11 52 6 60 9 70"/>
+          <path d="M15 1C17 14 11 24 15 36C18 46 12 54 16 62"/>
+        </g>
+        <g class="dp-jelly-arms" style="fill:var(--dp-jelly-arm); animation-delay:-1.2s">
+          <path d="M-7 2C-12 10 -5 16 -10 24C-6 26 -9 32 -5 36C-2 38 -1 34 -2 30C-4 24 0 18 -3 12C-2 8 -2 5 -2 2Z"/>
+          <path d="M7 2C12 10 5 16 10 24C6 26 9 32 5 38C2 40 1 36 2 32C4 26 0 18 3 12C2 8 2 5 2 2Z"/>
+        </g>
+        <g class="dp-pulse" filter="url(#dp-piece)">
+          <path d="M-19 0C-19 -15 -10 -24 0 -24C10 -24 19 -15 19 0C15.4 2 12 .2 9 2C5.4 .2 2 .4 0 2C-2 .4 -5.4 .2 -9 2C-12 .2 -15.4 2 -19 0Z" style="fill:var(--dp-jelly)"/>
+          <path fill-rule="evenodd" d="M-13 -3C-13 -12 -7 -19 0 -19C7 -19 13 -12 13 -3C8 -1.6 -8 -1.6 -13 -3Z M-6 -11.6a3.2 3.2 0 1 0 .1 0Z M6 -11.6a3.2 3.2 0 1 0 .1 0Z M0 -16.6a3 3 0 1 0 .1 0Z M0 -6.8a3 3 0 1 0 .1 0Z" style="fill:var(--dp-jelly-inner)"/>
+        </g>
+      </g>
+
+      <!-- Anemone: a column, then a back crown of tentacles in a deeper colour and a front crown in a paler one,
+           each tipped in pink. Base at the origin. -->
+      <g id="dp-anemone">
+        <g filter="url(#dp-piece)">
+          <path d="M-18 0C-16 -10 -13 -18 -15 -25H15C13 -18 16 -10 18 0Z" style="fill:var(--dp-anemone-base)"/>
+        </g>
+        <path d="M-14 -6h28M-15 -13h30M-14 -20h28" fill="none" style="stroke:var(--dp-anemone)" stroke-width="1" opacity=".5"/>
+        <g class="dp-tentacles" filter="url(#dp-piece)" style="fill:var(--dp-anemone-back); animation-delay:-2s">
+          <path d="M-10 -24C-18 -36 -22 -52 -20 -66C-14 -68 -14 -58 -12 -48C-10 -40 -6 -32 -4 -26Z"/>
+          <path d="M-2 -25C-4 -42 0 -58 6 -72C12 -70 8 -56 7 -46C6 -38 4 -32 4 -26Z"/>
+          <path d="M6 -24C12 -38 20 -50 32 -60C36 -56 28 -46 22 -38C17 -32 12 -28 10 -24Z"/>
+          <path d="M-14 -22C-26 -28 -36 -38 -42 -52C-38 -56 -32 -46 -24 -38C-20 -34 -14 -28 -12 -26Z"/>
+        </g>
+        <g class="dp-tentacles" filter="url(#dp-piece)" style="fill:var(--dp-anemone)">
+          <path d="M-14 -22C-30 -28 -42 -38 -48 -50C-44 -54 -36 -44 -26 -38C-20 -34 -14 -30 -11 -26Z"/>
+          <path d="M-9 -25C-18 -38 -24 -54 -28 -64C-23 -66 -20 -56 -16 -46C-12 -38 -8 -32 -5 -26Z"/>
+          <path d="M-4 -25C-6 -40 -6 -54 -2 -66C3 -66 2 -54 1 -44C0 -36 0 -30 1 -25Z"/>
+          <path d="M2 -25C6 -38 12 -52 20 -62C25 -60 19 -50 16 -42C13 -36 9 -30 6 -25Z"/>
+          <path d="M8 -24C18 -32 30 -40 42 -46C44 -41 34 -36 26 -32C20 -28 14 -26 11 -22Z"/>
+          <path d="M11 -22C22 -24 34 -26 46 -32C48 -28 38 -24 30 -21C24 -19 18 -18 14 -18Z"/>
+        </g>
+        <g class="dp-tentacles" style="fill:var(--dp-anemone-tip)">
+          <circle cx="-48" cy="-51" r="3.2"/><circle cx="-28" cy="-65" r="3.2"/><circle cx="-2" cy="-67" r="3.2"/>
+          <circle cx="21" cy="-62" r="3.2"/><circle cx="43" cy="-46" r="3.2"/><circle cx="46" cy="-31" r="3.2"/>
+        </g>
+      </g>
+
+      <!-- Clownfish, facing right: an orange body with three white bands, each band edged in black. -->
+      <g id="dp-clownfish" filter="url(#dp-piece)">
+        <path d="M-14 0C-14 -6.4 -6 -10.4 4 -10.4C12 -10.4 18.4 -5.4 18.4 0C18.4 5.4 12 10.4 4 10.4C-6 10.4 -14 6.4 -14 0Z" style="fill:var(--dp-clown)"/>
+        <path d="M-14 0L-22.4 -7.4C-23.4 -2.4 -23.4 2.4 -22.4 7.4Z M-2 -10L4 -15C8 -14 10 -12 10 -10Z" style="fill:var(--dp-clown)"/>
+        <path d="M-8.6 -8C-6.4 -3 -6.4 3 -8.6 8L-3.6 9.6C-1.4 4 -1.4 -4 -3.6 -9.6ZM2.6 -10.4C4.8 -5 4.8 5 2.6 10.4L7.6 10C9.8 5 9.8 -5 7.6 -10ZM11.8 -7.8C13.4 -3 13.4 3 11.8 7.8L14.8 6.4C16 2.6 16 -2.6 14.8 -6.4Z" style="fill:var(--dp-clown-band); stroke:var(--dp-eye)" stroke-width=".7"/>
+        <circle cx="14" cy="-2.4" r="1.4" style="fill:var(--dp-eye)"/>
+      </g>
+
+      <!-- Crab, facing the viewer: legs, then the shell, then the claws on top. -->
+      <g id="dp-crab">
+        <g class="dp-legs" filter="url(#dp-piece)" style="fill:var(--dp-crab-dark)">
+          <path d="M-12 -4L-24 -11L-31 -2L-27 -1L-23 -7L-12 -1Z M-12 0L-26 -2L-31 6L-27 6L-24 1L-12 3Z M12 -4L24 -11L31 -2L27 -1L23 -7L12 -1Z M12 0L26 -2L31 6L27 6L24 1L12 3Z"/>
+        </g>
+        <path d="M-8 -14L-9 -21M8 -14L9 -21" style="stroke:var(--dp-crab-dark)" stroke-width="1.8"/>
+        <g filter="url(#dp-piece)">
+          <path d="M-17 -2C-17 -13 -8 -17 0 -17C8 -17 17 -13 17 -2C17 2 8 4.5 0 4.5C-8 4.5 -17 2 -17 -2Z" style="fill:var(--dp-crab)"/>
+          <circle cx="-9" cy="-22" r="2.2" style="fill:var(--dp-eye)"/><circle cx="9" cy="-22" r="2.2" style="fill:var(--dp-eye)"/>
+        </g>
+        <path d="M-9 -8h4M5 -8h4M-2 -12h4" style="stroke:var(--dp-crab-dark)" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>
+        <g filter="url(#dp-piece)" style="fill:var(--dp-crab)">
+          <path d="M-15 -8C-21 -12 -27 -18 -27 -25C-31 -25 -33 -18 -31 -14C-29 -10 -23 -8 -17 -6Z M-27 -25C-25 -29 -21 -31 -19 -29C-21 -27 -23 -25 -23 -23Z"/>
+          <path d="M15 -8C21 -12 27 -18 27 -25C31 -25 33 -18 31 -14C29 -10 23 -8 17 -6Z M27 -25C25 -29 21 -31 19 -29C21 -27 23 -25 23 -23Z"/>
+        </g>
+      </g>
+
+      <!-- Starfish and a scallop shell. -->
+      <g id="dp-star">
+        <path d="M0 -16L4.4 -5.4L16 -5L7 2.4L10 14L0 7.4L-10 14L-7 2.4L-16 -5L-4.4 -5.4Z" style="fill:var(--dp-star); stroke:var(--dp-star)" stroke-linejoin="round" stroke-width="3"/>
+        <g style="fill:var(--dp-star-dot)"><circle cx="0" cy="-8" r="1"/><circle cx="7" cy="-3" r="1"/><circle cx="4" cy="6" r="1"/><circle cx="-4" cy="6" r="1"/><circle cx="-7" cy="-3" r="1"/><circle cx="0" cy="0" r="1.4"/></g>
+      </g>
+      <g id="dp-shell">
+        <path d="M-12 0C-14 -8 -8 -16 0 -16C8 -16 14 -8 12 0Z" style="fill:var(--dp-shell-paper)"/>
+        <path d="M-4 0L-3 3H3L4 0Z" style="fill:var(--dp-shell-paper)"/>
+        <path d="M0 -15V-1M-5 -14L-2 -1M5 -14L2 -1M-9 -11L-5 -1M9 -11L5 -1" fill="none" style="stroke:var(--dp-shell-line)" stroke-width="1"/>
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<div class="journey journey--deep" aria-hidden="true">
+  <svg class="walkers" viewBox="0 0 150 64" style="aspect-ratio: 150 / 64">
+    <g class="walker">
+      <path d="M58 40C58 30 70 24 84 24C98 24 108 31 108 39C108 47 98 52 84 52C70 52 58 48 58 40Z"/>
+      <path d="M106 37C110 33 118 32 122 36C123 40 119 43 114 43C110 43 107 41 106 39Z"/>
+      <path d="M96 46C102 52 106 60 104 64C100 60 94 54 90 48Z"/>
+      <path d="M96 26C100 18 100 10 94 4C92 10 90 18 88 24Z"/>
+      <path d="M62 44C56 48 50 50 46 49C50 46 55 43 60 42Z"/>
+    </g>
+    <g class="walker">
+      <path d="M20 22C20 18 24 16 28 16C32 16 35 18 35 22C35 26 32 28 28 28C24 28 20 26 20 22Z"/>
+      <path d="M20 22L14 18V26Z"/>
+    </g>
+    <g class="walker">
+      <path d="M136 12C136 9 139 8 142 8C145 8 147 10 147 12C147 14 145 16 142 16C139 16 136 15 136 12Z"/>
+      <path d="M136 12L131 9V15Z"/>
+    </g>
+  </svg>
+</div>

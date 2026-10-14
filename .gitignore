@@ -21,6 +21,9 @@ dist/
 *.mkv
 *.onnx
 
+# Visual references for new work, kept local
+.references/
+
 # Secrets
 .env
 .env.*
@@ -38,7 +41,11 @@ garden/look/
 portraits/pieces/*/*.svg
 portraits/pieces/*/index.html
 
+# Written by footers/build.py (npm run footers)
+footers/automaton.html
+
 # System and tool litter
+__pycache__/
 .claude/worktrees/
 .DS_Store
 .cc-writes/

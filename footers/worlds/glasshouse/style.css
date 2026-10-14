@@ -1,0 +1,121 @@
+/* Glasshouse: a Victorian palm house as a copperplate engraving. By day a line engraving, hand-tinted;
+   by night the same drawing lit from within the house. On laid paper, inside a plate mark. */
+
+:root[data-world="glasshouse"] {
+  --page-day:
+    url("{{TEX_LAID}}") 0 0 / 240px,
+    linear-gradient(#EFEEE8, #EFEEE8);
+  --page-night:
+    linear-gradient(to bottom, #0E1119 0%, #10131C 60%, #11141E 100%);
+  --page-blend: multiply, normal;
+  --body-day: #EFEEE8;
+  --body-night: #0E1119;
+  --ink-day: #231E1A;
+  --paper-day: #EFEEE8;
+  --ink-night: #ECE5D2;
+  --paper-night: #11141E;
+  --journey-day: #231E1A;
+  --journey-night: #ECE5D2;
+}
+
+.sky-paint--day { background: #EFEEE8; }
+/* The night sky: deep overhead, a cooler blue toward the horizon, and a faint halo round the moon. */
+.sky-paint--night {
+  background:
+    radial-gradient(240px circle at var(--orb-x) var(--orb-y), rgb(196 206 228 / .1), transparent),
+    linear-gradient(to top, #1A2233 0, #141A28 calc(var(--land) * .9), #0E121C 75%, #0C1019 100%);
+  opacity: 0;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .sky-paint--night { opacity: 1; }
+
+.gh-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #ECE5D2;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+[data-theme="night"] .gh-stars { opacity: .8; transition-delay: .6s; }
+
+.orb--sun { width: 150px; }
+.orb--moon { width: 140px; }
+
+.gh-far    { --rise: 40px; }
+.gh-mid    { --rise: 110px; }
+.gh-ground { --rise: 200px; }
+.gh-near   { --rise: 300px; }
+.sky-drift { --rise: 150px; }
+
+/* One set of forms, read two ways by day: knocked out of whatever lies behind, and hand-tinted over the
+   print. Drawn through <use>, so the names are global. */
+:global .gh-s { fill: color-mix(in srgb, var(--paper-k, #EFEEE8) calc(var(--knock, 0) * 100%), var(--c)); }
+:global .gh-handtint { mix-blend-mode: multiply; opacity: .55; }
+
+/* By night the house blooms into the air round it, and its light lies warm on what is near. */
+.gh-glow { mix-blend-mode: screen; animation: gh-breathe 6s ease-in-out infinite; animation-play-state: var(--play); }
+@keyframes gh-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .86; } }
+
+/* The specimens by night: the darkest things in the picture, their veins just catching the light. */
+.gh-sil { --knock: 1; --paper-k: #070A10; }
+.gh-veins { --gh-ink: #C9CFDA; opacity: .2; }
+.gh-labels { font: italic 400 9.5px "Alegreya", Georgia, serif; fill: #231E1A; stroke: none; }
+.gh-labels path { fill: none; stroke: #231E1A; stroke-width: .45; }
+
+/* The plate mark: the print's pressed edge, framing the whole footer. */
+.gh-plate {
+  position: absolute;
+  inset: 14px;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 0 1px rgb(35 30 26 / .16),
+    inset 1px 1px 0 1px rgb(255 255 255 / .55),
+    1px 1px 0 rgb(255 255 255 / .6);
+  pointer-events: none;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .gh-plate { opacity: .25; }
+.gh-paper {
+  background: url("{{TEX_LAID}}") 0 0 / 240px;
+  mix-blend-mode: multiply;
+  opacity: .7;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .gh-paper { opacity: 0; }
+
+/* The specimens grow as the footer arrives, each at its own moment. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-grow {
+      animation: gh-grow linear both;
+      animation-timeline: --land;
+      animation-range: entry var(--on) entry calc(var(--on) + 55%);
+    }
+    .gh-labels {
+      animation: gh-label linear both;
+      animation-timeline: --land;
+      animation-range: entry 70% entry 100%;
+    }
+  }
+}
+@keyframes gh-grow { from { scale: .15 .05; rotate: -10deg; opacity: 0; } 30% { opacity: 1; } }
+@keyframes gh-label { from { opacity: 0; } }
+
+/* Life. */
+:global .gh-flit { animation: gh-flit var(--flit) ease-in-out infinite var(--d); }
+:global .gh-wing { transform-origin: 0 0; animation: gh-wing .22s ease-in-out infinite alternate; }
+:global .gh-wing--r { animation-name: gh-wing-r; }
+:global .gh-moth { transform-origin: 0 0; animation: gh-orbit var(--orbit) linear infinite var(--d); }
+:global .gh-flit, :global .gh-wing, :global .gh-moth { animation-play-state: var(--play, running); }
+@keyframes gh-flit {
+  0%, 100% { translate: 0 0; } 20% { translate: 30px -18px; } 40% { translate: 60px -6px; }
+  60% { translate: 26px -26px; } 80% { translate: -20px -10px; }
+}
+@keyframes gh-wing { to { scale: .25 1; } }
+@keyframes gh-wing-r { to { scale: .25 1; } }
+@keyframes gh-orbit {
+  from { transform: rotate(0deg) translateX(var(--r)); }
+  to { transform: rotate(360deg) translateX(var(--r)); }
+}

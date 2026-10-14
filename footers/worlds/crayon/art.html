@@ -1,0 +1,43 @@
+<div class="world world--crayon">
+  <div class="sky">
+    <div class="sky-paint sky-paint--day"></div>
+    <div class="sky-paint sky-paint--night"></div>
+    <div class="sky-drift" data-sway="3">
+      <svg class="wax cr-clouds" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMin slice"><defs>{{SKY_DEFS}}</defs><g>{{SKY}}</g></svg>
+      <div class="orbit">
+        <div class="orb orb--sun"><svg class="wax" viewBox="0 0 200 200"><g>{{SUN}}</g></svg></div>
+        <div class="orb orb--moon"><svg class="wax" viewBox="0 0 200 200"><g>{{MOON}}</g></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="land-anchor"></div>
+    <div class="depth cr-range" data-sway="3">
+      <div class="pane"><svg class="art wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{RANGE_DEFS}}</defs><g>{{RANGE}}</g></svg></div>
+    </div>
+    <div class="depth cr-hills" data-sway="6">
+      <div class="pane"><svg class="art wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{HILLS_DEFS}}</defs><g>{{HILLS}}</g></svg></div>
+    </div>
+    <div class="depth cr-trees" data-sway="9">
+      <div class="pane"><svg class="art wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{TREES_DEFS}}</defs><g>{{TREES}}</g></svg></div>
+    </div>
+    <div class="depth cr-meadow" data-sway="13">
+      <div class="pane"><svg class="art wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{MEADOW_DEFS}}</defs><g>{{MEADOW}}</g></svg></div>
+    </div>
+    <div class="depth cr-near" data-sway="18">
+      <div class="pane"><svg class="art wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{NEAR_DEFS}}</defs><g>{{NEAR}}</g></svg></div>
+    </div>
+  </div>
+</div>
+
+<div class="journey journey--crayon" aria-hidden="true">
+  <svg class="walkers" viewBox="0 0 64 30">
+    <g class="walker">
+      <path d="M8 27c4-1 9-1.5 15-1.5h22c4 0 7 .8 9 2.2-1 .9-3 1.3-6 1.3H11c-2 0-3-.7-3-2z"/>
+      <path d="M48 26c2-3 2-7 4-9.5 1-1.3 3-1.5 3.6.2.6 1.6-.6 3-1.6 4.3-1.4 1.8-1.8 3.4-2.4 5z"/>
+      <path d="M55 15.5l2-4.5M53.6 15l-.2-4.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M33 25.5c-9 0-14-5-14-11 0-6 5-10.5 11-10.5 5.6 0 9.8 4 9.8 9 0 4.6-3.6 8-8 8-4 0-7-2.8-7-6.4 0-3.2 2.5-5.6 5.6-5.6 2.7 0 4.6 2 4.6 4.4 0 2-1.5 3.6-3.5 3.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div>

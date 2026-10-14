@@ -1,0 +1,132 @@
+/* Observatory: one sheet of working drawings, section A-A, a plan and a detail. Technical pen on gridded
+   drafting film by day; a cyanotype by night. Line weights carry meaning: cut, seen, fine, construction,
+   centre; each material cut through carries its own section symbol. */
+
+:root[data-world="observatory"] {
+  --page-day:
+    url("{{TEX_GRID}}") 0 0 / 60px,
+    linear-gradient(#EEF1EF, #EEF1EF);
+  --page-night:
+    url("{{TEX_GRID_NIGHT}}") 0 0 / 60px,
+    linear-gradient(to bottom, #173F6E 0%, #15396A 60%, #133566 100%);
+  --page-blend: normal, normal;
+  --body-day: #EEF1EF;
+  --body-night: #173F6E;
+  --ink-day: #1C2836;
+  --paper-day: #EEF1EF;
+  --ink-night: #EEF4F9;
+  --paper-night: #133566;
+  --journey-day: #1C2836;
+  --journey-night: #EEF4F9;
+}
+
+.sky-paint--day { background: url("{{TEX_GRID}}") 0 0 / 60px, #EEF1EF; }
+.sky-paint--night {
+  background: url("{{TEX_GRID_NIGHT}}") 0 0 / 60px, linear-gradient(to top, #12336A 0, #133566 50%, #133566 100%);
+  opacity: 0;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .sky-paint--night { opacity: 1; }
+
+.ob-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #EEF4F9;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+[data-theme="night"] .ob-stars { opacity: .85; transition-delay: .6s; }
+.ob-tw { animation: ob-twinkle 4.6s ease-in-out infinite var(--d); animation-play-state: var(--play); }
+@keyframes ob-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+.orb--sun, .orb--moon { width: 150px; }
+
+.ob-far    { --rise: 30px; }
+.ob-mid    { --rise: 110px; }
+.ob-ground { --rise: 180px; }
+.ob-near   { --rise: 260px; }
+.sky-drift { --rise: 140px; }
+
+.art-day {
+  --ob-ink: #1C2836; --ob-paper: #EEF1EF; --ob-arrow: url(#ob-arrow-day); --ob-con: rgb(28 40 54 / .35);
+  --ob-hatch: url(#ob-hatch-day); --ob-steel-light: url(#ob-hatch-day); --ob-steel: url(#ob-steel-day);
+  --ob-brick: url(#ob-brick-day); --ob-block: url(#ob-block-day); --ob-concrete: url(#ob-concrete-day); --ob-hardcore: url(#ob-hardcore-day);
+}
+.art-night {
+  --ob-ink: #EEF4F9; --ob-paper: #143768; --ob-arrow: url(#ob-arrow-night); --ob-con: rgb(238 244 249 / .35);
+  --ob-hatch: url(#ob-hatch-night); --ob-steel-light: url(#ob-hatch-night); --ob-steel: url(#ob-steel-night);
+  --ob-brick: url(#ob-brick-night); --ob-block: url(#ob-block-night); --ob-concrete: url(#ob-concrete-night); --ob-hardcore: url(#ob-hardcore-night);
+}
+
+/* Line weights. Parts drawn through <use> keep global names; their colours arrive by inheritance. */
+:global .ob-cut    { stroke: var(--ob-ink); stroke-width: 1.4; stroke-linejoin: round; }
+:global .ob-see    { stroke: var(--ob-ink); stroke-width: .8; stroke-linejoin: round; stroke-linecap: round; }
+:global .ob-fine   { stroke: var(--ob-ink); stroke-width: .45; stroke-linecap: round; }
+:global .ob-con    { stroke: var(--ob-con); stroke-width: .5; stroke-dasharray: 6 4; }
+:global .ob-con--star { stroke-dasharray: 2 4; }
+:global .ob-center { stroke: var(--ob-ink); stroke-width: .4; stroke-dasharray: 18 3 2 3; opacity: .6; }
+:global .ob-dim    { stroke: var(--ob-ink); stroke-width: .45; marker-start: var(--ob-arrow); marker-end: var(--ob-arrow); }
+:global .ob-cutfill { fill: var(--ob-hatch); }
+:global .ob-steelfill { fill: var(--ob-steel); }
+:global .ob-seefill { fill: var(--ob-paper); }
+:global .ob-starfill { fill: var(--ob-ink); }
+:global .ob-balloon { fill: var(--ob-paper); stroke: var(--ob-ink); stroke-width: .6; }
+:global .ob-label { fill: var(--ob-ink); font: 500 8.5px "Alegreya Sans", sans-serif; letter-spacing: .08em; }
+:global .ob-label--small { font-size: 7px; opacity: .8; }
+:global .ob-label--num { font-size: 8.5px; text-anchor: middle; }
+:global .ob-label--big { font-size: 15px; font-weight: 700; }
+:global .ob-label--title { font-size: 9.5px; font-weight: 700; }
+:global .ob-label--tiny { font-size: 5.6px; letter-spacing: .06em; }
+.ob-shutter-plate { stroke: var(--ob-ink); stroke-width: 7; }
+.ob-mech .ob-shutter-plate { stroke-linecap: butt; }
+
+/* The resting state: the shutter open, the telescope raised to the slit and on Vega. */
+.ob-shutter { transform-origin: 800px 368px; rotate: 34deg; }
+.ob-scope { transform-origin: 836px 362px; rotate: 258deg; }
+.ob-gear--big { transform-origin: 1318px 368px; }
+.ob-gear--small { transform-origin: 1318px 333px; }
+
+/* Scrolling turns the crank: the gears mesh, the shutter slides open, the telescope lifts to the sky. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ob-gear--big, .ob-gear--small, .ob-rack, .ob-shutter, .ob-scope {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --land;
+      animation-range: entry 0% entry 100%;
+    }
+    .ob-gear--big { animation-name: ob-big; }
+    .ob-gear--small { animation-name: ob-small; }
+    .ob-rack { animation-name: ob-rack; }
+    .ob-shutter { animation-name: ob-shutter; animation-range: entry 10% entry 70%; }
+    .ob-scope { animation-name: ob-raise; animation-range: entry 35% entry 100%; }
+  }
+}
+@keyframes ob-big { from { rotate: -240deg; } to { rotate: 0deg; } }
+@keyframes ob-small { from { rotate: 528deg; } to { rotate: 0deg; } }
+/* The pinion's 528 degrees on an 11 unit pitch radius carry the ring gear about 101 units. */
+@keyframes ob-rack { from { translate: 101px 0; } to { translate: 0 0; } }
+@keyframes ob-shutter { from { rotate: 0deg; } to { rotate: 34deg; } }
+@keyframes ob-raise { from { rotate: 180deg; } to { rotate: 258deg; } }
+
+/* Idle: the clock drive tracks the sky, the observer leans in to the eyepiece, the sidereal clock runs. */
+.ob-track { transform-origin: 836px 362px; animation: ob-track 14s ease-in-out infinite alternate; animation-play-state: var(--play); }
+.ob-observer { transform-origin: 856px 421px; animation: ob-lean 9s ease-in-out infinite; animation-play-state: var(--play); }
+.ob-hand { transform-origin: 930px 398px; animation: ob-tick 60s steps(60) infinite; animation-play-state: var(--play); }
+@keyframes ob-track { from { rotate: -1.4deg; } to { rotate: 1.4deg; } }
+@keyframes ob-lean { 0%, 30%, 100% { rotate: 0deg; } 40%, 80% { rotate: -8deg; } }
+@keyframes ob-tick { to { rotate: 360deg; } }
+
+.ob-cyano {
+  background: url("{{TEX_CYANO}}") 0 0 / 400px;
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity var(--t-theme) ease;
+}
+[data-theme="night"] .ob-cyano { opacity: .38; }
+.ob-cyano {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 280px);
+  mask-image: linear-gradient(to bottom, transparent, #000 280px);
+}

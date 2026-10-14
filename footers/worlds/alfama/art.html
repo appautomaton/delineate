@@ -1,0 +1,242 @@
+<div class="world world--alfama">
+  <div class="sky">
+    <div class="sky-paint sky-paint--day"></div>
+    <div class="sky-paint sky-paint--night"></div>
+    <div class="sky-drift" data-sway="3">
+      <svg class="al-stars" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMin slice">{{STARS}}</svg>
+      <svg class="al-gulls" viewBox="0 0 120 50">
+        <g transform="translate(20 24)"><use href="#al-gull"/></g>
+        <g transform="translate(78 12) scale(.8)"><use href="#al-gull" style="--gull-d:-.6s"/></g>
+      </svg>
+      <div class="orbit">
+        <div class="orb orb--sun">
+          <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="26" fill="#F3C64C" opacity=".75" filter="url(#al-wash-soft)"/></svg>
+        </div>
+        <div class="orb orb--moon">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="22" fill="#FBF6E6" filter="url(#al-wash-soft)"/>
+            <circle cx="100" cy="100" r="22" fill="none" stroke="#2C2622" stroke-width="1.2" stroke-dasharray="40 6 60 4" opacity=".6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="land-anchor"></div>
+
+    <div class="depth al-far" data-sway="4">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-far-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-ferry"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-far-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-ferry"/><use href="#al-far-lights"/></svg>
+      </div>
+    </div>
+
+    <div class="depth al-mid" data-sway="9">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-mid-art"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-mid-art"/></svg>
+        <svg class="art al-lights" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">{{MID_WINDOWS}}</svg>
+      </div>
+    </div>
+
+    <div class="depth al-ground" data-sway="16">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-ground-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-laundry"/></svg>
+        <div class="al-tram"><svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" overflow="visible"><use href="#al-tram"/></svg></div>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-ground-art"/></svg>
+        <svg class="art al-lights" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice">{{GROUND_WINDOWS}}</svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-laundry"/></svg>
+        <div class="al-tram"><svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice" overflow="visible"><use href="#al-tram"/><use href="#al-tram-lights"/></svg></div>
+      </div>
+    </div>
+
+    <div class="depth al-near" data-sway="28">
+      <div class="pane pane--day art-day">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-near-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-near-life"/></svg>
+      </div>
+      <div class="pane pane--night art-night">
+        <svg class="art" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-near-art"/></svg>
+        <svg class="art art--live" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-near-life"/></svg>
+        <svg class="art al-glow" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMax slice"><use href="#al-lamp-glow"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="texture al-paper"></div>
+
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- Watercolour: wet edges that wander, pigment that pools where the wash dried,
+           lighter blooms in the body, and granulation. -->
+      <filter id="al-wash" x="-3%" y="-8%" width="106%" height="116%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="7" result="warp"/>
+        <feDisplacementMap in="SourceGraphic" in2="warp" scale="6" xChannelSelector="R" yChannelSelector="G" result="wet"/>
+        <feMorphology in="wet" operator="erode" radius="1.3" result="inner"/>
+        <feComposite in="wet" in2="inner" operator="out" result="edge"/>
+        <feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="3" result="bloom"/>
+        <feColorMatrix in="bloom" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.5 -.1" result="bloomA"/>
+        <feComposite in="wet" in2="bloomA" operator="in" result="body"/>
+        <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="1" seed="9" result="grain"/>
+        <feColorMatrix in="grain" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 2.2 -.95" result="grainA"/>
+        <feComposite in="wet" in2="grainA" operator="in" result="specks"/>
+        <feMerge><feMergeNode in="body"/><feMergeNode in="edge"/><feMergeNode in="specks"/></feMerge>
+      </filter>
+      <filter id="al-wash-soft" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="5" result="warp"/>
+        <feDisplacementMap in="SourceGraphic" in2="warp" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <!-- Fineliner: a slight tremor in the hand. -->
+      <filter id="al-ink" x="-2%" y="-3%" width="104%" height="106%">
+        <feTurbulence type="fractalNoise" baseFrequency=".08" numOctaves="1" seed="4" result="w"/>
+        <feDisplacementMap in="SourceGraphic" in2="w" scale="1.4" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <!-- Azulejos: painted tiles, a quatrefoil in each, laid as a wash so they wander a little. -->
+      <pattern id="al-azulejo-day" width="6" height="6" patternUnits="userSpaceOnUse">
+        <rect width="6" height="6" fill="rgb(150 186 226 / .35)"/>
+        <path d="M3 .9v4.2M.9 3h4.2" stroke="rgb(38 78 160 / .7)" stroke-width=".55"/>
+        <circle cx="3" cy="3" r="1.3" fill="none" stroke="rgb(38 78 160 / .6)" stroke-width=".45"/>
+        <path d="M0 0h6M0 0v6" stroke="rgb(38 78 160 / .3)" stroke-width=".35" fill="none"/>
+      </pattern>
+      <pattern id="al-azulejo-night" width="6" height="6" patternUnits="userSpaceOnUse">
+        <rect width="6" height="6" fill="rgb(40 56 110 / .6)"/>
+        <path d="M3 .9v4.2M.9 3h4.2" stroke="rgb(20 30 80 / .8)" stroke-width=".55"/>
+      </pattern>
+      <!-- The sketch fades into bare paper at both sides of the page. -->
+      <linearGradient id="al-vignette-g" gradientUnits="userSpaceOnUse" x1="-60" y1="0" x2="1660" y2="0">
+        <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+        <stop offset=".08" stop-color="#fff"/>
+        <stop offset=".92" stop-color="#fff"/>
+        <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+      <mask id="al-vignette" maskUnits="userSpaceOnUse" x="-100" y="0" width="1800" height="640">
+        <rect x="-100" y="0" width="1800" height="640" fill="url(#al-vignette-g)"/>
+      </mask>
+
+      <!-- The washes stop short of both ends on a wandering edge; past it the drawing runs on in ink alone. -->
+      <filter id="al-edge-wander" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="2" seed="2" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="90" xChannelSelector="R" yChannelSelector="G" result="d"/>
+        <feGaussianBlur in="d" stdDeviation="6"/>
+      </filter>
+      <mask id="al-wash-edge" maskUnits="userSpaceOnUse" x="-100" y="0" width="1800" height="640">
+        <path d="M190 0H1410L1500 640H100Z" fill="#fff" filter="url(#al-edge-wander)"/>
+      </mask>
+
+      <g id="al-far-art" mask="url(#al-vignette)">{{FAR_ART}}</g>
+      <g id="al-mid-art" mask="url(#al-vignette)">{{MID_ART}}</g>
+      <g id="al-ground-art" mask="url(#al-vignette)">{{GROUND_ART}}</g>
+      <g id="al-near-art">{{NEAR_ART}}</g>
+      <g id="al-laundry">{{LAUNDRY}}</g>
+
+      <!-- A cacilheiro crossing the river to the far bank, slow enough to miss. -->
+      <g id="al-ferry">
+        <g class="al-ferry-run">
+          <g transform="translate(1040 344)">
+            <path d="M-20 0h40l-4 5h-32Z" style="fill:var(--al-white); stroke:var(--al-ink)" stroke-width=".5"/>
+            <path d="M-19 0h38v1.6h-38Z" style="fill:var(--al-ferry)"/>
+            <path d="M-12 0v-6h22v6M-8 -6v-3h12v3" style="fill:var(--al-white); stroke:var(--al-ink)" stroke-width=".45"/>
+            <path d="M6 -9v-4h3v4" style="fill:var(--al-ferry); stroke:var(--al-ink)" stroke-width=".4"/>
+            <path d="M-26 5.5h12M18 5.5h14" fill="none" style="stroke:var(--al-ink)" stroke-width=".35" opacity=".6"/>
+          </g>
+        </g>
+      </g>
+      <g id="al-far-lights">
+        <g class="al-ferry-run"><circle cx="1032" cy="341" r="1.2" fill="#FFE2A0"/><circle cx="1046" cy="341" r="1.2" fill="#FFE2A0"/></g>
+        <g fill="#FFD890" opacity=".8">
+          <circle cx="880" cy="307" r=".9"/><circle cx="944" cy="306" r=".9"/><circle cx="1012" cy="308" r=".9"/><circle cx="1120" cy="306" r=".9"/>
+          <circle cx="1210" cy="307" r=".9"/><circle cx="1290" cy="305" r=".9"/><circle cx="1352" cy="307" r=".9"/><circle cx="1428" cy="289" r="1.1" fill="#FF8C7A"/>
+        </g>
+      </g>
+
+      <!-- Tram 28, a Remodelado: yellow below, cream above, climbing to the right. Drawn where it comes to rest. -->
+      <g id="al-tram" transform="translate(700 {{RAIL_Y}}) rotate(-2.86)">
+        <path d="M-1 -2V-56c0-4 3-6 7-6h128c4 0 7 2 7 6V-2ZM116 -74h20v12h-20Z" style="fill:var(--al-paper)"/>
+        <g filter="url(#al-wash)">
+          <path class="al-w" d="M2 -4h136c2 0 3-2 3-4v-20H-1v20c0 2 1 4 3 4Z" style="fill:var(--al-tram)"/>
+          <path class="al-w" d="M-1 -28h142v-28c0-4-3-6-7-6H6c-4 0-7 2-7 6Z" style="fill:var(--al-tram-top)"/>
+          <path class="al-w" d="M6 -52h17v18H6ZM28 -52h17v18H28ZM50 -52h17v18H50ZM72 -52h17v18H72ZM94 -52h17v18H94ZM118 -52h16v18h-16Z" style="fill:var(--al-glass)"/>
+          <path class="al-w" d="M104 -26h12v20h-12Z" style="fill:var(--al-glass)"/>
+          <path class="al-w" d="M-1 -10h142v6H-1Z" style="fill:var(--al-shade)"/>
+          <path class="al-w" d="M2 -62q68 -8 136 0v-3q-68 -8 -136 0Z" style="fill:var(--al-shade)"/>
+          <path class="al-w" d="M116 -74h20v8h-20Z" style="fill:var(--al-ink)"/>
+        </g>
+        <g filter="url(#al-ink)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--al-ink)">
+          <path d="M-3 -4h146M-1 -2V-56c0-4 3-6 7-6h128c4 0 7 2 7 6V-2" stroke-width="1.2"/>
+          <path d="M6 -52h17v18H6ZM28 -52h17v18H28ZM50 -52h17v18H50ZM72 -52h17v18H72ZM94 -52h17v18H94ZM118 -52h16v18h-16Z" stroke-width=".9"/>
+          <path d="M14.5 -52v18M36.5 -52v18M58.5 -52v18M80.5 -52v18M102.5 -52v18M6 -46h17M28 -46h17M50 -46h17M72 -46h17M94 -46h17" stroke-width=".45"/>
+          <path d="M-2 -28h145M-2 -31h145M-2 -10h145" stroke-width=".7"/>
+          <path d="M104 -26h12v22M110 -26v22" stroke-width=".7"/>
+          <path d="M2 -62q68 -8 136 0M8 -66q62 -7 124 0" stroke-width=".8"/>
+          <path d="M116 -74h20v8h-20Z" stroke-width=".6"/>
+          <path d="M40 -66L72 -91M70 -92l6 2" stroke-width="1.2"/>
+          <path d="M34 -66h12" stroke-width="1.4"/>
+          <path d="M141 -12l5 4v6h-4M-1 -12l-5 4v6h4" stroke-width=".8"/>
+          <circle cx="24" cy="2" r="5.5" stroke-width="1"/><circle cx="116" cy="2" r="5.5" stroke-width="1"/>
+          <path d="M14 2h20M106 2h20" stroke-width=".6"/>
+          <circle cx="139" cy="-18" r="2.2" stroke-width=".7"/>
+          <path d="M60 -20h30M60 -16h30" stroke-width=".4" opacity=".7"/>
+        </g>
+        <text x="126" y="-67.6" font-size="6.4" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="700" style="fill:var(--al-tram)">28</text>
+      </g>
+      <g id="al-tram-lights" transform="translate(700 {{RAIL_Y}}) rotate(-2.86)">
+        <path d="M6 -52h17v18H6ZM28 -52h17v18H28ZM50 -52h17v18H50ZM72 -52h17v18H72ZM94 -52h17v18H94ZM118 -52h16v18h-16Z" fill="#FFD98C" opacity=".85"/>
+        <circle cx="139" cy="-18" r="3" fill="#FFF2C8"/>
+        <circle class="al-spark" cx="72" cy="-92" r="2.4" fill="#E8F4FF"/>
+      </g>
+
+      <!-- The cat on the parapet: tail hanging over, ears that twitch. -->
+      <g id="al-near-life">
+        <g transform="translate(424 522)">
+          <g class="al-tail"><path d="M10 -2c4 6 4 16 0 26c-2 4 2 6 4 2c4-10 4-20-1-28Z" style="fill:var(--al-cat)"/></g>
+          <path d="M-8 0c-2-10 0-18 6-22c4-2 10-2 14 2c4 6 4 14 2 20Z" style="fill:var(--al-cat)"/>
+          <path d="M-6 -2c0-6 2-10 6-12c2 4 2 10 0 14Z" style="fill:var(--al-cat-light)"/>
+          <g class="al-head">
+            <path d="M-6 -20c-2-6 0-12 6-13c6-1 10 3 10 8c0 6-4 9-9 9c-4 0-6-1-7-4Z" style="fill:var(--al-cat)"/>
+            <path class="al-ear" d="M-4 -30l-2-7l6 4Z" style="fill:var(--al-cat)"/>
+            <path d="M5 -32l3-6l2 7Z" style="fill:var(--al-cat)"/>
+            <path d="M-2 -24h2M5 -24h2" stroke="#E8D070" stroke-width="1.2" stroke-linecap="round"/>
+          </g>
+          <path d="M-8 0c-2-10 0-18 6-22c4-2 10-2 14 2c4 6 4 14 2 20" fill="none" style="stroke:var(--al-ink)" stroke-width=".8"/>
+        </g>
+      </g>
+
+      <radialGradient id="al-lamp">
+        <stop offset="0" stop-color="#FFE7A8" stop-opacity=".95"/>
+        <stop offset=".25" stop-color="#FFC970" stop-opacity=".4"/>
+        <stop offset="1" stop-color="#FFB050" stop-opacity="0"/>
+      </radialGradient>
+      <g id="al-lamp-glow">
+        <circle cx="1452" cy="370" r="110" fill="url(#al-lamp)"/>
+        <ellipse cx="1452" cy="560" rx="150" ry="22" fill="url(#al-lamp)" opacity=".5"/>
+      </g>
+
+      <!-- Yellow-legged gull, gliding with a slow beat. -->
+      <g id="al-gull" fill="none" stroke="#3A3530" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path class="al-gull-wing" d="M0 0C-6 -6 -12 -7 -18 -4"/>
+        <path class="al-gull-wing al-gull-wing--r" d="M0 0C6 -6 12 -7 18 -4"/>
+        <path d="M-3 0.6h6" stroke-width="2"/>
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<div class="journey journey--alfama" aria-hidden="true">
+  <svg class="walkers" viewBox="0 0 150 64" style="aspect-ratio: 150 / 64">
+    <g class="walker">
+      <path d="M44 2L58 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path fill-rule="evenodd" d="M28 24H104C110 24 114 28 114 34V54H24V34C24 28 22 24 28 24ZM32 30h12v10H32ZM50 30h12v10H50ZM68 30h12v10H68ZM86 30h12v10H86Z"/>
+      <circle cx="40" cy="57" r="4"/><circle cx="98" cy="57" r="4"/>
+    </g>
+  </svg>
+</div>

@@ -1,0 +1,72 @@
+/* Crayon: wax on paper by day; the same strands on dark paper by night, where crayon reads as pastel.
+   Colours are names the strands carry as classes; the sky and the scene say what each name is. */
+
+:root[data-world="crayon"] {
+  --page-day: linear-gradient(#F8F7F2, #F8F7F2);
+  --page-night: linear-gradient(#1B2036, #1B2036);
+  --body-day: #F8F7F2;
+  --body-night: #1B2036;
+  --ink-day: #1B1B19;
+  --paper-day: #F8F7F2;
+  --ink-night: #F1EDE2;
+  --paper-night: #1B2036;
+  --journey-day: #1B1B19;
+  --journey-night: #F1EDE2;
+}
+
+.sky-paint--day { background: #F8F7F2; }
+.sky-paint--night { background: #1B2036; opacity: 0; transition: opacity var(--t-theme) ease; }
+[data-theme="night"] .sky-paint--night { opacity: 1; }
+
+.sky, .scene {
+  --c-blue: #2F4FB8; --c-deep: #1E2F7E; --c-ochre: #D9A532; --c-red: #CF3F2C; --c-maroon: #8E2A24;
+  --c-green: #4C7E37; --c-olive: #8C9B3C; --c-pink: #DE7C93; --c-violet: #6B55B3; --c-graphite: #3A3A38;
+  --c-moon: #EFE6C4;
+  --c-pine: #2F5A2E; --c-rust: #B5652A; --c-cloud: #C8D3E6; --c-mist: #8E9DBA; --c-lilac: #A99BD8;
+  --c-sage: #9DB08A; --c-wheat: #E3C26A;
+}
+[data-theme="night"] .sky, [data-theme="night"] .scene {
+  --c-blue: #8098F2; --c-deep: #BFC9FF; --c-ochre: #F3D27A; --c-red: #F27E66; --c-maroon: #EFA996;
+  --c-green: #8FCB7A; --c-olive: #C9D27A; --c-pink: #F5ACBE; --c-violet: #B9A8F4; --c-graphite: #ECE7DA;
+  --c-pine: #A8DA94; --c-rust: #F2A66B; --c-cloud: #464F78; --c-mist: #7F8BB3; --c-lilac: #8E82C4;
+  --c-sage: #7E9874; --c-wheat: #CDB463;
+}
+.k-blue { stroke: var(--c-blue); } .k-deep { stroke: var(--c-deep); } .k-ochre { stroke: var(--c-ochre); }
+.k-red { stroke: var(--c-red); } .k-maroon { stroke: var(--c-maroon); } .k-green { stroke: var(--c-green); }
+.k-olive { stroke: var(--c-olive); } .k-pink { stroke: var(--c-pink); } .k-violet { stroke: var(--c-violet); }
+.k-graphite { stroke: var(--c-graphite); } .k-moon { stroke: var(--c-moon); }
+.k-pine { stroke: var(--c-pine); } .k-rust { stroke: var(--c-rust); } .k-cloud { stroke: var(--c-cloud); }
+.k-mist { stroke: var(--c-mist); } .k-lilac { stroke: var(--c-lilac); } .k-sage { stroke: var(--c-sage); }
+.k-wheat { stroke: var(--c-wheat); }
+
+/* Drawing on: each strand draws in the time the hand took over it, stepped by the footer's film clock
+   like all its idle life. Once drawn, the strands stop and the paper's tooth comes up through the wax: each
+   plane is masked by the tooth under a solid layer that fades out, so the grain rises instead of snapping on. */
+@property --cr-bare { syntax: '<number>'; inherits: false; initial-value: 1; }
+.wax path {
+  fill: none; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1 1; stroke-dashoffset: 1;
+  transition: stroke var(--t-theme) ease;
+}
+&.is-drawing .wax path { animation: cr-draw var(--t) linear var(--d) forwards; animation-play-state: var(--play, running); }
+&.is-drawn .wax path { stroke-dashoffset: 0; animation: none; }
+&.is-drawn .wax {
+  -webkit-mask: linear-gradient(rgb(0 0 0 / var(--cr-bare)) 0 0), {{TOOTH}} 0 0 / 256px;
+  mask: linear-gradient(rgb(0 0 0 / var(--cr-bare)) 0 0), {{TOOTH}} 0 0 / 256px;
+  animation: cr-tooth 1.4s ease .3s forwards;
+}
+@keyframes cr-draw { to { stroke-dashoffset: 0; } }
+@keyframes cr-tooth { to { --cr-bare: 0; } }
+@media (prefers-reduced-motion: reduce) { &.is-drawn .wax { animation: none; --cr-bare: 0; } }
+
+.orb--sun { width: 150px; }
+.orb--moon { width: 136px; }
+
+.cr-clouds { position: absolute; inset: 0 0 auto; width: 100%; height: auto; aspect-ratio: 16 / 9; opacity: .55; }
+.cr-range  { --rise: 24px; }
+.cr-hills  { --rise: 60px; }
+.cr-trees  { --rise: 96px; }
+.cr-meadow { --rise: 150px; }
+.cr-near   { --rise: 230px; }
+
+.journey--crayon .walkers { aspect-ratio: 64 / 30; }
