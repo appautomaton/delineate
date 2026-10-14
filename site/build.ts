@@ -1,0 +1,84 @@
+// Builds delineate's own page into site/dist, ready to serve as it stands.
+//
+//   node site/build.ts        (npm run site, which draws the garden first)
+//
+// page.html is the page, with {{NAME}} holes for what is drawn: the opening bouquet (hero.ts), the icons and the
+// tab's mark (icons.ts), the foot of the page, drawn by the Footers' crayon world, and the Footers piece itself,
+// the real component built as a kit for this site. Beside it go what it borrows: Garden's stylesheets and the
+// plants its bed grows, and Paprika Girl split into planes (portrait.ts).
+
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { WORLDS, component, kit } from "../footers/component.ts";
+import { TOOTH } from "../footers/crayon/hand.ts";
+import { fixed } from "../footers/lib/number.ts";
+import { fill } from "../footers/lib/template.ts";
+import { markup } from "./hero.ts";
+import { favicon, icons } from "./icons.ts";
+import { planes } from "./portrait.ts";
+
+const ROOT = new URL("../", import.meta.url);
+const DIST = new URL("site/dist/", ROOT);
+
+const read = (path: string) => readFileSync(new URL(path, ROOT), "utf8");
+
+// A file another build writes; if it has not been written, say which command writes it.
+function made(path: string, by: string): URL {
+  const url = new URL(path, ROOT);
+  if (!existsSync(url)) {
+    console.error(`${path} is missing: run ${by} first`);
+    process.exit(1);
+  }
+  return url;
+}
+
+function write(path: string, text: string): void {
+  const url = new URL(path, DIST);
+  mkdirSync(new URL("./", url), { recursive: true });
+  writeFileSync(url, text);
+}
+
+// Seconds until a crayon drawing is done: when its last strand ends.
+const drawingTime = (...parts: string[]) =>
+  Math.max(...parts.flatMap((p) => [...p.matchAll(/--d:([\d.]+)s;--t:([\d.]+)s/g)].map(([, d, t]) => Number(d) + Number(t))));
+
+const template = read("site/page.html");
+rmSync(DIST, { recursive: true, force: true });
+
+// The foot of the page is drawn by the crayon world's generator, under ids of its own: the Footers section may be
+// showing the same world, and ids are shared by the whole page.
+const foot = Object.fromEntries(
+  Object.entries(WORLDS.crayon.gen.placeholders()).map(([k, v]) => [k, v.replaceAll('id="cr-', 'id="lf-').replaceAll("url(#cr-", "url(#lf-")]),
+);
+const bouquet = markup();
+const heroTime = fixed(drawingTime(bouquet), 2);
+const page = fill(
+  template,
+  {
+    HERO: bouquet,
+    HERO_TIME: heroTime,
+    FOOTER_KIT: kit(component("delineate")),
+    FOOT_TIME: fixed(drawingTime(...Object.values(foot)), 2),
+    TOOTH,
+    ...Object.fromEntries(Object.entries(foot).map(([k, v]) => [`FOOT_${k}`, v])),
+    ...Object.fromEntries(Object.entries(icons()).map(([k, v]) => [`ICON_${k.toUpperCase()}`, v])),
+  },
+  "site/page.html",
+);
+write("index.html", page);
+write("favicon.svg", favicon());
+
+// From Garden: its tokens, their dark light keyed to this page's night so the plants change with the page; its
+// paint and anchors; and the plants the bed grows, as the page's PLANTS names them.
+write("assets/garden/tokens.css", read("garden/src/tokens.css").replaceAll(':root[data-theme="dark"]', ':root[data-theme="night"]'));
+write("assets/garden/paint.css", read("garden/src/garden/paint.css"));
+write("assets/garden/anchors.css", readFileSync(made("garden/src/garden/anchors.css", "npm run draw"), "utf8"));
+for (const [, name] of template.matchAll(/\{ name: "([\w-]+)"/g)) {
+  copyFileSync(made(`garden/public/garden/${name}.svg`, "npm run draw"), new URL(`assets/garden/${name}.svg`, DIST));
+}
+
+// From Portraits: Paprika Girl, one plane per layer, for the page to stack and part.
+const layers = planes(readFileSync(made("portraits/pieces/paprika-girl/paprika-girl.svg", "npm run paprika-girl"), "utf8"));
+for (const { name, svg } of layers) write(`assets/portrait/${name}.svg`, svg);
+write("assets/portrait/layers.json", JSON.stringify(layers.map(({ name, title }) => ({ name, title })), null, 1));
+
+console.log(`wrote site/dist: index.html ${Math.floor(Buffer.byteLength(page) / 1024)} KB, the bouquet draws in ${heroTime}s, ${layers.length} portrait planes`);

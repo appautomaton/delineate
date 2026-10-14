@@ -41,11 +41,10 @@ garden/look/
 portraits/pieces/*/*.svg
 portraits/pieces/*/index.html
 
-# Written by footers/build.py (npm run footers)
+# Written by footers/build.ts (npm run footers)
 footers/automaton.html
 
 # System and tool litter
-__pycache__/
 .claude/worktrees/
 .DS_Store
 .cc-writes/
