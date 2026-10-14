@@ -29,6 +29,13 @@ build needs the piece's region maps, which are media and stay local.
   clip ids: Chrome then dropped whatever those clips held, whole petals and centres.
 - **Motion on the wrapper, drawing on the `<svg>`.** Each plane is a `<div>` that moves, parts and places, around
   an `<svg class="wax">` that draws and grains. On one element, the two animations overwrite each other.
+- **A frame keeps its drawing's proportions.** The bouquet's frame once took its height from the opening and
+  its width from a cap; where the cap bit, the frame was narrower than the drawing, and `slice` cut the drawing
+  down a line inside the page. Now its width is set and its height follows, so only the page's edges cut it.
+- **Words over a drawing clear the paper.** Where the lede lies over the bouquet, a radial of the page's own
+  colour fades the crayon out beneath it, so it holds by day and by night with nothing to tune. A blur would
+  read as glass, not paper, and repaint with every frame the drawing moves. The headline, large and dark, needs
+  no clearing.
 - **Fade into the paper.** No piece sits in a box: every edge that meets the page is masked to transparent,
   and stems and planes run on past the frame, so parting them never shows a cut end.
 
@@ -43,7 +50,8 @@ build needs the piece's region maps, which are media and stay local.
 - **Links.** Portraits' picture links to `#`, and Garden's Open expects the Garden app at `garden/`; both wait on
   where the site is deployed. Garden fetches its plants from `/garden/…`, so it can live only at a domain's
   root until those paths follow Vite's base.
-- **Checks.** Seen at desktop width only; `390x844` not yet. Performance was last traced before the grain became
+- **Checks.** The opening is checked from `375x667` to `1920x1080`, by day and by night; the rest of the page
+  at desktop width only. Performance was last traced before the grain became
   a mask. When the planes part mid-scroll, the festival plane's left edge and the sky's top still show.
 - **Weight.** `index.html` is 6.5 MB, 1.6 MB gzipped; 3.7 MB of it is the kit's seven worlds, inlined as
   templates. Fetching a world when it is chosen would take that off the first load.

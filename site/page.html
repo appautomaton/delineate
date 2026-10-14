@@ -108,22 +108,36 @@
   .k-olive { stroke: var(--c-olive); } .k-pink { stroke: var(--c-pink); } .k-violet { stroke: var(--c-violet); }
   .k-graphite { stroke: var(--c-graphite); }
 
-  /* Opening: the words on the left, the bouquet drawing itself on the right, cut by the page's edge. */
+  /* Opening: the first screen, and nothing else on it. The words on the left, the bouquet drawing itself on the
+     right, cut by the page's edge; where the page is too narrow for both, the bouquet runs on under the words. */
   .opening {
-    position: relative; min-height: clamp(36rem, 92svh, 56rem);
+    position: relative; min-height: max(36rem, 100svh);
     display: grid; align-items: center; padding: 6rem var(--margin) 4rem;
   }
-  .opening-text { position: relative; z-index: 2; max-width: 34rem; }
+  .opening-text { position: relative; z-index: 2; max-width: min(34rem, 44vw); }
+  /* Where the small words lie over the drawing, the paper clears round them. It is the page's own colour, so it
+     holds by day and by night. The headline needs no clearing: large and dark, it reads over the crayon. */
+  .lede { position: relative; }
+  .lede::before {
+    content: ""; position: absolute; z-index: -1; inset: -3rem -4rem; pointer-events: none;
+    background: radial-gradient(closest-side, var(--paper) 58%, transparent);
+  }
   .opening h1 { margin: 0; font: 400 clamp(2.75rem, 5.6vw, 5rem)/1.02 var(--serif); letter-spacing: -.015em; text-wrap: balance; max-width: 11ch; }
   .opening p { margin: 1.5rem 0 0; color: var(--soft); max-width: 30rem; text-wrap: pretty; }
   .actions { display: flex; flex-wrap: wrap; gap: 1.25rem 1.75rem; align-items: center; margin-top: 2rem; font-size: 1rem; }
   .button { display: inline-block; padding: .8rem 1.35rem; border-radius: 999px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; transition: translate .3s var(--settle); }
   .button:hover { translate: 0 -2px; }
   /* The bouquet's frame shows it down to where its stems fade into the paper; each plane runs on below the
-     frame, so the planes can part without a stem showing its end. Planes move; the drawings in them grain. */
+     frame, so the planes can part without a stem showing its end. Planes move; the drawings in them grain.
+     The frame keeps the drawing's proportions, so only the page's edges cut it: as tall as the screen allows,
+     up to 56rem, and narrow enough that only its left third, the distant flowers, lies under the words. */
   .bouquet {
-    position: absolute; right: 0; bottom: 0; height: 94%; max-width: 62vw; aspect-ratio: 820 / 730; pointer-events: none;
-    overflow: clip; -webkit-mask: linear-gradient(to top, transparent, #000 16%); mask: linear-gradient(to top, transparent, #000 16%);
+    position: absolute; right: 0; bottom: 0; aspect-ratio: 820 / 730; pointer-events: none;
+    width: min(calc(.94 * min(100svh, 56rem) * 820 / 730), calc((100% - var(--margin) - min(30rem, 44vw) - 1rem) * 3 / 2));
+    overflow: clip;
+    -webkit-mask: linear-gradient(to top, transparent, #000 16%), linear-gradient(to right, transparent, #000 8%);
+    -webkit-mask-composite: source-in;
+    mask: linear-gradient(to top, transparent, #000 16%) intersect, linear-gradient(to right, transparent, #000 8%);
   }
   .bouquet .hp { position: absolute; inset: 0 0 auto; height: calc(100% * 900 / 730); transition: translate .8s var(--settle); }
   .bouquet .wax { display: block; width: 100%; height: 100%; }
@@ -136,9 +150,12 @@
     .bouquet .hp--back { --rise: -2rem; } .bouquet .hp--mid { --rise: -5rem; } .bouquet .hp--front { --rise: -9rem; }
     @keyframes part { to { transform: translateY(var(--rise)); } }
   }
-  @media (max-width: 47.99rem) {
-    .opening { align-items: start; padding-top: 7rem; padding-bottom: 0; min-height: 0; }
-    .bouquet { position: relative; height: auto; max-width: none; width: calc(100% + 2 * var(--margin)); margin: 1rem calc(-1 * var(--margin)) 0; aspect-ratio: 1 / .95; }
+  /* On a narrow or upright screen the words come first and the bouquet grows up under them from the foot of the
+     screen, wider than the page, so both edges cut it; its buds always reach in under the words. */
+  @media (max-width: 47.99rem), (max-aspect-ratio: 1 / 1) {
+    .opening { align-items: start; align-content: space-between; padding: 7rem var(--margin) 0; }
+    .opening-text { max-width: 34rem; }
+    .bouquet { position: relative; justify-self: end; width: 125%; margin: -16% calc(-1 * var(--margin)) 0 0; }
   }
 
   /* Work: each piece drawn on the page at the height its motion needs, its words beside it. */
@@ -264,10 +281,12 @@
     <section class="opening" aria-labelledby="headline">
       <div class="opening-text">
         <h1 id="headline">Drawings that move when you do.</h1>
-        <p>Portraits that come apart, gardens that grow as you scroll, and small worlds at the foot of a page. Each comes with its source, and a skill your AI agent can follow to make one like it.</p>
-        <div class="actions">
-          <a class="button" href="#work">See the work</a>
-          <a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Browse the skills</a>
+        <div class="lede">
+          <p>Portraits that come apart, gardens that grow as you scroll, and small worlds at the foot of a page. Each comes with its source, and a skill your AI agent can follow to make one like it.</p>
+          <div class="actions">
+            <a class="button" href="#work">See the work</a>
+            <a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Browse the skills</a>
+          </div>
         </div>
       </div>
       <div class="bouquet draw" data-time="{{HERO_TIME}}" aria-hidden="true">
