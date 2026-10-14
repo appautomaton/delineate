@@ -8,8 +8,8 @@ build needs the piece's region maps, which are media and stay local.
 ## How it is built
 
 - **`page.html`**: the page, with `{{NAME}}` holes for what is drawn. In order: the opening, a headline beside a
-  crayon bouquet that parts as the page scrolls; Garden, a bed of plants from six gardens grown in as it crosses
-  the screen; Footers, the component itself, so the section is the world; Characters, a field of letters;
+  crayon bouquet that parts as the page scrolls; Garden, plants from six gardens massed round its words, each
+  growing as the Garden grows it while the bed crosses the screen; Footers, the component itself, so the section is the world; Characters, a field of letters;
   Portraits, Paprika Girl's planes, parted along the section's view timeline and tilted by the pointer; and the
   page's own footer, a crayon landscape in six planes. The corner button switches day and night for the whole
   page by pressing the footer's own switch, which keeps the light.
@@ -44,6 +44,13 @@ build needs the piece's region maps, which are media and stay local.
   shape of screen.
 - **Fade into the paper.** No piece sits in a box: every edge that meets the page is masked to transparent,
   and stems and planes run on past the frame, so parting them never shows a cut end.
+- **Mass the plants; never line them up.** The bed's first plants stood apart on one baseline, a branch in each
+  upper corner, and read as a specimen sheet. Massed in counterpoint across the diagonal, overlapping, led by
+  one large plant and filled by small ones, and rooted below a foot that fades into the paper, they read as a
+  garden. An upright bed keeps them to the bands above and below the words.
+- **Grow a plant as the Garden does.** Scaling each plant up whole from its base made every plant grow alike and
+  none as it does. The bed now runs the Garden's own growth, limbs extending and parts unfolding, pared down to
+  one moment of the year; a plant from a garden that shows a year stops at late spring, its fullest.
 
 ## Checking the work
 
@@ -56,9 +63,11 @@ build needs the piece's region maps, which are media and stay local.
 - **Links.** Portraits' picture links to `#`, and Garden's Open expects the Garden app at `garden/`; both wait on
   where the site is deployed. Garden fetches its plants from `/garden/…`, so it can live only at a domain's
   root until those paths follow Vite's base.
-- **Checks.** The opening is checked from `375x667` to `1920x1080` and the foot at `390x844` and `1440x900`, by
-  day and by night; the rest of the page at desktop width only. Performance was last traced before the grain
+- **Checks.** The opening is checked from `375x667` to `1920x1080`, the Garden bed at `390x844`, `768x1024`,
+  `1024x768`, `1440x900` and `1920x1080`, and the foot at `390x844` and `1440x900`, by day and by night; the rest of the page at desktop width only. Performance was last traced before the grain
   became a mask. When the planes part mid-scroll, the festival plane's left edge and the sky's top still show.
+- **Growth.** `page.html` carries a pared-down copy of the growth in `garden/src/main.ts`; a change to how the
+  Garden grows must be made in both until they share a module.
 - **Weight.** `index.html` is 7.0 MB, 1.7 MB gzipped; 3.7 MB of it is the kit's seven worlds, inlined as
   templates. Fetching a world when it is chosen would take that off the first load.
 - **Language.** The generators are Python, as the Footers' are; the rest of the repository is TypeScript run by

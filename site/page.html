@@ -191,22 +191,25 @@
     @keyframes apart { 0%, 16% { transform: none; } 50% { transform: translateZ(calc((var(--i) - (var(--n) - 1) / 2) * 3.4rem)); } 84%, 100% { transform: none; } }
   }
 
-  /* Garden: what the garden is for, a frame of plants growing in round the words. */
+  /* Garden: what the garden is for, a frame of plants growing in round the words. The bed's edges fade into the
+     paper, so the plants rise out of the ground instead of standing on a line. */
   .bed {
     position: relative; height: clamp(30rem, 78svh, 44rem); margin: clamp(2rem, 6vw, 5rem) 0;
-    container-type: size; view-timeline: --bed block; display: grid; place-items: center; text-align: center;
+    container-type: size; display: grid; place-items: center; text-align: center;
+    mask-image: linear-gradient(transparent, #000 2rem, #000 calc(100% - 5rem), transparent);
   }
   .bed .piece-text { position: relative; z-index: 2; max-width: 30rem; padding: 0 1.5rem; }
   .bed .piece-text p { margin-inline: auto; }
   .bed .take { justify-content: center; }
-  .grow { position: absolute; left: var(--x); top: var(--y); height: calc(var(--h) * min(1cqh, .95cqw)); aspect-ratio: var(--ar);
+  .grow { --x: var(--wx); --y: var(--wy); --h: var(--wh); --unit: min(1cqh, .95cqw);
+    position: absolute; left: var(--x); top: var(--y); height: calc(var(--h) * var(--unit)); aspect-ratio: var(--ar);
     translate: calc(var(--bx) * -100%) calc(var(--by) * -100%); transform-origin: calc(var(--bx) * 100%) calc(var(--by) * 100%);
     rotate: var(--r, 0deg); scale: var(--flip, 1) 1; pointer-events: none; }
-  .grow > div { width: 100%; height: 100%; transform-origin: inherit; }
   .grow svg { display: block; width: 100%; height: 100%; overflow: visible; }
-  @supports (animation-timeline: view()) {
-    .grow > div { animation: sprout linear both; animation-timeline: --bed; animation-range: entry calc(10% + var(--n) * 4%) cover calc(42% + var(--n) * 3%); }
-    @keyframes sprout { from { transform: scale(.08) rotate(var(--sway, 12deg)); opacity: 0; } 30% { opacity: 1; } to { transform: none; } }
+  /* On an upright bed the words fill the middle, so each plant takes its upright place, in the bands above and
+     below them, and is held to a share of the bed's height as well as its width. */
+  @container (aspect-ratio < 1.25) {
+    .grow { --x: var(--ux); --y: var(--uy); --h: var(--uh); --unit: min(.7cqh, .95cqw); }
   }
 
   /* Footers: the section is the world. Its words are written in the footer's own slots, the picker and the
@@ -289,7 +292,7 @@
   @media (prefers-reduced-motion: reduce) {
     .flip { animation: none !important; transform: rotateX(180deg); }
     .wax path { animation: none !important; stroke-dashoffset: 0; }
-    .bouquet .hp, .foot-scene .fp, .foot-orb, .stack, .plane, .grow > div { animation: none !important; }
+    .bouquet .hp, .foot-scene .fp, .foot-orb, .stack, .plane { animation: none !important; }
   }
 </style>
 </head>
@@ -435,33 +438,151 @@
     stage.addEventListener("pointerleave", () => { tilt.style.transform = ""; });
   }
 
-  // Garden: plants from six gardens, each anchored at its base on the bed's edge and grown in as the bed
-  // crosses the screen. Positions are fractions of the bed; heights are percentages of its height.
+  // Garden: plants from six gardens, massed round the words: a thicket rising at the lower left answers a
+  // canopy reaching in at the upper right, and one olive branch keeps the open corner. Each is anchored at its
+  // base, back to front: positions are fractions of the bed, heights percentages of its height, and a base
+  // below the bed's foot is rooted in the ground the bed fades into. `upright` places a plant on an upright bed.
   const PLANTS = [
-    { name: "bougainvillea", x: .86, y: 0, h: 62 },
-    { name: "olive", x: 0, y: .16, h: 30 },
-    { name: "monstera", x: .07, y: 1, h: 46 },
-    { name: "lavender", x: .3, y: 1, h: 24 },
-    { name: "strelitzia", x: .7, y: 1, h: 50 },
-    { name: "agave", x: .95, y: 1, h: 32 },
-    { name: "ginkgo", x: 1, y: .42, h: 34, flip: true },
-    { name: "iris", x: .5, y: 1, h: 18 },
+    { name: "olive", x: 0, y: .2, h: 24, upright: { y: .13, h: 22 } },
+    { name: "thorn", x: 1, y: .46, h: 36, flip: true, upright: { y: .27, h: 22 } },
+    { name: "bougainvillea", x: .84, y: -.02, h: 42, upright: { x: .74, h: 36 } },
+    { name: "monstera", x: .06, y: 1.04, h: 74, upright: { x: .1, y: .98, h: 54 } },
+    { name: "strelitzia", x: .8, y: 1.05, h: 50, upright: { x: .78, y: .99, h: 46 } },
+    { name: "kingprotea", x: .2, y: 1.06, h: 50, upright: { x: .3, y: .99, h: 40 } },
+    { name: "alchemilla", x: .12, y: 1.04, h: 22, upright: { y: .97, h: 18 } },
+    { name: "lavender", x: .34, y: 1.03, h: 24, upright: { x: .48, y: .96, h: 20 } },
+    { name: "iris", x: .7, y: 1.02, h: 17, until: .42, upright: { x: .6, y: .96, h: 14 } },
+    { name: "agave", x: .95, y: 1.07, h: 32, upright: { x: .97, y: 1, h: 28 } },
   ];
+
+  // Each grows as it does in the Garden (garden/src/main.ts, pared down to a single moment): one progress value
+  // extends each limb inside a clip shaped like a shoot, and opens each leaf, flower and fruit from where it
+  // attaches. A plant from a garden that shows a year grows only `until` late spring, its fullest.
+  const NS = "http://www.w3.org/2000/svg", ROOM = 8, UNFOLD = .08;
+  const clamp = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
+  const unfold = (t) => 1 + 2.4 * (t - 1) ** 3 + 1.4 * (t - 1) ** 2;
   const bed = document.querySelector("[data-bed]");
-  const grown = await Promise.all(PLANTS.map(async (p, n) => {
-    const svg = await (await fetch(`assets/garden/${p.name}.svg`)).text();
+  const plants = await Promise.all(PLANTS.map(async (p, n) => {
     const el = document.createElement("div");
     el.className = `grow g-${p.name}`;
-    el.style.cssText = `--x:${p.x * 100}%;--y:${p.y * 100}%;--h:${p.h};--n:${n}${p.flip ? ";--flip:-1" : ""}`;
-    el.innerHTML = `<div>${svg}</div>`;
-    return el;
+    const u = { ...p, ...p.upright };
+    el.style.cssText = `--wx:${p.x * 100}%;--wy:${p.y * 100}%;--wh:${p.h};--ux:${u.x * 100}%;--uy:${u.y * 100}%;--uh:${u.h}${p.flip ? ";--flip:-1" : ""}`;
+    el.innerHTML = await (await fetch(`assets/garden/${p.name}.svg`)).text();
+    const limbs = [...el.querySelectorAll(".gl")].map((g, i) => {
+      const v = g.dataset.sp.split(" ").map(Number), x = [], y = [], w = [], nx = [], ny = [], s = [0];
+      for (let k = 0; k < v.length; k += 3) x.push(v[k]), y.push(v[k + 1]), w.push(v[k + 2]);
+      for (let k = 0; k < x.length; k++) {
+        const a = Math.max(0, k - 1), b = Math.min(x.length - 1, k + 1), d = Math.hypot(x[b] - x[a], y[b] - y[a]) || 1;
+        nx.push(-(y[b] - y[a]) / d);
+        ny.push((x[b] - x[a]) / d);
+        if (k) s.push(s[k - 1] + Math.hypot(x[k] - x[k - 1], y[k] - y[k - 1]));
+      }
+      const clip = document.createElementNS(NS, "clipPath"), tip = document.createElementNS(NS, "path");
+      clip.id = `bed-${p.name}-${i}`;
+      tip.setAttribute("class", "ink mid");
+      g.before(clip);
+      g.after(tip);
+      return { g, clip: clip.appendChild(document.createElementNS(NS, "path")), tip, x, y, w, nx, ny, s, g0: +g.dataset.g0, g1: +g.dataset.g1, last: -1 };
+    });
+    const parts = [...el.querySelectorAll(".gp")].map((g, i) => {
+      const [x, y] = g.dataset.o.split(" ");
+      return { g, at: +g.dataset.g, o: `${x} ${y}`, back: `${-x} ${-y}`, turn: (i % 2 ? 1 : -1) * 22, last: -1 };
+    });
+    return { el, limbs, parts, k: 0, lag: n * .03, until: p.until ?? 1 };
   }));
-  bed.prepend(...grown);
-  const pen = () => grown.forEach((el) => {
-    const vb = el.querySelector("svg").viewBox.baseVal;
-    el.style.setProperty("--k", (vb.height / el.clientHeight).toFixed(3));
-  });
-  new ResizeObserver(pen).observe(bed);
+  bed.prepend(...plants.map((p) => p.el));
+
+  // Clips a growing limb to its spine up to the share t of its length, widened by ROOM on both sides, and
+  // rounds the end into a shoot whose ink arc rides on the tip.
+  function shoot(l, t, k) {
+    const { x, y, w, nx, ny, s } = l, n = x.length, at = t * s[n - 1];
+    let j = 1;
+    while (j < n - 1 && s[j] < at) j++;
+    const u = (at - s[j - 1]) / (s[j] - s[j - 1] || 1);
+    const gx = x[j - 1] + (x[j] - x[j - 1]) * u, gy = y[j - 1] + (y[j] - y[j - 1]) * u, gw = w[j - 1] + (w[j] - w[j - 1]) * u;
+    const len = Math.hypot(x[j] - x[j - 1], y[j] - y[j - 1]) || 1, tx = (x[j] - x[j - 1]) / len, ty = (y[j] - y[j - 1]) / len;
+    const r = gw + .6 * k, pt = (px, py) => `${px.toFixed(1)} ${py.toFixed(1)}`;
+    const side = (i, e, back = 0) => pt(x[i] + nx[i] * e * (w[i] + ROOM) - ny[i] * back, y[i] + ny[i] * e * (w[i] + ROOM) + nx[i] * back);
+    const a = (e, rr) => pt(gx - ty * e * rr, gy + tx * e * rr);
+    let left = side(0, 1, ROOM), right = side(0, -1, ROOM);
+    for (let i = 0; i < j; i++) {
+      left += `L${side(i, 1)}`;
+      right = `${side(i, -1)}L${right}`;
+    }
+    l.clip.setAttribute("d", `M${left}L${a(1, gw + ROOM)}L${a(1, r)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 0 ${a(-1, r)}L${a(-1, gw + ROOM)}L${right}Z`);
+    l.tip.setAttribute("d", `M${a(1, gw)}A${gw.toFixed(1)} ${gw.toFixed(1)} 0 0 0 ${a(-1, gw)}`);
+  }
+
+  // Writes only what has moved since the last frame.
+  function grow(progress) {
+    for (const p of plants) {
+      const q = clamp((progress - p.lag) / (1 - p.lag)) * p.until;
+      for (const l of p.limbs) {
+        const t = clamp((q - l.g0) / (l.g1 - l.g0));
+        if (t === l.last) continue;
+        l.last = t;
+        l.g.style.visibility = t ? "" : "hidden";
+        if (t > 0 && t < 1) {
+          l.g.setAttribute("clip-path", `url(#${l.clip.parentNode.id})`);
+          shoot(l, t, p.k);
+        } else {
+          l.g.removeAttribute("clip-path");
+          l.tip.removeAttribute("d");
+        }
+      }
+      for (const part of p.parts) {
+        const t = clamp((q - part.at) / UNFOLD);
+        if (t === part.last) continue;
+        part.last = t;
+        part.g.style.visibility = t ? "" : "hidden";
+        part.g.style.opacity = t < .3 ? String(t / .3) : "";
+        if (t === 1) part.g.removeAttribute("transform");
+        else part.g.setAttribute("transform", `translate(${part.o}) rotate(${(1 - t) * part.turn}) scale(${unfold(t)}) translate(${part.back})`);
+      }
+    }
+  }
+
+  // The ink keeps one weight at any size: --k is the drawing units per pixel, and a limb's tip is drawn in them.
+  function pen() {
+    for (const p of plants) {
+      const k = +(p.el.querySelector("svg").viewBox.baseVal.height / p.el.clientHeight).toFixed(3);
+      if (k === p.k) continue;
+      p.k = k;
+      p.el.style.setProperty("--k", k);
+      p.limbs.forEach((l) => (l.last = -1));
+    }
+  }
+
+  // The bed grows from when a tenth of it has come into view until its middle sits a little below the screen's,
+  // and the growth eases after the scroll, closing about two thirds of the gap in 75 ms.
+  let aim = 1, shown = 1, then = 0, easing = false;
+  const ease = (now) => {
+    shown += (aim - shown) * (1 - Math.exp(-(now - then) / 75));
+    then = now;
+    if (Math.abs(aim - shown) < 5e-4) shown = aim;
+    grow(Math.round(shown * 400) / 400);
+    easing = shown !== aim;
+    if (easing) requestAnimationFrame(ease);
+  };
+  const place = () => {
+    const r = bed.getBoundingClientRect(), from = innerHeight - r.height * .1, to = innerHeight - .45 * (innerHeight + r.height);
+    return clamp((from - r.top) / (from - to));
+  };
+  const follow = () => {
+    aim = place();
+    if (easing) return;
+    easing = true;
+    then = performance.now();
+    requestAnimationFrame(ease);
+  };
+  new ResizeObserver(() => {
+    pen();
+    grow(Math.round(shown * 400) / 400);
+  }).observe(bed);
+  if (!calm) {
+    shown = aim = place();
+    addEventListener("scroll", follow, { passive: true });
+  }
 
   // Characters: a field of letters where a slow noise gathers into shapes. It runs a dozen frames a
   // second, only while on screen and while someone is there.
