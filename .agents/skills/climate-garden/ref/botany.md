@@ -7,9 +7,9 @@ belongs as much as a wild one. A plant only needs to be real and grown in the cl
 
 ## The brief
 
-Spawn one or two general-purpose agents in the background on Haiku at high effort (lookup work
-does not need a larger model, nor more agents) with this brief, filled in; split a long roster
-between two. Draw nothing but scaffolding until they return.
+Send one or two research agents this brief, filled in, in the background; split a long roster
+between two. Lookup work needs neither the largest model nor more agents. Draw nothing but
+scaffolding until they return.
 
 > You are gathering visual reference for an illustrated web garden before any drawing starts.
 > The question is what each plant looks like, not where it comes from: skip native range,

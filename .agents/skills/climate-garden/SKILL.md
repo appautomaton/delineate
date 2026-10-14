@@ -1,102 +1,107 @@
 ---
 name: climate-garden
 description: >
-  Build or extend a climate garden on this project's garden site (garden/): research how a roster
-  of real plants looks, draw each plant with the garden/draw kit as growing watercolor-and-ink
-  SVG, give the garden its day and night tokens, compose its layouts, and check every layout. Use
-  whenever the user wants a new garden or climate (savanna, fynbos, taiga, a water garden), a new
-  plant in an existing garden, a plant redrawn or refined, a garden's composition changed (sides
-  feel empty, plants crowd, the sky fills up), or a plant's look researched, even if they never
-  say "skill" or name the files.
+  Make or change a garden on this project's Garden site (garden/): the plants of one real climate,
+  drawn in code as watercolor-and-ink SVG that grows as the page scrolls, by day and by night. Use
+  for a new garden or climate, a plant added, redrawn, or refined, a garden's composition changed
+  (sides look empty, plants crowd, the sky fills up), seasons or water given to a garden, or a
+  plant's look researched, even if the user never says "skill" or names the files.
 ---
 
 # Climate garden
 
 Project paths are relative to the repository root; `ref/` files are in this skill's folder. Load a
-ref file when its step comes up, not before. `garden/climates.md` holds the mechanisms gardens
-share (Seasons, Water) and each garden's botanical reference.
+ref when its step comes up, not before.
 
-## The goal
+## The bar
 
 A garden a visitor can tell from every other by silhouette alone, before color: about twelve real
 plants of one climate, drawn as one hand would draw them, growing in as the page scrolls, by day
 and by moonlight.
 
-- **Real plants.** Every plant exists and is grown in the climate, wild or cultivated alike. How
-  it looks is researched before it is drawn; where it is native is not our question.
-- **One moment, or a year.** A garden shows the moment its climate looks most itself (the desert
-  after rain, the alpine at any hour), or, marked `year` in `gardens.ts`, a four-season climate's
-  whole year, its leaves opening, turning, and falling as the page scrolls (see Seasons in
-  `climates.md`). A garden can have water: a tide, or a still pond (see Water there).
-- **Nothing floats.** Whatever hangs (lichen, mistletoe, a vine, spent flowers, fruit) is drawn
-  hanging from its host, in the host's drawing: from a branch reaching in, or, in a garden with a
-  canopy, from a bough or an arbor beam entering from the top. Open land leaves the top empty.
-- **Sides from beyond the frame.** Side plants are branches reaching in from an edge, or plants
-  rooted past a bottom corner and leaning in. A thin edge takes real wood, not filler.
+- **Real plants, drawn true.** Every plant exists and is grown in the climate, wild or cultivated.
+  How it looks is researched before it is drawn; where it is native is not our question.
+- **One hand.** A new plant is drawn in the manner of the plants around it, at the same weight of
+  wash and ink, so the garden reads as one sheet.
+- **It grows.** The page is a growth, not a picture: limbs extend, then parts unfold where the limb
+  has reached. The first scroll must visibly answer.
+- **Nothing floats.** Whatever hangs (lichen, a vine, spent flowers, fruit) hangs from a host drawn
+  with it. Side plants reach in from beyond the frame; bed plants root below it, so no ground is
+  ever drawn. Open land leaves the top to the sky.
+- **Judged at garden size.** A detail that reads in a close study can vanish where the plant is
+  placed; a flower under about eight pixels is lost.
 
-## How the site is built
+## How a garden works
 
-- `garden/src/garden/plants.json` lists every plant: key, garden, rank (who is dropped first when
-  space runs out), names, the gallery's words, and for a plant that turns in autumn its turning
-  window (`turn`). Its order is paint order.
-- `garden/draw/<garden>.ts` draws the plants; `garden/draw/draw.ts` registers each (seed, drawing,
-  close-study detail). `npm run draw` writes `garden/public/garden/<key>.svg`, the anchors and
-  fields the page uses, and the gallery details, and fails if a leaf would open before its limb
-  reaches it.
-- `garden/src/tokens.css` holds every color: a day set and a night set, grouped by garden.
-- `garden/src/garden/<garden>.css` places the plants per screen; `garden/src/garden/arrange.ts`
-  then slides them apart.
-- The garden is at `/?garden=<key>`; the token gallery, every plant by day and night beside its
-  close study, at `/gallery/?garden=<key>`. It shows a seasonal garden's plants in full leaf, at
-  late spring, without the parts of other seasons.
+- **A plant is a function.** It draws in its own units, base (or hanging point) at the origin,
+  from its own seed, into a list of SVG elements wrapped in growth markup. The page drives one
+  progress value from 0 to 1; a garden that shows a year maps it onto the calendar.
+- **Color is tokens.** A drawing names a species tone or a material, never a color; each has a day
+  value and a night value in `garden/src/tokens.css`.
+- **Layout is CSS.** Each garden has a stylesheet that places its plants for each tier of screen;
+  a solver then slides them apart.
+- **`npm run draw` renders every plant** and fails when a part would open before its limb reaches
+  it. The page, the gallery, and the solver all read what it writes.
 
-A new garden touches eight places: `plants.json`; `draw/<garden>.ts` and its registry entries in
-`draw/draw.ts`; a materials and a species group in both sets of `tokens.css`; an entry with an
-emblem in `src/garden/gardens.ts`; its line in the garden-hiding rule of `src/garden/paint.css`;
-`src/garden/<garden>.css`, imported in `src/main.ts`; and its section in `climates.md`.
+To see what exists, read the code rather than a list: the gardens in
+`garden/src/garden/gardens.ts` (the page, the switcher, and the gallery find a garden through it),
+the plants in `garden/src/garden/plants.json` (names, the gallery's words, rank, and paint order),
+and the drawings in `garden/draw/`, where the registry in `draw.ts` maps each plant to its
+function. Most gardens draw in a module named for them; the oldest draw in the shared kit. `garden/climates.md` holds the
+mechanisms gardens share (Seasons, Water) and each garden's botanical reference.
 
-## Workflow
+## The task
 
-1. **Research the roster.** Send one or two research agents the brief in `ref/botany.md`, in the
-   background. They return what each plant looks like (through the year, for a seasonal garden)
-   and which would repeat a plant already drawn. Decide the roster from it: roles, the moment,
-   hangers on their hosts, about twelve plants (about four sides, two or three hangers, five in
-   the bed).
-2. **Record it** in the garden's section of `climates.md`: the moment, the roster as decided, what
-   to keep apart in the drawing, what stays unresolved, the sources. Not how the roster got there.
-3. **Scaffold the garden with its signature plant only**: the eight places above, one plant, one
-   layout. See `ref/drawing.md` for tokens and the emblem.
-4. **Draw the signature plant until it sets the manner,** then show it to the user before the
-   rest. It takes several rounds; the others go faster once it is right. See `ref/drawing.md`.
-5. **Draw the rest in one batch,** then judge each in the gallery, by day and by night, and give
-   the failures a second pass. Most failures are known: check the traps in `ref/drawing.md` first.
-6. **Compose.** Lay out each breakpoint; leave open sky and open ground; fill thin sides with
-   real wood. See `ref/layout.md`.
-7. **Verify.** `npm run draw`, `npm run check`, `npm run build`; `npm run look <key>` for every
-   layout by day and by night, then read its screenshots. See `ref/verify.md`.
-8. **Record and report.** A lesson another garden will need goes, as a rule, into the ref it
-   belongs to (a drawing trap into `ref/drawing.md`, a placement into `ref/layout.md`); what only
-   this garden needs lives in its code. Tell the user where to look, what changed, and what is
-   still off.
+- **A new garden.** Research the roster (`ref/botany.md`) and decide it: about four sides, two or
+  three hangers on their hosts where the climate has a canopy (none on open land), five or so in
+  the bed. Decide the moment or the year: a climate whose plants change their silhouette through
+  the year (wood that goes bare, herbs that die back) earns a year; one whose silhouettes hold
+  (evergreens, succulents, cushions) shows its best moment. Record it in `climates.md`. Wire the
+  garden in wherever an existing one is wired (see Finding the places, below), its `gardens.ts`
+  entry first. Start with the signature plant alone, draw it until it sets the manner
+  (`ref/drawing.md`), and show it to the user before the rest. Then draw the rest in one batch,
+  judge each, compose (`ref/layout.md`), and verify (`ref/verify.md`).
+- **A plant added to a garden.** Research the one plant. Check its silhouette against the garden's
+  others before drawing. Read its neighbors' code and draw in their manner, with a close study
+  beside the drawing for the gallery. Wire it in wherever a neighbor is wired: its registry entry
+  (seed, drawing, close study) and its `plants.json` entry together (`npm run draw` stops on a
+  plant listed but not registered), its token in both lights, its place in the layout tiers where
+  it earns one, and its rows in `climates.md`.
+- **A plant redrawn or refined.** Find it through `plants.json` and its garden's module; read its
+  entry in `climates.md`. Judge it in the gallery by day and by night and at garden size before
+  and after the change.
+- **A garden recomposed.** `ref/layout.md`, then `npm run look` for every tier.
+- **Seasons or water.** The mechanisms are in `climates.md`; timing parts on the year is in
+  `ref/drawing.md`.
+
+**Finding the places.** Lists of files go stale; the code does not. `git grep -il <key>` for an
+existing garden's or plant's key, together with the files named for it, shows every place one is
+wired in; a new one goes in each of those places. Prose that counts the gardens (the README,
+delineate's page) names no key: search for the count in words.
+
+Every task ends the same way: `npm run check` and `npm run look <key>` (both draw the plants
+first), then read the screenshots and tell the user where to look, what changed, and what is
+still off.
 
 ## Working rules
 
 - The roster, the drawings, and the layout are yours to decide. Decide, build, show; the user
   corrects. Ask only where the choice is theirs (which garden next, a plant they may not want).
-- Judge at garden size. A drawing that reads in the gallery's close study can vanish at the size
-  it is placed; a flower under about eight pixels is lost.
 - Draw back to front, and build volume from parts: a mass painted behind a shrub reads as a rock.
-- Improve rather than preserve. An earlier drawing is not a specification.
-- When an approach fails, delete it. Keep only code the drawings use.
-- Reuse the kit before writing new geometry, and when a second garden needs a helper that lives in
-  one garden's module, move it into a shared module then, named by what it is, not by the plant it
+- Reuse the kit before writing geometry. When a second garden needs a helper that lives in one
+  garden's module, move it into a shared module then, named by what it is, not by the plant it
   first served.
+- Improve rather than preserve: an earlier drawing is not a specification. When an approach fails,
+  delete it; keep only code the drawings use.
+- A lesson another garden will need goes, as a rule, into the ref it belongs to (a drawing trap
+  into `ref/drawing.md`, a placement into `ref/layout.md`). What only one garden needs lives in its
+  code.
 
 ## Routing
 
 | Step | Load |
 |---|---|
-| Researching a roster, briefing the research agents | `ref/botany.md` |
+| Researching a roster or a plant, briefing research agents | `ref/botany.md` |
 | Drawing a plant, growth markup, tokens, the emblem, a drawing that looks wrong | `ref/drawing.md` |
-| Placing plants, breakpoints, sides, crowding | `ref/layout.md` |
-| Running the site, looking in Chrome, sizes, the build | `ref/verify.md` |
+| Placing plants, tiers of screen, sides, crowding | `ref/layout.md` |
+| Running the site, looking at layouts, the build | `ref/verify.md` |
