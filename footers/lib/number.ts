@@ -1,9 +1,9 @@
-// Numbers as the drawings write them. The worlds were first written in Python, and their output depends on
-// Python's arithmetic where it differs from JavaScript's: halves round to even, and a sum of floats is
-// compensated. These keep every coordinate the same to the last digit.
+// Numbers as the drawings write them: halves round to even and sums of floats are compensated, where
+// JavaScript's own arithmetic does neither. Every coordinate of every world rests on these to the last digit,
+// so change a drawing on purpose, never by changing them.
 
-// v to `digits` decimals. toFixed rounds an exact half up, away from zero; Python, like correct decimal
-// rounding, rounds it to the even digit. A half is exact only when v is an odd multiple of 2^-(digits + 1).
+// v to `digits` decimals. toFixed rounds an exact half up, away from zero; this rounds it to the even digit.
+// A half is exact only when v is an odd multiple of 2^-(digits + 1).
 export function fixed(v: number, digits: number): string {
   const sign = v < 0 || Object.is(v, -0) ? "-" : "";
   const halves = Math.abs(v) * 2 ** (digits + 1);
@@ -24,7 +24,7 @@ export function roundEven(v: number): number {
   return rest > 0.5 || (rest === 0.5 && floor % 2 !== 0) ? floor + 1 : floor;
 }
 
-// A sum of floats, compensated as Python's sum() compensates it (Neumaier's improvement of Kahan's method).
+// A sum of floats, compensated by Neumaier's improvement of Kahan's method.
 export function sum(values: Iterable<number>): number {
   let total = 0;
   let c = 0;
@@ -44,8 +44,8 @@ export function f(v: number): string {
   return s === "" || s === "-0" || s === "-" ? "0" : s;
 }
 
-// The length of (x, y), to the last bit as Python's math.hypot computes it: scaled into [0.5, 1), squared and
-// summed in double-length arithmetic, then the square root corrected once.
+// The length of (x, y): scaled into [0.5, 1), squared and summed in double-length arithmetic, then the square
+// root corrected once. Math.hypot can differ from it in the last bit.
 export function hypot(x: number, y: number): number {
   const a = Math.abs(x);
   const b = Math.abs(y);

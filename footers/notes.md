@@ -101,11 +101,6 @@ about 33 ms a second on Alfama, 220 on Desert and 130 to 218 on the Deep; scroll
 - **Lay an open wash as long strokes, not a fill.** A fill tilts its passes a little and turns them back where
   they meet the shape's edge; over a band of sky those turns left small bars in the middle of it. The haze is
   rows of long, overlapping strokes run past the sheet's edges instead.
-- **Port by the output.** The generators were written in Python and moved to TypeScript with not one byte of
-  their output changed: every world, the bouquet and the icons were compared with what the Python drew before
-  the Python went. That meant keeping Python's arithmetic where JavaScript's differs: `lib/random.ts` is its
-  Mersenne Twister, seeded and drawn call for call, and `lib/number.ts` rounds halves to even, compensates a
-  `sum` and takes `hypot` to the last bit. Change a drawing on purpose, never by changing these.
 - **Draw at scale.** Alfama's landmarks read only once placed at their true size and distance (`sk.place`);
   the observatory sheet reads as a drawing because every line weight and section symbol has a job.
 

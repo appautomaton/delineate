@@ -1,7 +1,7 @@
 // SVG as CSS images: a drawing written into a data URI, and a filter laid over a tile.
 
-// Kept as they are, as Python's quote() keeps them: letters, digits, "_.-~", and the quote, slash, colon,
-// equals sign, full stop and space that the drawings use and a data URI allows.
+// Kept as they are: letters, digits, "_.-~", and the quote, slash, colon, equals sign and space that the
+// drawings use and a data URI allows.
 const KEEP = /[^A-Za-z0-9_.~'/:= -]/gu;
 const bytes = new TextEncoder();
 

@@ -1,6 +1,6 @@
-// Seeded random numbers, drawn exactly as Python's random.Random draws them: the Mersenne Twister, seeded
-// from an integer as Python seeds it, and the few draws the drawings make. The worlds were composed with
-// these sequences, so every stroke depends on getting the same number at the same call.
+// Seeded random numbers: the Mersenne Twister (MT19937), keyed from an integer seed, and the few draws the
+// drawings make. The worlds were composed on these sequences, so every stroke depends on getting the same
+// number at the same call: change a drawing on purpose, never by changing this.
 
 const N = 624;
 const M = 397;
@@ -10,7 +10,7 @@ export class Random {
   #i = N;
 
   constructor(seed: number) {
-    // Python keys the generator with the seed's magnitude, in 32-bit words, least significant first.
+    // The key is the seed's magnitude, in 32-bit words, least significant first.
     const n = Math.abs(seed);
     const key = n >= 2 ** 32 ? [n % 2 ** 32, Math.floor(n / 2 ** 32)] : [n];
     this.#init(19650218);
@@ -59,7 +59,7 @@ export class Random {
     return seq[this.#below(seq.length)];
   }
 
-  // Shuffles in place, as Python does: from the end, each item swapped with one at or before it.
+  // Shuffles in place: from the end, each item swapped with one at or before it.
   shuffle<T>(items: T[]): void {
     for (let i = items.length - 1; i > 0; i--) {
       const j = this.#below(i + 1);
