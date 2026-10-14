@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>delineate</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="description" content="Drawings that move when you do. Each comes with its source and a skill your AI agent can follow to make one like it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap">
+<link rel="stylesheet" href="assets/garden/tokens.css">
+<link rel="stylesheet" href="assets/garden/paint.css">
+<link rel="stylesheet" href="assets/garden/anchors.css">
+<style>
+  /* One sheet of paper. Drawings lie on it, not in boxes; words sit beside them. */
+  :root {
+    --paper: #F8F7F2;
+    --ink: #1B1B19;
+    --soft: #62625C;
+    --rule: color-mix(in srgb, var(--ink) 14%, transparent);
+    --serif: "Hedvig Letters Serif", Georgia, serif;
+    --sans: "General Sans", system-ui, sans-serif;
+    --margin: clamp(1.25rem, 5vw, 5rem);
+    --settle: cubic-bezier(.2, .8, .2, 1);
+    --c-blue: #2F4FB8; --c-deep: #1E2F7E; --c-ochre: #D9A532; --c-red: #CF3F2C; --c-maroon: #8E2A24;
+    --c-green: #4C7E37; --c-olive: #8C9B3C; --c-pink: #DE7C93; --c-violet: #6B55B3; --c-graphite: #3A3A38;
+    --c-moon: #EFE6C4;
+    --c-pine: #2F5A2E; --c-rust: #B5652A; --c-cloud: #C8D3E6; --c-mist: #8E9DBA; --c-lilac: #A99BD8;
+    --c-sage: #9DB08A; --c-wheat: #E3C26A;
+    color-scheme: light;
+  }
+  /* Night: the same page on dark paper, where crayon reads as pastel. */
+  :root[data-theme="night"] {
+    --paper: #1B2036; --ink: #F1EDE2; --soft: #AEB0BE;
+    --c-blue: #8098F2; --c-deep: #BFC9FF; --c-ochre: #F3D27A; --c-red: #F27E66; --c-maroon: #EFA996;
+    --c-green: #8FCB7A; --c-olive: #C9D27A; --c-pink: #F5ACBE; --c-violet: #B9A8F4; --c-graphite: #ECE7DA;
+    --c-pine: #A8DA94; --c-rust: #F2A66B; --c-cloud: #464F78; --c-mist: #7F8BB3; --c-lilac: #8E82C4;
+    --c-sage: #7E9874; --c-wheat: #CDB463;
+    color-scheme: dark;
+  }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .7s; }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  body { background: var(--paper); }
+  body { margin: 0; font: 400 1.0625rem/1.6 var(--sans); overflow-x: clip; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
+  .link { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25em; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+  .link:hover { text-decoration-color: currentColor; }
+
+  /* Header. The name arrives as its handle, d3lin3at3, and as the page moves each 3 turns over to
+     show the e on its back. */
+  .bar {
+    position: fixed; inset: 0 0 auto; z-index: 10; height: 4rem;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 var(--margin);
+    background: linear-gradient(var(--paper) 55%, color-mix(in srgb, var(--paper) 0%, transparent));
+  }
+  .bar .brand { font: 400 1.375rem/1 var(--serif); text-decoration: none; display: inline-flex; align-items: baseline; perspective: 30rem; }
+  .flip { display: inline-grid; transform-style: preserve-3d; }
+  .flip > span { grid-area: 1 / 1; text-align: center; backface-visibility: hidden; }
+  .flip .e { transform: rotateX(180deg); }
+  .bar nav { display: flex; gap: .25rem; margin-right: -.6rem; }
+
+  /* Drawn icons. A label waits a moment before it shows, so a pointer passing over leaves no flicker, and
+     goes at once when the pointer does; keyboard focus shows it too. */
+  .tipped { position: relative; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; color: var(--ink); }
+  .tipped .icon { width: 1.9rem; height: 1.9rem; transition: scale .35s var(--settle); }
+  .tipped:hover .icon { scale: 1.08; }
+  .tip {
+    position: absolute; top: calc(100% + .35rem); left: 50%; z-index: 2;
+    padding: .38rem .62rem .42rem; border-radius: .45rem;
+    background: var(--ink); color: var(--paper); font: 500 .8125rem/1 var(--sans); white-space: nowrap;
+    opacity: 0; translate: -50% -.25rem; pointer-events: none;
+    transition: opacity .12s ease, translate .12s ease;
+  }
+  .tip::before { content: ""; position: absolute; left: 50%; top: -4px; width: 8px; height: 8px; background: inherit; translate: -50% 0; rotate: 45deg; border-radius: 1px; }
+  .tipped:hover .tip, .tipped:focus-visible .tip { opacity: 1; translate: -50% 0; transition: opacity .2s ease .45s, translate .25s var(--settle) .45s; }
+  .tip--up { top: auto; bottom: calc(100% + .35rem); }
+  .tip--up::before { top: auto; bottom: -4px; }
+  @supports (animation-timeline: scroll()) {
+    .flip { animation: turn linear both; animation-timeline: scroll(root); animation-range: calc(var(--k) * 40px) calc(var(--k) * 40px + 140px); }
+    @keyframes turn { to { transform: rotateX(180deg); } }
+  }
+  @supports not (animation-timeline: scroll()) { .flip { transform: rotateX(180deg); } }
+
+  /* Crayon. Every strand draws on in the time the hand took over it. Once the drawing is done the strands
+     stop, and the paper's tooth comes up through the wax: the drawing is masked by the tooth under a solid
+     layer that fades out. Icons are too small for grain. */
+  @property --bare { syntax: "<number>"; inherits: false; initial-value: 1; }
+  .wax path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+  .draw.is-drawing .wax path { animation: draw var(--t) linear var(--d) forwards; }
+  .draw.is-drawn .wax path { stroke-dashoffset: 0; animation: none; }
+  .draw.is-drawn .wax:not(.icon) {
+    -webkit-mask: linear-gradient(rgb(0 0 0 / var(--bare)) 0 0), {{TOOTH}} 0 0 / 256px;
+    mask: linear-gradient(rgb(0 0 0 / var(--bare)) 0 0), {{TOOTH}} 0 0 / 256px;
+    animation: tooth 1.4s ease .3s forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes tooth { to { --bare: 0; } }
+  @media (prefers-reduced-motion: reduce) { .draw.is-drawn .wax:not(.icon) { animation: none; --bare: 0; } }
+  .k-moon { stroke: var(--c-moon); } .k-pine { stroke: var(--c-pine); } .k-rust { stroke: var(--c-rust); }
+  .k-cloud { stroke: var(--c-cloud); } .k-mist { stroke: var(--c-mist); } .k-lilac { stroke: var(--c-lilac); }
+  .k-sage { stroke: var(--c-sage); } .k-wheat { stroke: var(--c-wheat); }
+  .k-blue { stroke: var(--c-blue); } .k-deep { stroke: var(--c-deep); } .k-ochre { stroke: var(--c-ochre); }
+  .k-red { stroke: var(--c-red); } .k-maroon { stroke: var(--c-maroon); } .k-green { stroke: var(--c-green); }
+  .k-olive { stroke: var(--c-olive); } .k-pink { stroke: var(--c-pink); } .k-violet { stroke: var(--c-violet); }
+  .k-graphite { stroke: var(--c-graphite); }
+
+  /* Opening: the words on the left, the bouquet drawing itself on the right, cut by the page's edge. */
+  .opening {
+    position: relative; min-height: clamp(36rem, 92svh, 56rem);
+    display: grid; align-items: center; padding: 6rem var(--margin) 4rem;
+  }
+  .opening-text { position: relative; z-index: 2; max-width: 34rem; }
+  .opening h1 { margin: 0; font: 400 clamp(2.75rem, 5.6vw, 5rem)/1.02 var(--serif); letter-spacing: -.015em; text-wrap: balance; max-width: 11ch; }
+  .opening p { margin: 1.5rem 0 0; color: var(--soft); max-width: 30rem; text-wrap: pretty; }
+  .actions { display: flex; flex-wrap: wrap; gap: 1.25rem 1.75rem; align-items: center; margin-top: 2rem; font-size: 1rem; }
+  .button { display: inline-block; padding: .8rem 1.35rem; border-radius: 999px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; transition: translate .3s var(--settle); }
+  .button:hover { translate: 0 -2px; }
+  /* The bouquet's frame shows it down to where its stems fade into the paper; each plane runs on below the
+     frame, so the planes can part without a stem showing its end. Planes move; the drawings in them grain. */
+  .bouquet {
+    position: absolute; right: 0; bottom: 0; height: 94%; max-width: 62vw; aspect-ratio: 820 / 730; pointer-events: none;
+    overflow: clip; -webkit-mask: linear-gradient(to top, transparent, #000 16%); mask: linear-gradient(to top, transparent, #000 16%);
+  }
+  .bouquet .hp { position: absolute; inset: 0 0 auto; height: calc(100% * 900 / 730); transition: translate .8s var(--settle); }
+  .bouquet .wax { display: block; width: 100%; height: 100%; }
+  .bouquet .hp--back { translate: calc(var(--px, 0) * -6px) calc(var(--py, 0) * -4px); opacity: .82; }
+  .bouquet .hp--mid { translate: calc(var(--px, 0) * -12px) calc(var(--py, 0) * -8px); }
+  .bouquet .hp--front { translate: calc(var(--px, 0) * -22px) calc(var(--py, 0) * -14px); }
+  @supports (animation-timeline: scroll()) {
+    /* Leaving the opening, the planes part: the nearest rises fastest. */
+    .bouquet .hp { animation: part linear both; animation-timeline: scroll(root); animation-range: 0 90svh; }
+    .bouquet .hp--back { --rise: -2rem; } .bouquet .hp--mid { --rise: -5rem; } .bouquet .hp--front { --rise: -9rem; }
+    @keyframes part { to { transform: translateY(var(--rise)); } }
+  }
+  @media (max-width: 47.99rem) {
+    .opening { align-items: start; padding-top: 7rem; padding-bottom: 0; min-height: 0; }
+    .bouquet { position: relative; height: auto; max-width: none; width: calc(100% + 2 * var(--margin)); margin: 1rem calc(-1 * var(--margin)) 0; aspect-ratio: 1 / .95; }
+  }
+
+  /* Work: each piece drawn on the page at the height its motion needs, its words beside it. */
+  .piece {
+    display: grid; gap: clamp(2rem, 5vw, 5rem); align-items: center;
+    padding: clamp(3.5rem, 9vw, 8rem) var(--margin);
+  }
+  .piece h2, .bed h2 { margin: 0; font: 400 clamp(2.25rem, 4.2vw, 3.5rem)/1.04 var(--serif); letter-spacing: -.01em; }
+  .piece p, .bed p { margin: 1rem 0 0; color: var(--soft); max-width: 28rem; text-wrap: pretty; }
+  .take { display: flex; gap: 1.5rem; margin-top: 1.5rem; font-size: 1rem; }
+  @media (min-width: 48rem) {
+    .piece { grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 1fr); }
+    .piece--flip .piece-art { order: 2; }
+  }
+
+  /* Portraits: the planes of one portrait, stacked in register; crossing the screen, the stack turns
+     and they part in depth, then close into the picture again. */
+  .stage { --h: clamp(20rem, 60svh, 36rem); position: relative; height: var(--h); display: grid; place-items: center; perspective: 90rem; perspective-origin: 50% 35%; view-timeline: --portrait block; }
+  .tilt { position: relative; width: min(100%, calc(var(--h) * .82)); aspect-ratio: 1; transform-style: preserve-3d; transition: transform .6s var(--settle); }
+  .stack, .plane { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .plane img { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent), linear-gradient(transparent, #000 16%, #000 84%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent), linear-gradient(transparent, #000 16%, #000 84%, transparent);
+    mask-composite: intersect; }
+  @supports (animation-timeline: view()) {
+    .stack { animation: turn-stack linear both; animation-timeline: --portrait; animation-range: cover 8% cover 92%; }
+    .plane { animation: apart linear both; animation-timeline: --portrait; animation-range: cover 8% cover 92%; }
+    @keyframes turn-stack { 0%, 16% { transform: none; } 50% { transform: rotateX(12deg) rotateY(-36deg) scale(.84); } 84%, 100% { transform: none; } }
+    @keyframes apart { 0%, 16% { transform: none; } 50% { transform: translateZ(calc((var(--i) - (var(--n) - 1) / 2) * 3.4rem)); } 84%, 100% { transform: none; } }
+  }
+
+  /* Garden: what the garden is for, a frame of plants growing in round the words. */
+  .bed {
+    position: relative; height: clamp(30rem, 78svh, 44rem); margin: clamp(2rem, 6vw, 5rem) 0;
+    container-type: size; view-timeline: --bed block; display: grid; place-items: center; text-align: center;
+  }
+  .bed .piece-text { position: relative; z-index: 2; max-width: 30rem; padding: 0 1.5rem; }
+  .bed .piece-text p { margin-inline: auto; }
+  .bed .take { justify-content: center; }
+  .grow { position: absolute; left: var(--x); top: var(--y); height: calc(var(--h) * min(1cqh, .95cqw)); aspect-ratio: var(--ar);
+    translate: calc(var(--bx) * -100%) calc(var(--by) * -100%); transform-origin: calc(var(--bx) * 100%) calc(var(--by) * 100%);
+    rotate: var(--r, 0deg); scale: var(--flip, 1) 1; pointer-events: none; }
+  .grow > div { width: 100%; height: 100%; transform-origin: inherit; }
+  .grow svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  @supports (animation-timeline: view()) {
+    .grow > div { animation: sprout linear both; animation-timeline: --bed; animation-range: entry calc(10% + var(--n) * 4%) cover calc(42% + var(--n) * 3%); }
+    @keyframes sprout { from { transform: scale(.08) rotate(var(--sway, 12deg)); opacity: 0; } 30% { opacity: 1; } to { transform: none; } }
+  }
+
+  /* Footers: the section is the world. Its words are written in the footer's own slots, the picker and the
+     switch follow them, and the page's paper softens into its sky above and its ground below. */
+  .footer-show { position: relative; margin-block: clamp(2rem, 6vw, 5rem); }
+  .footer-show::before, .footer-show::after { content: ""; position: absolute; inset: 0 0 auto; height: 4rem; z-index: 1; pointer-events: none;
+    background: linear-gradient(var(--paper), color-mix(in srgb, var(--paper) 0%, transparent)); }
+  .footer-show::after { inset: auto 0 0; background: linear-gradient(color-mix(in srgb, var(--paper) 0%, transparent), var(--paper)); }
+  .footer-show .site-footer {
+    --footer-sans: "General Sans", system-ui, sans-serif; --footer-serif: "Hedvig Letters Serif", Georgia, serif;
+    --land: max(260px, 30vw); --pad-top: clamp(80px, 8vw, 120px); --gutter: var(--margin);
+  }
+  .footer-show .show-title { margin: 0; font: 400 clamp(2.25rem, 4.2vw, 3.5rem)/1.04 var(--serif); letter-spacing: -.01em; }
+  .footer-show .tagline { font: 400 1.0625rem/1.6 var(--sans); font-style: normal; max-width: 30rem; margin-top: 1rem; }
+  .footer-show .show-take { display: flex; gap: 1.5rem; margin: 1.5rem 0 0; }
+  .footer-show .show-take a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25em; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+
+  /* Characters, soon: a picture made of letters, shown working. */
+  .field { position: relative; height: clamp(18rem, 46svh, 28rem); }
+  .field canvas { position: absolute; inset: 0; width: 100%; height: 100%; mask-image: radial-gradient(closest-side, #000 62%, transparent); }
+
+  /* The page's own foot: its words, then a crayon landscape in six depths that rises as it comes into view,
+     on the page's paper by day and by night. */
+  .foot { position: relative; view-timeline: --foot block; margin-top: clamp(3rem, 8vw, 6rem); }
+  .foot-grid { position: relative; z-index: 2; display: grid; gap: 2.5rem; padding: clamp(2.5rem, 5vw, 4rem) var(--margin) 0; }
+  .foot-name { font: 400 clamp(2.5rem, 6vw, 4.5rem)/1 var(--serif); letter-spacing: -.015em; }
+  .foot-grid p { margin: .75rem 0 0; color: var(--soft); max-width: 24rem; }
+  .foot-grid nav { display: flex; gap: clamp(2rem, 6vw, 5rem); font-size: 1rem; }
+  .foot-grid h3 { margin: 0 0 .6rem; font: 500 1rem/1.3 var(--sans); }
+  .foot-grid ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; color: var(--soft); }
+  .foot-grid ul a { text-decoration: none; } .foot-grid ul a:hover { color: var(--ink); }
+  .foot-row { font-size: .875rem; color: var(--soft); }
+  @media (min-width: 48rem) { .foot-grid { grid-template-columns: 1fr auto; } .foot-row { grid-column: 1 / -1; } }
+  .foot-scene { position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 34rem; margin-top: -4rem; overflow: hidden; }
+  .foot-scene .fp { position: absolute; inset: 0; }
+  .foot-scene .wax { display: block; width: 100%; height: 100%; }
+  .foot-orb { position: absolute; top: 9%; right: 12%; width: clamp(4.5rem, 8vw, 7.5rem); aspect-ratio: 1; transition: opacity .9s ease; }
+  .foot-orb--moon, [data-theme="night"] .foot-orb--sun { opacity: 0; }
+  [data-theme="night"] .foot-orb--moon { opacity: 1; }
+  @supports (animation-timeline: view()) {
+    .foot-scene .fp, .foot-orb { animation: rise linear both; animation-timeline: --foot; animation-range: entry 0% entry 70%; }
+    .fp--sky { --from: 1rem; } .fp--range { --from: 2rem; } .fp--hills { --from: 4.5rem; } .fp--trees { --from: 7rem; }
+    .fp--meadow { --from: 10rem; } .fp--near { --from: 15rem; } .foot-orb { --from: 3rem; }
+    @keyframes rise { from { transform: translateY(var(--from)); } to { transform: none; } }
+  }
+
+  /* The light, page-wide, from a crayon sun or moon floating at the corner. */
+  .fab { position: fixed; right: clamp(1rem, 2.5vw, 2rem); bottom: clamp(1rem, 2.5vw, 2rem); z-index: 20;
+    width: 3.25rem; height: 3.25rem; border: 0; padding: 0; font: inherit; cursor: pointer; border-radius: 50%;
+    background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent), 0 8px 24px -14px color-mix(in srgb, var(--ink) 50%, transparent); }
+  .fab .icon { width: 2.1rem; height: 2.1rem; }
+  .fab .icon--moon, [data-theme="night"] .fab .icon--sun { display: none; }
+  [data-theme="night"] .fab .icon--moon { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip { animation: none !important; transform: rotateX(180deg); }
+    .wax path { animation: none !important; stroke-dashoffset: 0; }
+    .bouquet .hp, .foot-scene .fp, .foot-orb, .stack, .plane, .grow > div { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <header class="bar">
+    <a class="brand" href="./" aria-label="delineate">
+      <span aria-hidden="true">d</span><span class="flip" style="--k:0" aria-hidden="true"><span>3</span><span class="e">e</span></span><span aria-hidden="true">lin</span><span class="flip" style="--k:1" aria-hidden="true"><span>3</span><span class="e">e</span></span><span aria-hidden="true">at</span><span class="flip" style="--k:2" aria-hidden="true"><span>3</span><span class="e">e</span></span>
+    </a>
+    <nav aria-label="Site">
+      <a class="tipped draw" data-time="1" href="#work" aria-label="Work">{{ICON_WORK}}<span class="tip" aria-hidden="true">Work</span></a>
+      <a class="tipped draw" data-time="1" href="https://github.com/appautomaton/delineate" aria-label="Source on GitHub">{{ICON_GITHUB}}<span class="tip" aria-hidden="true">Source on GitHub</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="opening" aria-labelledby="headline">
+      <div class="opening-text">
+        <h1 id="headline">Drawings that move when you do.</h1>
+        <p>Portraits that come apart, gardens that grow as you scroll, and small worlds at the foot of a page. Each comes with its source, and a skill your AI agent can follow to make one like it.</p>
+        <div class="actions">
+          <a class="button" href="#work">See the work</a>
+          <a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Browse the skills</a>
+        </div>
+      </div>
+      <div class="bouquet draw" data-time="{{HERO_TIME}}" aria-hidden="true">
+{{HERO}}
+      </div>
+    </section>
+
+    <div id="work">
+      <article class="bed garden" aria-labelledby="garden" data-bed>
+        <div class="piece-text">
+          <h2 id="garden">Garden</h2>
+          <p>Twelve gardens from around the world, drawn plant by plant, that grow in round whatever they frame. These came from six of them.</p>
+          <div class="take"><a class="link" href="garden/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/garden">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/climate-garden">Skill</a></div>
+        </div>
+      </article>
+
+      <article class="footer-show" aria-labelledby="footers">
+{{FOOTER_KIT}}
+      </article>
+
+      <article class="piece piece--flip" aria-labelledby="characters">
+        <div class="piece-art field" data-field aria-hidden="true"><canvas></canvas></div>
+        <div class="piece-text">
+          <h2 id="characters">Characters</h2>
+          <p>A picture made of letters, gathering into shapes and letting go of them. Coming soon, with Collage, a picture built from scraps of paper.</p>
+        </div>
+      </article>
+
+      <article class="piece piece--flip" aria-labelledby="portraits">
+        <a class="piece-art stage" href="#" aria-label="Open Portraits">
+          <div class="tilt"><div class="stack" data-layers></div></div>
+        </a>
+        <div class="piece-text">
+          <h2 id="portraits">Portraits</h2>
+          <p>Illustrated portraits redrawn in vector as planes, each at its own depth. Pull them apart and they keep moving.</p>
+          <div class="take"><a class="link" href="https://github.com/appautomaton/delineate/tree/main/portraits">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/layered-svg">Skill</a></div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="foot" id="foot">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-name">delineate</div>
+        <p>Drawings that move when you do, with the source and the skills to make your own.</p>
+      </div>
+      <nav aria-label="Footer">
+        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#portraits">Portraits</a></li></ul></div>
+        <div><h3>Take</h3><ul><li><a href="https://github.com/appautomaton/delineate">Source on GitHub</a></li><li><a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Agent skills</a></li></ul></div>
+      </nav>
+      <p class="foot-row">© 2026 delineate</p>
+    </div>
+    <div class="foot-scene draw" data-time="{{FOOT_TIME}}" aria-hidden="true">
+      <div class="fp fp--sky"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMin slice"><defs>{{FOOT_SKY_DEFS}}</defs><g>{{FOOT_SKY}}</g></svg></div>
+      <div class="foot-orb foot-orb--sun"><svg class="wax" viewBox="0 0 200 200"><g>{{FOOT_SUN}}</g></svg></div>
+      <div class="foot-orb foot-orb--moon"><svg class="wax" viewBox="0 0 200 200"><g>{{FOOT_MOON}}</g></svg></div>
+      <div class="fp fp--range"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_RANGE_DEFS}}</defs><g>{{FOOT_RANGE}}</g></svg></div>
+      <div class="fp fp--hills"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_HILLS_DEFS}}</defs><g>{{FOOT_HILLS}}</g></svg></div>
+      <div class="fp fp--trees"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_TREES_DEFS}}</defs><g>{{FOOT_TREES}}</g></svg></div>
+      <div class="fp fp--meadow"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_MEADOW_DEFS}}</defs><g>{{FOOT_MEADOW}}</g></svg></div>
+      <div class="fp fp--near"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_NEAR_DEFS}}</defs><g>{{FOOT_NEAR}}</g></svg></div>
+    </div>
+  </footer>
+
+  <button class="fab tipped draw" data-time="1" type="button" aria-label="Switch to night">{{ICON_SUN}}{{ICON_MOON}}<span class="tip tip--up" aria-hidden="true">Night</span></button>
+
+<script type="module">
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Crayon drawings draw on when they come into view; once drawn, the stylesheet brings the grain up.
+  function settle(el) {
+    el.classList.remove("is-drawing");
+    el.classList.add("is-drawn");
+  }
+  const draw = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const el = e.target;
+      draw.unobserve(el);
+      if (calm) { settle(el); continue; }
+      el.classList.add("is-drawing");
+      setTimeout(() => settle(el), (Number(el.dataset.time) + .2) * 1000);
+    }
+  }, { threshold: .2 });
+  document.querySelectorAll(".draw").forEach((el) => draw.observe(el));
+
+  // The bouquet leans away from a fine pointer, nearer planes further.
+  const bouquet = document.querySelector(".bouquet");
+  if (!calm && matchMedia("(pointer: fine)").matches) {
+    addEventListener("pointermove", (e) => {
+      bouquet.style.setProperty("--px", (e.clientX / innerWidth - .5).toFixed(3));
+      bouquet.style.setProperty("--py", (e.clientY / innerHeight - .5).toFixed(3));
+    }, { passive: true });
+  }
+
+  // Portraits: one plane per layer of the portrait, back to front.
+  const stack = document.querySelector("[data-layers]");
+  const layers = await (await fetch("assets/portrait/layers.json")).json();
+  stack.append(...layers.map((layer, i) => {
+    const plane = document.createElement("div");
+    plane.className = "plane";
+    plane.style.setProperty("--i", i);
+    plane.style.setProperty("--n", layers.length);
+    const img = new Image();
+    img.src = `assets/portrait/${layer.name}.svg`;
+    img.alt = "";
+    img.decoding = "async";
+    img.loading = "lazy";
+    plane.append(img);
+    return plane;
+  }));
+  const stage = document.querySelector(".stage"), tilt = stage.querySelector(".tilt");
+  if (!calm && matchMedia("(pointer: fine)").matches) {
+    stage.addEventListener("pointermove", (e) => {
+      const r = stage.getBoundingClientRect();
+      tilt.style.transform = `rotateY(${((e.clientX - r.left) / r.width - .5) * 16}deg) rotateX(${-((e.clientY - r.top) / r.height - .5) * 12}deg)`;
+    });
+    stage.addEventListener("pointerleave", () => { tilt.style.transform = ""; });
+  }
+
+  // Garden: plants from six gardens, each anchored at its base on the bed's edge and grown in as the bed
+  // crosses the screen. Positions are fractions of the bed; heights are percentages of its height.
+  const PLANTS = [
+    { name: "bougainvillea", x: .86, y: 0, h: 62 },
+    { name: "olive", x: 0, y: .16, h: 30 },
+    { name: "monstera", x: .07, y: 1, h: 46 },
+    { name: "lavender", x: .3, y: 1, h: 24 },
+    { name: "strelitzia", x: .7, y: 1, h: 50 },
+    { name: "agave", x: .95, y: 1, h: 32 },
+    { name: "ginkgo", x: 1, y: .42, h: 34, flip: true },
+    { name: "iris", x: .5, y: 1, h: 18 },
+  ];
+  const bed = document.querySelector("[data-bed]");
+  const grown = await Promise.all(PLANTS.map(async (p, n) => {
+    const svg = await (await fetch(`assets/garden/${p.name}.svg`)).text();
+    const el = document.createElement("div");
+    el.className = `grow g-${p.name}`;
+    el.style.cssText = `--x:${p.x * 100}%;--y:${p.y * 100}%;--h:${p.h};--n:${n}${p.flip ? ";--flip:-1" : ""}`;
+    el.innerHTML = `<div>${svg}</div>`;
+    return el;
+  }));
+  bed.prepend(...grown);
+  const pen = () => grown.forEach((el) => {
+    const vb = el.querySelector("svg").viewBox.baseVal;
+    el.style.setProperty("--k", (vb.height / el.clientHeight).toFixed(3));
+  });
+  new ResizeObserver(pen).observe(bed);
+
+  // Characters: a field of letters where a slow noise gathers into shapes. It runs a dozen frames a
+  // second, only while on screen and while someone is there.
+  const field = document.querySelector("[data-field]"), canvas = field.querySelector("canvas"), ctx = canvas.getContext("2d");
+  const RAMP = " .,:;-=+*%#@";
+  let seen = false, stirred = performance.now(), last = 0, cols = 0, rows = 0, cell = 14;
+  for (const type of ["pointermove", "scroll", "keydown", "touchstart", "wheel"]) addEventListener(type, () => (stirred = performance.now()), { passive: true });
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) requestAnimationFrame(tick); }).observe(field);
+  const fit = () => {
+    const r = field.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio);
+    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cell = r.width < 600 ? 11 : 14; cols = Math.ceil(r.width / (cell * .62)); rows = Math.ceil(r.height / cell);
+    ctx.font = `500 ${cell}px ui-monospace, "SF Mono", Menlo, monospace`; ctx.textBaseline = "top";
+  };
+  new ResizeObserver(fit).observe(field);
+  // Value noise on a hashed lattice, three octaves, its domain warped a little so shapes bend as they drift.
+  const hash = (x, y) => { let h = x * 374761393 + y * 668265263; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
+  const smooth = (t) => t * t * (3 - 2 * t);
+  const value = (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), u = smooth(x - xi), v = smooth(y - yi);
+    const a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  };
+  const fbm = (x, y) => .55 * value(x, y) + .3 * value(x * 2.1 + 7, y * 2.1 + 3) + .15 * value(x * 4.3 + 1, y * 4.3 + 9);
+  function tick(now) {
+    if (!seen) return;
+    requestAnimationFrame(tick);
+    if (now - last < 83 || now - stirred > 20000) return;
+    last = now;
+    const t = now / 4000, w = field.clientWidth, h = field.clientHeight, step = cell * .62;
+    // The letters take the page's ink and blue, by day and by night.
+    const css = getComputedStyle(document.documentElement), ink = css.getPropertyValue("--ink").trim(), blue = css.getPropertyValue("--c-blue").trim();
+    ctx.clearRect(0, 0, w, h);
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      const x = i / 9, y = j / 6;
+      const wx = x + .9 * value(x * .5 + t * .3, y * .5), wy = y + .9 * value(x * .5 + 11, y * .5 - t * .25);
+      const v = fbm(wx + t * .35, wy - t * .2);
+      const x0 = i * step, y0 = j * cell;
+      if (v < .5) {
+        // The field: a faint dot in every cell, so the shapes rise out of a ground, not out of nothing.
+        ctx.fillStyle = ink; ctx.globalAlpha = .16;
+        ctx.fillText(".", x0, y0);
+        continue;
+      }
+      const k = Math.min(RAMP.length - 1, 2 + Math.floor((v - .5) / .32 * (RAMP.length - 2)));
+      ctx.fillStyle = v > .74 ? blue : ink;
+      ctx.globalAlpha = Math.min(1, .45 + (v - .5) * 2.2);
+      ctx.fillText(RAMP[k], x0, y0);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // A drawn icon draws itself again when a pointer comes to it.
+  const redraw = (el) => {
+    if (calm || el.classList.contains("is-drawing")) return;
+    el.classList.remove("is-drawn");
+    void el.offsetWidth;
+    el.classList.add("is-drawing");
+    setTimeout(() => { el.classList.remove("is-drawing"); el.classList.add("is-drawn"); }, (Number(el.dataset.time) + .2) * 1000);
+  };
+  document.querySelectorAll(".tipped").forEach((el) => el.addEventListener("pointerenter", () => redraw(el)));
+
+  // The light is the page's: the footer keeps it (its switch, its storage, its sun and moon), so the corner
+  // presses the footer's switch, and the page follows the root, cross-fading through a view transition.
+  const light = document.querySelector("button.fab"), lightTip = light.querySelector(".tip");
+  const showLight = () => {
+    const night = document.documentElement.dataset.theme === "night";
+    light.setAttribute("aria-label", night ? "Switch to day" : "Switch to night");
+    lightTip.textContent = night ? "Day" : "Night";
+  };
+  new MutationObserver(showLight).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  showLight();
+  light.addEventListener("click", () => {
+    const press = () => document.querySelector(".site-footer .theme-toggle").click();
+    if (document.startViewTransition && !calm) document.startViewTransition(press); else press();
+    redraw(light);
+  });
+</script>
+</body>
+</html>
