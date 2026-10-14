@@ -325,28 +325,28 @@
   /* Set flush right, the name reads as the pill's caption and the pill never shifts when the name changes. */
   .footer-view .picker-name { order: -1; min-width: 0; text-align: right; }
 
-  /* Scroll choreography */
+  /* Scroll choreography. Keyframe names are the whole page's, so the footer's carry its own prefix. */
 
-  @keyframes rise { from { translate: 0 var(--rise); } }
-  @keyframes reveal { from { opacity: 0; translate: 0 32px; } }
+  @keyframes footer-rise { from { translate: 0 var(--rise); } }
+  @keyframes footer-reveal { from { opacity: 0; translate: 0 32px; } }
 
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       .site-footer { view-timeline: --footer block; timeline-scope: --land; }
       .land-anchor { view-timeline: --land block; }
       .depth {
-        animation: rise linear both;
+        animation: footer-rise linear both;
         animation-timeline: --land;
         animation-range: entry 0% entry 100%;
       }
       /* The sky settles as the footer arrives: the moon climbs while the ground rises in layers. */
       .sky-drift {
-        animation: rise linear both;
+        animation: footer-rise linear both;
         animation-timeline: --footer;
         animation-range: entry 0% entry 100%;
       }
       .footer-body .brand, .sitemap > div, .signoff, .footer-view {
-        animation: reveal linear both;
+        animation: footer-reveal linear both;
         animation-timeline: --footer;
       }
       .footer-body .brand { animation-range: entry 8% entry 40%; }

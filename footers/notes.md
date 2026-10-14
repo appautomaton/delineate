@@ -81,6 +81,9 @@ about 33 ms a second on Alfama, 220 on Desert and 130 to 218 on the Deep; scroll
   looked dead and dropped frames on the theme switch. What worked was choosing the one light that matters,
   the house glowing from within, and redrawing for it: luminous glass, black iron and silhouettes against
   it, rims only where the moon falls. The vector night switches with no slow frames.
+- **A component's keyframes carry its name.** Keyframe names belong to the whole page: the footer's `rise`
+  once replaced delineate's own, and the page's foot stopped moving without a word. They are `footer-rise` and
+  `footer-reveal` now.
 - **Draw at scale.** Alfama's landmarks read only once placed at their true size and distance (`sk.place`);
   the observatory sheet reads as a drawing because every line weight and section symbol has a job.
 
