@@ -36,6 +36,12 @@ build needs the piece's region maps, which are media and stay local.
   colour fades the crayon out beneath it, so it holds by day and by night with nothing to tune. A blur would
   read as glass, not paper, and repaint with every frame the drawing moves. The headline, large and dark, needs
   no clearing.
+- **The foot moves on its own timeline.** Its planes once rose on the whole foot's, words included, so the
+  motion was spent before the landscape showed. Now they rise from the moment the landscape shows until the
+  page ends, and the sun or moon sinks to rest over the hamlet as they do.
+- **Place things in the sheet's units.** The orb and the narrow-screen slide are worked out from the slice's
+  own scale (`--s`, from container units), so the sun stays over the hamlet and the hamlet stays in view at any
+  shape of screen.
 - **Fade into the paper.** No piece sits in a box: every edge that meets the page is masked to transparent,
   and stems and planes run on past the frame, so parting them never shows a cut end.
 
@@ -50,9 +56,9 @@ build needs the piece's region maps, which are media and stay local.
 - **Links.** Portraits' picture links to `#`, and Garden's Open expects the Garden app at `garden/`; both wait on
   where the site is deployed. Garden fetches its plants from `/garden/…`, so it can live only at a domain's
   root until those paths follow Vite's base.
-- **Checks.** The opening is checked from `375x667` to `1920x1080`, by day and by night; the rest of the page
-  at desktop width only. Performance was last traced before the grain became
-  a mask. When the planes part mid-scroll, the festival plane's left edge and the sky's top still show.
+- **Checks.** The opening is checked from `375x667` to `1920x1080` and the foot at `390x844` and `1440x900`, by
+  day and by night; the rest of the page at desktop width only. Performance was last traced before the grain
+  became a mask. When the planes part mid-scroll, the festival plane's left edge and the sky's top still show.
 - **Weight.** `index.html` is 7.0 MB, 1.7 MB gzipped; 3.7 MB of it is the kit's seven worlds, inlined as
   templates. Fetching a world when it is chosen would take that off the first load.
 - **Language.** The generators are Python, as the Footers' are; the rest of the repository is TypeScript run by

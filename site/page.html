@@ -228,9 +228,9 @@
   .field { position: relative; height: clamp(18rem, 46svh, 28rem); }
   .field canvas { position: absolute; inset: 0; width: 100%; height: 100%; mask-image: radial-gradient(closest-side, #000 62%, transparent); }
 
-  /* The page's own foot: its words, then a crayon landscape in six depths that rises as it comes into view,
-     on the page's paper by day and by night. */
-  .foot { position: relative; view-timeline: --foot block; margin-top: clamp(3rem, 8vw, 6rem); }
+  /* The page's own foot: its words, then a crayon landscape in six depths that rises into place as the page
+     comes to its end, on the page's paper by day and by night. */
+  .foot { position: relative; margin-top: clamp(3rem, 8vw, 6rem); }
   .foot-grid { position: relative; z-index: 2; display: grid; gap: 2.5rem; padding: clamp(2.5rem, 5vw, 4rem) var(--margin) 0; }
   .foot-name { font: 400 clamp(2.5rem, 6vw, 4.5rem)/1 var(--serif); letter-spacing: -.015em; }
   .foot-grid p { margin: .75rem 0 0; color: var(--soft); max-width: 24rem; }
@@ -240,16 +240,40 @@
   .foot-grid ul a { text-decoration: none; } .foot-grid ul a:hover { color: var(--ink); }
   .foot-row { font-size: .875rem; color: var(--soft); }
   @media (min-width: 48rem) { .foot-grid { grid-template-columns: 1fr auto; } .foot-row { grid-column: 1 / -1; } }
-  .foot-scene { position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 34rem; margin-top: -4rem; overflow: hidden; }
-  .foot-scene .fp { position: absolute; inset: 0; }
+  .foot-scene {
+    position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 34rem; margin-top: -4rem; overflow: hidden;
+    container-type: size; view-timeline: --scene block;
+  }
+  /* Each plane and the orb measure the sheet as the slice lays it (--s, px per sheet px). Where the screen is
+     narrower than the sheet, the slice keeps only its middle, so the planes slide left as far as that crop
+     allows, up to 200 sheet px, to bring the hamlet toward the middle; on a wide screen there is no crop and
+     nothing moves. */
+  .foot-scene > * {
+    --s: max(100cqw / 1600, 100cqh / 900);
+    --shift: clamp(0px, (1600 * var(--s) - 100cqw) / 2, 200 * var(--s));
+  }
+  .foot-scene .fp { position: absolute; inset: 0 0 0 calc(-2 * var(--shift)); }
   .foot-scene .wax { display: block; width: 100%; height: 100%; }
-  .foot-orb { position: absolute; top: 9%; right: 12%; width: clamp(4.5rem, 8vw, 7.5rem); aspect-ratio: 1; transition: opacity .9s ease; }
+  /* The sun or the moon hangs over the hamlet, at (1060, 380) on the 1600 x 900 sheet: placed in the sheet's own
+     units, scaled as the land's slice scales it, so it keeps its place at any shape of screen. */
+  .foot-orb {
+    position: absolute; left: calc(50% + 260 * var(--s) - var(--shift)); top: calc(100% - 520 * var(--s)); width: calc(184 * var(--s));
+    aspect-ratio: 1; translate: -50% -50%; transition: opacity .9s ease;
+  }
+  /* The glow is light, not wax: a soft gradient of the orb's own colour behind its disc. */
+  .foot-orb::before {
+    content: ""; position: absolute; inset: -35%; z-index: -1; border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--glow) 30%, transparent), transparent);
+  }
+  .foot-orb--sun { --glow: var(--c-ochre); } .foot-orb--moon { --glow: var(--c-moon); }
   .foot-orb--moon, [data-theme="night"] .foot-orb--sun { opacity: 0; }
   [data-theme="night"] .foot-orb--moon { opacity: 1; }
   @supports (animation-timeline: view()) {
-    .foot-scene .fp, .foot-orb { animation: rise linear both; animation-timeline: --foot; animation-range: entry 0% entry 70%; }
-    .fp--sky { --from: 1rem; } .fp--range { --from: 2rem; } .fp--hills { --from: 4.5rem; } .fp--trees { --from: 7rem; }
-    .fp--meadow { --from: 10rem; } .fp--near { --from: 15rem; } .foot-orb { --from: 3rem; }
+    /* From the moment the landscape shows until the page ends, the land rises into place, the nearest from
+       furthest below, and the sun, or the moon, sinks to rest over the hamlet. */
+    .foot-scene .fp, .foot-orb { animation: rise linear both; animation-timeline: --scene; animation-range: entry 0% entry 100%; }
+    .fp--sky { --from: 2rem; } .fp--range { --from: 3rem; } .fp--hills { --from: 6rem; } .fp--trees { --from: 9rem; }
+    .fp--meadow { --from: 14rem; } .fp--near { --from: 21rem; } .foot-orb { --from: -6rem; }
     @keyframes rise { from { transform: translateY(var(--from)); } to { transform: none; } }
   }
 
