@@ -15,11 +15,11 @@ import "./garden/taiga.css";
 import "./garden/american.css";
 import "./garden/woodland.css";
 import "./garden/anchors.css";
-import { animate } from "animejs";
 import { arrange } from "./garden/arrange";
 import { GARDENS, SPRING } from "./garden/gardens";
 import PLANTS from "./garden/plants.json";
 import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
+import { tween } from "./garden/tween";
 
 // The garden is drawn by garden/draw into public/garden/<name>.svg. Each plant this screen
 // shows is fetched and inlined so CSS can color it, then grown by one progress value: a short
@@ -129,7 +129,7 @@ setupTheme();
 setupSwitcher(document.querySelector("[data-garden-switch]")!, document.querySelector("[data-garden-list]")!, () => garden, showGarden);
 arrange(beds);
 plantGarden().then(() => {
-  if (!still) animate(growth, { intro: 1, duration: 2600, ease: "out(3)", onUpdate: () => requestGarden(), onComplete: () => { if (touch) autoplay(); } });
+  if (!still) tween(growth, "intro", 1, { duration: 2600, power: 3, onUpdate: requestGarden, onComplete: () => { if (touch) autoplay(); } });
 });
 addEventListener(
   "resize",
@@ -368,7 +368,7 @@ function showGarden(next: string) {
   root.dataset.garden = garden;
   if (syncWater() && !still) {
     tideIn.k = 0;
-    animate(tideIn, { k: 1, duration: GROW_IN, ease: "out(2)", onUpdate: () => requestGarden() });
+    tween(tideIn, "k", 1, { duration: GROW_IN, power: 2, onUpdate: requestGarden });
   }
   keepGarden(garden);
   linkGallery();
@@ -394,7 +394,7 @@ function syncWater() {
 function growIn(plant: Plant) {
   if (still) return;
   plant.boost = 0;
-  animate(plant, { boost: 1, duration: GROW_IN, ease: "out(2)", onUpdate: () => requestGarden() });
+  tween(plant, "boost", 1, { duration: GROW_IN, power: 2, onUpdate: requestGarden });
 }
 
 // Writes only what has changed: a frame whose inputs have not moved is skipped, and each offset,
