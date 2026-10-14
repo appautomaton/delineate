@@ -25,31 +25,31 @@ build needs the piece's region maps, which are media and stay local.
 ## What the work taught
 
 - **Grain is a mask on the drawing itself.** A crayon drawing draws on when it comes into view; then its grain,
-  `TOOTH`, comes up as a CSS mask. An earlier grain cloned each drawing, and the clones duplicated
-  clip ids: Chrome then dropped whatever those clips held, whole petals and centres.
+  `TOOTH`, comes up as a CSS mask. Never clone a drawing for its grain: the clones duplicate clip ids, and
+  Chrome then drops whatever those clips hold, whole petals and centres.
 - **Motion on the wrapper, drawing on the `<svg>`.** Each plane is a `<div>` that moves, parts and places, around
   an `<svg class="wax">` that draws and grains. On one element, the two animations overwrite each other.
-- **A frame keeps its drawing's proportions.** The bouquet's frame once took its height from the opening and
-  its width from a cap; where the cap bit, the frame was narrower than the drawing, and `slice` cut the drawing
-  down a line inside the page. Now its width is set and its height follows, so only the page's edges cut it.
+- **A frame keeps its drawing's proportions.** Set the bouquet's width and let its height follow, so only the
+  page's edges cut it. A frame sized on both axes turns narrower than the drawing where a cap bites, and
+  `slice` cuts the drawing down a line inside the page.
 - **Words over a drawing clear the paper.** Where the lede lies over the bouquet, a radial of the page's own
   colour fades the crayon out beneath it, so it holds by day and by night with nothing to tune. A blur would
   read as glass, not paper, and repaint with every frame the drawing moves. The headline, large and dark, needs
   no clearing.
-- **The foot moves on its own timeline.** Its planes once rose on the whole foot's, words included, so the
-  motion was spent before the landscape showed. Now they rise from the moment the landscape shows until the
-  page ends, and the sun or moon sinks to rest over the hamlet as they do.
+- **The foot moves on its own timeline.** Its planes rise from the moment the landscape shows until the page
+  ends, and the sun or moon sinks to rest over the hamlet as they do. On the whole foot's timeline, words
+  included, the motion would be spent before the landscape shows.
 - **Place things in the sheet's units.** The orb and the narrow-screen slide are worked out from the slice's
   own scale (`--s`, from container units), so the sun stays over the hamlet and the hamlet stays in view at any
   shape of screen.
 - **Fade into the paper.** No piece sits in a box: every edge that meets the page is masked to transparent,
   and stems and planes run on past the frame, so parting them never shows a cut end.
-- **Mass the plants; never line them up.** The bed's first plants stood apart on one baseline, a branch in each
-  upper corner, and read as a specimen sheet. Massed in counterpoint across the diagonal, overlapping, led by
-  one large plant and filled by small ones, and rooted below a foot that fades into the paper, they read as a
-  garden. An upright bed keeps them to the bands above and below the words.
-- **Grow a plant as the Garden does.** Scaling each plant up whole from its base made every plant grow alike and
-  none as it does. The bed now runs the Garden's own growth, limbs extending and parts unfolding, pared down to
+- **Mass the plants; never line them up.** Plants standing apart on one baseline read as a specimen sheet.
+  Massed in counterpoint across the diagonal, overlapping, led by one large plant and filled by small ones,
+  and rooted below a foot that fades into the paper, they read as a garden. An upright bed keeps them to the
+  bands above and below the words.
+- **Grow a plant as the Garden does.** Scaling a plant up whole from its base makes every plant grow alike and
+  none as it does. The bed runs the Garden's own growth, limbs extending and parts unfolding, pared down to
   one moment of the year; a plant from a garden that shows a year stops at late spring, its fullest.
 
 ## Checking the work
@@ -65,7 +65,7 @@ build needs the piece's region maps, which are media and stay local.
   root until those paths are made relative to the page.
 - **Checks.** The opening is checked from `375x667` to `1920x1080`, the Garden bed at `390x844`, `768x1024`,
   `1024x768`, `1440x900` and `1920x1080`, and the foot at `390x844` and `1440x900`, by day and by night; the
-  rest of the page at desktop width only. Performance was last traced before the grain became a mask. When the
+  rest of the page at desktop width only. Performance needs tracing again. When the
   planes part mid-scroll, the festival plane's left edge and the sky's top still show.
 - **Growth.** `page.html` carries a pared-down copy of the growth in `garden/src/main.ts`; a change to how the
   Garden grows must be made in both until they share a module.

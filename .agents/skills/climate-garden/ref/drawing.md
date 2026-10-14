@@ -56,6 +56,8 @@ when the plant opens it, and have the whole plant in leaf by late spring, 0.42.
   it, or stays after the limb has died back. Usually a part near a fork is closer to the fork's
   base than to its own limb: open it a beat later (`+ 0.03`), start it clear of the fork, or grow
   the structure that was already standing (a dead spike) first.
+- A part unfolds about its one origin, so one part along a whole limb swings its far end off the
+  bark as it opens. Give each node's thorns, leaves, or pod a part of its own, anchored at the node.
 - Order in the list is paint order, so draw back to front. A trunk drawn last covers where its
   branches leave it; a branch drawn over its stem hides the seam with a hem of leaf tips in
   hairline ink.
@@ -74,7 +76,11 @@ when the plant opens it, and have the whole plant in leaf by late spring, 0.42.
 - **A column of bracts** needs a soft body behind it and hairs off its edges, or it reads as a
   stack of scales.
 - **Tiny flowers** vanish at garden size; enlarge the flower, not the plant. Thin stars and
-  spiky shapes turn to ink; give them broad points.
+  spiky shapes turn to ink; give them broad points. A tight coil fills in to a dark coin; open it.
+- **A wash behind a compound crown** shows as a plate, since every `.wash` carries a darker rim.
+  Build the crown's depth from leaflets in a back rank and a front rank (`dl`) instead.
+- **Grass blades of two points** stand as stiff needles; three points give them an arch.
+- **A bare host bough** entering from the top reads as a cut stick. Tip it with its own leaves.
 - **Tiers or masses with square ends** show seams where they overlap; taper them into lenses.
 - **A fork's neck** must be covered by the limbs drawn over it, starting well inside it, with no
   ink across its top.

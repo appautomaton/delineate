@@ -49,8 +49,7 @@ have decided on; write something new, or work by hand, when it is not. One quest
 whether a method is serving you: **who decided this edge?** Pixels may feed a field (tone,
 direction, depth) that your marks respond to, and you may read positions off the reference by eye.
 When pixels decide the shapes in the drawing, that is tracing, and tracing is not drawing: every
-shape is drawn, by hand-read data, a model, or a generator of marks. (The four pieces so far
-predate this rule.)
+shape is drawn, by hand-read data, a model, or a generator of marks.
 
 ## Coarse to fine
 
@@ -152,11 +151,11 @@ geometric family) and would serve a picture with none of this one's things. Name
 | Every module in the harness | `ref/harness.md` |
 | Something looks wrong and the cause is unclear | `ref/traps.md` |
 
-## The pieces so far
+## The pieces
 
 All four are in the cel grammar and were made mostly by tracing, region by region at full
-precision. Read them for the machinery of depth (plates, hidden parts, bleed, motion, the page),
-not for the way of working, which this skill now replaces. `npm run <piece>:segment`,
+precision, which breaks the rule above. Read them for the machinery of depth (plates, hidden
+parts, bleed, motion, the page), not for the way of working. `npm run <piece>:segment`,
 `npm run <piece>`.
 
 - **paprika**: a background plate and a sharp plate; confetti fitted on the sharp plate and taken

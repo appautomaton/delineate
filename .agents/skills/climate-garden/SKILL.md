@@ -13,9 +13,8 @@ description: >
 # Climate garden
 
 Project paths are relative to the repository root; `ref/` files are in this skill's folder. Load a
-ref file when its step comes up, not before. `garden/climates.md` is the plan: the survey of
-candidate gardens, the status of each, and what every garden built so far taught. Read its Status,
-The test, and the lessons sections before starting; record what you decide and learn back into it.
+ref file when its step comes up, not before. `garden/climates.md` holds the mechanisms gardens
+share (Seasons, Water) and each garden's botanical reference.
 
 ## The goal
 
@@ -54,30 +53,31 @@ and by moonlight.
 A new garden touches eight places: `plants.json`; `draw/<garden>.ts` and its registry entries in
 `draw/draw.ts`; a materials and a species group in both sets of `tokens.css`; an entry with an
 emblem in `src/garden/gardens.ts`; its line in the garden-hiding rule of `src/garden/paint.css`;
-`src/garden/<garden>.css`, imported in `src/main.ts`; and its section and status in
-`climates.md`.
+`src/garden/<garden>.css`, imported in `src/main.ts`; and its section in `climates.md`.
 
 ## Workflow
 
 1. **Research the roster.** Send one or two research agents the brief in `ref/botany.md`, in the
    background. They return what each plant looks like (through the year, for a seasonal garden)
    and which would repeat a plant already drawn. Decide the roster from it: roles, the moment,
-   hangers on their hosts, about twelve plants.
-2. **Record it** in the garden's section of `climates.md`: the table, the corrections, what stays
-   unresolved, the sources.
+   hangers on their hosts, about twelve plants (about four sides, two or three hangers, five in
+   the bed).
+2. **Record it** in the garden's section of `climates.md`: the moment, the roster as decided, what
+   to keep apart in the drawing, what stays unresolved, the sources. Not how the roster got there.
 3. **Scaffold the garden with its signature plant only**: the eight places above, one plant, one
    layout. See `ref/drawing.md` for tokens and the emblem.
 4. **Draw the signature plant until it sets the manner,** then show it to the user before the
    rest. It takes several rounds; the others go faster once it is right. See `ref/drawing.md`.
 5. **Draw the rest in one batch,** then judge each in the gallery, by day and by night, and give
-   the failures a second pass. Most failures are known: check the lessons in `climates.md` and the
-   traps in `ref/drawing.md` first.
+   the failures a second pass. Most failures are known: check the traps in `ref/drawing.md` first.
 6. **Compose.** Lay out each breakpoint; leave open sky and open ground; fill thin sides with
    real wood. See `ref/layout.md`.
 7. **Verify.** `npm run draw`, `npm run check`, `npm run build`; `npm run look <key>` for every
    layout by day and by night, then read its screenshots. See `ref/verify.md`.
-8. **Record and report.** Update the status and add "What the <garden> taught" to `climates.md`.
-   Tell the user where to look, what changed, and what is still off.
+8. **Record and report.** A lesson another garden will need goes, as a rule, into the ref it
+   belongs to (a drawing trap into `ref/drawing.md`, a placement into `ref/layout.md`); what only
+   this garden needs lives in its code. Tell the user where to look, what changed, and what is
+   still off.
 
 ## Working rules
 

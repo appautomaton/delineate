@@ -41,11 +41,11 @@ between two. Draw nothing but scaffolding until they return.
 - **Silhouette first.** Two plants that read alike are one plant too many, unless drawn apart by
   habit (Afroalpine keeps two heaths: ascending plumes on red-brown limbs against rounded
   light-green clumps on grey twigs).
-- **Overlaps with built gardens.** `climates.md` lists the ones to settle. A plant that repeats a
-  built garden's silhouette needs a reason to stay.
-- **Roles follow the drawing, not the survey.** The desert's saguaro moved from side to bed, and its
-  mistletoe went into the palo verde's drawing. Open land may have fewer than twelve plants and
-  nothing at the top.
+- **Overlaps with built gardens.** A plant that repeats a built garden's silhouette needs a reason
+  to stay, and a way to be told apart (the Keep apart notes in `climates.md`).
+- **Roles follow the drawing, not the research.** A column that carries the height stands in the
+  bed (the desert's saguaro), and a parasite is drawn in its host's drawing (the palo verde's
+  mistletoe). Open land may have fewer than twelve plants and nothing at the top.
 - **Real dimensions, legible flowers.** Keep each plant's proportions true to the notes, and set
   relative sizes in the layout from real heights; enlarge only flowers too small to read.
 - **Record the unresolved** (a flower color not confirmed, a height range) in `climates.md`, and

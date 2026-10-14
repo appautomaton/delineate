@@ -40,7 +40,7 @@ job. Judge a world as a visitor meets it, at their width and their pace of scrol
 - **`lib/`**: what every generator shares. `geometry.ts`: `catmull`, `poly`, `smooth`, `bezier`, `resample`,
   `ribbon`, `pressure`, `ellipse`, and `spans`/`unionOutline` for inside-tests and outlines. `svg.ts`:
   `dataUri` and `tile`. `template.ts`: `fill`. `random.ts` and `number.ts` keep every drawing as it was drawn
-  (see What the work taught); `f` writes a coordinate.
+  (see their headers); `f` writes a coordinate.
 - **`worlds/<id>/`**: `gen.ts` (the procedural parts; `placeholders()`, which draws afresh on every call; and
   the picker's 16 × 16 `GLYPH`),
   `art.html` (depth planes with `data-sway`, a day pane and a night pane), `style.css`, and `life.js`, which
@@ -88,19 +88,18 @@ about 33 ms a second on Alfama, 220 on Desert and 130 to 218 on the Deep; scroll
 
 ## What the work taught
 
-- **Night is lighting, not a filter.** Every filtered night of the Glasshouse (mezzotint grain, tone groups)
-  looked dead and dropped frames on the theme switch. What worked was choosing the one light that matters,
-  the house glowing from within, and redrawing for it: luminous glass, black iron and silhouettes against
-  it, rims only where the moon falls. The vector night switches with no slow frames.
-- **A component's keyframes carry its name.** Keyframe names belong to the whole page: the footer's `rise`
-  once replaced delineate's own, and the page's foot stopped moving without a word. They are `footer-rise` and
-  `footer-reveal` now.
+- **Night is lighting, not a filter.** Choose the one light that matters, as the Glasshouse glows from within,
+  and redraw for it: luminous glass, black iron and silhouettes against it, rims only where the moon falls.
+  Such a night switches with no slow frames; a filtered one (mezzotint grain, tone groups) looks dead and
+  drops frames on the switch.
+- **A component's keyframes carry its name** (`footer-rise`, `footer-reveal`). Keyframe names belong to the
+  whole page: a bare `rise` would replace the host's own, and the host's animation would stop without a word.
 - **A colour name can do more than tint.** The crayon world's `haze` is warm by day and a moonlit mist by night;
   `star` is clear by day and `lamp` is a dark pane by day, so the stars and the hamlet's lit windows come out
   only at night, from the one drawing.
 - **Lay an open wash as long strokes, not a fill.** A fill tilts its passes a little and turns them back where
-  they meet the shape's edge; over a band of sky those turns left small bars in the middle of it. The haze is
-  rows of long, overlapping strokes run past the sheet's edges instead.
+  they meet the shape's edge, and over a band of sky those turns leave small bars in the middle of it. Lay it
+  as rows of long, overlapping strokes run past the sheet's edges.
 - **Draw at scale.** Alfama's landmarks read only once placed at their true size and distance (`sk.place`);
   the observatory sheet reads as a drawing because every line weight and section symbol has a job.
 
