@@ -336,14 +336,16 @@ def bud(sheet, h, cx, cy, r, fill, edge, ang=0.0):
 
 
 def leaf(sheet, h, base, ang, length, width, fill="green", second="pine", bend=None, veins=True):
-    """A leaf from `base` at `ang`: its midrib curves by `bend` (a fraction of its length), it is widest a third
-    of the way up and narrows to a turned tip. Each half is coloured along its veins, so the halves meet at the
-    rib in a herringbone; the rib and the veins are drawn in `second`, and so is a fine outline."""
+    """A leaf from `base`, where it grows from a stem or the ground, at `ang`: a short stalk, then the blade,
+    whose midrib curves by `bend` (a fraction of its length); it is widest a third of the way up and narrows to a
+    turned tip. Each half is coloured along its veins, so the halves meet at the rib in a herringbone; the rib
+    and the veins are drawn in `second`, and so is a fine outline."""
     rng = h.rng
-    bx, by = base
     bend = rng.uniform(-.16, .16) if bend is None else bend
     ux, uy = math.cos(ang), math.sin(ang)
     vx, vy = -uy, ux
+    stalk = length * .08
+    bx, by = base[0] + ux * stalk, base[1] + uy * stalk
 
     def rib(t):
         off = bend * length * 4 * t * (1 - t)
@@ -375,7 +377,7 @@ def leaf(sheet, h, base, ang, length, width, fill="green", second="pine", bend=N
                 p0, p1 = rib(t), edge(min(1, t + .14), side * .85)
                 h.stroke([p0, ((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2), p1], second, width=1.6, n=1, weight=(.8, 1.2), alpha=(.3, .5), secs=.06)
     h.line(outline, second, closed=True, width=2.5, n=2, weight=(1, 1.6), alpha=(.45, .75), secs=.25)
-    h.stroke([rib(0), (bx - ux * length * .08, by - uy * length * .08)], second, width=3, n=2, weight=(1.4, 2.2), secs=.08)
+    h.stroke([base, rib(0)], second, width=3, n=2, weight=(1.4, 2.2), secs=.08)
     out.append(h.take())
     h.clock = t0 + .22
     return "\n".join(out)

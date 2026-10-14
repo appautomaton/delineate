@@ -60,7 +60,7 @@ def build():
     s, p = sheets["front"], planes["front"]
     h = hand(.2)
     p.append(stem(h, [(1300, FOOT), (1320, 600), (1290, 360)], width=10))
-    p.append(leaf(s, h, (1312, 640), -.55, 220, 58))
+    p.append(leaf(s, h, (1318, 640), -.55, 220, 58))
     p.append(poppy(s, h, 1290, 330, 172, "red", "maroon", "maroon"))
     h = hand(.6)
     p.append(stem(h, [(1540, FOOT), (1520, 700), (1500, 600)], width=9))
