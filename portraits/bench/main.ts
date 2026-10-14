@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 // The bench page. Everything it shows is in its address, so a view can be handed to someone:
 //
 //   ?piece=<piece>                 which piece, or <piece>/<layer> for one layer of it
@@ -168,7 +167,9 @@ addEventListener("keydown", (e) => {
 });
 addEventListener("resize", place);
 
-import.meta.hot?.on("bench:built", async (b: Build) => {
+// A build finished: redraw if it was this piece.
+new EventSource("/events").addEventListener("built", async (event) => {
+  const b: Build = JSON.parse(event.data);
   if (b.piece !== piece) return;
   await load();
   header();

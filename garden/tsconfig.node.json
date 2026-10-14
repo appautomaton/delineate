@@ -4,5 +4,5 @@
     "lib": ["ES2022", "DOM"],
     "types": ["node"]
   },
-  "include": ["draw", "look.ts", "vite.config.ts"]
+  "include": ["draw", "look.ts", "build.ts", "dev.ts"]
 }

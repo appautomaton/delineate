@@ -1,5 +1,5 @@
-import { FIELDS } from "./fields";
-import PLANTS from "./plants.json";
+import { FIELDS } from "./fields.ts";
+import PLANTS from "./plants.json" with { type: "json" };
 
 // Spaces the garden out. CSS places each plant where the composition wants it, and this slides
 // each one along the edge it grows in from, and lets it retreat a little into that edge, so

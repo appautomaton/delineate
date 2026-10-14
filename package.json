@@ -8,12 +8,12 @@
     "precheck": "npm run draw",
     "check": "tsc -p garden && tsc -p garden/tsconfig.node.json && tsc -p portraits && tsc -p footers && tsc -p site && tsc -p tools",
     "predev": "npm run draw",
-    "dev": "vite garden",
-    "build": "npm run check && vite build garden",
-    "preview": "vite preview garden",
+    "dev": "node garden/dev.ts",
+    "build": "npm run check && node garden/build.ts",
+    "preview": "node tools/serve.ts garden/dist 4173",
     "prelook": "npm run draw",
     "look": "node garden/look.ts",
-    "bench": "vite --config portraits/bench/vite.config.ts --configLoader native",
+    "bench": "node portraits/bench/serve.ts",
     "paprika:segment": "node portraits/pieces/paprika/segment.ts",
     "paprika": "node portraits/pieces/paprika/build.ts",
     "paprika-girl:segment": "node portraits/pieces/paprika-girl/segment.ts",
@@ -34,7 +34,6 @@
     "@types/pngjs": "6.0.5",
     "playwright-core": "1.63.0",
     "pngjs": "7.0.0",
-    "typescript": "7.0.2",
-    "vite": "8.3.2"
+    "typescript": "7.0.2"
   }
 }

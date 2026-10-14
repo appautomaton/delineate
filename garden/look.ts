@@ -9,8 +9,9 @@
 
 import { mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { createServer } from "vite";
 import { launch } from "../portraits/harness/browser.ts";
+import { serve } from "../tools/serve.ts";
+import { DIST, build } from "./build.ts";
 import { GARDENS } from "./src/garden/gardens.ts";
 
 // One screen for each layout tier in the gardens' CSS (see ref/layout.md in the climate-garden
@@ -31,8 +32,8 @@ const unknown = keys.filter((key) => !GARDENS.some((g) => g.key === key));
 if (unknown.length) throw new Error(`No garden named ${unknown.join(", ")}. Gardens: ${GARDENS.map((g) => g.key).join(", ")}`);
 
 const root = fileURLToPath(new URL(".", import.meta.url));
-const server = await createServer({ root, logLevel: "silent", server: { port: 0 } });
-await server.listen();
+build();
+const server = await serve(DIST);
 const browser = await launch();
 try {
   for (const key of keys) {
@@ -64,7 +65,7 @@ try {
 async function open(key: string, width: number, height: number, light: "light" | "dark", pin: string) {
   const context = await browser.newContext({ viewport: { width, height }, colorScheme: light, reducedMotion: "reduce" });
   const page = await context.newPage();
-  await page.goto(`${server.resolvedUrls!.local[0]}?garden=${key}${pin}`);
+  await page.goto(`${server.url}?garden=${key}${pin}`);
   await page.waitForFunction(planted);
   await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
   return page;

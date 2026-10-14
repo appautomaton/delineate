@@ -62,7 +62,7 @@ build needs the piece's region maps, which are media and stay local.
 
 - **Links.** Portraits' picture links to `#`, and Garden's Open expects the Garden app at `garden/`; both wait on
   where the site is deployed. Garden fetches its plants from `/garden/…`, so it can live only at a domain's
-  root until those paths follow Vite's base.
+  root until those paths are made relative to the page.
 - **Checks.** The opening is checked from `375x667` to `1920x1080`, the Garden bed at `390x844`, `768x1024`,
   `1024x768`, `1440x900` and `1920x1080`, and the foot at `390x844` and `1440x900`, by day and by night; the
   rest of the page at desktop width only. Performance was last traced before the grain became a mask. When the

@@ -3,7 +3,7 @@
 // it on Escape or a click elsewhere). Its look is in switcher.css; where the button sits is the
 // page's to say, and the list opens under it.
 
-import { GARDENS, type Garden } from "./gardens";
+import { GARDENS, type Garden } from "./gardens.ts";
 
 const known = (key: string | null) => (GARDENS.some((g) => g.key === key) ? key : null);
 

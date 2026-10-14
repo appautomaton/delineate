@@ -1,13 +1,11 @@
-import "../src/tokens.css";
-import "../src/garden/paint.css";
-import "../src/garden/anchors.css";
-import "../src/garden/switcher.css";
-import "./gallery.css";
-import tokens from "../src/tokens.css?raw";
-import paint from "../src/garden/paint.css?raw";
-import PLANTS from "../src/garden/plants.json";
-import { GARDENS, SPRING } from "../src/garden/gardens";
-import { chosenGarden, emblem, keepGarden, setupSwitcher } from "../src/garden/switcher";
+import { GARDENS, SPRING } from "../src/garden/gardens.ts";
+import PLANTS from "../src/garden/plants.json" with { type: "json" };
+import { chosenGarden, emblem, keepGarden, setupSwitcher } from "../src/garden/switcher.ts";
+
+// A file beside this one, as text: the stylesheets the page links, read again for their tokens, and the plants'
+// close studies.
+const text = async (path: string) => (await fetch(new URL(path, import.meta.url))).text();
+const [tokens, paint] = await Promise.all([text("../src/tokens.css"), text("../src/garden/paint.css")]);
 
 // The token gallery, one garden at a time: its palette, its pen, and its plants, each by day and
 // by night side by side. Everything is read from the files that ship, so the gallery always shows
@@ -166,7 +164,7 @@ function scaleInk() {
   });
 }
 
-const details = import.meta.glob<string>("./details/*.svg", { query: "?raw", import: "default" });
+const studyOf = (name: string) => text(`./details/${name}.svg`);
 const drawingOf = (name: string) => fetch(`/garden/${name}.svg`).then((r) => r.text());
 
 let garden = chosenGarden(GARDENS[0].key);
@@ -176,7 +174,7 @@ async function show() {
   const at = ++showing;
   const g = GARDENS.find((g) => g.key === garden)!;
   const plants = PLANTS.filter((plant) => plant.garden === garden).sort((a, b) => a.rank - b.rank);
-  const [drawings, studies] = await Promise.all([Promise.all(plants.map((p) => drawingOf(p.name))), Promise.all(plants.map((p) => details[`./details/${p.name}.svg`]()))]);
+  const [drawings, studies] = await Promise.all([Promise.all(plants.map((p) => drawingOf(p.name))), Promise.all(plants.map((p) => studyOf(p.name)))]);
   if (at !== showing) return;
   document.title = `${g.name} garden tokens`;
   document.querySelector<HTMLAnchorElement>("[data-garden-back]")!.href = `/?garden=${garden}`;

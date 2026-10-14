@@ -1,25 +1,8 @@
-import "./tokens.css";
-import "./style.css";
-import "./garden/switcher.css";
-import "./garden/paint.css";
-import "./garden/tropical.css";
-import "./garden/mediterranean.css";
-import "./garden/desert.css";
-import "./garden/afroalpine.css";
-import "./garden/savanna.css";
-import "./garden/fynbos.css";
-import "./garden/namib.css";
-import "./garden/mangrove.css";
-import "./garden/eastasian.css";
-import "./garden/taiga.css";
-import "./garden/american.css";
-import "./garden/woodland.css";
-import "./garden/anchors.css";
-import { arrange } from "./garden/arrange";
-import { GARDENS, SPRING } from "./garden/gardens";
-import PLANTS from "./garden/plants.json";
-import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher";
-import { tween } from "./garden/tween";
+import { arrange } from "./garden/arrange.ts";
+import { GARDENS, SPRING } from "./garden/gardens.ts";
+import PLANTS from "./garden/plants.json" with { type: "json" };
+import { chosenGarden, keepGarden, setupSwitcher } from "./garden/switcher.ts";
+import { tween } from "./garden/tween.ts";
 
 // The garden is drawn by garden/draw into public/garden/<name>.svg. Each plant this screen
 // shows is fetched and inlined so CSS can color it, then grown by one progress value: a short

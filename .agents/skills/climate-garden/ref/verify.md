@@ -3,14 +3,16 @@
 ## Commands
 
 - `npm run draw`: redraws every plant; fails on parts that open early. Run after any drawing edit.
-- `npm run check`: types for the site, the drawing kit, and the portraits.
-- `npm run build`: check, then a production build into `garden/dist` (a generated folder).
+- `npm run check`: types for the garden, the drawing kit, the portraits, and the repository's other
+  pieces and tools.
+- `npm run build`: check, then the garden built into `garden/dist` (a generated folder), its
+  scripts compiled a module to a file, to serve from a domain's root as it stands.
 - `npm run look`: every layout by day and night, below.
-- Dev server, from the repository root: `npx vite garden --port 5199 --strictPort`, in the
-  background. The page's plant beds are written from `plants.json` on every load. In a sandboxed
-  session the server may not see edits at all (polling did not help either): restart it after
-  every source edit and wait until it prints its address before loading the page. Redrawn SVGs
-  need only a reload.
+- Dev server, from the repository root: `npm run dev -- 5199`, in the background. It draws the
+  plants, builds the garden, serves it, and builds it again whenever a source changes, every open
+  page reloading itself; the page's plant beds are written from `plants.json` on every build. In a
+  sandboxed session the server may not see edits at all: restart it after every source edit and
+  wait until it prints its address before loading the page. Redrawn SVGs need only a reload.
 
 ## Looking at every layout
 
