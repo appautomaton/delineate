@@ -2,13 +2,11 @@
 name: layered-svg
 description: >
   Turn a raster picture (painting, illustration, portrait, poster) into a layered, animated vector
-  SVG drawn in a style: cel color blocks, line engraving, or whatever the reference speaks. Works
-  the way a painter does: read the picture, lay in the big shapes and depth planes, then tone, then
-  the lines that hold form, then detail where the eye goes, judging the whole frame by eye at every
-  stage. The harness in portraits/harness/ (trace, model, stage) is a toolkit, not a procedure. Use
-  when making a portrait or scene into animatable SVG, rendering a picture in a style (engraving,
-  cel, ink), adding motion or a separation view to a layered SVG, or reworking a portrait piece,
-  even if the user never says "skill".
+  SVG drawn in a style: cel color blocks, line engraving, woodcut, or whatever the reference
+  speaks, with depth planes that part and move. Works the way a painter does, coarse to fine,
+  judging the whole frame by eye at every stage. Use when making a portrait or scene into
+  animatable SVG, rendering a picture in a style, adding motion, parallax, or a separation view to
+  a layered SVG, or reworking a portrait piece, even if the user never says "skill".
 ---
 
 # Layered SVG
@@ -83,6 +81,8 @@ back to the lay-in when something late looks wrong.
 - **Segmentation** (Segment Anything, `trace/sam.ts`) finds complex outlines fast, but it cuts the
   picture into the reference's own accidents. Reach for it when an outline is intricate and a hand
   outline would cost more than it is worth (hair against a busy ground), not to begin a piece.
+- **Generated marks** (`ref/marks.md`) are how a style made of marks is drawn: a rule lays them,
+  and pixels only feed the fields they respond to.
 - **Tracing** (`trace/stack.ts`) is the cel grammar's way of making tone into shapes. It is right
   for a region whose style is flat color, and wrong as a way to copy a style that is made of marks.
 - **Models and symbols** (`model/`) draw things with a rule (spheres, repeats, falls) as exact
@@ -134,7 +134,9 @@ and fitters, `motion.css`, `page.ts` (the page's words), and its outputs (`<piec
 
 The **harness** (`portraits/harness/`) is what any picture needs: `trace/` (rasters, color, masks,
 regions, plates, the cel grammar, the checks), `model/` (parametric things drawn as exact geometry),
-`stage/` (layers as planes, the motion vocabulary, the page). Build what a piece needs in the piece
+`stage/` (layers as planes, the motion vocabulary, the page). Every module opens with a comment
+saying what it does: read the headers of a folder before writing something it may already hold.
+Build what a piece needs in the piece
 first; move it into the harness only when it is about the medium (a grammar, depth, motion, a
 geometric family) and would serve a picture with none of this one's things. Name it by what it is
 (a sphere, a hatch), not by the subject it first served (a balloon, a jacket).
@@ -144,25 +146,17 @@ geometric family) and would serve a picture with none of this one's things. Name
 | Need | Load |
 |---|---|
 | Reading a style, writing its grammar | `ref/grammar.md` |
+| Drawing a style made of marks: lines, hatching, stipple | `ref/marks.md` |
 | Layers, groups, and how each thing is drawn | `ref/representation.md` |
 | Regions, plates, the cel grammar (tone-stack tracing), inpainting, bleed | `ref/tracing.md` |
 | Motion, parallax, separation view, performance | `ref/motion.md` |
 | Checking the result and showing it | `ref/verify.md` |
-| Every module in the harness | `ref/harness.md` |
 | Something looks wrong and the cause is unclear | `ref/traps.md` |
 
-## The pieces
+## Existing pieces
 
-All four are in the cel grammar and were made mostly by tracing, region by region at full
-precision, which breaks the rule above. Read them for the machinery of depth (plates, hidden
-parts, bleed, motion, the page), not for the way of working. `npm run <piece>:segment`,
-`npm run <piece>`.
-
-- **paprika**: a background plate and a sharp plate; confetti fitted on the sharp plate and taken
-  back out of the defocused reference; a symbol crowd; balloons as spheres.
-- **memories**: plates per depth, cut into regions by claims; color transfer per region; receding
-  planes (a road, a guardrail); petals as a sprite.
-- **paprika-girl**: a plate painted larger and mapped in; loose hair strands found and stroked; a
-  sky made whole by push-pull fill.
-- **memories-girl**: plates in other frames, mapped by features and ECC; a ridge read by eye and
-  settled onto its edge.
+`portraits/pieces/` holds the pieces, each with its notes at the top of its `scene.ts` (one per
+layer, where a piece is built in layers) and its scripts in `package.json`. Read them for the machinery: plates, hidden parts, bleed, motion, the
+page. The cel pieces were traced region by region, which breaks the rule above, so do not take
+their way of working as the method. The wavy-line engraving lays its tone by rule; `ref/marks.md`
+says what to take from it.

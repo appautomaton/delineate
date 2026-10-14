@@ -8,7 +8,9 @@
 | `node portraits/harness/trace/review.ts <drawing.svg> <reference.png> <dir> [regions.png]` | the review page: wipe, flip with Space, difference, region map, zoom 1:1 and 2:1, layer toggles with sizes, the numbers |
 | `node portraits/harness/trace/look.ts crop x y w h zoom out.png a.png b.png ...` | the same box from several images, enlarged, side by side |
 | `node portraits/harness/trace/look.ts grid x y w h zoom out.png image.png [shapes.json]` | a gridded crop for reading coordinates, with outlines drawn over it |
-| `ONLY=<regex> OUT=<file.svg> node portraits/pieces/<piece>/build.ts` | build only some regions, for quick trials |
+| `ONLY=<regex> OUT=<file.svg> node portraits/pieces/<piece>/build.ts` | build only some regions, for quick trials, in a piece whose build reads `ONLY` |
+| the bench with `&tone=<px>` (T toggles it) | every pane blurred until the marks vanish, so only tone is compared |
+| `bench.measure(reference, panes, region?)`, `bench.cells(reference, pane)` in the bench's console | tone against a reference per pane, and the cells most off, worst first |
 | `node portraits/harness/stage/pace.ts <page.html>` | frame rate and main-thread share of the page, together and apart |
 | `node portraits/harness/stage/reel.ts <page.html> [out.mp4\|.webp\|.gif ...]` | the page coming apart and back as a five-second loop (`reel.mp4` beside the page): the piece shown to someone who will not open it |
 
@@ -30,13 +32,12 @@
 ## What the numbers mean
 
 Pixel error (`compare.ts`) is fair only to the cel grammar. For a grammar of marks, blur render and
-reference until the marks vanish and compare tone; a line shifted half a period scores as a gross
+reference until the marks vanish and compare tone (the bench's tone view and `bench.measure`); a line shifted half a period scores as a gross
 error and is not one.
 
-For a painted 1254 px portrait, a mean error near 5 of 255 with about 15% of pixels off by more
-than 12 looked like the same picture at normal size; the remaining error lived in texture and soft
-edges. Numbers rise when traced texture is replaced by clean models; that is expected, and the eye
-decides.
+Pixel error has no pass mark of its own: use it to compare builds of one piece, and to find the
+tiles that got worse. Numbers rise when traced texture is replaced by clean models; that is
+expected, and the eye decides.
 
 ## Reporting
 

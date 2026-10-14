@@ -17,14 +17,14 @@ onto its edge), tone ranges in OKLab, and Segment Anything masks.
 Segment Anything (`portraits/harness/trace/sam.ts`), for an intricate outline that a hand outline
 would cost more than it is worth:
 
-- ViT-B in **fp16**. The 8-bit build lost whole parts (a shirt, the hair, the koi) on the same
-  prompts; fp16 agreed with fp32 on 99.6% of pixels at half the size.
+- Run it in **fp16**. The 8-bit build loses whole parts on the same prompts; fp16 matches full
+  precision at half the size.
 - Prompt with **single points and take the union** of their masks. One prompt with many points
   often returns a different, larger thing.
 - Some single points select the whole surrounding thing (a point on a lip returned the face). Probe
   candidate points one by one and keep the ones whose masks are the right size.
 - Small parts get **clip boxes** so a wrong mask cannot spread.
-- After cutting: islands under about 24 px join their surroundings; backdrop holes enclosed by one
+- After cutting: small islands join their surroundings; backdrop holes enclosed by one
   thing join that thing.
 - Use SAM only where outlines are complex and colors close to their neighbors. A flat piece is
   found by its color; a regular solid by fitting its model.
@@ -35,7 +35,8 @@ How a region in flat color is made into tone shapes. It executes the cel grammar
 grammar of marks is drawn (see `grammar.md`).
 
 
-1. Flatten paint texture with a light bilateral filter (one pass, color 12, space 3).
+1. Flatten paint texture with a light bilateral filter (`trace/filter.ts`), only enough to quiet
+   the brushwork.
 2. Palette in OKLab, sized per region to a mean error target (`paletteFor`).
 3. **Tones go down light to dark**, like glazes. Where two tones meet, the anti-aliased edge lets
    the tones stacked between them show; in lightness order those read as the edge's own blend.
@@ -48,25 +49,18 @@ grammar of marks is drawn (see `grammar.md`).
 6. Each separate piece is filled with a flat color or a one-direction gradient fitted to its own
    pixels; near-flat ramps are drawn flat.
 
-Starting presets (a `TraceStyle` each, see `portraits/harness/trace/layer.ts`), as error / tones / tolerance /
-soften / flat / minArea; tune per picture:
-
-| Preset | Values | For |
-|---|---|---|
-| default | 0.009 / 64 / 0.4 / 0.5 / 3 / 1.5 | things in view |
-| skin | error 0.005, flat 1.5 | smooth faces |
-| backdrop | 0.016 / 64 / 0.6 / 0.9 / 6 / 10, straight 7 | busy distance |
-| geometric | 0.02 / 16 / 1.6 / 1.2 / 4 / 24, straight 0 | straight-membered structures |
-| hidden | 0.03 / 24 / 1 / 1.2 / 8 / 40, straight 6 | what only shows when layers move |
+Start from the presets in `trace/layer.ts` (`TraceStyle`: things in view, smooth skin, busy
+distance, straight-membered structures, what only shows when layers move) and tune them per
+picture.
 
 ## Making layers whole
 
-- Each region **continues under nearer regions** by a margin (24 px), and fully under loose pieces
+- Each region **continues under nearer regions** by a margin, and fully under loose pieces
   that will move away (falling confetti).
 - The hidden part is **inpainted from the region's own clean pixels** (OpenCV Telea), never smeared
-  outward ring by ring (that drew streaks), and never from pixels within 2 px of a nearer region
+  outward ring by ring (that drew streaks), and never from pixels within a couple of pixels of a nearer region
   (they carry its color in their anti-aliasing).
-- **Bleed**: trace from the reference extended 16 px past every edge (edges copied), in the
+- **Bleed**: trace from the reference extended past every edge (edges copied), further than parallax will move it, in the
   reference's own coordinates, so layers reach beyond the frame and parallax never bares it.
 
 ## Depth plates
@@ -75,8 +69,7 @@ Some pictures come with plates painted per depth (distance, middle ground, near 
 each over black or over transparency. They agree with the picture in shape, not in tone or detail.
 See `portraits/harness/trace/plate.ts`.
 
-- Register first: plates may be painted larger or shifted (by 1.2 to 1.5 times, by hundreds of
-  pixels). Fit an affine map by features (`fitFeatures`), refine it by ECC over a box where the
+- Register first: plates may be painted larger or shifted. Fit an affine map by features (`fitFeatures`), refine it by ECC over a box where the
   plate's scene shows clearly (`refine`), store the numbers in the scene, and resample (`warp`). A
   plate that only roughly matches serves for outlines, not paint.
 - Measure: which plate best explains each pixel of the picture, and how far each plate's
@@ -100,10 +93,9 @@ See `portraits/harness/trace/plate.ts`.
 ## Busy texture
 
 A detailed middle distance (a town, foliage, a street of shops) costs the most bytes and holds the
-most error. Tried on a Shinkai-style town: looser curves (tolerance 1.2) with a finer palette
-(error 0.012), shapes of at least 5 px², and near-flat ramps drawn flat (8 levels) held the
-picture better than the default distant preset, in fewer bytes. Tightening further bought little
-for much.
+most error. Looser curves with a finer palette, small crumbs dropped, and near-flat ramps drawn
+flat hold it better than tighter tracing, in fewer bytes; past a point, tightening buys little for
+much.
 
 ## Extra plates
 
@@ -114,7 +106,7 @@ repaint textures elsewhere).
 - **Background plate**, the subject removed and the scene behind painted in. Cut it into its own
   region map. Regions behind the subject are then traced in two passes: a coarse pass of what the
   plate shows where the subject stands, and on top the fine pass of what the reference shows. Trust
-  the plate only a seam (12 px) inside the subject's outline: what shows through the subject's soft
+  the plate only a seam inside the subject's outline: what shows through the subject's soft
   edge is the reference's own scene, and a narrower seam left a light halo around the subject.
 - **Sharp plate**, nothing out of focus. Defocused pieces are drawn as shapes with their blur on
   top, so what lies behind their smear must be drawn under them:

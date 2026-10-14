@@ -66,8 +66,3 @@
 - Pacing measured while another tab animates, or a build runs, says nothing about the page.
 - `transform-box` defaults to the element's box in CSS; set `view-box` so origins are drawing
   coordinates.
-- Playwright viewports must be integers.
-- In zsh, `$VAR` holding several words is not split; use arrays.
-- Node runs `.ts` directly (erasable syntax only); scripts that call `page.evaluate` need DOM types
-  in their tsconfig.
-- Chrome only: `portraits/harness/browser.ts` launches the system Chrome through the pinned playwright-core.

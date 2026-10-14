@@ -21,15 +21,14 @@ Everything else stays in its thing's group. A face is one group with its brows, 
 earrings in it; splitting them buys no motion and costs seams.
 
 Order layers by where things stand, not by kind. A backdrop, a few middle planes, the subject on
-the focus plane, and whatever lies nearer than the subject is a common shape; the worked examples
-show four.
+the focus plane, and whatever lies nearer than the subject is a common shape.
 
 ## Choosing how a thing is drawn
 
 Pick the cheapest representation that still reads as the thing at normal size, in the piece's
-grammar (see `grammar.md`). The table is written for the cel grammar. In a grammar of marks the
-geometry choices hold (authored outlines, models, symbols), and tone comes from the grammar's
-marks, not from a trace. In rough order of preference:
+grammar (see `grammar.md`). The geometry choices (authored outlines, models, symbols) hold in any
+grammar; the trace rows are the cel grammar's. In a grammar of marks, tone comes from the marks
+(`marks.md`), never from a trace. In rough order of preference:
 
 | The thing | Draw it as | Cost |
 |---|---|---|
@@ -39,7 +38,7 @@ marks, not from a trace. In rough order of preference:
 | Repeated things: crowd figures, petals, windows, trees | **One `<symbol>`, many `<use>`** (`model/sprite.ts`): draw the thing once; place it with position, angle, scale; vary color with a CSS custom property on the `<use>` (it inherits into the symbol). Read placements off the picture or fit them to found copies. | one drawing plus tens of bytes per placement |
 | Built structure of straight members: gates, beams, frames | **A straight-edged trace**: few tones, polygonal rings, no crumbs. | kilobytes |
 | Organic and complex things: faces, hair, animals, costumes | **A tone-stack trace**, finer where the paint is smooth (skin), coarser elsewhere. | tens to hundreds of kilobytes |
-| A busy backdrop: city, crowd, foliage | **Selected, not copied:** tone and the few edges that give its silhouette, authored or traced coarsely with straight-where-straight rings and crumbs dropped; the generator's clutter left out. | in the pieces so far, the bulk of the file |
+| A busy backdrop: city, crowd, foliage | **Selected, not copied:** tone and the few edges that give its silhouette, authored or traced coarsely with straight-where-straight rings and crumbs dropped; the generator's clutter left out. | often the bulk of the file |
 | What is seen only when layers move or part | **A coarse trace**, plus symbols for any repeated things in it. | modest |
 | Hand-made details the picture does not show | **Draw them**: lash lines for a blink, a closed lid. | bytes |
 
@@ -49,9 +48,6 @@ Rules of thumb:
   is simple and one-off; trace only what is irregular.
 - A defocused thing is a sharp shape seen through a blur: a polygon with `feGaussianBlur`. Never
   trace a blur as soft tones.
-- Before modeling a class of things by machine, check it on the picture. Regularizing a city into
-  boxes and window grids looked wrong here: the painting's buildings are overlapping straight-edged
-  patches with blotchy windows, so straight-edged tracing resembled it and a grid did not.
-- Sizes at 1254 px square: a full tracing runs 5 to 11 MB (1.2 to 3 MB gzipped), the more the
-  busier the paint; the subject about 1 MB; dozens of cards, spheres, and symbol placements
-  together under 20 KB.
+- Before modeling a class of things by machine, check that the picture draws them that way. A
+  painted city of overlapping straight-edged patches and blotchy windows is not a grid of boxes;
+  regularized, it becomes another picture.
