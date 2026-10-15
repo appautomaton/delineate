@@ -44,6 +44,9 @@ portraits/pieces/*/index.html
 # Written by footers/build.ts (npm run footers)
 footers/automaton.html
 
+# Collage's drawings, one file a hand, written from each motif's renders
+collage/art/
+
 # System and tool litter
 .claude/worktrees/
 .DS_Store
