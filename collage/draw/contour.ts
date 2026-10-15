@@ -11,11 +11,11 @@ export function contour(fields: Fields, title: string): string {
   const lines = findLines(fields, 0.005); // no tone here, so the shallower overlaps are drawn too
   const d = strokes(lines, (facing, strength, kind) => {
     const shade = smoothstep(-1.05, 0.9, facing); // 0 toward the light, 1 away from it
-    if (kind === "silhouette") return 0.7 * smoothstep(-1.02, -0.8, facing) + 2.1 * shade;
-    if (kind === "occlusion") return (0.8 + 1.1 * strength) * (0.7 + 0.5 * shade);
-    if (kind === "feature") return 0.35 + 0.9 * strength;
-    if (kind === "form") return 0.3 + 0.6 * strength;
-    return 0.7;
+    if (kind === "silhouette") return 1.0 * smoothstep(-1.02, -0.8, facing) + 3.0 * shade;
+    if (kind === "occlusion") return (1.1 + 1.5 * strength) * (0.7 + 0.5 * shade);
+    if (kind === "feature") return 0.7 + 1.4 * strength;
+    if (kind === "form") return 0.55 + 0.9 * strength;
+    return 1.1;
   });
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
 <title>${title}, a contour sketch</title>

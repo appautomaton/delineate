@@ -8,7 +8,9 @@
 
 import { MOTIFS } from "./motifs.js";
 
-const pct = (v) => `${v / 10}%`;
+// The card, in its own units; a piece is placed in these units, as a share of what it lies on (the card, or a sheet).
+const CARD = { x: 0, y: 0, w: 1000, h: 1000 };
+const pct = (v, of) => `${(100 * v) / of}%`;
 
 function el(tag, cls, ...kids) {
   const e = document.createElement(tag);
@@ -25,10 +27,10 @@ function box({ x, y, w, h, cx, cy, rot = 0, z = 0 }, aspect) {
   if (cy !== undefined) y = cy - h / 2;
   return { x, y, w, h, rot, z };
 }
-function place(e, b) {
-  Object.assign(e.style, { left: pct(b.x), top: pct(b.y), zIndex: b.z, transform: `rotate(${b.rot}deg)` });
-  if (b.w !== undefined) e.style.width = pct(b.w);
-  if (b.h !== undefined) e.style.height = pct(b.h);
+function place(e, b, on = CARD) {
+  Object.assign(e.style, { left: pct(b.x - on.x, on.w), top: pct(b.y - on.y, on.h), zIndex: b.z, transform: `rotate(${b.rot}deg)` });
+  if (b.w !== undefined) e.style.width = pct(b.w, on.w);
+  if (b.h !== undefined) e.style.height = pct(b.h, on.h);
   return e;
 }
 const enter = (e, how, delay = 0) => (Object.assign(e.dataset, { enter: how, delay }), e);
@@ -46,14 +48,14 @@ function random(seed) {
 // The pieces, each made for one motif.
 function kit(m, src, rand) {
   const [FW, FH] = m.frame;
-  // A hand's drawing, whole or cropped, as a sheet cut to its box.
-  function art(hand, crop, at, { paper = false } = {}) {
+  // A hand's drawing, whole or cropped, as a sheet cut to its box; `on` is the box of the sheet it lies on, if any.
+  function art(hand, crop, at, { paper = false, on } = {}) {
     const [cx, cy, cw, ch] = crop ?? [0, 0, FW, FH];
     const img = el("img");
     Object.assign(img, { src: `${src}/${hand}.svg`, alt: "", decoding: "async", draggable: false });
     Object.assign(img.style, { width: `${(FW / cw) * 100}%`, height: `${(FH / ch) * 100}%`, left: `${(-cx / cw) * 100}%`, top: `${(-cy / ch) * 100}%` });
     const b = box(at, cw / ch);
-    return Object.assign(place(el("div", `art${paper ? " paper" : ""}`, img), b), { box: b });
+    return Object.assign(place(el("div", `art${paper ? " paper" : ""}`, img), b, on), { box: b });
   }
   // Tabs of bars, popping out one by one along a side of a box.
   const TINTS = ["#4FB3B4", "#B8C64B", "#5E8FD8", "#E39B76", "#B9A8E6"];
@@ -153,13 +155,15 @@ export const SHOTS = [
   { hold: 700, pieces: (p, m) => [p.stamp("screen", m.crops.chest, { cx: 500, cy: 505, w: 440, rot: 6 })] },
   {
     hold: 800,
-    pieces: (p, m) => {
-      const navy = p.sheet("#22377F", { x: 380, y: 190, w: 400, h: 560, z: 1 });
+    pieces: (p) => {
+      // The drawing on its page, as large as the card allows; the coloured sheets dropped first show only at its edges.
+      const page = { x: 220, y: 110, w: 520, h: 790, z: 2 };
+      const navy = { x: 310, y: 170, w: 480, h: 700, z: 1, rot: 1.5 };
       return [
-        enter(p.sheet("#CFC5EA", { x: 300, y: 160, w: 400, h: 560 }), "drop", 0),
-        enter(navy, "drop", 60),
-        ...p.tabs({ x: 380, y: 190, w: 400, h: 560 }, "right", 3, 240),
-        enter(p.sheet("#FFFFFF", { x: 220, y: 220, w: 440, h: 640, z: 2 }, p.art("contour", null, { cx: 500, cy: 500, h: 950 })), "drop", 140),
+        enter(p.sheet("#CFC5EA", { x: 230, y: 80, w: 480, h: 560, rot: -3 }), "drop", 0),
+        enter(p.sheet("#22377F", navy), "drop", 60),
+        ...p.tabs(navy, "right", 3, 240),
+        enter(p.sheet("#FFFFFF", page, p.art("contour", null, { cx: 480, cy: 505, h: 750 }, { on: page })), "drop", 140),
       ];
     },
   },
