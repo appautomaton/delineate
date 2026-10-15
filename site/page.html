@@ -8,12 +8,13 @@
 <meta name="description" content="Drawings that move when you do. Each comes with its source and a skill your AI agent can follow to make one like it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@3.3.0/build/victormono-nf-obl.css">
 <link rel="stylesheet" href="assets/garden/tokens.css">
 <link rel="stylesheet" href="assets/garden/paint.css">
 <link rel="stylesheet" href="assets/garden/anchors.css">
+<link rel="stylesheet" href="collage/card.css">
 <style>
   /* One sheet of paper. Drawings lie on it, not in boxes; words sit beside them. */
   :root {
@@ -23,6 +24,7 @@
     --rule: color-mix(in srgb, var(--ink) 14%, transparent);
     --serif: "Hedvig Letters Serif", Georgia, serif;
     --sans: "General Sans", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
     --margin: clamp(1.25rem, 5vw, 5rem);
     --settle: cubic-bezier(.2, .8, .2, 1);
     --c-blue: #2F4FB8; --c-deep: #1E2F7E; --c-ochre: #D9A532; --c-red: #CF3F2C; --c-maroon: #8E2A24;
@@ -90,19 +92,20 @@
 
   /* Crayon. Every strand draws on in the time the hand took over it. Once the drawing is done the strands
      stop, and the paper's tooth comes up through the wax: the drawing is masked by the tooth under a solid
-     layer that fades out. Icons are too small for grain. */
+     layer that fades out. Icons are too small for grain, and the lettered headline must read as ink. */
   @property --bare { syntax: "<number>"; inherits: false; initial-value: 1; }
   .wax path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
   .draw.is-drawing .wax path { animation: draw var(--t) linear var(--d) forwards; }
   .draw.is-drawn .wax path { stroke-dashoffset: 0; animation: none; }
-  .draw.is-drawn .wax:not(.icon) {
+  .draw.is-drawn .wax:not(.icon, .mark, .lettered) {
     -webkit-mask: linear-gradient(rgb(0 0 0 / var(--bare)) 0 0), {{TOOTH}} 0 0 / 256px;
     mask: linear-gradient(rgb(0 0 0 / var(--bare)) 0 0), {{TOOTH}} 0 0 / 256px;
     animation: tooth 1.4s ease .3s forwards;
   }
   @keyframes draw { to { stroke-dashoffset: 0; } }
   @keyframes tooth { to { --bare: 0; } }
-  @media (prefers-reduced-motion: reduce) { .draw.is-drawn .wax:not(.icon) { animation: none; --bare: 0; } }
+  @media (prefers-reduced-motion: reduce) { .draw.is-drawn .wax:not(.icon, .mark, .lettered) { animation: none; --bare: 0; } }
+  .k-ink { stroke: var(--ink); }
   .k-moon { stroke: var(--c-moon); } .k-pine { stroke: var(--c-pine); } .k-rust { stroke: var(--c-rust); }
   .k-cloud { stroke: var(--c-cloud); } .k-mist { stroke: var(--c-mist); } .k-lilac { stroke: var(--c-lilac); }
   .k-sage { stroke: var(--c-sage); } .k-wheat { stroke: var(--c-wheat); }
@@ -126,11 +129,35 @@
     content: ""; position: absolute; z-index: -1; inset: -3rem -4rem; pointer-events: none;
     background: radial-gradient(closest-side, var(--paper) 58%, transparent);
   }
-  .opening h1 { margin: 0; font: 400 clamp(2.75rem, 5.6vw, 5rem)/1.02 var(--serif); letter-spacing: -.015em; text-wrap: balance; max-width: 11ch; }
-  .opening p { margin: 1.5rem 0 0; color: var(--soft); max-width: 30rem; text-wrap: pretty; }
-  .actions { display: flex; flex-wrap: wrap; gap: 1.25rem 1.75rem; align-items: center; margin-top: 2rem; font-size: 1rem; }
-  .button { display: inline-block; padding: .8rem 1.35rem; border-radius: 999px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; transition: translate .3s var(--settle); }
-  .button:hover { translate: 0 -2px; }
+  /* The call and the links are set in the typewriter's capitals, each underlined by a fine line of crayon. */
+  /* The headline is drawn: each line of words lies under a crayon drawing of itself, traced from the same serif
+     at the same size, which letters it in on arrival, outline first, then colour. The words stay in the page,
+     unseen, for reading aloud, finding and copying. Under the pointer the three lines lean apart, each by its own
+     amount; as the page moves on, they drift off in turn. */
+  .headline { margin: 0; font: 400 clamp(2.5rem, 4.4vw, 4rem)/1.04 var(--serif); letter-spacing: -.015em;
+    --px: 0; --py: 0; }
+  .headline .line { position: relative; display: block; width: max-content;
+    transform: translate(calc(var(--px) * (var(--n) + 1) * 3px), calc(var(--py) * (var(--n) + 1) * 2px)); transition: transform .8s var(--settle); }
+  .headline .said { color: transparent; }
+  .headline .wax { position: absolute; left: -.12em; top: 0; overflow: visible; }
+  .headline .tone { fill: var(--ink); stroke: none; opacity: 0; transition: opacity 1.2s ease; }
+  .headline.is-drawn .tone { opacity: .58; }
+  .opening p { margin: 1.5rem 0 0; color: var(--soft); max-width: 28rem; font-size: 1rem; text-wrap: pretty; }
+  .call { position: relative; display: inline-block; margin-top: 2.25rem; padding-bottom: .55rem; font: 500 .6875rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; text-decoration: none; color: var(--ink); }
+  .call .mark { left: -4%; bottom: -.1rem; width: 108%; height: .7rem; }
+  .arrow { display: inline-block; margin-left: .55em; transition: translate .35s var(--settle); }
+  .call:hover .arrow { translate: .3em 0; }
+  /* A mark lies over what it marks; however far its sheet is stretched, its strands keep their width. */
+  .mark { position: absolute; overflow: visible; pointer-events: none; }
+  .mark path { vector-effect: non-scaling-stroke; }
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes rise-line { from { translate: 0 105%; } }
+    @supports (animation-timeline: scroll()) {
+      .headline .line { animation: scatter linear both; animation-timeline: scroll(root); animation-range: calc(var(--n) * 6svh) calc(55svh + var(--n) * 6svh); }
+      .headline .line:nth-child(2) { --dx: 2.5vw; }
+      @keyframes scatter { 45% { opacity: 1; } to { translate: var(--dx, -2.5vw) calc(-1.5rem - var(--n) * 1rem); opacity: 0; } }
+    }
+  }
   /* The bouquet's frame shows it down to where its stems fade into the paper; each plane runs on below the
      frame, so the planes can part without a stem showing its end. Planes move; the drawings in them grain.
      The frame keeps the drawing's proportions, so only the page's edges cut it: as tall as the screen allows,
@@ -162,34 +189,46 @@
     .bouquet { position: relative; justify-self: end; width: 125%; margin: -16% calc(-1 * var(--margin)) 0 0; }
   }
 
-  /* Work: each piece drawn on the page at the height its motion needs, its words beside it. */
-  .piece {
-    display: grid; gap: clamp(2rem, 5vw, 5rem); align-items: center;
-    padding: clamp(3.5rem, 9vw, 8rem) var(--margin);
-  }
-  .piece h2, .bed h2 { margin: 0; font: 400 clamp(2.25rem, 4.2vw, 3.5rem)/1.04 var(--serif); letter-spacing: -.01em; }
-  .piece p, .bed p { margin: 1rem 0 0; color: var(--soft); max-width: 28rem; text-wrap: pretty; }
-  .take { display: flex; gap: 1.5rem; margin-top: 1.5rem; font-size: 1rem; }
-  @media (min-width: 48rem) {
-    .piece { grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 1fr); }
-    .piece--flip .piece-art { order: 2; }
+  .bed h2, .work h2, .footer-show .show-title { margin: 0; font: 400 clamp(1.75rem, 2.4vw, 2rem)/1.1 var(--serif); letter-spacing: -.01em; }
+  .bed p, .work p { margin: .85rem 0 0; color: var(--soft); max-width: 26rem; font-size: .9375rem; text-wrap: pretty; }
+  .take, .footer-show .show-take { display: flex; flex-wrap: wrap; gap: .9rem 1.5rem; margin: 1.25rem 0 0; font: 500 .6875rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+  .take a, .footer-show .show-take a { position: relative; padding-bottom: .55rem; color: inherit; text-decoration: none; }
+  .take .mark, .show-take .mark { left: -4%; bottom: -.15rem; width: 108%; height: .7rem; }
+  h2 > span { display: inline-block; }
+  /* As a work arrives its words rise into place, once, a beat apart, the name from under its own edge. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (timeline-trigger: --t view()) and (animation-trigger: --t play-once) {
+      .piece-text, :has(> .show-title) { timeline-trigger: --words view() entry 75% exit 25%; }
+      .piece-text > :not(h2), :has(> .show-title) > :not(h2) { animation: rise-words .95s cubic-bezier(.16, .84, .24, 1) calc(var(--i, 0) * 140ms + (sibling-index() - 1) * 90ms) both; animation-trigger: --words play-once; }
+      .piece-text > h2, .show-title { overflow: clip; padding-bottom: .08em; margin-bottom: -.08em; }
+      .piece-text > h2 > span, .show-title > span { animation: rise-line 1s cubic-bezier(.16, .84, .24, 1) calc(var(--i, 0) * 140ms + 60ms) both; animation-trigger: --words play-once; }
+      @keyframes rise-words { from { opacity: 0; translate: 0 14px; } }
+    }
   }
 
-  /* Portraits: the planes of one portrait, stacked in register; crossing the screen, the stack turns
-     and they part in depth, then close into the picture again. */
-  .stage { --h: clamp(20rem, 60svh, 36rem); position: relative; height: var(--h); display: grid; place-items: center; perspective: 90rem; perspective-origin: 50% 35%; view-timeline: --portrait block; }
+  /* Portraits: the planes of one portrait, stacked in register. Crossing the screen, one number, --apart, opens
+     them as an exploded view: the stack tips back and turns, each plane lifts off the one behind it on its own
+     depth, and a sheet of paper shows behind each, so the planes read as leaves of tracing paper; past the
+     middle they close into the picture again. It runs on the row's timeline, which holds however the row is laid,
+     opening once the portrait has developed. --apart is declared on the stage, as low as it can be. */
+  @property --apart { syntax: "<number>"; inherits: true; initial-value: 0; }
+  .stage { --h: clamp(20rem, 60svh, 36rem); --gap: calc(var(--h) * .055); position: relative; height: var(--h); display: grid; place-items: center; perspective: 90rem; perspective-origin: 50% 35%; }
   .tilt { position: relative; width: min(100%, calc(var(--h) * .82)); aspect-ratio: 1; transform-style: preserve-3d; transition: transform .6s var(--settle); }
-  .stack, .plane { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .stage .stack, .stage .plane { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .stage .stack { transform: rotateX(calc(var(--apart) * 52deg)) rotateZ(calc(var(--apart) * -26deg)) scale(calc(1 - var(--apart) * .18)); }
+  .stage .plane { transform: translateZ(calc((var(--i) - (var(--n) - 1) / 2) * var(--apart) * var(--gap))); }
+  .stage .plane::before { content: ""; position: absolute; inset: 0; background: var(--paper); opacity: calc(var(--apart) * .32);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent); }
   .plane img { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
     -webkit-mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent), linear-gradient(transparent, #000 16%, #000 84%, transparent);
     -webkit-mask-composite: source-in;
     mask-image: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent), linear-gradient(transparent, #000 16%, #000 84%, transparent);
     mask-composite: intersect; }
-  @supports (animation-timeline: view()) {
-    .stack { animation: turn-stack linear both; animation-timeline: --portrait; animation-range: cover 8% cover 92%; }
-    .plane { animation: apart linear both; animation-timeline: --portrait; animation-range: cover 8% cover 92%; }
-    @keyframes turn-stack { 0%, 16% { transform: none; } 50% { transform: rotateX(12deg) rotateY(-36deg) scale(.84); } 84%, 100% { transform: none; } }
-    @keyframes apart { 0%, 16% { transform: none; } 50% { transform: translateZ(calc((var(--i) - (var(--n) - 1) / 2) * 3.4rem)); } 84%, 100% { transform: none; } }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .stage { animation: explode linear both; animation-timeline: --row; animation-range: cover 0% cover 100%; }
+      @keyframes explode { 0%, 30% { --apart: 0; } 47%, 54% { --apart: 1; } 70%, 100% { --apart: 0; } }
+    }
   }
 
   /* Garden: what the garden is for, a frame of plants growing in round the words. The bed's edges fade into the
@@ -224,15 +263,73 @@
     --footer-sans: "General Sans", system-ui, sans-serif; --footer-serif: "Hedvig Letters Serif", Georgia, serif;
     --land: max(260px, 30vw); --pad-top: clamp(80px, 8vw, 120px); --gutter: var(--margin);
   }
-  .footer-show .show-title { margin: 0; font: 400 clamp(2.25rem, 4.2vw, 3.5rem)/1.04 var(--serif); letter-spacing: -.01em; }
-  .footer-show .tagline { font: 400 1.0625rem/1.6 var(--sans); font-style: normal; max-width: 30rem; margin-top: 1rem; }
-  .footer-show .show-take { display: flex; gap: 1.5rem; margin: 1.5rem 0 0; }
-  .footer-show .show-take a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25em; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+  .footer-show .tagline { font: 400 .9375rem/1.6 var(--sans); font-style: normal; max-width: 26rem; margin-top: .85rem; }
 
   /* Characters, soon: a picture made of letters, shown working. */
   .field { position: relative; height: clamp(18rem, 46svh, 28rem); --leaf: #4E6B3B; }
   :root[data-theme="night"] .field { --leaf: #A9C48E; }
   .field canvas { position: absolute; inset: 0; width: 100%; height: 100%; mask-image: radial-gradient(closest-side, #000 62%, transparent); }
+
+  /* Characters, Collage and Portraits: one row, each piece above its words, presented by the scroll.
+     Wide, the three stand side by side and develop in turn as the row comes up the screen, left to right, a beat
+     apart: a veil of the page's paper lifts as each settles from a little larger and lower. Narrower, the section
+     pins for a screen and scrolling down carries the row sideways through it: each work develops as it slides in,
+     a hairline grows with the way travelled, and the portrait, last in, opens once it has arrived. The words rise
+     into place once, as the row arrives. For a visitor who asks for less motion, or where scroll timelines are
+     unknown, the wide row stands still and the narrow one is a strip to swipe, snapping from work to work. */
+  .trio { --art: clamp(16rem, 25vw, 24rem); --gutter: clamp(2rem, 3.5vw, 3.5rem); --card: min(78vw, 24rem); padding: clamp(3rem, 6vw, 4.5rem) 0; view-timeline: --row block; }
+  .trio-track { display: grid; gap: var(--gutter); padding-inline: var(--margin); }
+  .trio-along { display: none; }
+  @media (min-width: 64rem) { .trio-track { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 63.99rem) {
+    .trio { --art: clamp(15rem, 60vw, 21rem); }
+    .trio-track {
+      grid-auto-flow: column; grid-auto-columns: var(--card);
+      overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--margin);
+      scrollbar-width: none; scroll-marker-group: after;
+    }
+    .work { scroll-snap-align: start; }
+    .trio-track::scroll-marker-group { display: flex; justify-content: center; gap: .75rem; padding-top: 1.75rem; }
+    .work::scroll-marker { content: "" / attr(data-name); width: .5rem; height: .5rem; border-radius: 50%; background: color-mix(in srgb, var(--ink) 22%, transparent); }
+    .work::scroll-marker:target-current { background: var(--ink); }
+  }
+  .work { display: grid; align-content: start; gap: clamp(1.25rem, 2.5vw, 2rem); }
+  .work-art { position: relative; height: var(--art); }
+  .work-art .field { height: 100%; }
+  .work-art .stage { --h: var(--art); }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .work-art { animation: develop linear both; animation-timeline: --row; animation-range: entry calc(var(--i) * 10%) cover calc(38% + var(--i) * 7%); }
+      .work-art::after { content: ""; position: absolute; inset: -2px; background: var(--paper); pointer-events: none;
+        animation: veil linear both; animation-timeline: --row; animation-range: entry calc(var(--i) * 10%) cover calc(38% + var(--i) * 7%); }
+      @keyframes develop { from { scale: 1.08; translate: 0 2.5rem; } }
+      @keyframes veil { from { opacity: .96; } to { opacity: 0; } }
+    }
+  }
+  /* The pinned run: the section is as tall as a screen, the row's overflow and a hold. Over the first, scrolling
+     moves the row exactly its own width less the screen's, so the last work lands a margin from the right edge;
+     over the hold the row rests and the portrait opens and closes, before the section lets go. */
+  @media (max-width: 63.99rem) and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .trio { --travel: calc(3 * var(--card) + 2 * var(--gutter) + 2 * var(--margin) - 100vw); --hold: 80svh; height: calc(100svh + var(--travel) + var(--hold)); padding: 0; }
+      .trio-frame { position: sticky; top: 0; height: 100svh; overflow: clip; container-type: inline-size; display: grid; align-content: center; }
+      .trio-track { overflow: visible; scroll-snap-type: none; scroll-marker-group: none; width: max-content;
+        animation: pan linear both; animation-timeline: --row; animation-range: contain 0px contain var(--travel); }
+      @keyframes pan { to { translate: calc(100cqw - 100%) 0; } }
+      .trio-along { display: block; position: relative; height: 1px; margin: 2.25rem var(--margin) 0; background: color-mix(in srgb, var(--ink) 16%, transparent); }
+      .trio-along::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%;
+        animation: along linear both; animation-timeline: --row; animation-range: contain 0% contain 100%; }
+      @keyframes along { from { scale: 0 1; } }
+      .work:nth-child(1) .work-art, .work:nth-child(1) .work-art::after { animation-range: entry 40% contain 0%; }
+      .work:nth-child(2) .work-art, .work:nth-child(2) .work-art::after { animation-range: contain calc(var(--travel) * .05) contain calc(var(--travel) * .45); }
+      .work:nth-child(3) .work-art, .work:nth-child(3) .work-art::after { animation-range: contain calc(var(--travel) * .5) contain calc(var(--travel) * .92); }
+      .stage { animation-name: explode-run; animation-range: contain var(--travel) contain 100%; }
+      @keyframes explode-run { 0%, 6% { --apart: 0; } 40%, 62% { --apart: 1; } 96%, 100% { --apart: 0; } }
+    }
+  }
+  /* Collage: one card, dealt from the five, playing as it does on its own page; it stays paper by night. */
+  .collage-card { display: block; height: 100%; aspect-ratio: 1; max-width: 100%; border-radius: .5rem; }
+  .collage-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
   /* The page's own foot: its words, then a crayon landscape in six depths that rises into place as the page
      comes to its end, on the page's paper by day and by night. */
@@ -247,7 +344,7 @@
   .foot-row { font-size: .875rem; color: var(--soft); }
   @media (min-width: 48rem) { .foot-grid { grid-template-columns: 1fr auto; } .foot-row { grid-column: 1 / -1; } }
   .foot-scene {
-    position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 34rem; margin-top: -4rem; overflow: hidden;
+    position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 34rem; margin-top: -4rem; overflow: clip;
     container-type: size; view-timeline: --scene block;
   }
   /* Each plane and the orb measure the sheet as the slice lays it (--s, px per sheet px). Where the screen is
@@ -295,7 +392,7 @@
   @media (prefers-reduced-motion: reduce) {
     .flip { animation: none !important; transform: rotateX(180deg); }
     .wax path { animation: none !important; stroke-dashoffset: 0; }
-    .bouquet .hp, .foot-scene .fp, .foot-orb, .stack, .plane { animation: none !important; }
+    .bouquet .hp, .foot-scene .fp, .foot-orb { animation: none !important; }
   }
 </style>
 </head>
@@ -306,20 +403,18 @@
     </a>
     <nav aria-label="Site">
       <a class="tipped draw" data-time="1" href="#work" aria-label="Work">{{ICON_WORK}}<span class="tip" aria-hidden="true">Work</span></a>
-      <a class="tipped draw" data-time="1" href="https://github.com/appautomaton/delineate" aria-label="Source on GitHub">{{ICON_GITHUB}}<span class="tip" aria-hidden="true">Source on GitHub</span></a>
+      <a class="tipped draw" data-time="1" href="https://github.com/appautomaton/delineate" aria-label="Source">{{ICON_SOURCE}}<span class="tip" aria-hidden="true">Source</span></a>
     </nav>
   </header>
 
   <main>
     <section class="opening" aria-labelledby="headline">
       <div class="opening-text">
-        <h1 id="headline">Drawings that move when you do.</h1>
+        <h1 class="headline draw" id="headline" data-time="{{HEADLINE_TIME}}"><span class="line" style="--n: 0"><span class="said">Drawings</span>{{HEADLINE_0}}</span><span class="line" style="--n: 1"><span class="said">that move</span>{{HEADLINE_1}}</span><span class="line" style="--n: 2"><span class="said">when you do.</span>{{HEADLINE_2}}</span></h1>
+        <noscript><style>.headline .said { color: inherit; } .headline .wax { display: none; }</style></noscript>
         <div class="lede">
           <p>Portraits that come apart, gardens that grow as you scroll, and small worlds at the foot of a page. Each comes with its source, and a skill your AI agent can follow to make one like it.</p>
-          <div class="actions">
-            <a class="button" href="#work">See the work</a>
-            <a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Browse the skills</a>
-          </div>
+          <a class="call" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Browse the skills<span class="arrow" aria-hidden="true">→</span></a>
         </div>
       </div>
       <div class="bouquet draw" data-time="{{HERO_TIME}}" aria-hidden="true">
@@ -330,7 +425,7 @@
     <div id="work">
       <article class="bed garden" aria-labelledby="garden" data-bed>
         <div class="piece-text">
-          <h2 id="garden">Garden</h2>
+          <h2 id="garden"><span>Garden</span></h2>
           <p>Twelve gardens from around the world, drawn plant by plant, that grow in round whatever they frame. These came from six of them.</p>
           <div class="take"><a class="link" href="garden/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/garden">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/climate-garden">Skill</a></div>
         </div>
@@ -340,25 +435,40 @@
 {{FOOTER_KIT}}
       </article>
 
-      <article class="piece piece--flip" aria-labelledby="characters">
-        <div class="piece-art field" data-field aria-hidden="true"><canvas></canvas></div>
-        <div class="piece-text">
-          <h2 id="characters">Characters</h2>
-          <p>A picture made of letters, gathering into shapes and letting go of them. From each edge inward they spell the name; at the heart, something grows.</p>
-          <div class="take"><a class="link" href="characters/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/characters">Source</a></div>
-        </div>
-      </article>
+      <div class="trio">
+        <div class="trio-frame">
+          <div class="trio-track">
+            <article class="work" style="--i: 0" data-name="Characters" aria-labelledby="characters">
+              <div class="work-art"><div class="field" data-field aria-hidden="true"><canvas></canvas></div></div>
+              <div class="piece-text">
+                <h2 id="characters"><span>Characters</span></h2>
+                <p>A picture made of letters, gathering into shapes and letting go of them. From each edge inward they spell the name; at the heart, something grows.</p>
+                <div class="take"><a class="link" href="characters/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/characters">Source</a></div>
+              </div>
+            </article>
 
-      <article class="piece piece--flip" aria-labelledby="portraits">
-        <a class="piece-art stage" href="portraits/paprika-girl/" aria-label="Open Portraits">
-          <div class="tilt"><div class="stack" data-layers></div></div>
-        </a>
-        <div class="piece-text">
-          <h2 id="portraits">Portraits</h2>
-          <p>Illustrated portraits redrawn in vector as planes, each at its own depth. Pull them apart and they keep moving.</p>
-          <div class="take"><a class="link" href="portraits/paprika-girl/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/portraits">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/layered-svg">Skill</a></div>
+            <article class="work" style="--i: 1" data-name="Collage" aria-labelledby="collage">
+              <div class="work-art"><a class="collage-card" href="collage/" aria-label="Open Collage"><div data-collage></div></a></div>
+              <div class="piece-text">
+                <h2 id="collage"><span>Collage</span></h2>
+                <p>One picture, drawn by many hands, laid down again and again among scraps of paper. Five sculptures from their museums’ scans, each a card that cuts from hand to hand on its own beat.</p>
+                <div class="take"><a class="link" href="collage/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/collage">Source</a></div>
+              </div>
+            </article>
+
+            <article class="work" style="--i: 2" data-name="Portraits" aria-labelledby="portraits">
+              <div class="work-art"><a class="stage" href="portraits/paprika-girl/" aria-label="Open Portraits">
+                <div class="tilt"><div class="stack" data-layers></div></div></a></div>
+              <div class="piece-text">
+                <h2 id="portraits"><span>Portraits</span></h2>
+                <p>Illustrated portraits redrawn in vector as planes, each at its own depth. Pull them apart and they keep moving.</p>
+                <div class="take"><a class="link" href="portraits/paprika-girl/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/portraits">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/layered-svg">Skill</a></div>
+              </div>
+            </article>
+          </div>
+          <div class="trio-along" aria-hidden="true"></div>
         </div>
-      </article>
+      </div>
     </div>
   </main>
 
@@ -369,25 +479,17 @@
         <p>Drawings that move when you do, with the source and the skills to make your own.</p>
       </div>
       <nav aria-label="Footer">
-        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#portraits">Portraits</a></li></ul></div>
-        <div><h3>Take</h3><ul><li><a href="https://github.com/appautomaton/delineate">Source on GitHub</a></li><li><a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Agent skills</a></li></ul></div>
+        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#collage">Collage</a></li><li><a href="#portraits">Portraits</a></li></ul></div>
+        <div><h3>Take</h3><ul><li><a href="https://github.com/appautomaton/delineate">Source</a></li><li><a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Agent skills</a></li></ul></div>
       </nav>
       <p class="foot-row">© 2026 delineate</p>
     </div>
-    <div class="foot-scene draw" data-time="{{FOOT_TIME}}" aria-hidden="true">
-      <div class="fp fp--sky"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMin slice"><defs>{{FOOT_SKY_DEFS}}</defs><g>{{FOOT_SKY}}</g></svg></div>
-      <div class="foot-orb foot-orb--sun"><svg class="wax" viewBox="0 0 200 200"><g>{{FOOT_SUN}}</g></svg></div>
-      <div class="foot-orb foot-orb--moon"><svg class="wax" viewBox="0 0 200 200"><g>{{FOOT_MOON}}</g></svg></div>
-      <div class="fp fp--range"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_RANGE_DEFS}}</defs><g>{{FOOT_RANGE}}</g></svg></div>
-      <div class="fp fp--hills"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_HILLS_DEFS}}</defs><g>{{FOOT_HILLS}}</g></svg></div>
-      <div class="fp fp--trees"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_TREES_DEFS}}</defs><g>{{FOOT_TREES}}</g></svg></div>
-      <div class="fp fp--meadow"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_MEADOW_DEFS}}</defs><g>{{FOOT_MEADOW}}</g></svg></div>
-      <div class="fp fp--near"><svg class="wax" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs>{{FOOT_NEAR_DEFS}}</defs><g>{{FOOT_NEAR}}</g></svg></div>
-    </div>
+    <div class="foot-scene" data-src="assets/foot.html" data-time="{{FOOT_TIME}}" aria-hidden="true"></div>
   </footer>
 
   <button class="fab tipped draw" data-time="1" type="button" aria-label="Switch to night">{{ICON_SUN}}{{ICON_MOON}}<span class="tip tip--up" aria-hidden="true">Night</span></button>
 
+<template id="lines">{{MARK_LINES}}</template>
 <script type="module">
   const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -396,6 +498,31 @@
     el.classList.remove("is-drawing");
     el.classList.add("is-drawn");
   }
+  // Every link to a work, its source or its skill is underlined in crayon, one of four lines in turn, drawn as it
+  // comes into view and again when the pointer comes to it.
+  const lines = document.querySelector("#lines").content.children;
+  document.querySelectorAll(".call, .take a, .show-take a").forEach((a, k) => {
+    a.append(lines[k % lines.length].cloneNode(true));
+    a.classList.add("draw", "marked");
+    a.dataset.time = ".5";
+  });
+
+  // The headline leans with the pointer: where it is across the screen, as -1 to 1, eased by the stylesheet.
+  const headline = document.querySelector(".headline");
+  if (!calm && matchMedia("(pointer: fine)").matches) {
+    let queued = false, px = 0, py = 0;
+    addEventListener("pointermove", (e) => {
+      [px, py] = [(e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1];
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        headline.style.setProperty("--px", px.toFixed(3));
+        headline.style.setProperty("--py", py.toFixed(3));
+      });
+    }, { passive: true });
+  }
+
   const draw = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
@@ -407,6 +534,20 @@
     }
   }, { threshold: .2 });
   document.querySelectorAll(".draw").forEach((el) => draw.observe(el));
+
+  // The foot's landscape is the page's heaviest drawing and its last; it is fetched as the page comes within a
+  // screen of it, and drawn on when it comes into view, as any drawing is.
+  const scene = document.querySelector(".foot-scene[data-src]");
+  const near = new IntersectionObserver(async ([e]) => {
+    if (!e.isIntersecting) return;
+    near.disconnect();
+    try {
+      scene.innerHTML = await (await fetch(scene.dataset.src)).text();
+      scene.classList.add("draw");
+      draw.observe(scene);
+    } catch {}
+  }, { rootMargin: "100% 0px" });
+  near.observe(scene);
 
   // The bouquet leans away from a fine pointer, nearer planes further.
   const bouquet = document.querySelector(".bouquet");
@@ -583,13 +724,25 @@
     pen();
     grow(Math.round(shown * 400) / 400);
   }).observe(bed);
+  // The bed follows the scroll only while it is near the screen: elsewhere it rests as it was left, and the page's
+  // scrolling never stops to measure it.
   if (!calm) {
     shown = aim = place();
-    addEventListener("scroll", follow, { passive: true });
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) addEventListener("scroll", follow, { passive: true });
+      else removeEventListener("scroll", follow);
+      follow();
+    }, { rootMargin: "50% 0px" }).observe(bed);
   }
 
   // Characters: the piece's own field of letters (characters/field.js), in the page's ink and light.
   import("./characters/field.js").then(({ mount }) => mount(document.querySelector("[data-field] canvas"), { cell: 11, gather: 0.6 }));
+
+  // Collage: one card from collage/card.js, a motif and an ink dealt at random, as the Collage page deals them.
+  Promise.all([import("./collage/card.js"), import("./collage/motifs.js")]).then(([{ mountCard }, { GROUNDS, MOTIFS }]) => {
+    const pick = (list) => list[Math.floor(Math.random() * list.length)];
+    mountCard(document.querySelector("[data-collage]"), pick(Object.keys(MOTIFS)), { art: "collage/art", ground: pick(Object.keys(GROUNDS)) });
+  });
 
   // A drawn icon draws itself again when a pointer comes to it.
   const redraw = (el) => {
@@ -599,7 +752,7 @@
     el.classList.add("is-drawing");
     setTimeout(() => { el.classList.remove("is-drawing"); el.classList.add("is-drawn"); }, (Number(el.dataset.time) + .2) * 1000);
   };
-  document.querySelectorAll(".tipped").forEach((el) => el.addEventListener("pointerenter", () => redraw(el)));
+  document.querySelectorAll(".tipped, .marked").forEach((el) => el.addEventListener("pointerenter", () => redraw(el)));
 
   // The light is the page's: the footer keeps it (its switch, its storage, its sun and moon), so the corner
   // presses the footer's switch, and the page follows the root, cross-fading through a view transition.

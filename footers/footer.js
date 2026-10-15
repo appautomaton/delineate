@@ -38,7 +38,22 @@
     let reel = [], clock = 0, then = 0, asleep = false;
 
     const label = (id) => { for (const p of pickers) p.querySelector('.picker-name').textContent = names[id]; };
-    const mount = (id) => {
+    // A world's scene may wait in a file of its own until it is first wanted: its template names the file in
+    // data-src. It is fetched once, into the template, and a failed fetch may be tried again.
+    const scenes = {};
+    const ensure = (id) => {
+      const template = document.getElementById(`world-${id}`);
+      if (!template.dataset.src) return Promise.resolve();
+      return (scenes[id] ??= fetch(template.dataset.src)
+        .then((r) => { if (!r.ok) throw new Error(`${r.status} ${template.dataset.src}`); return r.text(); })
+        .then((html) => { template.innerHTML = html; delete template.dataset.src; })
+        .catch((error) => { delete scenes[id]; throw error; }));
+    };
+    let wanted = null;
+    const mount = async (id) => {
+      wanted = id;
+      try { await ensure(id); } catch { return; }
+      if (wanted !== id) return;
       active?.destroy?.();
       active = null;
       const scene = document.getElementById(`world-${id}`).content.cloneNode(true);
@@ -82,7 +97,8 @@
       const buttons = [...picker.querySelectorAll('button')];
       for (const button of buttons) {
         button.addEventListener('click', () => choose(button.dataset.world));
-        button.addEventListener('pointerenter', () => label(button.dataset.world));
+        button.addEventListener('pointerenter', () => { label(button.dataset.world); ensure(button.dataset.world).catch(() => {}); });
+        button.addEventListener('focus', () => ensure(button.dataset.world).catch(() => {}));
         button.addEventListener('pointerleave', () => label(root.dataset.world));
       }
       // Arrow keys move the choice, as in any radio group.

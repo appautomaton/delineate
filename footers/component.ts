@@ -39,20 +39,26 @@ export type Site = keyof typeof SITES;
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
-// The worlds' scoped stylesheets, their markup as inert templates, their scripts, and their picker glyphs.
-function worlds(ids: readonly World[]) {
+// The worlds' scoped stylesheets, their markup as inert templates, their scripts, and their picker glyphs. A world
+// named in `apart` keeps its markup in a file of its own, returned in `files`, and its template only names it,
+// so a page carries the scene it opens on and fetches another only when it is first chosen.
+function worlds(ids: readonly World[], apart: { worlds: readonly World[]; at: string } = { worlds: [], at: "" }) {
   const [css, templates, scripts, glyphs]: string[][] = [[], [], [], []];
+  const files: Record<string, string> = {};
   for (const id of ids) {
     const { name, gen } = WORLDS[id];
     const values = gen.placeholders();
     const style = fill(read(`worlds/${id}/style.css`), values, `${id}/style.css`);
     css.push(scopeCss(style, `.world--${id}`));
     const art = pruneDefs(unfoldLife(fill(read(`worlds/${id}/art.html`), values, `${id}/art.html`), style), style);
-    templates.push(`<template id="world-${id}" data-world="${id}" data-name="${name}">\n${art}</template>`);
+    if (apart.worlds.includes(id)) {
+      files[`${id}.html`] = art;
+      templates.push(`<template id="world-${id}" data-world="${id}" data-name="${name}" data-src="${apart.at}${id}.html"></template>`);
+    } else templates.push(`<template id="world-${id}" data-world="${id}" data-name="${name}">\n${art}</template>`);
     scripts.push(fill(read(`worlds/${id}/life.js`), values, `${id}/life.js`));
     glyphs.push(`    <g id="glyph-${id}">${gen.GLYPH}</g>`);
   }
-  return { css: css.join("\n\n"), templates: templates.join("\n\n"), scripts: scripts.join("\n"), glyphs: glyphs.join("\n") };
+  return { css: css.join("\n\n"), templates: templates.join("\n\n"), scripts: scripts.join("\n"), glyphs: glyphs.join("\n"), files };
 }
 
 function picker(ids: readonly World[]): string {
@@ -82,10 +88,20 @@ function slots(site: Site): Record<string, string> {
 
 // The component's parts for a site, by the hole each fills in a page.
 export function component(site: Site): Record<string, string> {
+  return parts(site).parts;
+}
+
+// The same, with every world but the first kept apart in files to be served from `at` (a path from the page), so
+// the page carries only the scene it opens on.
+export function componentApart(site: Site, at: string): { parts: Record<string, string>; files: Record<string, string> } {
+  return parts(site, { worlds: SITES[site].worlds.slice(1), at });
+}
+
+function parts(site: Site, apart?: { worlds: readonly World[]; at: string }): { parts: Record<string, string>; files: Record<string, string> } {
   const { worlds: ids, store, theme } = SITES[site];
-  const { css, templates, scripts, glyphs } = worlds(ids);
+  const { css, templates, scripts, glyphs, files } = worlds(ids, apart);
   const common = { STORE: store, WORLD_IDS: `[${ids.map((id) => JSON.stringify(id)).join(", ")}]`, DEFAULT_THEME: JSON.stringify(theme) };
-  return {
+  const out = {
     DEFAULT_WORLD: ids[0],
     PICKER: picker(ids),
     EARLY: fill(read("early.js"), common, "early.js"),
@@ -95,6 +111,7 @@ export function component(site: Site): Record<string, string> {
     WORLD_TEMPLATES: templates,
     FOOTER_JS: fill(read("footer.js"), { ...common, WORLD_JS: scripts }, "footer.js"),
   };
+  return { parts: out, files };
 }
 
 // The footer alone, to place at the end of a host page's body. The host sets its type on .site-footer.

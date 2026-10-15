@@ -6,19 +6,21 @@
 // tab's mark (icons.ts), the foot of the page, drawn by the Footers' crayon world, and the Footers piece itself,
 // the real component built as a kit for this site. Beside it go what it borrows: Garden's stylesheets and the
 // plants its bed grows, and Paprika Girl split into planes (portrait.ts). Beside that goes the work each section
-// opens: the Garden at garden/, the Footers' demo at footers/, Characters at characters/, and Paprika Girl's
-// separation page at portraits/paprika-girl/.
+// opens: the Garden at garden/, the Footers' demo at footers/, Characters at characters/, Collage at collage/ (its
+// card, which this page also shows, and the drawings npm run collage:draw makes), and Paprika Girl's separation
+// page at portraits/paprika-girl/.
 
 import { execFileSync } from "node:child_process";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { DIST as GARDEN, build as buildGarden } from "../garden/build.ts";
-import { WORLDS, component, kit } from "../footers/component.ts";
+import { WORLDS, componentApart, kit } from "../footers/component.ts";
 import { TOOTH } from "../footers/crayon/hand.ts";
 import { fixed } from "../footers/lib/number.ts";
 import { fill } from "../footers/lib/template.ts";
 import { markup } from "./hero.ts";
-import { favicon, icons } from "./icons.ts";
+import { headline } from "./headline.ts";
+import { favicon, icons, marks } from "./icons.ts";
 import { planes } from "./portrait.ts";
 
 const ROOT = new URL("../", import.meta.url);
@@ -54,6 +56,8 @@ rmSync(DIST, { recursive: true, force: true });
 const foot = Object.fromEntries(
   Object.entries(WORLDS.crayon.gen.placeholders()).map(([k, v]) => [k, v.replaceAll('id="cr-', 'id="lf-').replaceAll("url(#cr-", "url(#lf-")]),
 );
+// The Footers piece carries the world it opens on; the others wait in assets/footers/ until they are chosen.
+const footer = componentApart("delineate", "assets/footers/");
 const bouquet = markup();
 const heroTime = fixed(drawingTime(bouquet), 2);
 const page = fill(
@@ -61,15 +65,18 @@ const page = fill(
   {
     HERO: bouquet,
     HERO_TIME: heroTime,
-    FOOTER_KIT: kit(component("delineate")),
+    FOOTER_KIT: kit(footer.parts),
     FOOT_TIME: fixed(drawingTime(...Object.values(foot)), 2),
     TOOTH,
-    ...Object.fromEntries(Object.entries(foot).map(([k, v]) => [`FOOT_${k}`, v])),
     ...Object.fromEntries(Object.entries(icons()).map(([k, v]) => [`ICON_${k.toUpperCase()}`, v])),
+    ...marks(),
+    ...(({ lines, time }) => ({ HEADLINE_TIME: String(time), ...Object.fromEntries(lines.map((svg, k) => [`HEADLINE_${k}`, svg])) }))(headline()),
   },
   "site/page.html",
 );
 write("index.html", page);
+for (const [name, html] of Object.entries(footer.files)) write(`assets/footers/${name}`, html);
+write("assets/foot.html", fill(read("site/foot.html"), Object.fromEntries(Object.entries(foot).map(([k, v]) => [`FOOT_${k}`, v])), "site/foot.html"));
 write("favicon.svg", favicon());
 
 // From Garden: its tokens, their dark light keyed to this page's night so the plants change with the page; its
@@ -93,6 +100,8 @@ cpSync(GARDEN, new URL("garden/", DIST), { recursive: true });
 mkdirSync(new URL("footers/", DIST), { recursive: true });
 execFileSync(process.execPath, [fileURLToPath(new URL("footers/build.ts", ROOT)), fileURLToPath(new URL("footers/index.html", DIST))]);
 for (const file of ["index.html", "field.js", "foot.js", "scenes.js"]) write(`characters/${file}`, read(`characters/${file}`));
+for (const file of ["index.html", "page.js", "card.js", "card.css", "motifs.js"]) write(`collage/${file}`, read(`collage/${file}`));
+cpSync(made("collage/art/", "npm run collage:draw"), new URL("collage/art/", DIST), { recursive: true });
 write("portraits/paprika-girl/index.html", readFileSync(made("portraits/pieces/paprika-girl/index.html", "npm run paprika-girl"), "utf8"));
 for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html"]) {
   const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);

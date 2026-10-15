@@ -1,19 +1,10 @@
 // The page's icons, in the same crayon as its drawings, each drawn on a 160 x 160 sheet so the wax keeps its
-// grain when shown at icon size. Work is the page's own flower; GitHub is its mark, coloured in; the page's light
-// is a sun for day and a crescent for night. Each draws itself on, and again on hover.
+// grain when shown at icon size. Work is the page's own flower; Source is code's own sign, </>, written in three
+// strokes; the page's light is a sun for day and a crescent for night. Each draws itself on, and again on hover.
 
 import { Hand } from "../footers/crayon/hand.ts";
 import { Sheet, circle, closedD, petal, poppy } from "../footers/crayon/shapes.ts";
 import { Random } from "../footers/lib/random.ts";
-
-// GitHub's mark (Octicons, mark-github), on its 16 x 16 grid, scaled to the sheet.
-const GITHUB =
-  "M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49" +
-  "-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52" +
-  ".28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18" +
-  " 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07" +
-  "-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42" +
-  "-3.58-8-8-8z";
 
 type Icon = { sheet: Sheet; body: string };
 
@@ -23,15 +14,12 @@ function work(): Icon {
   return { sheet, body: poppy(sheet, new Hand(3, 0), 80, 80, 74, "red", "maroon", "maroon", { n: 5 }) };
 }
 
-function github(): Icon {
-  const sheet = new Sheet("ic-gh-");
+// The sign for code: an angle bracket, a slash, an angle bracket, each one stroke, written left to right.
+function source(): Icon {
   const h = new Hand(5, 0);
-  h.fill([[4, 4], [156, 4], [156, 156], [4, 156]], "deep", { angle: -35, spacing: 5, width: 8, n: 6, secs: 0.45, weight: [2.2, 3.6], alpha: [0.75, 1] });
-  const fill = h.take();
-  const id = `${sheet.prefix}0`;
-  sheet.clips.push(`<clipPath id="${id}"><path transform="translate(4 4) scale(9.5)" d="${GITHUB}"/></clipPath>`);
-  h.loops(80, 80, 73, "deep", { turns: 1.05, width: 5, n: 3, secs: 0.3, alpha: [0.55, 0.85], wobble: 0.015 });
-  return { sheet, body: `<g clip-path="url(#${id})">${fill}</g>${h.take()}` };
+  for (const pts of [[[56, 40], [16, 80], [56, 120]], [[88, 32], [72, 128]], [[104, 40], [144, 80], [104, 120]]] as [number, number][][])
+    h.stroke(pts, "deep", { width: 14, n: 6, secs: 0.24, weight: [3, 4.6], alpha: [0.75, 1] });
+  return { sheet: new Sheet("ic-src-"), body: h.take() };
 }
 
 function sun(): Icon {
@@ -69,9 +57,32 @@ export function favicon(): string {
   );
 }
 
+// The page's mark, made under its links with the same crayon: a line, light and fine, drawn on a sheet that is
+// stretched to the word it underlines, its strands keeping their width (the page draws them with non-scaling
+// strokes); it draws itself on as it comes into view, and again when the pointer comes to it.
+type Pt = [number, number];
+
+// A line under a word on a W x H sheet: drawn left to right, sagging a little, lifting at its end.
+function underline(seed: number, colour: string): string {
+  const [W, H] = [400, 24];
+  const rng = new Random(seed), h = new Hand(seed, 0), pts: Pt[] = [];
+  const sag = rng.uniform(1.5, 3.5), lift = rng.uniform(2, 5);
+  for (let k = 0; k <= 40; k++) {
+    const t = k / 40;
+    pts.push([6 + t * (W - 12), H / 2 + sag * Math.sin(Math.PI * t) - lift * t ** 4]);
+  }
+  h.stroke(pts, colour, { width: 3, n: 2, secs: 0.35, weight: [0.9, 1.3], alpha: [0.4, 0.6], step: 4 });
+  return `<svg class="wax mark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${h.take()}</svg>`;
+}
+
+// Lines for the page's links, four of them, so no two links in a row are underlined alike.
+export function marks(): Record<string, string> {
+  return { MARK_LINES: [41, 43, 47, 53].map((seed) => underline(seed, "graphite")).join("") };
+}
+
 // Each icon's <svg>, by name.
 export function icons(): Record<string, string> {
-  const drawn = { work: work(), github: github(), sun: sun(), moon: moon() };
+  const drawn = { work: work(), source: source(), sun: sun(), moon: moon() };
   return Object.fromEntries(
     Object.entries(drawn).map(([name, { sheet, body }]) => [
       name,

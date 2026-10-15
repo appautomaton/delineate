@@ -24,8 +24,8 @@ a 3. On the project's page the 3s turn over as you scroll and show the e on thei
 | **Footers** | The bottom of a web page drawn as a small world that rises as you arrive. Seven worlds, each in its own medium, from gouache to crayon, by day and by night. | [`footers/`](footers) | |
 | **Portraits** | Illustrated portraits redrawn in vector as planes, each at its own depth. Pull them apart and they keep moving. | [`portraits/`](portraits) | [layered-svg](.agents/skills/layered-svg) |
 | **Characters** | A picture made of letters. Ring by ring from each shape's edge inward they spell the name, and at the heart leaves and flowers grow, or moons, or stars. | [`characters/`](characters) | |
+| **Collage** | Five sculptures from their museums' scans, each drawn as an engraving, a line screen, flat marble and a single line, and laid among scraps of paper on a card that cuts from hand to hand. | [`collage/`](collage) | |
 
-Collage, a picture built from scraps of paper, is on the way.
 [`site/`](site) builds delineate's own page, which shows all of it on one long sheet.
 
 ## Agent skills
@@ -60,7 +60,7 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run bench` | Serves the portrait bench at http://localhost:5288. |
 | `npm run collage:render -- <motif>` | Renders a Collage motif's sculpture scan in Blender into the passes its drawings are made from. |
 | `npm run collage:draw` | Draws every Collage motif in each of its hands into `collage/art/`. |
-| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, and Paprika Girl's separation page that its sections open. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, and Paprika Girl's separation page that its sections open. Collage needs `npm run collage:draw` first. |
 | `npm run check` | Type-checks every part of the repository. |
 
 ## What is not in the repository
@@ -77,6 +77,7 @@ rendering one needs Blender. The Garden and the Footers build from the repositor
 garden/      the Garden: plants drawn in code, and the site that grows them
 footers/     the Footers component and its seven worlds
 characters/  the field of letters and its page
+collage/     the collage cards, their page, and the scripts that render and draw them
 portraits/   the portrait pieces and the harness that builds them
 site/        delineate's own page
 tools/       the small static server the dev tools share
