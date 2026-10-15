@@ -1,12 +1,14 @@
 // A collage card: one picture, drawn by several hands, laid down again and again among scraps of paper, a shot
 // at a time, inside a frame that never moves. Shots cut hard, on a beat; within a shot only small things move:
 // a label is slapped on, tabs pop out along an edge, sheets drop onto a pile, the hands' sheets settle into a
-// stack. Pieces are placed in card units, a thousand across, so the card scales as one sheet.
+// stack. Held under the pointer, the card stops and its pieces part, so the layers show. Pieces are placed in
+// card units, a thousand across, so the card scales as one sheet.
 //
 //   import { mountCard } from "./card.js";
-//   mountCard(element, "panther-hunter");
+//   const card = mountCard(element, "panther-hunter", { ground: "oxblood", start: 3, tempo: 1.1 });
+//   card.destroy();
 
-import { MOTIFS } from "./motifs.js";
+import { GROUNDS, HANDS, MOTIFS } from "./motifs.js";
 
 // The card, in its own units; a piece is placed in these units, as a share of what it lies on (the card, or a sheet).
 const CARD = { x: 0, y: 0, w: 1000, h: 1000 };
@@ -19,8 +21,10 @@ function el(tag, cls, ...kids) {
   return e;
 }
 
-// A piece's box: given its middle and one side, the other side follows from its aspect.
-function box({ x, y, w, h, cx, cy, rot = 0, z = 0 }, aspect) {
+// A piece's box: given one side, the other follows from its aspect; given a span to fit, it is the largest box of its
+// aspect that fits it, so a wide picture and a tall one both fill their place. Its corner may be given, or its middle.
+function box({ x, y, w, h, cx, cy, fit, rot = 0, z = 0 }, aspect) {
+  if (fit) [w, h] = fit[0] / fit[1] > aspect ? [fit[1] * aspect, fit[1]] : [fit[0], fit[0] / aspect];
   if (w === undefined && h !== undefined && aspect) w = h * aspect;
   if (h === undefined && w !== undefined && aspect) h = w / aspect;
   if (cx !== undefined) x = cx - w / 2;
@@ -52,10 +56,10 @@ function kit(m, src, rand) {
   function art(hand, crop, at, { paper = false, on } = {}) {
     const [cx, cy, cw, ch] = crop ?? [0, 0, FW, FH];
     const img = el("img");
-    Object.assign(img, { src: `${src}/${hand}.svg`, alt: "", decoding: "async", draggable: false });
+    Object.assign(img, { src: `${src}/${HANDS[hand].file}`, alt: "", decoding: "async", draggable: false });
     Object.assign(img.style, { width: `${(FW / cw) * 100}%`, height: `${(FH / ch) * 100}%`, left: `${(-cx / cw) * 100}%`, top: `${(-cy / ch) * 100}%` });
     const b = box(at, cw / ch);
-    return Object.assign(place(el("div", `art${paper ? " paper" : ""}`, img), b, on), { box: b });
+    return Object.assign(place(el("div", `art ${hand}${paper ? " paper" : ""}`, img), b, on), { box: b });
   }
   // Tabs of bars, popping out one by one along a side of a box.
   const TINTS = ["#4FB3B4", "#B8C64B", "#5E8FD8", "#E39B76", "#B9A8E6"];
@@ -92,7 +96,7 @@ function kit(m, src, rand) {
   function stamp(hand, crop, at) {
     const face = art(hand, crop, { x: 0, y: 0, w: 1000 });
     Object.assign(face.style, { position: "relative", left: 0, top: 0, width: "100%", height: "auto", aspectRatio: `${crop[2]} / ${crop[3]}` });
-    const caption = el("div", "caption", el("span", "", m.title), el("span", "", `${m.number} · ${m.year}`));
+    const caption = el("div", "caption", el("span", "", m.title), el("span", "", m.mark));
     // Placed by its face's aspect; its height is its face's and the margins'.
     return place(el("div", "stamp-shadow", el("div", "stamp", face, caption)), { ...box(at, crop[2] / crop[3]), h: undefined });
   }
@@ -117,16 +121,17 @@ function kit(m, src, rand) {
       const slab = el("div", "slab", art(hand, null, { x: 0, y: 0, w: 1000 }));
       slab.firstChild.style.cssText += "left:0;top:0;width:100%;height:100%;transform:none;";
       slab.style.transform = `translateZ(${(n * gap * k) / 10}cqi)`;
+      slab.style.setProperty("--n", n);
       s.append(enter(slab, "settle", 80 + n * 110));
     });
     return s;
   }
-  // One crop, its left half in one hand and its right half in another, meeting at the middle.
-  function halves(left, right, [x, y, w, h], at) {
-    const b = box(at, w / h), half = w / 2;
+  // The whole drawing, its left half in one hand and its right half in another, meeting at the middle.
+  function halves(left, right, at) {
+    const b = box(at, FW / FH), half = FW / 2;
     return [
-      art(left, [x, y, half, h], { x: b.x, y: b.y, w: b.w / 2, h: b.h }),
-      art(right, [x + half, y, half, h], { x: b.x + b.w / 2, y: b.y, w: b.w / 2, h: b.h }),
+      art(left, [0, 0, half, FH], { x: b.x, y: b.y, w: b.w / 2, h: b.h }),
+      art(right, [half, 0, half, FH], { x: b.x + b.w / 2, y: b.y, w: b.w / 2, h: b.h }),
     ];
   }
   return { art, tabs, record, label, sheet, stamp, stack, halves };
@@ -134,54 +139,56 @@ function kit(m, src, rand) {
 
 // The shots, in order: each is held for its beat, then cut.
 export const SHOTS = [
-  { hold: 800, pieces: (p) => [p.art("engraving", null, { cx: 500, cy: 505, h: 780, rot: -1.2 }, { paper: true })] },
+  { hold: 800, pieces: (p) => [p.art("engraving", null, { cx: 500, cy: 505, fit: [800, 780], rot: -1.2 }, { paper: true })] },
   {
     hold: 700,
-    pieces: (p, m) => {
-      const panel = p.art("screen", m.crops.upper, { cx: 500, cy: 505, h: 640 });
+    pieces: (p) => {
+      const panel = p.art("screen", null, { cx: 500, cy: 505, fit: [640, 780] });
       return [panel, ...p.tabs(panel.box, "left", 3), ...p.tabs(panel.box, "right", 3, 160)];
     },
   },
   {
     hold: 1200,
     pieces: (p, m) => [
-      p.art("engraving", m.crops.jaw, { x: 400, y: 150, w: 420 }, { paper: true }),
+      p.art("engraving", m.crops.detail, { x: 400, y: 150, w: 420 }, { paper: true }),
       p.record({ x: 170, y: 500, w: 370, z: 2 }),
-      p.label("Bronze, 1846", "light", { x: 140, y: 420, rot: -1.5, z: 4 }, 140),
-      p.label("Public domain", "dark", { x: 280, y: 474, rot: 1, z: 5 }, 330),
+      p.label(m.labels[0], "light", { x: 140, y: 420, rot: -1.5, z: 4 }, 140),
+      p.label(m.labels[1], "dark", { x: 280, y: 474, rot: 1, z: 5 }, 330),
     ],
   },
-  { hold: 600, pieces: (p) => [p.art("marble", null, { cx: 500, cy: 510, h: 740 })] },
-  { hold: 700, pieces: (p, m) => [p.stamp("screen", m.crops.chest, { cx: 500, cy: 505, w: 440, rot: 6 })] },
+  // The object itself, cut out and laid on the card.
+  { hold: 700, pieces: (p) => [p.art("cast", null, { cx: 500, cy: 510, fit: [800, 760] })] },
+  { hold: 700, pieces: (p, m) => [p.stamp("screen", m.crops.stamp, { cx: 500, cy: 505, fit: [540, 552], rot: 6 })] },
   {
     hold: 800,
-    pieces: (p) => {
+    pieces: (p, m) => {
       // The drawing on its page, as large as the card allows; the coloured sheets dropped first show only at its edges.
-      const page = { x: 220, y: 110, w: 520, h: 790, z: 2 };
-      const navy = { x: 310, y: 170, w: 480, h: 700, z: 1, rot: 1.5 };
+      const drawing = box({ cx: 480, cy: 505, fit: [640, 750] }, m.frame[0] / m.frame[1]);
+      const page = { x: drawing.x - 48, y: drawing.y - 20, w: drawing.w + 96, h: drawing.h + 40, z: 2 };
+      const dark = { x: page.x + 90, y: page.y + 60, w: page.w - 40, h: page.h - 90, z: 1, rot: 1.5 };
       return [
-        enter(p.sheet("#CFC5EA", { x: 230, y: 80, w: 480, h: 560, rot: -3 }), "drop", 0),
-        enter(p.sheet("#22377F", navy), "drop", 60),
-        ...p.tabs(navy, "right", 3, 240),
-        enter(p.sheet("#FFFFFF", page, p.art("contour", null, { cx: 480, cy: 505, h: 750 }, { on: page })), "drop", 140),
+        enter(p.sheet("#CFC5EA", { x: page.x + 10, y: page.y - 30, w: page.w - 40, h: page.h * 0.7, rot: -3 }), "drop", 0),
+        enter(p.sheet("var(--ground)", dark), "drop", 60),
+        ...p.tabs(dark, "right", 3, 240),
+        enter(p.sheet("#FFFFFF", page, p.art("contour", null, drawing, { on: page })), "drop", 140),
       ];
     },
   },
   { hold: 1100, pieces: (p) => [p.stack(["screen", "marble", "engraving", "contour"], { cx: 500, cy: 500, span: [660, 640] })] },
   {
     hold: 1200,
-    pieces: (p, m) => [
+    pieces: (p) => [
       // One picture, cut down the middle: one hand on the left, another on the right.
-      ...p.halves("engraving", "screen", m.crops.meeting, { cx: 500, cy: 480, h: 600 }),
-      p.label("One picture,", "light", { x: 250, y: 700, rot: -1, z: 4 }, 140),
-      p.label("many hands.", "dark", { x: 420, y: 760, rot: 0.5, z: 5 }, 330),
+      ...p.halves("engraving", "screen", { cx: 500, cy: 445, fit: [640, 700] }),
+      p.label("One picture,", "light", { x: 250, y: 772, rot: -1, z: 4 }, 140),
+      p.label("many hands.", "dark", { x: 420, y: 830, rot: 0.5, z: 5 }, 330),
     ],
   },
   {
     hold: 700,
-    pieces: (p, m) => [
-      p.art("screen", m.crops.upper, { x: 450, y: 190, h: 560 }),
-      p.art("marble", null, { cx: 400, cy: 515, h: 700, z: 2 }),
+    pieces: (p) => [
+      p.art("screen", null, { x: 470, y: 150, fit: [460, 640] }),
+      p.art("marble", null, { cx: 400, cy: 515, fit: [560, 700], z: 2 }),
     ],
   },
 ];
@@ -203,10 +210,24 @@ function frame() {
   return document.createRange().createContextualFragment(svg);
 }
 
-export function mountCard(root, id, { shots = SHOTS, art = "art", motto = "One picture, many hands." } = {}) {
-  const m = MOTIFS[id], p = kit(m, `${art}/${id}`, random(id.length * 7919));
+// Where each piece of a shot goes when the card is held: away from the card's middle, the higher layers farther, so
+// the pile opens; a piece alone in the middle lifts instead.
+function part(shot) {
+  for (const e of shot.children) {
+    const [x, y, w, h] = ["left", "top", "width", "height"].map((k) => parseFloat(e.style[k]) || 0);
+    const [dx, dy] = [x + w / 2 - 50, y + h / 2 - 50], d = Math.hypot(dx, dy), reach = 1.6 + 0.7 * (Number(e.style.zIndex) || 0);
+    e.style.setProperty("--part", d < 8 ? "0 -1.4cqi" : `${((dx / d) * reach).toFixed(2)}cqi ${((dy / d) * reach).toFixed(2)}cqi`);
+  }
+}
+
+// The card is printed in one of the GROUNDS: the line screen's sheets, the dark tape and the dark paper all take it.
+// It opens on shot `start`, holds each shot `tempo` times its beat, and waits `delay` ms more before its first cut,
+// so cards side by side keep their own time; `seed` deals its scraps.
+export function mountCard(root, id, { shots = SHOTS, art = "art", ground = "navy", start = 0, tempo = 1, delay = 0, seed = id.length * 7919, motto = "One picture, many hands." } = {}) {
+  const m = MOTIFS[id], p = kit(m, `${art}/${id}`, random(seed));
   const calm = matchMedia("(prefers-reduced-motion: reduce)");
   root.classList.add("card");
+  root.style.setProperty("--ground", GROUNDS[ground]);
   root.setAttribute("role", "img");
   root.setAttribute("aria-label", `${m.title}, drawn by four hands among scraps of paper`);
   const layers = shots.map((s) => {
@@ -215,8 +236,10 @@ export function mountCard(root, id, { shots = SHOTS, art = "art", motto = "One p
     return shot;
   });
   root.append(frame(), el("div", "title", m.title), el("div", "motto", motto), ...layers);
+  layers.forEach(part);
 
   let at = -1, timer = 0, due = 0, left = 0, playing = false, seen = false, held = false;
+  const hold = (k) => shots[k].hold * tempo;
   function show(k) {
     if (at >= 0) layers[at].hidden = true;
     at = k;
@@ -229,7 +252,7 @@ export function mountCard(root, id, { shots = SHOTS, art = "art", motto = "One p
   }
   function next() {
     show((at + 1) % layers.length);
-    wait(shots[at].hold);
+    wait(hold(at));
   }
   function wait(ms) {
     due = performance.now() + ms;
@@ -238,7 +261,7 @@ export function mountCard(root, id, { shots = SHOTS, art = "art", motto = "One p
   // The card plays while it is on screen and not held, and holds still for anyone who asks for less motion.
   function update() {
     const play = seen && !held && !document.hidden && !calm.matches;
-    if (play && !playing) wait(left || shots[at].hold);
+    if (play && !playing) wait(left || hold(at));
     if (!play && playing) {
       clearTimeout(timer);
       left = Math.max(0, due - performance.now());
@@ -247,13 +270,27 @@ export function mountCard(root, id, { shots = SHOTS, art = "art", motto = "One p
   }
 
   // Start once every hand is ready to show, so no shot cuts to a blank.
+  const off = new AbortController(), signal = off.signal;
+  const sight = new IntersectionObserver(([e]) => { seen = e.isIntersecting; update(); });
   const images = [...new Set([...root.querySelectorAll("img")].map((i) => i.src))].map((s) => Object.assign(new Image(), { src: s }));
   Promise.all(images.map((i) => i.decode().catch(() => {}))).then(() => {
-    show(0);
-    new IntersectionObserver(([e]) => { seen = e.isIntersecting; update(); }).observe(root);
-    root.addEventListener("pointerenter", () => { held = true; update(); });
-    root.addEventListener("pointerleave", () => { held = false; update(); });
-    document.addEventListener("visibilitychange", update);
-    calm.addEventListener("change", update);
+    if (signal.aborted) return;
+    show(start % layers.length);
+    left = hold(at) + delay;
+    sight.observe(root);
+    const holdStill = (on) => { held = on; root.classList.toggle("parted", on); update(); };
+    root.addEventListener("pointerenter", () => holdStill(true), { signal });
+    root.addEventListener("pointerleave", () => holdStill(false), { signal });
+    document.addEventListener("visibilitychange", update, { signal });
+    calm.addEventListener("change", update, { signal });
   });
+  return {
+    destroy() {
+      off.abort();
+      sight.disconnect();
+      clearTimeout(timer);
+      root.replaceChildren();
+      root.classList.remove("card", "parted");
+    },
+  };
 }

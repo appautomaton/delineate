@@ -1,7 +1,7 @@
 /* A collage card: a square sheet of paper engraved with fine rings, a ruled frame with its corners cut in, and the
    shots laid inside it. Everything is sized in the card's own width (cqi), so the card scales as one sheet. */
 .card {
-  --card: #F1EFE8; --rule: #B9B2A2; --ink: #1D1C19; --navy: #1E2F7E;
+  --card: #F1EFE8; --rule: #B9B2A2; --ink: #1D1C19;
   --serif: "Hedvig Letters Serif", Georgia, serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
   position: relative; aspect-ratio: 1; container-type: inline-size; overflow: hidden; isolation: isolate;
   background: var(--card); color: var(--ink); border-radius: .5cqi;
@@ -23,10 +23,21 @@
 
 .card .shot { position: absolute; inset: 0; }
 .card .shot[hidden] { display: none; }
-.card .shot > * { position: absolute; transform-origin: 50% 50%; }
+.card .shot > * { position: absolute; transform-origin: 50% 50%; transition: translate .5s cubic-bezier(.2, .8, .3, 1); }
+
+/* Held, the pieces part: each moves off along its own way out, the stack's sheets lift apart. */
+.card.parted .shot > * { translate: var(--part, 0 0); }
+.card .slab { transition: translate .5s cubic-bezier(.2, .8, .3, 1); }
+.card.parted .slab { translate: 0 0 calc(var(--n) * 2.6cqi); }
+@media (prefers-reduced-motion: reduce) {
+  .card .shot > *, .card .slab { transition: none; }
+  .card.parted .shot > *, .card.parted .slab { translate: none; }
+}
 
 .card .art { overflow: hidden; }
 .card .art img { position: absolute; display: block; max-width: none; }
+/* The line screen draws only its cream; its sheet is the card's ground. */
+.card .art.screen { background: var(--ground); }
 .card .paper { box-shadow: 0 .12cqi .25cqi rgb(30 26 18 / .1), 0 1cqi 2cqi -1cqi rgb(30 26 18 / .2); }
 
 /* The holder's record, typed. */
@@ -39,7 +50,7 @@
   padding: 1.15cqi 1.5cqi 1cqi; font: 500 2.9cqi/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; white-space: nowrap;
 }
 .card .label.light { background: #E2E0DA; color: #2B2A27; text-shadow: 0 .08cqi 0 rgb(255 255 255 / .7); box-shadow: 0 .1cqi .2cqi rgb(0 0 0 / .12); }
-.card .label.dark { background: var(--navy); color: #F3F0E6; text-shadow: 0 -.08cqi 0 rgb(0 0 0 / .35); box-shadow: 0 .1cqi .3cqi rgb(0 0 0 / .2); }
+.card .label.dark { background: var(--ground); color: #F3F0E6; text-shadow: 0 -.08cqi 0 rgb(0 0 0 / .35); box-shadow: 0 .1cqi .3cqi rgb(0 0 0 / .2); }
 
 .card .tab { box-shadow: 0 .08cqi .2cqi rgb(0 0 0 / .12); }
 .card .sheet > .art { position: absolute; }

@@ -32,7 +32,7 @@ export function load(id: string): Fields {
   const pass = (name: string) => `${renders(id)}/${name}.png`;
   const render = JSON.parse(readFileSync(`${renders(id)}/view.json`, "utf8"));
   const tone = readPng(pass("tone"));
-  const beautyRgb = readPng(pass("beauty"));
+  const beauty = readPng(pass("beauty")); // the object in ivory, cut out on nothing
   const { width: w, height: h } = tone;
   const alpha: Field = { width: w, height: h, data: Float32Array.from({ length: w * h }, (_, p) => tone.data[p * 4 + 3] / 255) };
   const d16 = read16(pass("depth"));
@@ -41,13 +41,6 @@ export function load(id: string): Fields {
   // Metres from the camera; where the render is empty, the far plane.
   const depth: Field = { width: w, height: h, data: Float32Array.from({ length: w * h }, (_, p) => (d16.data[p * 4 + 3] > 0.5 ? far - d16.data[p * 4] * (far - near) : far)) };
   const normal = [0, 1, 2].map((c) => ({ width: w, height: h, data: Float32Array.from({ length: w * h }, (_, p) => n16.data[p * 4 + c] * 2 - 1) }));
-  // beauty.png carries no alpha; it shares the tone render's camera, so it takes that opacity.
-  const beauty: Raster = { width: w, height: h, data: new Uint8Array(w * h * 4) };
-  const stride = beautyRgb.data.length / (w * h);
-  for (let p = 0; p < w * h; p++) {
-    for (let c = 0; c < 3; c++) beauty.data[p * 4 + c] = beautyRgb.data[p * stride + c];
-    beauty.data[p * 4 + 3] = tone.data[p * 4 + 3];
-  }
   // The figure's box, with air, scaled so its long side is LONG.
   let [bx0, by0, bx1, by1] = [w, h, 0, 0];
   alpha.data.forEach((a, p) => {

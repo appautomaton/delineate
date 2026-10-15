@@ -12,7 +12,8 @@ JSON keys:
   lens      focal length in mm
   key_side  -1 keys from the left, +1 from the right: the side the subject faces
   samples   Cycles samples for the beauty and tone renders
-Final writes beauty.png, tone.png, depth.png and normal.png (both 16-bit), and view.json.
+Final writes beauty.png (the object in ivory, on nothing), tone.png, depth.png and normal.png (both 16-bit), and
+view.json.
 """
 import bpy, sys, json, math, os
 import numpy as np
@@ -207,19 +208,20 @@ def measure(name, view, channel_fn):
 def srgb_to_lin(v):
     return np.where(v <= 0.04045, v / 12.92, ((v + 0.055) / 1.055) ** 2.4)
 
-# 1. Marble beauty.
-m = bpy.data.materials.new("marble"); m.use_nodes = True
+# 1. Beauty: the scan itself, cast in warm ivory plaster and cut out on nothing, as a photograph of the object
+# would show it: a soft key, a warm fill from the room, a faint rim; the ground transparent.
+m = bpy.data.materials.new("ivory"); m.use_nodes = True
 b = m.node_tree.nodes["Principled BSDF"]
-b.inputs["Base Color"].default_value = (0.70, 0.67, 0.62, 1)
-b.inputs["Roughness"].default_value = 0.32
-b.inputs["Subsurface Weight"].default_value = 0.15
-b.inputs["Subsurface Radius"].default_value = (0.06, 0.04, 0.03)
+b.inputs["Base Color"].default_value = (0.70, 0.59, 0.42, 1)
+b.inputs["Roughness"].default_value = 0.45
+b.inputs["Subsurface Weight"].default_value = 0.2
+b.inputs["Subsurface Radius"].default_value = (0.08, 0.05, 0.03)
 b.inputs["Subsurface Scale"].default_value = 0.02
 set_material(m)
-clear_lights(); world((0.30, 0.30, 0.31), 0.25)
-area("key", 380, 2.5, key_dir); area("fill", 70, 4.0, fill_dir); area("rim", 260, 1.5, rim_dir)
+clear_lights(); world((0.92, 0.87, 0.80), 0.10)
+area("key", 520, 3.0, key_dir); area("fill", 55, 5.0, fill_dir); area("rim", 120, 1.5, rim_dir)
 scene.cycles.samples = cfg.get("samples", 160)
-render("beauty", "AgX", transparent=False)
+render("beauty", "AgX")
 
 # 2. Tone: diffuse grey, one key, soft fill from the world.
 t = bpy.data.materials.new("tone"); t.use_nodes = True

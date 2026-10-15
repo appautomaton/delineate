@@ -1,19 +1,24 @@
-// Line screen on navy: the engraving's engine turned upright. Straight vertical cream lines, each
-// as wide as the light asks (matched in linear light between the navy and the cream), so the figure
-// reads by the lines' width alone; behind it, a fine guilloché of concentric circles in a navy a
-// shade lighter, stopped short of the figure, as on a banknote.
+// Line screen: the engraving's engine turned upright. Straight vertical cream lines, each as wide as
+// the light asks (matched in linear light between the ground and the cream), so the figure reads by
+// the lines' width alone; behind it, a fine guilloché a shade lighter than the ground, stopped short
+// of the figure, as on a banknote: circles centred well below the frame, so only their arcs cross it
+// and no bullseye lands in a gap of the figure.
+//
+// Only the cream is drawn: the ground is the card's, one of the GROUNDS, all of one lightness, so
+// the lines are matched to the navy and serve on each. Where the guilloché stops at the figure, and
+// where the lines break to draw a feature, the ground shows through a mask.
 //
 // The engine lays level lines and breaks them along x; an upright family is laid in the transposed
 // frame, where it is level, and turned back.
 import { ink, inked, luminance, over, rgb, sample, shapes, type Box, type Field } from "../../portraits/pieces/wavy-line-engraving/engrave.ts";
-import { HANDS } from "../motifs.js";
+import { GROUNDS } from "../motifs.js";
 import { reframe, type Fields } from "./fields.ts";
 import { asRaster, light, occlusion } from "./light.ts";
 import { findLines, strokes } from "./lines.ts";
 
-const NAVY = HANDS.screen.ground;
+const NAVY = GROUNDS.navy;
 const CREAM = "#EFE3C8";
-const GROUND = "#34489F"; // the guilloché's navy, a shade lighter
+const RINGS = 0.14; // the guilloché's cream, as a share over the ground: a shade lighter
 const SPACING = 3.2;
 const RING = 4.8; // the guilloché's pitch
 const FULLEST = 0.55; // the most cream a line may take: lights stay lines
@@ -62,12 +67,12 @@ export function screen(fields: Fields, title: string): string {
 
   // The figure's outline, for the ground to stop at.
   const outline = shapes(over([0, 0, W, H], 1, (x, y) => sample(alpha, x, y) - 0.5), 1, 0.3, 20);
-  const [cx, cy] = [W / 2, H * 0.47];
-  const reach = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy));
+  const [cx, cy] = [W / 2, H * 1.5];
+  const reach = Math.hypot(cx, cy);
   const rings: string[] = [];
-  for (let r = RING; r < reach; r += RING) rings.push(`<circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}"/>`);
+  for (let r = Math.ceil((cy - H) / RING) * RING; r < reach; r += RING) rings.push(`<circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}"/>`);
 
-  // Gaps of navy through the cream where one form passes in front of another, and along the
+  // Gaps of ground through the cream where one form passes in front of another, and along the
   // features (a band's edge, an eye, the gaps between fingers): the screen's own way of drawing a line.
   const gaps = strokes(findLines(fields).filter((l) => l.kind !== "silhouette"), (_f, s, kind) => {
     if (kind === "occlusion") return 1.4 + 1.2 * s;
@@ -76,11 +81,10 @@ export function screen(fields: Fields, title: string): string {
     return 0.8;
   });
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-<title>${title}, a line screen on navy</title>
-<rect width="${W}" height="${H}" fill="${NAVY}"/>
-<g fill="none" stroke="${GROUND}" stroke-width="1.3">${rings.join("")}</g>
-<path fill="${NAVY}" stroke="${NAVY}" stroke-width="5" stroke-linejoin="round" d="${outline}"/>
-<path fill="${CREAM}" transform="scale(${1 / K})" d="${lines}"/>
-<path fill="${NAVY}" transform="scale(.25)" d="${gaps}"/>
+<title>${title}, a line screen</title>
+<mask id="around" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fff"/><path d="${outline}" stroke="#000" stroke-width="5" stroke-linejoin="round"/></mask>
+<mask id="cut" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fff"/><path transform="scale(.25)" d="${gaps}"/></mask>
+<g mask="url(#around)" fill="none" stroke="${CREAM}" stroke-opacity="${RINGS}" stroke-width="1.3">${rings.join("")}</g>
+<g mask="url(#cut)"><path fill="${CREAM}" transform="scale(${1 / K})" d="${lines}"/></g>
 </svg>`;
 }
