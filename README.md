@@ -58,6 +58,8 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run look` | Takes screenshots of every garden layout, by day and by night. |
 | `npm run footers` | Writes the Footers demo to `footers/automaton.html`. Add `?world=crayon`, or another world, to choose one. |
 | `npm run bench` | Serves the portrait bench at http://localhost:5288. |
+| `npm run collage:render -- <motif>` | Renders a Collage motif's sculpture scan in Blender into the passes its drawings are made from. |
+| `npm run collage:draw` | Draws every Collage motif in each of its hands into `collage/art/`. |
 | `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, and Paprika Girl's separation page that its sections open. |
 | `npm run check` | Type-checks every part of the repository. |
 
@@ -65,8 +67,9 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 
 Images and video stay out of git. The pictures the portraits are drawn from, and the region maps cut
 from them, are kept locally. A fresh clone can read every line of the portraits' code but cannot
-rebuild them, and `npm run site` needs a built portrait. The Garden and the Footers build from the
-repository alone.
+rebuild them, and `npm run site` needs a built portrait. Collage's sculpture scans and their renders
+are kept locally too; each motif in `collage/motifs.js` names where its scan is published, and
+rendering one needs Blender. The Garden and the Footers build from the repository alone.
 
 ## Layout
 

@@ -7,7 +7,7 @@
   "scripts": {
     "draw": "node garden/draw/draw.ts",
     "precheck": "npm run draw",
-    "check": "tsc -p garden && tsc -p garden/tsconfig.node.json && tsc -p portraits && tsc -p footers && tsc -p site && tsc -p tools",
+    "check": "tsc -p garden && tsc -p garden/tsconfig.node.json && tsc -p portraits && tsc -p footers && tsc -p collage && tsc -p site && tsc -p tools",
     "predev": "npm run draw",
     "dev": "node garden/dev.ts",
     "build": "npm run check && node garden/build.ts",
@@ -25,6 +25,8 @@
     "memories-girl": "node portraits/pieces/memories-girl/build.ts",
     "wavy-line-engraving": "node portraits/pieces/wavy-line-engraving/build.ts",
     "footers": "node footers/build.ts footers/automaton.html",
+    "collage:render": "node collage/render.ts",
+    "collage:draw": "node collage/draw/draw.ts",
     "presite": "npm run draw",
     "site": "node site/build.ts"
   },
