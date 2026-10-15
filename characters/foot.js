@@ -2,10 +2,11 @@
 // grid of cells, each a pixel of a dithered picture: its color one of three tones of its material, laid as a soft
 // tile, and on it a letter of the name or one of the face's trees, a tone beyond the tile. At this size the letters
 // are grain and the tiles carry the color. Four scenes take turns, a gorge, a valley, dunes, and a cove (scenes.js
-// draws them): each holds for a while, then dissolves into the next, cell by cell in the order of an ordered
-// dither leaning upward, so the change is made of the same stuff as the pictures and the new scene settles from
-// the foot as the old lifts away. As the foot comes into view the planes rise into place a row at a time, the
-// nearest the furthest; over the still scene, its air moves at twelve frames a second.
+// draws them): each holds a while, then gives way to the next as a stage changes its set. The old scene's planes
+// sink out of the frame, the farthest first, behind what stands before them; the new scene's rise into place, the
+// nearest first, the distance coming up behind, settling a row at a time; and the sun, or the moon, crosses from
+// its place in the one to its place in the other. As the foot comes into view the planes rise into place the same
+// way, the nearest the furthest; over the still scene, its air moves at twelve frames a second.
 //
 //   import { mountFoot } from "./foot.js";
 //   mountFoot(canvas, { clear: [...words] });
@@ -18,10 +19,15 @@
 import { SCENES, across } from "./scenes.js";
 
 const FPS = 12;
+const TURN_FPS = 30; // while scenes turn; at twelve a plane would jump half a dozen rows a frame
 const REST = 20000; // ms without input before the foot holds still, as the field does
-const HOLD = 11000; // ms a scene holds, long enough to look at
-const TURN = 1600; // ms a scene takes to dissolve into the next, eased at both ends
-const RISING = 0.35; // how far the dissolve leans upward: the new scene settles from the foot, the old lifts off the top
+const HOLD = 2000; // ms a scene holds between turns
+const TURN = 2000; // ms a scene takes to give way to the next
+// A turn's choreography, in shares of it. Each plane moves over MOVE. The old scene's start within the first
+// STAGGER, farthest first; the new scene's from ENTER, nearest first; so the two overlap and the land is never bare.
+const MOVE = 0.4, STAGGER = 0.2, ENTER = 0.4;
+const ARC = 0.35; // how far the sun or the moon rises above the straight way between its places, in the scenes' units
+const RISING = 0.35; // how far a repaint leans upward: a new light settles from the foot
 const BUDGET = 7; // ms a slice of composing may take, or a frame, drawing and all; the rest waits for the next
 const TILE = 0.64; // how strongly a cell's own color is laid under its letter
 const ORB = 0.4; // the sun's and the moon's radius, in the scenes' units
@@ -32,7 +38,7 @@ const H = 9; // the frame's height in the scenes' units
 const NONE = 0xffff; // a cell whose drawing is not known, so it is drawn whatever it should show
 
 // Ordered dither thresholds, (v + 0.5) / n²: four by four for a cell's tone, eight by eight for the order in which
-// cells change, sixty-four steps fine.
+// cells are repainted, sixty-four steps fine.
 const bayer = (x, y, n) => (n === 1 ? 0 : 4 * bayer(x % (n / 2), y % (n / 2), n / 2) + [[0, 2], [3, 1]][(y / (n / 2)) | 0][(x / (n / 2)) | 0]);
 const BAYER4 = Float32Array.from({ length: 16 }, (_, k) => (bayer(k & 3, k >> 2, 4) + 0.5) / 16);
 const BAYER8 = Float32Array.from({ length: 64 }, (_, k) => (bayer(k & 7, k >> 3, 8) + 0.5) / 64);
@@ -70,10 +76,11 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
   // The layout. Cells are measured in whole device pixels, so tiles meet edge to edge with no seam and each look
   // is copied from the atlas pixel for pixel.
   let cols = 0, rows = 0, cw = 1, ch = 1, dpr = 1, size = 8, scale = 1, W = 16;
-  let drawn = new Uint16Array(0), order = new Uint32Array(0), turns = new Float32Array(0), cleared = new Uint8Array(0);
-  let pictures = [], jobs = [], pumping = false, cursor = 0, dirty = true;
+  let drawn = new Uint16Array(0), order = new Uint32Array(0), cleared = new Uint8Array(0), heaven = new Uint16Array(0);
+  let pictures = [], stages = [], jobs = [], pumping = false, cursor = 0, dirty = true;
   let atlas = null, a = null, inked = new Uint8Array(0);
   let rise = 0, seen = false, last = 0, stirred = performance.now(), watched = 0, airTime = 0;
+  let behind = false, layered = false, fast = false;
   let light = document.documentElement.dataset.theme === "night" ? "night" : "day";
 
   function fit() {
@@ -90,12 +97,12 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     W = box.width / scale;
     const n = cols * rows;
     drawn = new Uint16Array(n); // the still canvas starts empty, as every cell of the sky is
-    // When each cell turns to the next scene, as a share of the dissolve: by the ordered dither, leaning upward.
-    turns = new Float32Array(n);
-    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) turns[j * cols + i] = BAYER8[(j & 7) * 8 + (i & 7)] * (1 - RISING) + RISING * (1 - j / rows);
-    // Cells are visited in the order they turn, so work spread over frames spreads as the dissolve does: counted
-    // into a thousand steps of turning, which is finer than any frame of the dissolve and costs one pass.
-    const STEPS = 1024, counts = new Uint32Array(STEPS + 1), step = (k) => Math.min(STEPS - 1, (turns[k] * STEPS) | 0);
+    heaven = new Uint16Array(n);
+    // The order in which cells are repainted, as when the light changes: by the ordered dither, leaning upward, so
+    // the new settles from the foot. Counted into a thousand steps, finer than the eye follows, in one pass.
+    const due = new Float32Array(n);
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) due[j * cols + i] = BAYER8[(j & 7) * 8 + (i & 7)] * (1 - RISING) + RISING * (1 - j / rows);
+    const STEPS = 1024, counts = new Uint32Array(STEPS + 1), step = (k) => Math.min(STEPS - 1, (due[k] * STEPS) | 0);
     for (let k = 0; k < n; k++) counts[step(k) + 1]++;
     for (let q = 1; q <= STEPS; q++) counts[q] += counts[q - 1];
     order = new Uint32Array(n);
@@ -112,8 +119,10 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     atlas = null;
     inked = new Uint8Array(0);
     pictures = [];
+    stages = [];
     jobs = [];
     dirty = true;
+    behind = false;
     prepare(now().scene);
   }
 
@@ -122,24 +131,28 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
   const frameY = (j) => ((j + 0.5) * ch) / dpr / scale;
 
   // A scene's picture for this layout: how it lies across the frame; for each plane, the look of every cell at
-  // rest, and how many rows the plane sits lower before it has risen; and the sky, by day and by night. Composed a
-  // row at a time, between frames.
+  // rest, the cells it covers, and how many rows it sits lower before it has risen; where its sun and moon stand;
+  // and its sky, by day and by night. Composed a row at a time, between frames.
   function prepare(n) {
     if (pictures[n]) return;
     pictures[n] = { ready: false };
-    jobs.push(compose(n, pictures[n]));
+    run(compose(n, pictures[n]));
+  }
+  function run(job) {
+    jobs.push(job);
     if (!pumping) { pumping = true; setTimeout(pump, 0); }
   }
-  // Composing goes a row at a time, and stops before a row that might not fit in the slice; until a row has been
-  // timed, one is taken to cost two milliseconds.
+  // Composing goes a row at a time, at least one a slice, and stops before a row that might not fit in it; until
+  // a row has been timed, one is taken to cost two milliseconds.
   let step = 2;
   function pump() {
     const end = performance.now() + BUDGET - 0.5;
-    for (let now = performance.now(); jobs.length && now + step < end; ) {
+    for (let now = performance.now(); jobs.length; ) {
       if (jobs[0].next().done) { jobs.shift(); dirty = true; }
       const then = performance.now();
       step = Math.max(step * 0.9, then - now);
       now = then;
+      if (now + step > end) break;
     }
     if (jobs.length) setTimeout(pump, 0);
     else pumping = false;
@@ -147,6 +160,7 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
   function* compose(n, picture) {
     const scene = SCENES[n], planes = scene.planes, lay = across(scene, W);
     const out = planes.map(() => new Uint16Array(cols * rows));
+    const box = planes.map(() => [cols, -1, rows, -1]); // first and last column, first and last row
     const point = { x: 0, k: 1, row: ch / dpr / scale };
     for (let j = 0; j < rows; j++) {
       const Y = frameY(j);
@@ -156,15 +170,24 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
         const X = lay.to(point.x);
         for (let p = 0; p < planes.length; p++) {
           const cell = planes[p].at(X, Y, point);
-          if (cell) out[p][j * cols + i] = lookOf(n, cell, i, j);
+          if (!cell) continue;
+          out[p][j * cols + i] = lookOf(n, cell, i, j);
+          const b = box[p];
+          if (i < b[0]) b[0] = i;
+          if (i > b[1]) b[1] = i;
+          if (j < b[2]) b[2] = j;
+          b[3] = j;
         }
       }
       yield;
     }
+    const place = ([at, Y]) => [lay.from(at), Y];
     picture.lay = lay;
     picture.planes = out;
+    picture.box = box.map((b) => (b[1] < 0 ? null : b));
     picture.lift = planes.map((p) => Math.round((p.rise * scale * dpr) / ch));
-    picture.sky = { day: sky(n, "day", lay), night: sky(n, "night", lay) };
+    picture.orb = { day: place(scene.sun), night: place(scene.moon) };
+    picture.sky = { day: sky(n, "day", picture.orb.day), night: sky(n, "night", picture.orb.night) };
     yield;
     picture.ready = true;
   }
@@ -178,10 +201,10 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     return look(n, cell.m, level, Math.round(clamp01(cell.haze) * 8), glyph, true);
   }
 
-  // The sky: by day the sun, a disc of cells with a glow of points thinning round it; by night the moon, and stars.
-  function sky(n, hour, lay) {
-    const scene = SCENES[n], out = new Uint16Array(cols * rows);
-    const [at, OY] = hour === "day" ? scene.sun : scene.moon, OX = lay.from(at);
+  // The sky with the sun or the moon at [OX, OY]: by day a disc of cells with a glow of points thinning round it;
+  // by night the moon, and stars. The screen of cells stays put, so an orb that moves moves under it.
+  function sky(n, hour, [OX, OY], out = new Uint16Array(cols * rows)) {
+    out.fill(0);
     for (let j = 0; j < rows; j++) {
       const Y = frameY(j);
       if (Y > 6) break;
@@ -246,18 +269,81 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     a.restore();
     inked[id] = 1;
   }
+  const copy = (ctx, id, x, y) => ctx.drawImage(atlas, (id % 64) * cw, ((id / 64) | 0) * ch, cw, ch, x, y, cw, ch);
 
-  // Where the turn of scenes stands: the scene shown, the next, and how far the dissolve into it has gone.
+  // The layers: each plane of the scene shown and of the next, drawn once into a canvas of its own, cropped to the
+  // cells it covers, so a turn moves planes whole where drawing them cell by cell would take a frame and more. Each
+  // cell is laid on the paper, so a nearer plane hides what is behind it rather than letting its tile through.
+  // Only the two scenes in play keep theirs; a new light redraws them in place, a row at a time. Each row is drawn
+  // to a point at once, so the canvas does its work in the row's slice, not all of it in the turn's first frame.
+  const dot = new OffscreenCanvas(1, 1).getContext("2d");
+  function stage(n) {
+    if (stages[n] || !pictures[n]?.ready) return;
+    stages[n] = { ready: false, layers: null, gen: 0 };
+    redraw(n);
+  }
+  function redraw(n) {
+    const st = stages[n];
+    run(layer(n, st, ++st.gen));
+  }
+  function* layer(n, st, gen) {
+    const { box, planes } = pictures[n];
+    st.layers ??= box.map((b) => b && new OffscreenCanvas((b[1] - b[0] + 1) * cw, (b[3] - b[2] + 1) * ch).getContext("2d"));
+    for (let p = 0; p < box.length; p++) {
+      const b = box[p], l = st.layers[p];
+      if (!b) continue;
+      for (let j = b[2]; j <= b[3]; j++) {
+        if (st.gen !== gen || stages[n] !== st) return;
+        l.fillStyle = PAPER[light];
+        for (let i = b[0]; i <= b[1]; i++) {
+          const id = planes[p][j * cols + i];
+          if (!id) continue;
+          const x = (i - b[0]) * cw, y = (j - b[2]) * ch;
+          l.fillRect(x, y, cw, ch);
+          ink(id);
+          copy(l, id, x, y);
+        }
+        dot.drawImage(l.canvas, 0, 0, 1, 1, 0, 0, 1, 1);
+        yield;
+      }
+    }
+    st.ready = true;
+  }
+  function keep(...ns) {
+    for (let n = 0; n < stages.length; n++) if (stages[n] && !ns.includes(n)) stages[n] = null;
+  }
+
+  // Where the turn of scenes stands: the scene shown, the next, and how far the turn into it has gone, 0 to 1,
+  // or 0 while the scene holds.
   function now() {
     const at = Math.floor(watched / (HOLD + TURN)), phase = watched - at * (HOLD + TURN);
-    return { scene: at % SCENES.length, next: (at + 1) % SCENES.length, turn: phase > HOLD ? ease((phase - HOLD) / TURN) : 0 };
+    return { scene: at % SCENES.length, next: (at + 1) % SCENES.length, turn: phase > HOLD ? (phase - HOLD) / TURN : 0 };
+  }
+  // The scene the still canvas is being brought to: in a turn, the one coming.
+  const target = (state) => (state.turn > 0 ? state.next : state.scene);
+
+  // How many rows each plane of a picture sits below its place: at this rise, and in a turn, how far it has sunk
+  // (going: farthest first, falling away) or has yet to rise (coming: nearest first, settling). Each goes just far
+  // enough that its top row is below the frame's foot, but a far plane never runs ahead of the planes before it, so
+  // the parts of it they hide, drawn roughly or not at all, stay hidden.
+  function lifts(picture) {
+    return picture.lift.map((l) => Math.round((1 - rise) * l));
+  }
+  function offsets(picture, u, going) {
+    const off = lifts(picture), P = off.length;
+    for (let p = P - 1, ahead = 0; p >= 0; p--) {
+      const b = picture.box[p];
+      if (!b) continue;
+      const share = P > 1 ? p / (P - 1) : 0, D = rows - b[2];
+      const t = clamp01((u - (going ? STAGGER * share : ENTER + STAGGER * (1 - share))) / MOVE);
+      ahead = Math.max(ahead, Math.round(going ? D * t * t : D * (1 - t) ** 3));
+      off[p] += ahead;
+    }
+    return off;
   }
 
   // What a cell of a picture shows at this rise: the nearest plane that covers it, each plane lower by the rows it
   // has yet to rise; failing all, the sky.
-  function lifts(picture) {
-    return picture.lift.map((l) => Math.round((1 - rise) * l));
-  }
   function shows(picture, lift, k, i, j) {
     const planes = picture.planes;
     for (let p = planes.length - 1; p >= 0; p--) {
@@ -269,24 +355,25 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     return picture.sky[light][k];
   }
 
-  // Bring the still canvas to what each cell should show, drawing only the cells that change, in the order cells
-  // turn, until the frame's budget is spent; the rest waits for the next frame. Returns whether anything was drawn.
+  // Bring the still canvas to what each cell of the target scene should show at rest, drawing only the cells that
+  // change, in the repaint's order, until the frame's budget is spent; the rest waits for the next frame. Returns
+  // whether anything was drawn.
   function paint(state) {
-    const A = pictures[state.scene];
+    const A = pictures[target(state)];
     if (!A?.ready) return false;
-    const B = state.turn > 0 ? pictures[state.next] : null;
-    // Drawing leaves a frame room to lay the still scene and its air on the canvas after it.
-    const la = lifts(A), lb = B && lifts(B), n = cols * rows, end = performance.now() + BUDGET - 2.5;
+    // Drawing leaves a frame room to lay the scene and its air on the canvas after it; in a turn, when the still
+    // canvas is hidden and has the turn to catch up, it takes less.
+    const la = lifts(A), n = cols * rows, end = performance.now() + (state.turn > 0 ? 1 : BUDGET - 2.5);
     let changed = false, c = 0;
     for (; c < n; c++) {
       if ((c & 255) === 0 && c && performance.now() > end) break;
       const k = order[(cursor + c) % n], i = k % cols, j = (k / cols) | 0;
-      const id = B && turns[k] < state.turn ? shows(B, lb, k, i, j) : shows(A, la, k, i, j);
+      const id = shows(A, la, k, i, j);
       if (id === drawn[k]) continue;
       s.clearRect(i * cw, j * ch, cw, ch);
       if (id) {
         ink(id);
-        s.drawImage(atlas, (id % 64) * cw, ((id / 64) | 0) * ch, cw, ch, i * cw, j * ch, cw, ch);
+        copy(s, id, i * cw, j * ch);
       }
       drawn[k] = id;
       changed = true;
@@ -296,49 +383,100 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     return changed;
   }
 
-  // Each frame: the still scene, then its air, over the cells that are the scene's own. While nothing but the air
-  // has changed, only the air's reach is laid again.
+  // The cells a scene's air may reach.
+  function reachOf(n) {
+    const [x0, x1, y0, y1] = SCENES[n].air.box, lay = pictures[n].lay;
+    return [
+      Math.max(0, Math.floor((lay.from(x0) * scale * dpr) / cw)), Math.min(cols - 1, Math.ceil((lay.from(x1) * scale * dpr) / cw)),
+      Math.max(0, Math.floor((y0 * scale * dpr) / ch)), Math.min(rows - 1, Math.ceil((y1 * scale * dpr) / ch)),
+    ];
+  }
+  // A scene's air over the cells of its reach, where under(i, j) gives the material below, or null for none of its own.
+  function breathe(n, [i0, i1, j0, j1], under) {
+    const air = SCENES[n].air, lay = pictures[n].lay;
+    const orb = light === "day" ? SCENES[n].sun : SCENES[n].moon;
+    const ids = air.shade ? [look(n, "air", 1, 0, "", true)] : air.glyphs.map((glyph) => look(n, "air", 1, 0, glyph, false));
+    for (let j = j0; j <= j1; j++) {
+      const Y = frameY(j);
+      for (let i = i0; i <= i1; i++) {
+        const m = under(i, j);
+        if (m === null) continue;
+        const v = air.at(lay.to(frameX(i)), Y, airTime, m, orb);
+        if (v <= 0) continue;
+        if (air.shade && v < BAYER8[(j & 7) * 8 + (i & 7)]) continue;
+        const id = air.shade ? ids[0] : ids[Math.min(ids.length - 1, Math.floor(v * ids.length))];
+        ink(id);
+        g.globalAlpha = air.shade ? air.alpha : air.alpha * v;
+        copy(g, id, i * cw, j * ch);
+      }
+    }
+    g.globalAlpha = 1;
+  }
+
+  // A frame while the scene holds: the still scene, then its air. While nothing but the air has changed, only the
+  // air's reach is laid again.
   function present(state, whole) {
-    const shown = (state.turn > 0 ? [state.scene, state.next] : [state.scene]).filter((n) => SCENES[n].air && pictures[n]?.lay);
-    const reach = shown.map((n) => {
-      const [x0, x1, y0, y1] = SCENES[n].air.box, lay = pictures[n].lay;
-      return [
-        Math.max(0, Math.floor((lay.from(x0) * scale * dpr) / cw)), Math.min(cols - 1, Math.ceil((lay.from(x1) * scale * dpr) / cw)),
-        Math.max(0, Math.floor((y0 * scale * dpr) / ch)), Math.min(rows - 1, Math.ceil((y1 * scale * dpr) / ch)),
-      ];
-    });
+    const n = state.scene, reach = SCENES[n].air && pictures[n]?.lay ? reachOf(n) : null;
     let [x, y, w, h] = [0, 0, canvas.width, canvas.height];
-    if (!whole && reach.length) {
-      x = Math.min(...reach.map((r) => r[0])) * cw;
-      y = Math.min(...reach.map((r) => r[2])) * ch;
-      w = Math.min(canvas.width, (Math.max(...reach.map((r) => r[1])) + 1) * cw) - x;
-      h = Math.min(canvas.height, (Math.max(...reach.map((r) => r[3])) + 1) * ch) - y;
+    if (!whole && reach) {
+      [x, y] = [reach[0] * cw, reach[2] * ch];
+      w = Math.min(canvas.width, (reach[1] + 1) * cw) - x;
+      h = Math.min(canvas.height, (reach[3] + 1) * ch) - y;
     }
     g.globalAlpha = 1;
     g.clearRect(x, y, w, h);
     g.drawImage(still, x, y, w, h, x, y, w, h);
-    shown.forEach((n, q) => {
-      const air = SCENES[n].air, lay = pictures[n].lay;
-      const orb = light === "day" ? SCENES[n].sun : SCENES[n].moon;
-      const ids = air.shade ? [look(n, "air", 1, 0, "", true)] : air.glyphs.map((glyph) => look(n, "air", 1, 0, glyph, false));
-      const [i0, i1, j0, j1] = reach[q];
-      for (let j = j0; j <= j1; j++) {
-        const Y = frameY(j);
-        for (let i = i0; i <= i1; i++) {
-          const k = j * cols + i;
-          // In a turn, each cell's air is that of the scene it shows.
-          if (state.turn > 0 && (turns[k] < state.turn) !== (n === state.next)) continue;
-          const v = air.at(lay.to(frameX(i)), Y, airTime, looks[drawn[k]]?.m ?? "", orb);
-          if (v <= 0) continue;
-          if (air.shade && v < BAYER8[(j & 7) * 8 + (i & 7)]) continue;
-          const id = air.shade ? ids[0] : ids[Math.min(ids.length - 1, Math.floor(v * ids.length))];
-          ink(id);
-          g.globalAlpha = air.shade ? air.alpha : air.alpha * v;
-          g.drawImage(atlas, (id % 64) * cw, ((id / 64) | 0) * ch, cw, ch, i * cw, j * ch, cw, ch);
-        }
-      }
+    if (reach) breathe(n, reach, (i, j) => looks[drawn[j * cols + i]]?.m ?? "");
+  }
+
+  // A frame drawn from the layers, in a turn or until the still canvas has caught up with it: the sky with its orb
+  // where it stands, then each scene's planes, far to near, at their rows, the coming scene in front of the going;
+  // then each scene's air, only over its own land at rest.
+  function shift(state) {
+    const u = state.turn, going = u > 0 ? state.scene : -1, coming = target(state);
+    const shown = (going < 0 ? [coming] : [going, coming]).map((n) => {
+      const picture = pictures[n];
+      return { n, picture, lift: lifts(picture), off: u > 0 ? offsets(picture, u, n === going) : lifts(picture) };
     });
+    // The sun or the moon crosses from the one place to the other, eased, a little above the straight way.
+    let orb = pictures[coming].orb[light];
+    if (going >= 0) {
+      const from = pictures[going].orb[light], e = ease(u);
+      orb = [from[0] + (orb[0] - from[0]) * e, from[1] + (orb[1] - from[1]) * e - ARC * Math.sin(Math.PI * e)];
+    }
     g.globalAlpha = 1;
+    g.clearRect(0, 0, canvas.width, canvas.height);
+    sky(coming, light, orb, heaven);
+    for (let k = 0; k < heaven.length; k++) {
+      const id = heaven[k];
+      if (!id) continue;
+      ink(id);
+      copy(g, id, (k % cols) * cw, ((k / cols) | 0) * ch);
+    }
+    for (const { n, picture, off } of shown) {
+      const layers = stages[n].layers;
+      picture.box.forEach((b, p) => {
+        if (b && b[2] + off[p] < rows) g.drawImage(layers[p].canvas, b[0] * cw, (b[2] + off[p]) * ch);
+      });
+    }
+    // The sky is the going scene's until its farthest plane moves, and the coming scene's once its own has settled.
+    const [first, last] = [shown[0], shown[shown.length - 1]];
+    const heavens = first.off[0] === first.lift[0] ? first.n : last.off[0] === last.lift[0] ? last.n : -1;
+    for (const { n } of shown) {
+      if (!SCENES[n].air) continue;
+      breathe(n, reachOf(n), (i, j) => {
+        for (let q = shown.length - 1; q >= 0; q--) {
+          const { picture, off, lift } = shown[q], planes = picture.planes;
+          for (let p = planes.length - 1; p >= 0; p--) {
+            const r = j - off[p];
+            if (r < 0) continue;
+            const id = planes[p][r * cols + i];
+            if (id) return shown[q].n === n && off[p] === lift[p] ? looks[id].m : null;
+          }
+        }
+        return heavens === n ? "" : null;
+      });
+    }
   }
 
   // How far the foot has come into view: its planes have risen fully once it is wholly on screen, or fills it.
@@ -351,7 +489,7 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
   function tick(time) {
     if (!seen) return;
     requestAnimationFrame(tick);
-    if (time - last < 1000 / FPS) return;
+    if (time - last < 1000 / (fast ? TURN_FPS : FPS)) return;
     const dt = Math.min(250, time - last);
     last = time;
     measure();
@@ -360,24 +498,41 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     const moving = !calm.matches && (time - stirred < REST || state.turn > 0);
     if (moving && pictures[state.scene]?.ready) {
       airTime += dt / 1000;
-      // A scene holds until the next is composed, however long that takes.
+      // A scene holds until the next is composed and both have their layers, however long that takes.
       const at = Math.floor(watched / (HOLD + TURN)) * (HOLD + TURN);
-      watched = pictures[state.next]?.ready ? watched + dt : Math.min(watched + dt, at + HOLD);
+      const set = pictures[state.next]?.ready && stages[state.scene]?.ready && stages[state.next]?.ready;
+      watched = set ? watched + dt : Math.min(watched + dt, at + HOLD);
       const after = now();
-      if (after.scene !== state.scene || after.turn !== state.turn) dirty = true;
+      // The still canvas is brought to the scene that will hold next; until it has caught up, frames come from the
+      // layers.
+      if (target(after) !== target(state)) { dirty = true; behind = true; }
       state = after;
     }
     prepare(state.scene);
-    if (!calm.matches) prepare(state.next);
+    if (!calm.matches) {
+      prepare(state.next);
+      stage(state.scene);
+      stage(state.next);
+      keep(state.scene, state.next);
+    }
     const painted = dirty && paint(state);
-    if (painted || moving) present(state, painted);
+    if (behind && state.turn === 0 && !dirty) behind = false;
+    const was = layered;
+    layered = (state.turn > 0 || behind) && [state.scene, target(state)].every((n) => stages[n]?.ready);
+    if (layered) {
+      shift(state);
+      // The still canvas, hidden meanwhile, does its drawing now, a frame's worth at a time, not all of it when shown.
+      if (painted) dot.drawImage(still, 0, 0, 1, 1, 0, 0, 1, 1);
+    } else if (painted || moving || was) present(state, painted || was);
+    fast = state.turn > 0;
   }
 
   const wake = () => (stirred = performance.now());
   for (const type of ["pointermove", "scroll", "keydown", "touchstart", "wheel"]) addEventListener(type, wake, { passive: true });
   const view = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) requestAnimationFrame(tick); });
   const resize = new ResizeObserver(() => fit());
-  // By night the same scene, repainted: every look is drawn again in the new light as its cells come round.
+  // By night the same scene, repainted: every look is drawn again in the new light as its cells come round, and
+  // the layers in play are drawn again in place.
   const theme = new MutationObserver(() => {
     const next = document.documentElement.dataset.theme === "night" ? "night" : "day";
     if (next === light) return;
@@ -385,6 +540,7 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     inked.fill(0);
     drawn.fill(NONE);
     dirty = true;
+    for (let n = 0; n < stages.length; n++) if (stages[n]) redraw(n);
   });
   document.fonts.load(`400 12px ${font}`, RAMP.join("") + TREES.join("") + STAR + "+").then(() => {
     resize.observe(canvas);

@@ -48,10 +48,18 @@ air that moves over it.
   round clumps lit from where the sun stands; grass is tufts and blades; dunes split at their crests into a lit
   face and a slip face, the near sand combed into ripples that follow its swell, each a row or more of shadow
   and a lit crest; the sea runs deep to pale with rocks under it and a line of foam.
-- **The scenes take turns.** Each holds eleven seconds, then dissolves into the next over 1.6 seconds, eased:
-  each cell switches at its threshold in an eight by eight Bayer matrix, leaning upward, so the new scene settles
-  from the foot as the old lifts off the top. The change is made of the same stuff as the pictures, a dither, and
-  it never blends colors the inks do not hold. Only the cells that change are drawn.
+- **The scenes take turns.** Each holds two seconds, then gives way to the next over two, as a stage changes
+  its set: the old scene's planes sink out of the frame, farthest first, behind what stands before them, and the
+  new scene's rise into place, nearest first, the distance coming up behind, settling a row at a time; the two
+  overlap so the land is never bare. A far plane never runs ahead of the planes before it, so what they hide stays
+  hidden. The sun, or the moon, crosses from its place in the one
+  to its place in the other on a low arc, under a screen of cells that stays put. Each scene's air shows only
+  over its own land at rest. Planes move by whole rows and inks never blend.
+- **A turn moves layers, not cells.** Drawing a whole frame cell by cell takes about 20 ms on a wide screen, so
+  each plane of the scene shown and of the next is drawn once into a layer of its own, on the paper so it hides
+  what is behind it, and a turn lays the layers at their rows, thirty frames a second. The next scene's layers
+  are drawn while the scene holds, a row at a time; a turn waits for them. Meanwhile the hidden still canvas is
+  brought to the new scene, so the hold resumes from it.
 - **It rises a row at a time.** As the foot comes into view each plane rises into place by whole rows, the
   nearest the furthest, so the type never leaves its grid.
 - **The air moves.** Over a still copy of the scene, at twelve frames a second: mist through the gorge, cloud
