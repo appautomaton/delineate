@@ -19,7 +19,7 @@ import { TOOTH } from "../footers/crayon/hand.ts";
 import { fixed } from "../footers/lib/number.ts";
 import { fill } from "../footers/lib/template.ts";
 import { markup } from "./hero.ts";
-import { CARD, card } from "./card.ts";
+import { CARDS, SIZE, cardFile, renderCards, type Card } from "./card.ts";
 import { headline } from "./headline.ts";
 import { favicon, icons, marks } from "./icons.ts";
 import { planes } from "./portrait.ts";
@@ -71,10 +71,6 @@ const page = fill(
     FOOTER_KIT: kit(footer.parts),
     FOOT_TIME: fixed(drawingTime(...Object.values(foot)), 2),
     TOOTH,
-    SITE,
-    CARD: `${SITE}${CARD.file}`,
-    CARD_WIDTH: String(CARD.width * CARD.scale),
-    CARD_HEIGHT: String(CARD.height * CARD.scale),
     ...Object.fromEntries(Object.entries(icons()).map(([k, v]) => [`ICON_${k.toUpperCase()}`, v])),
     ...marks(),
     ...(({ lines, time }) => ({ HEADLINE_TIME: String(time), ...Object.fromEntries(lines.map((svg, k) => [`HEADLINE_${k}`, svg])) }))(headline()),
@@ -115,7 +111,30 @@ for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/i
   write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));
 }
 
-// The card a shared link shows, drawn from the page as built.
-await card(DIST);
+// Each page names the card a shared link to it shows, with its title, description and address in full; the
+// cards are drawn from the pages as built.
+const attr = (v: string) => v.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+function share(card: Card): void {
+  const path = `${card.page}index.html`, html = readFileSync(new URL(path, DIST), "utf8");
+  // A page's own title and description are written as markup already; a card's own are plain text.
+  const title = card.title ? attr(card.title) : (html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "delineate");
+  const description = card.description ? attr(card.description) : (html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "");
+  const tags = [
+    `<link rel="canonical" href="${SITE}${card.page}">`,
+    `<meta property="og:type" content="website">`,
+    `<meta property="og:site_name" content="delineate">`,
+    `<meta property="og:title" content="${title}">`,
+    `<meta property="og:description" content="${description}">`,
+    `<meta property="og:url" content="${SITE}${card.page}">`,
+    `<meta property="og:image" content="${SITE}${cardFile(card)}">`,
+    `<meta property="og:image:width" content="${SIZE.width * SIZE.scale}">`,
+    `<meta property="og:image:height" content="${SIZE.height * SIZE.scale}">`,
+    `<meta property="og:image:alt" content="${attr(card.alt)}">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
+  ];
+  write(path, html.replace("</head>", `${tags.join("\n")}\n</head>`));
+}
+CARDS.forEach(share);
+await renderCards(DIST);
 
-console.log(`wrote site/dist: index.html ${Math.floor(Buffer.byteLength(page) / 1024)} KB, the bouquet draws in ${heroTime}s, ${layers.length} portrait planes, and ${CARD.file}`);
+console.log(`wrote site/dist: index.html ${Math.floor(Buffer.byteLength(page) / 1024)} KB, the bouquet draws in ${heroTime}s, ${layers.length} portrait planes, and ${CARDS.length} cards`);
