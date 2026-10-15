@@ -19,11 +19,14 @@ import { TOOTH } from "../footers/crayon/hand.ts";
 import { fixed } from "../footers/lib/number.ts";
 import { fill } from "../footers/lib/template.ts";
 import { markup } from "./hero.ts";
+import { CARD, card } from "./card.ts";
 import { headline } from "./headline.ts";
 import { favicon, icons, marks } from "./icons.ts";
 import { planes } from "./portrait.ts";
 
 const ROOT = new URL("../", import.meta.url);
+// Where the site is served: links shared elsewhere, and the card they show, name it in full.
+const SITE = "https://appautomaton.com/delineate/";
 const DIST = new URL("site/dist/", ROOT);
 
 const read = (path: string) => readFileSync(new URL(path, ROOT), "utf8");
@@ -68,6 +71,10 @@ const page = fill(
     FOOTER_KIT: kit(footer.parts),
     FOOT_TIME: fixed(drawingTime(...Object.values(foot)), 2),
     TOOTH,
+    SITE,
+    CARD: `${SITE}${CARD.file}`,
+    CARD_WIDTH: String(CARD.width * CARD.scale),
+    CARD_HEIGHT: String(CARD.height * CARD.scale),
     ...Object.fromEntries(Object.entries(icons()).map(([k, v]) => [`ICON_${k.toUpperCase()}`, v])),
     ...marks(),
     ...(({ lines, time }) => ({ HEADLINE_TIME: String(time), ...Object.fromEntries(lines.map((svg, k) => [`HEADLINE_${k}`, svg])) }))(headline()),
@@ -108,4 +115,7 @@ for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/i
   write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));
 }
 
-console.log(`wrote site/dist: index.html ${Math.floor(Buffer.byteLength(page) / 1024)} KB, the bouquet draws in ${heroTime}s, ${layers.length} portrait planes`);
+// The card a shared link shows, drawn from the page as built.
+await card(DIST);
+
+console.log(`wrote site/dist: index.html ${Math.floor(Buffer.byteLength(page) / 1024)} KB, the bouquet draws in ${heroTime}s, ${layers.length} portrait planes, and ${CARD.file}`);

@@ -60,7 +60,7 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run bench` | Serves the portrait bench at http://localhost:5288. |
 | `npm run collage:render -- <motif>` | Renders a Collage motif's sculpture scan in Blender into the passes its drawings are made from. |
 | `npm run collage:draw` | Draws every Collage motif in each of its hands into `collage/art/`. |
-| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, and Paprika Girl's separation page that its sections open. Collage needs `npm run collage:draw` first. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, and Paprika Girl's separation page that its sections open. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
 | `npm run deploy` | Builds the site and publishes it to GitHub Pages, at https://appautomaton.github.io/delineate/. |
 | `npm run check` | Type-checks every part of the repository. |
 
