@@ -1,211 +1,368 @@
-// The foot of the Characters page: a misty gorge written in type. Cliffs, slopes, and trees are cells of
-// one grid, each a pixel of a dithered picture, its color one of three tones of its material, laid as a
-// soft tile, and on it a letter of the name or one of the face's glyphs in the tone below: the tile
-// carries the color, since a letter alone lays too little ink to, and the letter carries the texture; the haze washes the far planes toward the
-// paper and fills the gorge's floor. As the foot comes into view its planes rise into place a row at a
-// time, the nearest the furthest; a drift of mist moves through the gorge. By night the same gorge is
-// moonlit.
+// The foot of the Characters page: landscapes written in type, after the references kept locally. A scene is a
+// grid of cells, each a pixel of a dithered picture: its color one of three tones of its material, laid as a soft
+// tile, and on it a letter of the name or one of the face's trees, a tone beyond the tile. At this size the letters
+// are grain and the tiles carry the color. Four scenes take turns, a gorge, a valley, dunes, and a cove (scenes.js
+// draws them): each holds for a while, then dissolves into the next, cell by cell in the order of an ordered
+// dither leaning upward, so the change is made of the same stuff as the pictures and the new scene settles from
+// the foot as the old lifts away. As the foot comes into view the planes rise into place a row at a time, the
+// nearest the furthest; over the still scene, its air moves at twelve frames a second.
 //
 //   import { mountFoot } from "./foot.js";
-//   mountFoot(canvas);
+//   mountFoot(canvas, { clear: [...words] });
 //
-// The scene is composed on a 16 x 9 sheet, laid over the canvas as a slice is, its foot on the canvas's
-// foot and its middle in the middle, so a narrow screen keeps the gorge and loses the outer cliffs.
+// Each scene is composed on a 16 x 9 sheet, laid over the canvas as a slice is, its foot on the canvas's foot and
+// its middle in the middle, so a narrow screen keeps the middle of the scene and loses its edges. The sky is left
+// to the page's words: nothing in it, not even a star, falls on the elements given as clear.
 
-import { perlin } from "./field.js";
+import { SCENES } from "./scenes.js";
 
 const FPS = 12;
-const W = 16, H = 9;
-const TILE = 0.42; // how strongly a cell's own color is laid under its letter
+const REST = 20000; // ms without input before the foot holds still, as the field does
+const HOLD = 11000; // ms a scene holds, long enough to look at
+const TURN = 1600; // ms a scene takes to dissolve into the next, eased at both ends
+const RISING = 0.35; // how far the dissolve leans upward: the new scene settles from the foot, the old lifts off the top
+const BUDGET = 7; // ms of work a frame may spend on drawing or on composing; the rest waits for the next
+const TILE = 0.64; // how strongly a cell's own color is laid under its letter
+const ORB = 0.4; // the sun's and the moon's radius, in units of the sheet
 const RAMP = ["d", "a", "3", "n", "t", "l", "i", ":", "·"]; // dark to light, by how much ink each letter lays
 const TREES = ["\u{F0531}", "\u{F0405}"]; // a broadleaf and a pine, from the Nerd Fonts' Material Design icons
-const SUN = "\u{E30D}", MOON = "\u{E39B}", STARS = "\u{E370}"; // weather-day_sunny, weather-moon_full, weather-stars
-const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+const STAR = "\u{F0AE2}"; // a four-pointed star
+const W = 16, H = 9;
+const NONE = 0xffff; // a cell whose drawing is not known, so it is drawn whatever it should show
 
-// Each material's three tones, dark to light, by day and by night.
-const INKS = {
-  day: { rock: ["#7E6F78", "#B09F5A", "#DCCF8C"], foliage: ["#2F5A2C", "#5F8D3A", "#B5C567"], grass: ["#6E8F3A", "#A3B449", "#D8DA7E"], paper: "#F8F7F2", sky: "#C9A23C" },
-  night: { rock: ["#3E4566", "#6B7598", "#A3ACCD"], foliage: ["#22383A", "#3F6159", "#7E9C8C"], grass: ["#2E4740", "#557064", "#8EA697"], paper: "#1B2036", sky: "#F1EDE2" },
+// Ordered dither thresholds, (v + 0.5) / n²: four by four for a cell's tone, eight by eight for the order in which
+// cells change, sixty-four steps fine.
+const bayer = (x, y, n) => (n === 1 ? 0 : 4 * bayer(x % (n / 2), y % (n / 2), n / 2) + [[0, 2], [3, 1]][(y / (n / 2)) | 0][(x / (n / 2)) | 0]);
+const BAYER4 = Float32Array.from({ length: 16 }, (_, k) => (bayer(k & 3, k >> 2, 4) + 0.5) / 16);
+const BAYER8 = Float32Array.from({ length: 64 }, (_, k) => (bayer(k & 7, k >> 3, 8) + 0.5) / 64);
+const PAPER = { day: "#F8F7F2", night: "#1B2036" };
+
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const ease = (t) => t * t * (3 - 2 * t);
+const hash = (i, j) => { const s = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return s - Math.floor(s); };
+const mix = (a, b, t) => {
+  const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [x, y] = [p(a), p(b)];
+  return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(",")})`;
 };
 
-const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-const n1 = (x, k = 0) => perlin(x, k, 0.5); // a ragged line, about -0.5 to 0.5
-const hash = (i, j) => { const s = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return s - Math.floor(s); };
+// Every look a cell can take, numbered once: a scene's material, its tone, its haze in eighths, its glyph, and
+// whether a tile lies under it. The pictures hold these numbers; the atlas holds their looks in the light of the hour.
+const looks = [null], numbers = new Map(), glyphs = new Map();
+const MATERIALS = SCENES.map((s) => new Map(Object.keys(s.inks.day).map((m, i) => [m, i])));
+function look(scene, m, level, haze, glyph, tile) {
+  if (!glyphs.has(glyph)) glyphs.set(glyph, glyphs.size);
+  const key = ((((scene * 32 + MATERIALS[scene].get(m)) * 3 + level) * 9 + haze) * 256 + glyphs.get(glyph)) * 2 + (tile ? 1 : 0);
+  let id = numbers.get(key);
+  if (id === undefined) {
+    id = looks.length;
+    looks.push({ scene, m, level, haze, glyph, tile });
+    numbers.set(key, id);
+  }
+  return id;
+}
 
-// The planes, far to near. Each says, for a point of the sheet, whether it is inside, of what, how light
-// (0 dark to 1 light), and how far the haze has washed it toward the paper.
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
-// Columned rock: the noise pushed hard toward light and dark, so the columns read as lit and shadowed.
-const columns = (X, Y, k) => clamp01(0.5 + 1.7 * perlin(X * 6.5, Y * 0.32, k));
-const PLANES = [
-  { // the far walls, deep in the gorge, half lost in haze
-    rise: 2,
-    at(X, Y) {
-      const left = X < 6.5 + 0.25 * n1(Y * 0.9, 3) && Y > 3.3 + 0.5 * n1(X * 1.3, 1) + 0.12 * X;
-      const right = X > 9.7 + 0.25 * n1(Y * 0.9, 4) && Y > 3.8 + 0.5 * n1(X * 1.3, 2) - 0.05 * (X - 10);
-      if (!left && !right) return null;
-      const face = left ? smooth(5, 6.5, X) : 1 - smooth(9.7, 11.2, X);
-      return { m: "rock", t: 0.3 + 0.45 * columns(X, Y, 9) + 0.25 * face, haze: 0.45 + 0.4 * smooth(4.5, 8.5, Y) };
-    },
-  },
-  { // the gorge's floor, far below: a few crowns showing through the mist, the middle left to the mist
-    rise: 3,
-    at(X, Y) {
-      if (Math.abs(X - 8) > 3.4 || Y < 7.2 + 0.35 * n1(X * 0.8, 5)) return null;
-      if (perlin(X * 3, Y * 3, 11) < 0.05) return null;
-      return { m: "foliage", t: 0.45 + 0.3 * perlin(X * 2.4, Y * 2.4, 19), haze: 0.62 + 0.25 * (1 - Math.abs(X - 8) / 3.4) };
-    },
-  },
-  { // the tall walls either side: columned rock, lit on the faces that turn to the gorge, shadowed behind
-    rise: 5,
-    at(X, Y) {
-      const lt = 1.5 + 0.35 * n1(X * 1.6, 6) + 0.16 * Math.floor(X * 1.4) / 1.4;
-      const rt = 1.9 + 0.35 * n1(X * 1.6, 7) + 0.14 * Math.floor((W - X) * 1.4) / 1.4;
-      const left = X < 4.4 + 0.3 * n1(Y * 1.1, 8) + 0.06 * Y && Y > lt;
-      const right = X > 11.3 + 0.3 * n1(Y * 1.1, 9) - 0.06 * Y && Y > rt;
-      if (!left && !right) return null;
-      const face = left ? smooth(2.4, 4.4, X) : 1 - smooth(11.3, 13.6, X);
-      const top = left ? lt : rt;
-      // A green crown where the rock meets the sky.
-      if (Y < top + 0.32 + 0.2 * n1(X * 4, 10)) return { m: "foliage", t: 0.35 + 0.35 * perlin(X * 4, Y * 4, 12), haze: 0.05 };
-      return { m: "rock", t: 0.1 + 0.5 * columns(X, Y, 13) + 0.4 * face - 0.15 * smooth(5, 9, Y), haze: 0.04 + 0.28 * smooth(6, 9, Y) };
-    },
-  },
-  { // the near slopes: crowns of trees on their shoulders, grass falling to the foot
-    rise: 8,
-    at(X, Y) {
-      const left = Y > 6.0 + 2.7 * (X / 5.6) ** 2 - 0.9 * Math.max(0, perlin(X * 1.8, 2, 15) + 0.3) && X < 6.2;
-      const right = Y > 5.6 + 2.8 * ((W - X) / 5.2) ** 2 - 0.9 * Math.max(0, perlin(X * 1.8, 3, 16) + 0.3) && X > 10.2;
-      if (!left && !right) return null;
-      const shoulder = left ? 6.0 + 2.7 * (X / 5.6) ** 2 : 5.6 + 2.8 * ((W - X) / 5.2) ** 2;
-      // Crowns gather where the noise rises near the shoulder; each is drawn in trees, darker at its foot.
-      const crown = perlin(X * 2.4, Y * 2.4, 17) + 0.45 - 0.5 * Math.max(0, Y - shoulder - 0.4);
-      if (crown > 0.2) return { m: "foliage", t: 0.15 + 0.5 * clamp01(crown - 0.2) + 0.3 * perlin(X * 5, Y * 5, 20), haze: 0, tree: true };
-      return { m: "grass", t: 0.62 + 0.3 * perlin(X * 3, Y * 6, 18), haze: 0 };
-    },
-  },
-];
-
-export function mountFoot(canvas, { font = '"VictorMono NF Obl"' } = {}) {
+export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } = {}) {
   const g = canvas.getContext("2d");
   const calm = matchMedia("(prefers-reduced-motion: reduce)");
   const still = document.createElement("canvas"), s = still.getContext("2d");
-  let cols = 0, rows = 0, cw = 0, ch = 0, dpr = 1, size = 12, scale = 1, ox = 0, oy = 0;
-  let rise = 0, drawnRise = -1, seen = false, last = 0;
-
-  const light = () => (document.documentElement.dataset.theme === "night" ? "night" : "day");
-  const mix = (a, b, t) => {
-    const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-    const [x, y] = [p(a), p(b)];
-    return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(",")})`;
-  };
+  // The layout. Cells are measured in whole device pixels, so tiles meet edge to edge with no seam and each look
+  // is copied from the atlas pixel for pixel.
+  let cols = 0, rows = 0, cw = 1, ch = 1, dpr = 1, size = 8, scale = 1, ox = 0, oy = 0;
+  let drawn = new Uint16Array(0), order = new Uint32Array(0), turns = new Float32Array(0), cleared = new Uint8Array(0);
+  let pictures = [], jobs = [], pumping = false, cursor = 0, dirty = true;
+  let atlas = null, a = null, inked = new Uint8Array(0);
+  let rise = 0, seen = false, last = 0, stirred = performance.now(), watched = 0, airTime = 0;
+  let light = document.documentElement.dataset.theme === "night" ? "night" : "day";
 
   function fit() {
     const box = canvas.getBoundingClientRect();
     dpr = Math.min(2, devicePixelRatio || 1);
     for (const c of [canvas, still]) { c.width = Math.round(box.width * dpr); c.height = Math.round(box.height * dpr); }
-    size = box.width < 600 ? 10 : 12;
-    cw = size * 0.92;
-    ch = size * 1.08;
-    cols = Math.ceil(box.width / cw);
-    rows = Math.ceil(box.height / ch);
+    size = box.width < 600 ? 7 : box.width < 2000 ? 8 : 9;
+    cw = Math.max(2, Math.round(size * 0.92 * dpr));
+    ch = Math.max(2, Math.round(size * 1.08 * dpr));
+    cols = Math.ceil(canvas.width / cw);
+    rows = Math.ceil(canvas.height / ch);
     // The sheet laid as a slice: it covers the canvas, its foot on the foot, its middle in the middle.
     scale = Math.max(box.width / W, box.height / H);
     ox = (box.width - W * scale) / 2;
     oy = box.height - H * scale;
-    drawnRise = -1;
-    paint();
+    const n = cols * rows;
+    drawn = new Uint16Array(n); // the still canvas starts empty, as every cell of the sky is
+    // When each cell turns to the next scene, as a share of the dissolve: by the ordered dither, leaning upward.
+    turns = new Float32Array(n);
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) turns[j * cols + i] = BAYER8[(j & 7) * 8 + (i & 7)] * (1 - RISING) + RISING * (1 - j / rows);
+    // Cells are visited in the order they turn, so work spread over frames spreads as the dissolve does: counted
+    // into a thousand steps of turning, which is finer than any frame of the dissolve and costs one pass.
+    const STEPS = 1024, counts = new Uint32Array(STEPS + 1), step = (k) => Math.min(STEPS - 1, (turns[k] * STEPS) | 0);
+    for (let k = 0; k < n; k++) counts[step(k) + 1]++;
+    for (let q = 1; q <= STEPS; q++) counts[q] += counts[q - 1];
+    order = new Uint32Array(n);
+    for (let k = 0; k < n; k++) order[counts[step(k)]++] = k;
+    cursor = 0;
+    // The words' boxes, a cell wider all round, where the sky stays empty.
+    cleared = new Uint8Array(n);
+    for (const el of clear) {
+      const r = el.getBoundingClientRect();
+      const [x0, x1, y0, y1] = [r.left - box.left, r.right - box.left, r.top - box.top, r.bottom - box.top].map((v) => v * dpr);
+      for (let j = Math.max(0, Math.floor(y0 / ch) - 1); j <= Math.min(rows - 1, Math.floor(y1 / ch) + 1); j++)
+        for (let i = Math.max(0, Math.floor(x0 / cw) - 1); i <= Math.min(cols - 1, Math.floor(x1 / cw) + 1); i++) cleared[j * cols + i] = 1;
+    }
+    atlas = null;
+    inked = new Uint8Array(0);
+    pictures = [];
+    jobs = [];
+    dirty = true;
+    prepare(now().scene);
   }
 
-  // The scene as it stands at this much rise, into the still canvas; the frames lay the mist over it.
-  function paint() {
-    const inks = INKS[light()], night = light() === "night";
-    s.setTransform(dpr, 0, 0, dpr, 0, 0);
-    s.clearRect(0, 0, cols * cw, rows * ch);
-    s.textAlign = "center";
-    s.textBaseline = "middle";
-    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
-      const X = ((i + 0.5) * cw - ox) / scale;
-      let cell = null;
-      // The nearest plane that covers the cell wins; each plane sits lower by the rows it has yet to rise.
-      for (let p = PLANES.length - 1; p >= 0 && !cell; p--) {
-        const lag = Math.round((1 - rise) * PLANES[p].rise);
-        const Y = ((j - lag + 0.5) * ch - oy) / scale;
-        cell = PLANES[p].at(X, Y);
+  // The sheet's coordinates of a cell's middle.
+  const sheetX = (i) => (((i + 0.5) * cw) / dpr - ox) / scale;
+  const sheetY = (j) => (((j + 0.5) * ch) / dpr - oy) / scale;
+
+  // A scene's picture for this layout: for each plane, the look of every cell at rest, and how many rows the plane
+  // sits lower before it has risen; and the sky, by day and by night. Composed a row at a time, between frames.
+  function prepare(n) {
+    if (pictures[n]) return;
+    pictures[n] = { ready: false };
+    jobs.push(compose(n, pictures[n]));
+    if (!pumping) { pumping = true; setTimeout(pump, 0); }
+  }
+  function pump() {
+    const end = performance.now() + BUDGET;
+    while (jobs.length && performance.now() < end) if (jobs[0].next().done) { jobs.shift(); dirty = true; }
+    if (jobs.length) setTimeout(pump, 0);
+    else pumping = false;
+  }
+  function* compose(n, picture) {
+    const scene = SCENES[n], planes = scene.planes;
+    const out = planes.map(() => new Uint16Array(cols * rows));
+    for (let j = 0; j < rows; j++) {
+      const Y = sheetY(j);
+      for (let i = 0; i < cols; i++) {
+        const X = sheetX(i);
+        for (let p = 0; p < planes.length; p++) {
+          const cell = planes[p].at(X, Y);
+          if (cell) out[p][j * cols + i] = lookOf(n, cell, i, j);
+        }
       }
-      if (!cell) continue;
-      const t = Math.min(1, Math.max(0, cell.t)), tones = inks[cell.m];
-      const level = Math.min(2, Math.floor(t * 2 + BAYER[(j & 3) * 4 + (i & 3)]));
-      let glyph = RAMP[Math.min(RAMP.length - 1, Math.floor(t * RAMP.length))];
-      if (cell.tree && hash(i, j) < 0.85) glyph = TREES[hash(j, i) < 0.6 ? 0 : 1];
-      // The tile on whole device pixels, edge to edge with its neighbours, so no seam shows between them.
-      const [x0, x1, y0, y1] = [i * cw, (i + 1) * cw, j * ch, (j + 1) * ch].map((v) => Math.round(v * dpr) / dpr);
-      s.globalAlpha = TILE;
-      s.fillStyle = mix(tones[level], inks.paper, cell.haze);
-      s.fillRect(x0, y0, x1 - x0, y1 - y0);
-      s.globalAlpha = 1;
-      s.font = `400 ${size * (glyph.length > 1 ? 1.05 : 1)}px ${font}`;
-      // The letter a tone beyond its tile: darker by day, lighter by night, as moonlight catches it.
-      const beyond = night ? Math.min(2, level + 1) : Math.max(0, level - 1);
-      s.fillStyle = mix(tones[beyond], inks.paper, cell.haze * 0.85);
-      s.fillText(glyph, (i + 0.5) * cw, (j + 0.5) * ch);
+      yield;
     }
-    // Sun by day; by night the moon and a scatter of stars, all in the sky above the walls.
-    const orb = (X, Y, glyph, k, color) => { s.font = `400 ${size * k}px ${font}`; s.fillStyle = color; s.fillText(glyph, X * scale + ox, Y * scale + oy); };
-    if (light() === "day") orb(12.6, 1.1, SUN, 2.6, inks.sky);
-    else {
-      orb(12.6, 1.1, MOON, 2.4, inks.sky);
-      for (let k = 0; k < 9; k++) orb(1 + hash(k, 3) * 14, 0.25 + hash(3, k) * 1.4, STARS, 0.9, mix(inks.sky, inks.paper, 0.45));
-    }
-    drawnRise = rise;
+    picture.planes = out;
+    picture.lift = planes.map((p) => Math.round((p.rise * scale * dpr) / ch));
+    picture.sky = { day: sky(n, "day"), night: sky(n, "night") };
+    yield;
+    picture.ready = true;
+  }
+  function lookOf(n, cell, i, j) {
+    const t = clamp01(cell.t);
+    const level = Math.min(2, Math.floor(t * 2 + BAYER4[(j & 3) * 4 + (i & 3)]));
+    // The letter by how much ink the cell asks for (a material may ask for lighter grain than its tone); in the
+    // shaded body of a crown, a tree.
+    let glyph = RAMP[Math.min(RAMP.length - 1, Math.floor(clamp01(cell.g ?? t) * RAMP.length))];
+    if (cell.tree && t < 0.56 && hash(i, j) < 0.85) glyph = TREES[hash(j, i) < 0.6 ? 0 : 1];
+    return look(n, cell.m, level, Math.round(clamp01(cell.haze) * 8), glyph, true);
   }
 
-  // Each frame: the still scene, then the mist drifting through the gorge's floor.
-  function frame(t) {
-    const inks = INKS[light()];
-    if (drawnRise !== rise) paint();
-    g.setTransform(1, 0, 0, 1, 0, 0);
+  // The sky: by day the sun, a disc of cells with a glow of points thinning round it; by night the moon, and stars.
+  function sky(n, hour) {
+    const scene = SCENES[n], out = new Uint16Array(cols * rows);
+    const [OX, OY] = hour === "day" ? scene.sun : scene.moon;
+    for (let j = 0; j < rows; j++) {
+      const Y = sheetY(j);
+      if (Y > 6) break;
+      for (let i = 0; i < cols; i++) {
+        const k = j * cols + i;
+        if (cleared[k]) continue;
+        const X = sheetX(i), d = Math.hypot(X - OX, Y - OY) / ORB;
+        if (d < 1) {
+          // Lit from the upper left, by day a little and by night as a moon is, with a shadowed limb.
+          const t = 0.62 + 0.3 * (1 - d * d) - 0.25 * Math.max(0, ((X - OX) - (OY - Y)) / ORB) * (hour === "night" ? 1 : 0.4);
+          out[k] = lookOf(n, { m: "orb", t, haze: 0 }, i, j);
+        } else if (d < 2.6) {
+          const v = (1 - (d - 1) / 1.6) ** 2 * 0.55;
+          if (v > BAYER8[(j & 7) * 8 + (i & 7)]) out[k] = look(n, "orb", 1, 3, "·", false);
+        } else if (hour === "night" && Y < 4.2) {
+          const h = hash(i * 0.37, j * 0.61);
+          if (h < 0.0045) out[k] = look(n, "star", h < 0.0008 ? 2 : 1, 0, h < 0.0008 ? STAR : h < 0.0022 ? "+" : "·", false);
+        }
+      }
+    }
+    return out;
+  }
+
+  // The atlas: each look drawn once, in the light of the hour, in a slot of its own; cells are copies of it.
+  function ink(id) {
+    if (inked[id]) return;
+    const per = 64;
+    if (!atlas || id >= inked.length) {
+      // Room for the looks there are and as many again; what was drawn is carried over.
+      const slots = Math.ceil((looks.length * 2) / per) * per;
+      const next = new OffscreenCanvas(per * cw, (slots / per) * ch);
+      if (atlas) next.getContext("2d").drawImage(atlas, 0, 0);
+      atlas = next;
+      a = atlas.getContext("2d");
+      a.textAlign = "center";
+      a.textBaseline = "middle";
+      const grown = new Uint8Array(slots);
+      grown.set(inked);
+      inked = grown;
+    }
+    const { scene, m, level, haze, glyph, tile } = looks[id];
+    const tones = SCENES[scene].inks[light][m], paper = PAPER[light];
+    const x = (id % per) * cw, y = ((id / per) | 0) * ch;
+    a.save();
+    a.beginPath();
+    a.rect(x, y, cw, ch);
+    a.clip();
+    a.clearRect(x, y, cw, ch);
+    if (tile) {
+      a.globalAlpha = TILE;
+      a.fillStyle = mix(tones[level], paper, haze / 8);
+      a.fillRect(x, y, cw, ch);
+      a.globalAlpha = 1;
+    }
+    if (glyph) {
+      // The letter a tone beyond its tile: darker by day, lighter by night, as moonlight catches it.
+      const beyond = !tile ? level : light === "night" ? Math.min(2, level + 1) : Math.max(0, level - 1);
+      a.fillStyle = mix(tones[beyond], paper, (haze / 8) * 0.85);
+      a.font = `400 ${size * dpr * (glyph.length > 1 ? 0.9 : 1)}px ${font}`;
+      a.fillText(glyph, x + cw / 2, y + ch / 2);
+    }
+    a.restore();
+    inked[id] = 1;
+  }
+
+  // Where the turn of scenes stands: the scene shown, the next, and how far the dissolve into it has gone.
+  function now() {
+    const at = Math.floor(watched / (HOLD + TURN)), phase = watched - at * (HOLD + TURN);
+    return { scene: at % SCENES.length, next: (at + 1) % SCENES.length, turn: phase > HOLD ? ease((phase - HOLD) / TURN) : 0 };
+  }
+
+  // What a cell of a picture shows at this rise: the nearest plane that covers it, each plane lower by the rows it
+  // has yet to rise; failing all, the sky.
+  function lifts(picture) {
+    return picture.lift.map((l) => Math.round((1 - rise) * l));
+  }
+  function shows(picture, lift, k, i, j) {
+    const planes = picture.planes;
+    for (let p = planes.length - 1; p >= 0; p--) {
+      const r = j - lift[p];
+      if (r < 0) continue;
+      const v = planes[p][r * cols + i];
+      if (v) return v;
+    }
+    return picture.sky[light][k];
+  }
+
+  // Bring the still canvas to what each cell should show, drawing only the cells that change, in the order cells
+  // turn, until the frame's budget is spent; the rest waits for the next frame. Returns whether anything was drawn.
+  function paint(state) {
+    const A = pictures[state.scene];
+    if (!A?.ready) return false;
+    const B = state.turn > 0 ? pictures[state.next] : null;
+    const la = lifts(A), lb = B && lifts(B), n = cols * rows, end = performance.now() + BUDGET;
+    let changed = false, c = 0;
+    for (; c < n; c++) {
+      if ((c & 255) === 0 && c && performance.now() > end) break;
+      const k = order[(cursor + c) % n], i = k % cols, j = (k / cols) | 0;
+      const id = B && turns[k] < state.turn ? shows(B, lb, k, i, j) : shows(A, la, k, i, j);
+      if (id === drawn[k]) continue;
+      s.clearRect(i * cw, j * ch, cw, ch);
+      if (id) {
+        ink(id);
+        s.drawImage(atlas, (id % 64) * cw, ((id / 64) | 0) * ch, cw, ch, i * cw, j * ch, cw, ch);
+      }
+      drawn[k] = id;
+      changed = true;
+    }
+    cursor = (cursor + c) % n;
+    if (c === n) dirty = false;
+    return changed;
+  }
+
+  // Each frame: the still scene, then its air, over the cells that are the scene's own.
+  function present(state) {
+    g.globalAlpha = 1;
     g.clearRect(0, 0, canvas.width, canvas.height);
     g.drawImage(still, 0, 0);
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.textAlign = "center";
-    g.textBaseline = "middle";
-    g.font = `400 ${size}px ${font}`;
-    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
-      const X = ((i + 0.5) * cw - ox) / scale, Y = ((j + 0.5) * ch - oy) / scale;
-      if (X < 4.8 || X > 11.2 || Y < 4.6 || Y > 8.8) continue;
-      const v = perlin(X * 1.6 - t * 0.6, Y * 3, 21) + 0.35 * (1 - Math.abs(X - 8) / 3.2);
-      if (v < 0.42) continue;
-      g.fillStyle = mix(inks.rock[2], inks.paper, 0.35);
-      g.globalAlpha = Math.min(0.6, (v - 0.42) * 2.4);
-      g.fillText(v > 0.6 ? "~" : "·", (i + 0.5) * cw, (j + 0.5) * ch);
+    if (!pictures[state.scene]?.ready) return;
+    for (const n of state.turn > 0 ? [state.scene, state.next] : [state.scene]) {
+      const air = SCENES[n].air;
+      if (!air) continue;
+      const orb = light === "day" ? SCENES[n].sun : SCENES[n].moon;
+      const ids = air.shade ? [look(n, "air", 1, 0, "", true)] : air.glyphs.map((glyph) => look(n, "air", 1, 0, glyph, false));
+      const [x0, x1, y0, y1] = air.box;
+      const i0 = Math.max(0, Math.floor(((x0 * scale + ox) * dpr) / cw)), i1 = Math.min(cols - 1, Math.ceil(((x1 * scale + ox) * dpr) / cw));
+      const j0 = Math.max(0, Math.floor(((y0 * scale + oy) * dpr) / ch)), j1 = Math.min(rows - 1, Math.ceil(((y1 * scale + oy) * dpr) / ch));
+      for (let j = j0; j <= j1; j++) {
+        const Y = sheetY(j);
+        for (let i = i0; i <= i1; i++) {
+          const k = j * cols + i;
+          // In a turn, each cell's air is that of the scene it shows.
+          if (state.turn > 0 && (turns[k] < state.turn) !== (n === state.next)) continue;
+          const v = air.at(sheetX(i), Y, airTime, looks[drawn[k]]?.m ?? "", orb);
+          if (v <= 0) continue;
+          if (air.shade && v < BAYER8[(j & 7) * 8 + (i & 7)]) continue;
+          const id = air.shade ? ids[0] : ids[Math.min(ids.length - 1, Math.floor(v * ids.length))];
+          ink(id);
+          g.globalAlpha = air.shade ? air.alpha : air.alpha * v;
+          g.drawImage(atlas, (id % 64) * cw, ((id / 64) | 0) * ch, cw, ch, i * cw, j * ch, cw, ch);
+        }
+      }
     }
     g.globalAlpha = 1;
   }
 
-  // How far the foot has come into view: its planes have risen fully once its top reaches the middle.
+  // How far the foot has come into view: its planes have risen fully once it is wholly on screen, or fills it.
   function measure() {
     const r = canvas.getBoundingClientRect();
-    rise = calm.matches ? 1 : Math.round(Math.min(1, Math.max(0, (innerHeight - r.top) / (r.height * 0.75 + innerHeight * 0.25))) * 8) / 8;
-  }
-  function tick(now) {
-    if (!seen) return;
-    requestAnimationFrame(tick);
-    if (now - last < 1000 / FPS) return;
-    last = now;
-    measure();
-    frame(calm.matches ? 0 : now / 1000);
+    const next = calm.matches ? 1 : Math.round(clamp01((innerHeight - r.top) / Math.min(r.height, innerHeight)) * 16) / 16;
+    if (next !== rise) { rise = next; dirty = true; }
   }
 
-  const view = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) requestAnimationFrame(tick); });
-  const resize = new ResizeObserver(() => { fit(); frame(0); });
-  const theme = new MutationObserver(() => { drawnRise = -1; frame(performance.now() / 1000); });
-  document.fonts.load(`400 12px ${font}`, RAMP.join("") + TREES.join("") + SUN + MOON + STARS).then(() => {
+  function tick(time) {
+    if (!seen) return;
+    requestAnimationFrame(tick);
+    if (time - last < 1000 / FPS) return;
+    const dt = Math.min(250, time - last);
+    last = time;
     measure();
-    fit();
-    frame(0);
-    view.observe(canvas);
+    let state = now();
+    // The scenes turn only while someone is there to see them, and a turn begun is finished.
+    const moving = !calm.matches && (time - stirred < REST || state.turn > 0);
+    if (moving && pictures[state.scene]?.ready) {
+      airTime += dt / 1000;
+      // A scene holds until the next is composed, however long that takes.
+      const at = Math.floor(watched / (HOLD + TURN)) * (HOLD + TURN);
+      watched = pictures[state.next]?.ready ? watched + dt : Math.min(watched + dt, at + HOLD);
+      const after = now();
+      if (after.scene !== state.scene || after.turn !== state.turn) dirty = true;
+      state = after;
+    }
+    prepare(state.scene);
+    if (!calm.matches) prepare(state.next);
+    const painted = dirty && paint(state);
+    if (painted || moving) present(state);
+  }
+
+  const wake = () => (stirred = performance.now());
+  for (const type of ["pointermove", "scroll", "keydown", "touchstart", "wheel"]) addEventListener(type, wake, { passive: true });
+  const view = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) requestAnimationFrame(tick); });
+  const resize = new ResizeObserver(() => fit());
+  // By night the same scene, repainted: every look is drawn again in the new light as its cells come round.
+  const theme = new MutationObserver(() => {
+    const next = document.documentElement.dataset.theme === "night" ? "night" : "day";
+    if (next === light) return;
+    light = next;
+    inked.fill(0);
+    drawn.fill(NONE);
+    dirty = true;
+  });
+  document.fonts.load(`400 12px ${font}`, RAMP.join("") + TREES.join("") + STAR + "+").then(() => {
     resize.observe(canvas);
+    view.observe(canvas);
     theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   });
 }

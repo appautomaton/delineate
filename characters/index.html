@@ -86,7 +86,7 @@
   <script type="module">
     import { mount } from "./field.js";
     import { mountFoot } from "./foot.js";
-    mountFoot(document.querySelector(".foot-scene canvas"));
+    mountFoot(document.querySelector(".foot-scene canvas"), { clear: [...document.querySelectorAll(".foot-grid a, .foot-grid p, .foot-grid h3")] });
     const field = mount(document.querySelector(".field canvas"), { clear: [...document.querySelectorAll(".words, .bar a, .light")] });
     for (const b of document.querySelectorAll("[data-bloom]")) b.addEventListener("click", () => {
       field.bloom(b.dataset.bloom);

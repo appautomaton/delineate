@@ -25,15 +25,34 @@ field in its Characters section. `npm run site` copies both to `site/dist/charac
 
 ## The foot
 
-`foot.js` writes the page's foot: a misty gorge, after a reference kept locally, drawn on a 16 x 9 sheet laid
-as a slice. Four planes, far walls, the gorge's floor, the tall walls, the near slopes, each say for a point
-what it is (rock, foliage, grass), how light, and how far the haze has washed it.
+`foot.js` writes the page's foot: four landscapes after references kept locally, a misty gorge, a green valley
+with a winding path, sand dunes, and a rocky cove of turquoise water, taking turns. `scenes.js` draws them, each
+on a 16 x 9 sheet laid as a slice: planes, far to near, that say for a point what it is (rock, foliage, sand,
+water...), how light, and how far the haze has washed it; three tones for each material by day and by night; a
+place for the sun and one for the moon; and the air that moves over it.
 
 - **A cell is a pixel of a dithered picture.** Its color is one of three tones of its material, chosen by an
   ordered (Bayer) dither and laid as a soft tile on whole device pixels; on it stands a letter of the name,
-  chosen by how much ink the tone asks for, or a tree where crowns gather. The tile carries the color, since a
-  letter lays too little ink to; the letter carries the texture. By day the letter is a tone darker than its
-  tile, by night a tone lighter, as moonlight catches it.
+  chosen by how much ink the tone asks for, or a tree in the shaded body of a crown. Cells are about 7 to 9 CSS
+  pixels, small enough that the letters read as grain and the tiles carry the color. By day the letter is a tone
+  darker than its tile, by night a tone lighter, as moonlight catches it.
+- **Detail at the scale of a cell.** Rock stands in cracked columns crossed by ledges; trees and scrub gather in
+  round clumps lit from where the sun stands; grass is tufts and blades; dunes split at their crests into a lit
+  face and a slip face, the near sand combed into ripples; the sea runs deep to pale with rocks under it and a
+  line of foam.
+- **The scenes take turns.** Each holds eleven seconds, then dissolves into the next over 1.6 seconds, eased:
+  each cell switches at its threshold in an eight by eight Bayer matrix, leaning upward, so the new scene settles
+  from the foot as the old lifts off the top. The change is made of the same stuff as the pictures, a dither, and
+  it never blends colors the inks do not hold. Only the cells that change are drawn.
 - **It rises a row at a time.** As the foot comes into view each plane rises into place by whole rows, the
-  nearest the furthest, so the type never leaves its grid; a drift of mist moves through the gorge at twelve
-  frames a second, over a still copy of the scene painted once per rise and per light.
+  nearest the furthest, so the type never leaves its grid.
+- **The air moves.** Over a still copy of the scene, at twelve frames a second: mist through the gorge, cloud
+  shadows over the valley, sand blown off the dunes' crests, glints on the sea along the path of the sun or the
+  moon.
+- **The words stay clear.** Nothing is drawn in the sky over the footer's words, not even a star, and the sun
+  and the moon are placed in each scene where the words are not.
+- **Cost.** Each look a cell can take is drawn once into an atlas in the light of the hour, and cells are copied
+  from it. A scene's picture is composed a row at a time in slices of a few milliseconds, the next scene while
+  the current one holds; drawing too is spent at a few milliseconds a frame, in the order cells turn. The foot
+  moves only while on screen and for twenty seconds after the last input, finishing a turn it has begun; with
+  less motion asked for, it holds one scene.
