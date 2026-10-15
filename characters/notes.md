@@ -22,3 +22,18 @@ field in its Characters section. `npm run site` copies both to `site/dist/charac
   them; about a box they would run in straight lines.
 - **Cost.** It steps twelve frames a second, from a glyph atlas drawn once per light, only while on screen and
   for twenty seconds after the last input; with less motion asked for, it holds one frame.
+
+## The foot
+
+`foot.js` writes the page's foot: a misty gorge, after a reference kept locally, drawn on a 16 x 9 sheet laid
+as a slice. Four planes, far walls, the gorge's floor, the tall walls, the near slopes, each say for a point
+what it is (rock, foliage, grass), how light, and how far the haze has washed it.
+
+- **A cell is a pixel of a dithered picture.** Its color is one of three tones of its material, chosen by an
+  ordered (Bayer) dither and laid as a soft tile on whole device pixels; on it stands a letter of the name,
+  chosen by how much ink the tone asks for, or a tree where crowns gather. The tile carries the color, since a
+  letter lays too little ink to; the letter carries the texture. By day the letter is a tone darker than its
+  tile, by night a tone lighter, as moonlight catches it.
+- **It rises a row at a time.** As the foot comes into view each plane rises into place by whole rows, the
+  nearest the furthest, so the type never leaves its grid; a drift of mist moves through the gorge at twelve
+  frames a second, over a still copy of the scene painted once per rise and per light.

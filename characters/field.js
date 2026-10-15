@@ -66,7 +66,7 @@ function grad(h, x, y, z) {
   const v = h < 4 ? y : h === 12 || h === 14 ? x : z;
   return (h & 1 ? -u : u) + (h & 2 ? -v : v);
 }
-function perlin(x, y, z) {
+export function perlin(x, y, z) {
   const X = Math.floor(x) & 255, Y = Math.floor(y) & 255, Z = Math.floor(z) & 255;
   x -= Math.floor(x); y -= Math.floor(y); z -= Math.floor(z);
   const u = fade(x), v = fade(y), w = fade(z);

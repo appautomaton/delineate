@@ -92,7 +92,7 @@ buildGarden();
 cpSync(GARDEN, new URL("garden/", DIST), { recursive: true });
 mkdirSync(new URL("footers/", DIST), { recursive: true });
 execFileSync(process.execPath, [fileURLToPath(new URL("footers/build.ts", ROOT)), fileURLToPath(new URL("footers/index.html", DIST))]);
-for (const file of ["index.html", "field.js"]) write(`characters/${file}`, read(`characters/${file}`));
+for (const file of ["index.html", "field.js", "foot.js"]) write(`characters/${file}`, read(`characters/${file}`));
 write("portraits/paprika-girl/index.html", readFileSync(made("portraits/pieces/paprika-girl/index.html", "npm run paprika-girl"), "utf8"));
 for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html"]) {
   const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);
