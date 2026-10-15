@@ -258,7 +258,7 @@ export const EMBLEMS: Record<string, () => string> = {
 EMBLEMS.assembly = () =>
   drawing("em-assembly", "0 0 160 120", 15, [
     (h, s) => {
-      h.stroke([[14, 104], [30, 78], [24, 58], [40, 50], [58, 64]], "graphite", { width: 3, n: 2, secs: 0.3, alpha: [0.35, 0.6], weight: [1, 1.6] });
+      h.line([[10, 108], [26, 84], [22, 62], [38, 52], [60, 62]], "graphite", { width: 3, n: 2, secs: 0.3, alpha: [0.35, 0.6], weight: [1, 1.6] });
       const trail = h.take();
       const top = coloured(s, h, sides([[140, 22], [54, 52], [86, 64]]), "blue", { edge: "deep", edgeWidth: 3 });
       const under = coloured(s, h, sides([[140, 22], [86, 64], [96, 94]]), "cloud", { edge: "deep", edgeWidth: 3, angle: 40 });

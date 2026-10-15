@@ -45,6 +45,7 @@ $(".confession-lead").textContent = `This page was drawn by ${HANDS} hands while
 
 if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
   root.classList.remove("is-preparing");
+  root.classList.add("is-open", "is-built");
   $(".readout").remove();
 } else {
   await document.fonts.ready;

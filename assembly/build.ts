@@ -41,8 +41,10 @@ export function build(out = DIST): void {
   execFileSync(TSC, ["-p", HERE, "--noEmit", "false", "--outDir", out], { stdio: "inherit" });
   const assets = (path: string) => statSync(path).isDirectory() || /\.(html|css|svg)$/.test(path);
   for (const dir of ["hand", "studies"]) cpSync(join(HERE, dir), join(out, dir), { recursive: true, filter: assets });
-  for (const file of ["index.html", "style.css"]) cpSync(join(HERE, file), join(out, file));
+  // The page, and the sheet another page shows (show.ts).
+  for (const file of ["index.html", "style.css", "show.html", "show.css"]) cpSync(join(HERE, file), join(out, file));
   page(join(out, "index.html"));
+  page(join(out, "show.html"));
   for (const s of readdirSync(join(HERE, "studies"))) page(join(out, "studies", s, "index.html"));
 }
 

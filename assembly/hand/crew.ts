@@ -16,9 +16,10 @@
 // "type", "block" or "headline" to choose for an element, "slots" on a row of labels, "draw" on a crayon drawing.
 
 import type { Clock } from "./clock.ts";
-import { boxOf, type Hand } from "./hand.ts";
+import type { Hand } from "./hand.ts";
 import type { Frame, Guide, Marks } from "./marks.ts";
 import type { Box, Pt } from "./motion.ts";
+import { PAGE, type Space } from "./space.ts";
 
 type Section = {
   el: HTMLElement;
@@ -58,14 +59,6 @@ function painted(el: Element): boolean {
 
 const isLeaf = (el: Element) => el.children.length === 0 && (el.textContent ?? "").trim() !== "";
 
-// The box the text itself fills, as a text frame hugs its words, in page coordinates.
-function textBox(el: Element): Box {
-  const range = document.createRange();
-  range.selectNodeContents(el);
-  const r = range.getBoundingClientRect();
-  return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height };
-}
-
 // A row of labels set at once, and the moment all of them have been typed.
 type Row = { n: number; typed: number; wrong: string; all: Promise<void>; arrive: () => void };
 
@@ -79,13 +72,16 @@ export class Crew {
   readonly #clock: Clock;
   readonly #sections: Section[] = [];
   readonly #writings = new Map<Element, Writing>();
+  readonly #space: Space;
   #finish!: () => void;
   #over = false;
 
-  constructor(root: HTMLElement, hands: Hand[], marks: Marks, clock: Clock) {
+  // `space` is where the hands and marks are measured from: the page, or a stage set into another page.
+  constructor(root: HTMLElement, hands: Hand[], marks: Marks, clock: Clock, space: Space = PAGE) {
     this.#hands = hands;
     this.#marks = marks;
     this.#clock = clock;
+    this.#space = space;
     this.finished = new Promise((done) => (this.#finish = done));
     root.querySelectorAll<HTMLElement>("[data-section]").forEach((el, index) => {
       const section: Section = { el, index, active: false, tasks: [], guides: [], built: [] };
@@ -165,19 +161,20 @@ export class Crew {
     const across = heading
       ? [
           this.#add(section, [], {
-            where: () => ({ x: scrollX + 40, y: textBox(heading).y }),
+            where: () => ({ x: this.#space.view().x + 40, y: this.#space.text(heading).y }),
             run: async (h) => {
-              const y = textBox(heading).y;
-              const x0 = scrollX + 26;
+              const v = this.#space.view();
+              const y = this.#space.text(heading).y;
+              const x0 = v.x + Math.min(26, v.w * 0.04);
               h.tool = "cross";
               await h.reachPoint({ x: x0, y }, 2);
               await h.press();
               const guide = this.#marks.guide(y, true);
               section.guides.push(guide);
               const stop = this.#clock.each(() => guide.span(x0, h.pos.x));
-              await h.reachPoint({ x: x0 + h.random.uniform(260, 420), y }, 2, 1.1);
+              await h.reachPoint({ x: x0 + v.w * h.random.uniform(0.2, 0.32), y }, 2, 1.1);
               stop();
-              guide.span(scrollX, scrollX + document.documentElement.clientWidth);
+              guide.span(v.x, v.x + v.w);
               h.release();
               h.tool = "arrow";
             },
@@ -187,23 +184,24 @@ export class Crew {
     return [...across, ...[0, 1].map((side) =>
       this.#add(section, [], {
         where: () => {
-          const b = boxOf(wrap);
-          return { x: side ? b.x + b.w : b.x, y: Math.max(b.y, scrollY + 40) };
+          const b = this.#space.box(wrap);
+          return { x: side ? b.x + b.w : b.x, y: Math.max(b.y, this.#space.view().y + 40) };
         },
         run: async (h) => {
-          const b = boxOf(wrap);
+          const b = this.#space.box(wrap);
           const s = getComputedStyle(wrap);
           const x = side ? b.x + b.w - parseFloat(s.paddingRight) : b.x + parseFloat(s.paddingLeft);
-          const top = boxOf(section.el).y;
+          const top = this.#space.box(section.el).y;
           const bottom = top + section.el.offsetHeight;
-          const y0 = clamp(scrollY + 60 + h.random.uniform(0, 80), top, bottom - 40);
+          const v = this.#space.view();
+          const y0 = clamp(v.y + Math.min(60, v.h * 0.1) + h.random.uniform(0, Math.min(80, v.h * 0.1)), top, bottom - 20);
           h.tool = "cross";
           await h.reachPoint({ x, y: y0 }, 2);
           await h.press();
           const guide = this.#marks.guide(x);
           section.guides.push(guide);
           const stop = this.#clock.each(() => guide.span(y0, h.pos.y));
-          await h.reachPoint({ x, y: clamp(y0 + h.random.uniform(180, 320), top, bottom) }, 2, 1.1);
+          await h.reachPoint({ x, y: clamp(y0 + v.h * h.random.uniform(0.22, 0.4), top, bottom) }, 2, 1.1);
           stop();
           // Let go, and the guide runs the section's height, as a ruler guide does.
           guide.span(top, bottom);
@@ -227,8 +225,9 @@ export class Crew {
     // showing where it lies.
     const left = this.#marks.extension();
     const up = this.#marks.extension();
-    left.set(scrollX, o.y, o.x, o.y);
-    up.set(o.x, Math.max(scrollY, o.y - 240), o.x, o.y);
+    const v = this.#space.view();
+    left.set(v.x, o.y, o.x, o.y);
+    up.set(o.x, Math.max(v.y, o.y - 240), o.x, o.y);
     const stop = this.#clock.each(() => frame.set({ x: o.x, y: o.y, w: h.pos.x - o.x, h: h.pos.y - o.y }));
     await h.reachPoint({ x: box.x + box.w, y: box.y + box.h }, 3, 1.15);
     stop();
@@ -242,9 +241,9 @@ export class Crew {
   #block(el: HTMLElement): Pick<Task, "where" | "run"> {
     el.classList.add("is-unbuilt");
     return {
-      where: () => centre(boxOf(el)),
+      where: () => centre(this.#space.box(el)),
       run: async (h) => {
-        const box = boxOf(el);
+        const box = this.#space.box(el);
         if (box.w < 32 || box.h < 24) {
           // Too small to draw out: placed with a click.
           await h.reach(box);
@@ -325,15 +324,15 @@ export class Crew {
     const w = this.#writing(el);
     const headline = el.dataset.build === "headline";
     return {
-      where: () => centre(boxOf(el)),
+      where: () => centre(this.#space.box(el)),
       run: async (h) => {
         // A headline is set small first, its final height held so nothing below it moves.
         const size = parseFloat(getComputedStyle(el).fontSize);
         if (headline) {
-          el.style.minHeight = `${boxOf(el).h}px`;
+          el.style.minHeight = `${this.#space.box(el).h}px`;
           el.style.fontSize = `${size * 0.36}px`;
         }
-        const box = textBox(el);
+        const box = this.#space.text(el);
         let frame: Frame;
         if (box.w >= 140 && !inBlock) frame = await this.#dragFrame(h, box, false);
         else {
@@ -343,13 +342,13 @@ export class Crew {
         }
         h.tool = "text";
         await h.reachPoint({ x: box.x + 4, y: box.y + Math.min(box.h, size * 1.2) / 2 }, 3, 0.7);
-        const keep = this.#clock.each(() => frame.set(textBox(el)));
+        const keep = this.#clock.each(() => frame.set(this.#space.text(el)));
         await this.#typeInto(h, w, w.full);
         if (headline) await this.#enlarge(h, el, size);
         keep();
         this.#done(w);
         el.style.minHeight = "";
-        this.#aligned(this.#sectionOf(el), textBox(el));
+        this.#aligned(this.#sectionOf(el), this.#space.text(el));
         await h.rest(0.12);
         frame.remove();
         h.tool = "arrow";
@@ -360,9 +359,9 @@ export class Crew {
   // Takes a headline's corner handle and pulls it out until the type stands at full size.
   async #enlarge(h: Hand, el: HTMLElement, size: number) {
     const small = parseFloat(el.style.fontSize);
-    const start = textBox(el);
+    const start = this.#space.text(el);
     el.style.fontSize = "";
-    const end = textBox(el);
+    const end = this.#space.text(el);
     el.style.fontSize = `${small}px`;
     const from = { x: start.x + start.w, y: start.y + start.h };
     const to = { x: end.x + end.w, y: end.y + end.h };
@@ -391,9 +390,9 @@ export class Crew {
   #slot(el: HTMLElement, i: number, row: Row): Pick<Task, "where" | "run"> {
     const w = this.#writing(el);
     return {
-      where: () => centre(boxOf(el)),
+      where: () => centre(this.#space.box(el)),
       run: async (h) => {
-        const box = boxOf(el);
+        const box = this.#space.box(el);
         await h.reach(box);
         await h.click();
         const frame = this.#marks.frame().set(box);
@@ -450,10 +449,10 @@ export class Crew {
       }
     };
     return {
-      where: () => centre(boxOf(g)),
+      where: () => centre(this.#space.box(g)),
       run: async (h) => {
         for (const s of strands) s.len = s.p.getTotalLength();
-        // Where the tip is at each sixtieth of a second, in page coordinates, or null while it is lifted.
+        // Where the tip is at each sixtieth of a second, in the crew's space, or null while it is lifted.
         const DT = 1 / 60;
         const tips: (Pt | null)[] = [];
         for (let tau = 0; tau <= end; tau += DT) {
@@ -472,7 +471,7 @@ export class Crew {
             x += q.x;
             y += q.y;
           }
-          tips.push({ x: x / lead.length + scrollX, y: y / lead.length + scrollY });
+          tips.push(this.#space.point(x / lead.length, y / lead.length));
         }
         // Runs of the tip without a lift or a jump: each is one movement of the pen.
         const runs: { from: number; points: Pt[] }[] = [];
@@ -549,12 +548,14 @@ export class Crew {
 
   // A hand without work drifts about the screen, now and then, and keeps an eye out for work.
   async #idle(h: Hand) {
-    const view = { x: scrollX + 40, y: scrollY + 60, w: innerWidth - 80, h: innerHeight - 120 };
+    const v = this.#space.view();
+    const [mx, my] = [Math.min(40, v.w * 0.08), Math.min(60, v.h * 0.1)];
+    const view = { x: v.x + mx, y: v.y + my, w: v.w - 2 * mx, h: v.h - 2 * my };
     const off = h.pos.y < view.y - 40 || h.pos.y > view.y + view.h + 40;
     if (off || h.random.chance(0.18)) {
       const target = off
         ? { x: view.x + h.random.uniform(0, view.w), y: view.y + h.random.uniform(0, view.h) }
-        : { x: clamp(h.pos.x + h.random.normal(0, 140), view.x, view.x + view.w), y: clamp(h.pos.y + h.random.normal(0, 110), view.y, view.y + view.h) };
+        : { x: clamp(h.pos.x + h.random.normal(0, view.w * 0.1), view.x, view.x + view.w), y: clamp(h.pos.y + h.random.normal(0, view.h * 0.1), view.y, view.y + view.h) };
       await h.reachPoint(target, 12, 1.4);
     }
     await h.rest(h.random.uniform(0.2, 0.6));

@@ -327,6 +327,13 @@
       @keyframes explode-run { 0%, 6% { --apart: 0; } 40%, 62% { --apart: 1; } 96%, 100% { --apart: 0; } }
     }
   }
+  /* Assembly: the work beside a sheet on which a few hands build a miniature of its page, again and again
+     (assembly/show.js). The sheet keeps this page's paper, ink and crayons, so it keeps the light. */
+  .assembly-show { display: grid; align-items: center; gap: clamp(1.75rem, 4vw, 3rem); padding: clamp(3rem, 6vw, 4.5rem) var(--margin) clamp(4rem, 8vw, 6rem); }
+  @media (min-width: 64rem) { .assembly-show { grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr); } }
+  .assembly-host { display: block; }
+  .assembly-host > div { aspect-ratio: 16 / 9; }
+
   /* Collage: one card, dealt from the five, playing as it does on its own page; it stays paper by night. */
   .collage-card { display: block; height: 100%; aspect-ratio: 1; max-width: 100%; border-radius: .5rem; }
   .collage-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
@@ -469,6 +476,15 @@
           <div class="trio-along" aria-hidden="true"></div>
         </div>
       </div>
+
+      <article class="work assembly-show" aria-labelledby="assembly">
+        <div class="piece-text">
+          <h2 id="assembly"><span>Assembly</span></h2>
+          <p>A page made in front of you by a crew of hands that move the way people do: guides pulled down, frames dragged out, words typed key by key, and crayon laid stroke by stroke.</p>
+          <div class="take"><a class="link" href="assembly/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/assembly">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/assembly">Skill</a></div>
+        </div>
+        <a class="assembly-host" href="assembly/" aria-label="Open Assembly"><div data-assembly aria-hidden="true"></div></a>
+      </article>
     </div>
   </main>
 
@@ -479,7 +495,7 @@
         <p>Drawings that move when you do, with the source and the skills to make your own.</p>
       </div>
       <nav aria-label="Footer">
-        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#collage">Collage</a></li><li><a href="#portraits">Portraits</a></li></ul></div>
+        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#collage">Collage</a></li><li><a href="#portraits">Portraits</a></li><li><a href="#assembly">Assembly</a></li></ul></div>
         <div><h3>Take</h3><ul><li><a href="https://github.com/appautomaton/delineate">Source</a></li><li><a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Agent skills</a></li></ul></div>
       </nav>
       <p class="foot-row">© 2026 delineate</p>
@@ -743,6 +759,9 @@
     const pick = (list) => list[Math.floor(Math.random() * list.length)];
     mountCard(document.querySelector("[data-collage]"), pick(Object.keys(MOTIFS)), { art: "collage/art", ground: pick(Object.keys(GROUNDS)) });
   });
+
+  // Assembly: a few hands building a miniature of Assembly's page on a sheet, again and again, while it is in view.
+  import("./assembly/show.js").then(({ mount }) => mount(document.querySelector("[data-assembly]")));
 
   // A drawn icon draws itself again when a pointer comes to it.
   const redraw = (el) => {

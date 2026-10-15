@@ -32,7 +32,7 @@ export const CARDS: Card[] = [
     page: "",
     render: "",
     title: "delineate · Drawings that move when you do",
-    description: "Gardens that grow as you scroll, small worlds at the foot of a page, portraits that come apart, a picture made of letters and sculptures laid among scraps of paper. Each with its source.",
+    description: "Gardens that grow as you scroll, small worlds at the foot of a page, portraits that come apart, a picture made of letters, sculptures laid among scraps of paper, and a page made in front of you. Each with its source.",
     alt: "Drawings that move when you do, lettered in crayon beside a bouquet of crayon poppies and anemones.",
     async prepare(page) {
       // A share is seen small: the headline is set larger than the page sets it, and the works named on one line.
@@ -42,7 +42,7 @@ export const CARDS: Card[] = [
           .headline { font-size: 80px; }
           .opening .works { max-width: none; margin: 2rem 0 0; font: 500 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--soft); }`,
       });
-      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Garden · Footers · Characters · Collage · Portraits</p>')`);
+      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Garden · Footers · Characters · Collage · Portraits · Assembly</p>')`);
       await page.waitForFunction("document.querySelector('.headline.is-drawn') && document.querySelector('.bouquet.is-drawn')");
       await settle(page, 1600); // the headline's wash settles under its strokes
     },
@@ -119,6 +119,15 @@ export const CARDS: Card[] = [
     async prepare(page) {
       await settle(page, 1500);
       await page.evaluate(`(() => { const s = document.querySelector("#apart"); s.value = 55; s.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+      await settle(page, 1500);
+    },
+  },
+  {
+    // Asking for less motion, Assembly lays its page down finished, so its first screen is the card.
+    page: "assembly/",
+    render: "assembly/",
+    alt: "Watch the page get made, beside a crayon still life of flowers in a glass vase on a table.",
+    async prepare(page) {
       await settle(page, 1500);
     },
   },

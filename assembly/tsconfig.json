@@ -5,5 +5,5 @@
     "rootDir": ".",
     "rewriteRelativeImportExtensions": true
   },
-  "include": ["main.ts", "hand", "studies"]
+  "include": ["main.ts", "show.ts", "hand", "studies"]
 }

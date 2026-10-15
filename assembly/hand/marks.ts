@@ -127,15 +127,18 @@ export class Marks {
   readonly #top: HTMLCanvasElement;
   readonly #left: HTMLCanvasElement;
   #shown = false;
+  #ruled = true;
   #font: string | undefined;
 
-  constructor(layer: HTMLElement) {
+  // A page of the crew's own has rulers along the screen; a stage set into another page does without.
+  constructor(layer: HTMLElement, { rulers = true } = {}) {
     this.layer = layer;
     this.#top = document.createElement("canvas");
     this.#top.className = "ruler ruler-top";
     this.#left = document.createElement("canvas");
     this.#left.className = "ruler ruler-left";
-    document.body.append(this.#top, this.#left);
+    if (rulers) document.body.append(this.#top, this.#left);
+    else this.#ruled = false;
   }
 
   frame(): Frame {
@@ -168,6 +171,7 @@ export class Marks {
 
   // The rulers show while anything is being made on the screen.
   set rulers(on: boolean) {
+    on &&= this.#ruled;
     if (on === this.#shown) return;
     this.#shown = on;
     document.documentElement.classList.toggle("is-making", on);

@@ -698,10 +698,14 @@ h2 {
   stroke-dashoffset: 1;
 }
 
-/* Without motion, the page is simply there, drawn. */
+/* Without motion, the page is simply there, drawn, with no name waiting at the middle for hands to circle. */
 @media (prefers-reduced-motion: reduce) {
   .wax path {
     stroke-dashoffset: 0;
+  }
+
+  .opening {
+    display: none;
   }
 }
 

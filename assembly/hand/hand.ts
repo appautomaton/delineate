@@ -2,7 +2,7 @@
 // What it does to the page is up to whoever directs it; the hand itself only moves and keeps time.
 // Its pointer takes the shape of the tool in hand; its tag shows whose hand it is while the button is down.
 //
-// Positions are page coordinates, so a hand stays with the page as it scrolls. A hand keeps its own time line on
+// Positions are in the coordinates of the layer the pointer lies on: the page's, or a stage's (see space.ts). A hand keeps its own time line on
 // the shared clock: each act starts where the last one ended, so the small lateness of frames never piles up.
 
 import type { Clock } from "./clock.ts";
@@ -24,12 +24,6 @@ export type Options = {
 type Course = { start: number; end: number; at: (t: number) => Pt };
 
 const minimumJerk = (u: number) => u * u * u * (10 - 15 * u + 6 * u * u);
-
-// A target's box on the page.
-export function boxOf(el: Element): Box {
-  const r = el.getBoundingClientRect();
-  return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height };
-}
 
 export class Hand {
   readonly name: string;
@@ -76,9 +70,9 @@ export class Hand {
     return this.#until((this.#t = this.#begin() + secs));
   }
 
-  // Brings the pointer onto `target`; `tempo` over 1 is slower, as a drag is.
-  reach(target: Element | Box, tempo = 1): Promise<void> {
-    const box = target instanceof Element ? boxOf(target) : target;
+  // Brings the pointer onto `box`, given in whatever space the hand's layer lies in; `tempo` over 1 is slower, as
+  // a drag is.
+  reach(box: Box, tempo = 1): Promise<void> {
     const style = { ...this.#style, tempo: this.#style.tempo * tempo };
     const moves = reach(this.pos, box, this.random, style);
     const start = this.#begin();
