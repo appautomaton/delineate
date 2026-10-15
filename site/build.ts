@@ -26,7 +26,7 @@ import { planes } from "./portrait.ts";
 
 const ROOT = new URL("../", import.meta.url);
 // Where the site is served: links shared elsewhere, and the card they show, name it in full.
-const SITE = "https://appautomaton.com/delineate/";
+const SITE = "https://delineate.appautomaton.com/";
 const DIST = new URL("site/dist/", ROOT);
 
 const read = (path: string) => readFileSync(new URL(path, ROOT), "utf8");

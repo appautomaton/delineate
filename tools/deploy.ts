@@ -1,5 +1,5 @@
-// Publishes the built site, site/dist, to the gh-pages branch, which GitHub Pages serves at
-// https://appautomaton.github.io/delineate/. The branch holds the latest build alone, one commit replaced on
+// Publishes the built site, site/dist, to the gh-pages branch, which GitHub Pages serves at its own domain,
+// https://delineate.appautomaton.com/. The branch holds the latest build alone, one commit replaced on
 // every deploy, so the repository never carries each build's drawings. The site is built here, not by GitHub:
 // Collage's drawings and the portraits' planes are made from sources kept on this machine.
 //
@@ -12,6 +12,8 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
+// The domain Pages serves the site at; it lives in the branch's CNAME file, so every deploy writes it again.
+const DOMAIN = "delineate.appautomaton.com";
 const DIST = join(ROOT, "site/dist");
 const git = (cwd: string, ...args: string[]) => execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
 
@@ -26,11 +28,12 @@ try {
   cpSync(DIST, dir, { recursive: true });
   // Served as it stands: without this, Pages would run the files through Jekyll first.
   writeFileSync(join(dir, ".nojekyll"), "");
+  writeFileSync(join(dir, "CNAME"), `${DOMAIN}\n`);
   git(dir, "init", "-q", "-b", "gh-pages");
   git(dir, "add", "-A");
   git(dir, ...who, "commit", "-q", "-m", `The site, as built from ${source}`);
   execFileSync("git", ["push", "-q", "-f", git(ROOT, "remote", "get-url", "origin"), "gh-pages"], { cwd: dir, stdio: "inherit" });
-  console.log(`published ${source} to gh-pages: https://appautomaton.github.io/delineate/`);
+  console.log(`published ${source} to gh-pages: https://${DOMAIN}/`);
 } finally {
   rmSync(dir, { recursive: true, force: true });
 }
