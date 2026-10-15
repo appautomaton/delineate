@@ -10,24 +10,25 @@
 //   import { mountFoot } from "./foot.js";
 //   mountFoot(canvas, { clear: [...words] });
 //
-// Each scene is composed on a 16 x 9 sheet, laid over the canvas as a slice is, its foot on the canvas's foot and
-// its middle in the middle, so a narrow screen keeps the middle of the scene and loses its edges. The sky is left
-// to the page's words: nothing in it, not even a star, falls on the elements given as clear.
+// The frame is always 9 units high, so the land keeps its share of the height and every feature its size, and as
+// many wide as its aspect makes it; each scene is laid across that width as scenes.js says, its sides holding the
+// edges and its middle taking what is left. The sky is left to the page's words: nothing in it, not even a star,
+// falls on the elements given as clear.
 
-import { SCENES } from "./scenes.js";
+import { SCENES, across } from "./scenes.js";
 
 const FPS = 12;
 const REST = 20000; // ms without input before the foot holds still, as the field does
 const HOLD = 11000; // ms a scene holds, long enough to look at
 const TURN = 1600; // ms a scene takes to dissolve into the next, eased at both ends
 const RISING = 0.35; // how far the dissolve leans upward: the new scene settles from the foot, the old lifts off the top
-const BUDGET = 7; // ms of work a frame may spend on drawing or on composing; the rest waits for the next
+const BUDGET = 7; // ms a slice of composing may take, or a frame, drawing and all; the rest waits for the next
 const TILE = 0.64; // how strongly a cell's own color is laid under its letter
-const ORB = 0.4; // the sun's and the moon's radius, in units of the sheet
+const ORB = 0.4; // the sun's and the moon's radius, in the scenes' units
 const RAMP = ["d", "a", "3", "n", "t", "l", "i", ":", "·"]; // dark to light, by how much ink each letter lays
 const TREES = ["\u{F0531}", "\u{F0405}"]; // a broadleaf and a pine, from the Nerd Fonts' Material Design icons
 const STAR = "\u{F0AE2}"; // a four-pointed star
-const W = 16, H = 9;
+const H = 9; // the frame's height in the scenes' units
 const NONE = 0xffff; // a cell whose drawing is not known, so it is drawn whatever it should show
 
 // Ordered dither thresholds, (v + 0.5) / n²: four by four for a cell's tone, eight by eight for the order in which
@@ -68,7 +69,7 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
   const still = document.createElement("canvas"), s = still.getContext("2d");
   // The layout. Cells are measured in whole device pixels, so tiles meet edge to edge with no seam and each look
   // is copied from the atlas pixel for pixel.
-  let cols = 0, rows = 0, cw = 1, ch = 1, dpr = 1, size = 8, scale = 1, ox = 0, oy = 0;
+  let cols = 0, rows = 0, cw = 1, ch = 1, dpr = 1, size = 8, scale = 1, W = 16;
   let drawn = new Uint16Array(0), order = new Uint32Array(0), turns = new Float32Array(0), cleared = new Uint8Array(0);
   let pictures = [], jobs = [], pumping = false, cursor = 0, dirty = true;
   let atlas = null, a = null, inked = new Uint8Array(0);
@@ -79,15 +80,14 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     const box = canvas.getBoundingClientRect();
     dpr = Math.min(2, devicePixelRatio || 1);
     for (const c of [canvas, still]) { c.width = Math.round(box.width * dpr); c.height = Math.round(box.height * dpr); }
-    size = box.width < 600 ? 7 : box.width < 2000 ? 8 : 9;
+    // Cells grow a little with the screen, from 7 px on a phone to 9 on the widest, the grain staying fine.
+    size = Math.min(9, Math.max(7, 6.2 + box.width / 800));
     cw = Math.max(2, Math.round(size * 0.92 * dpr));
     ch = Math.max(2, Math.round(size * 1.08 * dpr));
     cols = Math.ceil(canvas.width / cw);
     rows = Math.ceil(canvas.height / ch);
-    // The sheet laid as a slice: it covers the canvas, its foot on the foot, its middle in the middle.
-    scale = Math.max(box.width / W, box.height / H);
-    ox = (box.width - W * scale) / 2;
-    oy = box.height - H * scale;
+    scale = box.height / H;
+    W = box.width / scale;
     const n = cols * rows;
     drawn = new Uint16Array(n); // the still canvas starts empty, as every cell of the sky is
     // When each cell turns to the next scene, as a share of the dissolve: by the ordered dither, leaning upward.
@@ -117,41 +117,54 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     prepare(now().scene);
   }
 
-  // The sheet's coordinates of a cell's middle.
-  const sheetX = (i) => (((i + 0.5) * cw) / dpr - ox) / scale;
-  const sheetY = (j) => (((j + 0.5) * ch) / dpr - oy) / scale;
+  // The frame's coordinates of a cell's middle.
+  const frameX = (i) => ((i + 0.5) * cw) / dpr / scale;
+  const frameY = (j) => ((j + 0.5) * ch) / dpr / scale;
 
-  // A scene's picture for this layout: for each plane, the look of every cell at rest, and how many rows the plane
-  // sits lower before it has risen; and the sky, by day and by night. Composed a row at a time, between frames.
+  // A scene's picture for this layout: how it lies across the frame; for each plane, the look of every cell at
+  // rest, and how many rows the plane sits lower before it has risen; and the sky, by day and by night. Composed a
+  // row at a time, between frames.
   function prepare(n) {
     if (pictures[n]) return;
     pictures[n] = { ready: false };
     jobs.push(compose(n, pictures[n]));
     if (!pumping) { pumping = true; setTimeout(pump, 0); }
   }
+  // Composing goes a row at a time, and stops before a row that might not fit in the slice; until a row has been
+  // timed, one is taken to cost two milliseconds.
+  let step = 2;
   function pump() {
-    const end = performance.now() + BUDGET;
-    while (jobs.length && performance.now() < end) if (jobs[0].next().done) { jobs.shift(); dirty = true; }
+    const end = performance.now() + BUDGET - 0.5;
+    for (let now = performance.now(); jobs.length && now + step < end; ) {
+      if (jobs[0].next().done) { jobs.shift(); dirty = true; }
+      const then = performance.now();
+      step = Math.max(step * 0.9, then - now);
+      now = then;
+    }
     if (jobs.length) setTimeout(pump, 0);
     else pumping = false;
   }
   function* compose(n, picture) {
-    const scene = SCENES[n], planes = scene.planes;
+    const scene = SCENES[n], planes = scene.planes, lay = across(scene, W);
     const out = planes.map(() => new Uint16Array(cols * rows));
+    const point = { x: 0, k: 1, row: ch / dpr / scale };
     for (let j = 0; j < rows; j++) {
-      const Y = sheetY(j);
+      const Y = frameY(j);
       for (let i = 0; i < cols; i++) {
-        const X = sheetX(i);
+        point.x = frameX(i);
+        point.k = lay.squeeze(point.x);
+        const X = lay.to(point.x);
         for (let p = 0; p < planes.length; p++) {
-          const cell = planes[p].at(X, Y);
+          const cell = planes[p].at(X, Y, point);
           if (cell) out[p][j * cols + i] = lookOf(n, cell, i, j);
         }
       }
       yield;
     }
+    picture.lay = lay;
     picture.planes = out;
     picture.lift = planes.map((p) => Math.round((p.rise * scale * dpr) / ch));
-    picture.sky = { day: sky(n, "day"), night: sky(n, "night") };
+    picture.sky = { day: sky(n, "day", lay), night: sky(n, "night", lay) };
     yield;
     picture.ready = true;
   }
@@ -166,16 +179,16 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
   }
 
   // The sky: by day the sun, a disc of cells with a glow of points thinning round it; by night the moon, and stars.
-  function sky(n, hour) {
+  function sky(n, hour, lay) {
     const scene = SCENES[n], out = new Uint16Array(cols * rows);
-    const [OX, OY] = hour === "day" ? scene.sun : scene.moon;
+    const [at, OY] = hour === "day" ? scene.sun : scene.moon, OX = lay.from(at);
     for (let j = 0; j < rows; j++) {
-      const Y = sheetY(j);
+      const Y = frameY(j);
       if (Y > 6) break;
       for (let i = 0; i < cols; i++) {
         const k = j * cols + i;
         if (cleared[k]) continue;
-        const X = sheetX(i), d = Math.hypot(X - OX, Y - OY) / ORB;
+        const X = frameX(i), d = Math.hypot(X - OX, Y - OY) / ORB;
         if (d < 1) {
           // Lit from the upper left, by day a little and by night as a moon is, with a shadowed limb.
           const t = 0.62 + 0.3 * (1 - d * d) - 0.25 * Math.max(0, ((X - OX) - (OY - Y)) / ORB) * (hour === "night" ? 1 : 0.4);
@@ -262,7 +275,8 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     const A = pictures[state.scene];
     if (!A?.ready) return false;
     const B = state.turn > 0 ? pictures[state.next] : null;
-    const la = lifts(A), lb = B && lifts(B), n = cols * rows, end = performance.now() + BUDGET;
+    // Drawing leaves a frame room to lay the still scene and its air on the canvas after it.
+    const la = lifts(A), lb = B && lifts(B), n = cols * rows, end = performance.now() + BUDGET - 2.5;
     let changed = false, c = 0;
     for (; c < n; c++) {
       if ((c & 255) === 0 && c && performance.now() > end) break;
@@ -282,27 +296,39 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     return changed;
   }
 
-  // Each frame: the still scene, then its air, over the cells that are the scene's own.
-  function present(state) {
+  // Each frame: the still scene, then its air, over the cells that are the scene's own. While nothing but the air
+  // has changed, only the air's reach is laid again.
+  function present(state, whole) {
+    const shown = (state.turn > 0 ? [state.scene, state.next] : [state.scene]).filter((n) => SCENES[n].air && pictures[n]?.lay);
+    const reach = shown.map((n) => {
+      const [x0, x1, y0, y1] = SCENES[n].air.box, lay = pictures[n].lay;
+      return [
+        Math.max(0, Math.floor((lay.from(x0) * scale * dpr) / cw)), Math.min(cols - 1, Math.ceil((lay.from(x1) * scale * dpr) / cw)),
+        Math.max(0, Math.floor((y0 * scale * dpr) / ch)), Math.min(rows - 1, Math.ceil((y1 * scale * dpr) / ch)),
+      ];
+    });
+    let [x, y, w, h] = [0, 0, canvas.width, canvas.height];
+    if (!whole && reach.length) {
+      x = Math.min(...reach.map((r) => r[0])) * cw;
+      y = Math.min(...reach.map((r) => r[2])) * ch;
+      w = Math.min(canvas.width, (Math.max(...reach.map((r) => r[1])) + 1) * cw) - x;
+      h = Math.min(canvas.height, (Math.max(...reach.map((r) => r[3])) + 1) * ch) - y;
+    }
     g.globalAlpha = 1;
-    g.clearRect(0, 0, canvas.width, canvas.height);
-    g.drawImage(still, 0, 0);
-    if (!pictures[state.scene]?.ready) return;
-    for (const n of state.turn > 0 ? [state.scene, state.next] : [state.scene]) {
-      const air = SCENES[n].air;
-      if (!air) continue;
+    g.clearRect(x, y, w, h);
+    g.drawImage(still, x, y, w, h, x, y, w, h);
+    shown.forEach((n, q) => {
+      const air = SCENES[n].air, lay = pictures[n].lay;
       const orb = light === "day" ? SCENES[n].sun : SCENES[n].moon;
       const ids = air.shade ? [look(n, "air", 1, 0, "", true)] : air.glyphs.map((glyph) => look(n, "air", 1, 0, glyph, false));
-      const [x0, x1, y0, y1] = air.box;
-      const i0 = Math.max(0, Math.floor(((x0 * scale + ox) * dpr) / cw)), i1 = Math.min(cols - 1, Math.ceil(((x1 * scale + ox) * dpr) / cw));
-      const j0 = Math.max(0, Math.floor(((y0 * scale + oy) * dpr) / ch)), j1 = Math.min(rows - 1, Math.ceil(((y1 * scale + oy) * dpr) / ch));
+      const [i0, i1, j0, j1] = reach[q];
       for (let j = j0; j <= j1; j++) {
-        const Y = sheetY(j);
+        const Y = frameY(j);
         for (let i = i0; i <= i1; i++) {
           const k = j * cols + i;
           // In a turn, each cell's air is that of the scene it shows.
           if (state.turn > 0 && (turns[k] < state.turn) !== (n === state.next)) continue;
-          const v = air.at(sheetX(i), Y, airTime, looks[drawn[k]]?.m ?? "", orb);
+          const v = air.at(lay.to(frameX(i)), Y, airTime, looks[drawn[k]]?.m ?? "", orb);
           if (v <= 0) continue;
           if (air.shade && v < BAYER8[(j & 7) * 8 + (i & 7)]) continue;
           const id = air.shade ? ids[0] : ids[Math.min(ids.length - 1, Math.floor(v * ids.length))];
@@ -311,7 +337,7 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
           g.drawImage(atlas, (id % 64) * cw, ((id / 64) | 0) * ch, cw, ch, i * cw, j * ch, cw, ch);
         }
       }
-    }
+    });
     g.globalAlpha = 1;
   }
 
@@ -344,7 +370,7 @@ export function mountFoot(canvas, { font = '"VictorMono NF Obl"', clear = [] } =
     prepare(state.scene);
     if (!calm.matches) prepare(state.next);
     const painted = dirty && paint(state);
-    if (painted || moving) present(state);
+    if (painted || moving) present(state, painted);
   }
 
   const wake = () => (stirred = performance.now());

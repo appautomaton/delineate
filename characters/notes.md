@@ -26,11 +26,19 @@ field in its Characters section. `npm run site` copies both to `site/dist/charac
 ## The foot
 
 `foot.js` writes the page's foot: four landscapes after references kept locally, a misty gorge, a green valley
-with a winding path, sand dunes, and a rocky cove of turquoise water, taking turns. `scenes.js` draws them, each
-on a 16 x 9 sheet laid as a slice: planes, far to near, that say for a point what it is (rock, foliage, sand,
-water...), how light, and how far the haze has washed it; three tones for each material by day and by night; a
-place for the sun and one for the moon; and the air that moves over it.
+with a winding path, sand dunes, and a rocky cove of turquoise water, taking turns. `scenes.js` draws them: planes,
+far to near, that say for a point what it is (rock, foliage, sand, water...), how light, and how far the haze has
+washed it; three tones for each material by day and by night; a place for the sun and one for the moon; and the
+air that moves over it.
 
+- **Composed for the frame.** The frame is always nine units high, so every feature keeps its size and the land
+  its share of the height, and as wide as its aspect makes it. A scene is drawn for a frame sixteen wide, in
+  sides and a middle: the sides (gorge walls, headlands, the valley's hills) hold the frame's edges and lose
+  their outer parts when it is narrow; the middle (the gorge's floor, the cove's water, the valley's path) takes
+  the width left, squeezed or spread to fit, never less than a share of the frame. The dunes are all middle, so
+  each crest sits at its share of the width. So a phone sees a narrow inlet between headlands and a wide screen a
+  broad sea, and both see a cove; nothing changes at a breakpoint. Shapes that must stay round (clumps, crowns,
+  boulders) and grain that must stay fine are measured in the frame's own units, not the squeezed drawing's.
 - **A cell is a pixel of a dithered picture.** Its color is one of three tones of its material, chosen by an
   ordered (Bayer) dither and laid as a soft tile on whole device pixels; on it stands a letter of the name,
   chosen by how much ink the tone asks for, or a tree in the shaded body of a crown. Cells are about 7 to 9 CSS
@@ -38,8 +46,8 @@ place for the sun and one for the moon; and the air that moves over it.
   darker than its tile, by night a tone lighter, as moonlight catches it.
 - **Detail at the scale of a cell.** Rock stands in cracked columns crossed by ledges; trees and scrub gather in
   round clumps lit from where the sun stands; grass is tufts and blades; dunes split at their crests into a lit
-  face and a slip face, the near sand combed into ripples; the sea runs deep to pale with rocks under it and a
-  line of foam.
+  face and a slip face, the near sand combed into ripples that follow its swell, each a row or more of shadow
+  and a lit crest; the sea runs deep to pale with rocks under it and a line of foam.
 - **The scenes take turns.** Each holds eleven seconds, then dissolves into the next over 1.6 seconds, eased:
   each cell switches at its threshold in an eight by eight Bayer matrix, leaning upward, so the new scene settles
   from the foot as the old lifts off the top. The change is made of the same stuff as the pictures, a dither, and
