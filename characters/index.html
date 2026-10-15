@@ -11,6 +11,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap">
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@3.3.0/build/victormono-nf-obl.css">
+<script>
+  // The light the visitor chose on delineate's page, set before the first paint so nothing flashes; day if none.
+  try { document.documentElement.dataset.theme = localStorage.getItem("delineate-theme") || "day"; } catch {}
+</script>
 <style>
   /* The first screen is the field: letters across the whole sheet, parting round the words. Below it, the page's
      foot: a gorge written in the same type. */
@@ -92,13 +96,20 @@
       field.bloom(b.dataset.bloom);
       for (const o of document.querySelectorAll("[data-bloom]")) o.setAttribute("aria-pressed", String(o === b));
     });
+    // Day or night, as on delineate's page, which keeps the choice under the same name.
     const light = document.querySelector(".light");
-    light.addEventListener("click", () => {
-      const night = document.documentElement.dataset.theme !== "night";
-      document.documentElement.dataset.theme = night ? "night" : "day";
+    const showLight = () => {
+      const night = document.documentElement.dataset.theme === "night";
       light.textContent = night ? "Day" : "Night";
       light.setAttribute("aria-pressed", String(night));
+    };
+    light.addEventListener("click", () => {
+      const theme = document.documentElement.dataset.theme === "night" ? "day" : "night";
+      document.documentElement.dataset.theme = theme;
+      try { localStorage.setItem("delineate-theme", theme); } catch {}
+      showLight();
     });
+    showLight();
   </script>
 </body>
 </html>
