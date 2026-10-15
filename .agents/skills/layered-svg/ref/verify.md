@@ -10,7 +10,7 @@
 | `node portraits/harness/trace/look.ts grid x y w h zoom out.png image.png [shapes.json]` | a gridded crop for reading coordinates, with outlines drawn over it |
 | `ONLY=<regex> OUT=<file.svg> node portraits/pieces/<piece>/build.ts` | build only some regions, for quick trials, in a piece whose build reads `ONLY` |
 | the bench with `&tone=<px>` (T toggles it) | every pane blurred until the marks vanish, so only tone is compared |
-| `bench.measure(reference, panes, region?)`, `bench.cells(reference, pane)` in the bench's console | tone against a reference per pane, and the cells most off, worst first |
+| `bench.measure(reference, panes, { region?, paper?, bare? })`, `bench.cells(reference, pane, { cell? })` in the bench's console | tone against a reference per pane, in the picture's frame, and the cells most off, worst first; `paper` goes under transparent images, `bare` leaves out the paper round a subject on its own plate |
 | `node portraits/harness/stage/pace.ts <page.html>` | frame rate and main-thread share of the page, together and apart |
 | `node portraits/harness/stage/reel.ts <page.html> [out.mp4\|.webp\|.gif ...]` | the page coming apart and back as a five-second loop (`reel.mp4` beside the page): the piece shown to someone who will not open it |
 

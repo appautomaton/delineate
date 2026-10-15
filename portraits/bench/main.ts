@@ -180,13 +180,15 @@ await load();
 header();
 panes();
 
-// For the console and for agents: tone against a reference, by pane names.
-//   await bench.measure("wav-subject.png", ["previous", "latest"], [x0, y0, x1, y1]?)
-//   await bench.cells("wavy-eng-full.png", "latest")   where it is most off, worst first
+// For the console and for agents: tone against a reference, by pane names, in the picture's frame.
+//   await bench.measure("wav-subject.png", ["previous", "latest"], { region?, paper?, bare? })
+//   await bench.cells("wavy-eng-full.png", "latest", { cell?, paper? })   where it is most off, worst first
+// `paper` is laid under transparent images; `bare` leaves out where the reference is lighter than
+// it (linear light), as the paper round a subject on its own plate.
 Object.assign(globalThis, {
   bench: {
-    measure: (reference: string, keys: string[], region?: number[]) =>
-      measure(source(reference)!, keys.map((k) => source(k)!), { size: Math.max(frame.width, frame.height), region }),
-    cells: (reference: string, key: string, cell?: number) => cells(source(reference)!, source(key)!, { size: Math.max(frame.width, frame.height), cell }),
+    measure: (reference: string, keys: string[], options: { region?: number[]; paper?: string; bare?: number } = {}) =>
+      measure(source(reference)!, keys.map((k) => source(k)!), { ...frame, ...options }),
+    cells: (reference: string, key: string, options: { cell?: number; paper?: string } = {}) => cells(source(reference)!, source(key)!, { ...frame, ...options }),
   },
 });
