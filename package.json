@@ -28,7 +28,8 @@
     "collage:render": "node collage/render.ts",
     "collage:draw": "node collage/draw/draw.ts",
     "presite": "npm run draw",
-    "site": "node site/build.ts"
+    "site": "node site/build.ts",
+    "deploy": "npm run site && node tools/deploy.ts"
   },
   "devDependencies": {
     "@huggingface/transformers": "4.3.0",
