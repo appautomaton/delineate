@@ -1,6 +1,6 @@
-// delineate's page, made in front of the reader by 32 hands. They circle the name while the type loads, set to
-// work section by section as the page scrolls into view, and when the last section is done they fly as one
-// flock after the reader's own pointer.
+// Assembly's page, made in front of the reader by a crew of hands. They circle the name while the type loads,
+// set to work section by section as the page scrolls into view, and when the last section is done they fly as
+// one flock after the reader's own pointer.
 
 import { Clock } from "./hand/clock.ts";
 import { Crew } from "./hand/crew.ts";
@@ -12,13 +12,36 @@ import type { Pt } from "./hand/motion.ts";
 const $ = (s: string) => document.querySelector(s) as HTMLElement;
 const root = document.documentElement;
 
-// The hands wear the site's crayons, so the pointers belong to the drawings they make.
-const COLOURS = ["#2F4FB8", "#CF3F2C", "#D9A532", "#4C7E37", "#DE7C93", "#6B55B3", "#B5652A", "#1E2F7E", "#8C9B3C", "#8E2A24", "#2F5A2E"];
+// The hands wear the site's crayons, by name, so the pointers belong to the drawings they make and turn pastel
+// with them at night.
+const COLOURS = ["blue", "red", "ochre", "green", "pink", "violet", "rust", "deep", "olive", "maroon", "pine"].map((c) => `var(--c-${c})`);
 const ROLES = ["grid", "type", "wax", "ink", "copy", "line", "edit", "draw"];
-const HANDS = 32;
+
+// As many hands as the screen has room for: thirty-two on a wide one, ten on a phone.
+const HANDS = Math.round(Math.min(32, Math.max(10, (innerWidth * innerHeight) / 36000)));
 
 // Faster than a person, with a person's way of moving.
 const STYLE = { tempo: 0.6, curl: 0.05, scatter: 1 };
+
+// Day or night, as on delineate's page, which keeps the choice under the same name.
+const light = $(".light");
+const showLight = () => {
+  const night = root.dataset.theme === "night";
+  light.textContent = night ? "Day" : "Night";
+  light.setAttribute("aria-pressed", String(night));
+};
+light.addEventListener("click", () => {
+  const theme = root.dataset.theme === "night" ? "day" : "night";
+  root.dataset.theme = theme;
+  try {
+    localStorage.setItem("delineate-theme", theme);
+  } catch {}
+  showLight();
+});
+showLight();
+
+// The page says how many hands made it.
+$(".confession-lead").textContent = `This page was drawn by ${HANDS} hands while you scrolled.`;
 
 if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
   root.classList.remove("is-preparing");

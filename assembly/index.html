@@ -3,10 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>delineate · drawn by hand while you scroll</title>
+    <title>Assembly · delineate</title>
+    <meta name="description" content="A page made in front of you by a crew of hands that move the way people do." />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Sans&family=Hedvig+Letters+Serif:opsz@12..24&family=Fragment+Mono&display=swap" />
+    <script>
+      // The light the visitor chose on delineate's page, set before the first paint so nothing flashes; day if none.
+      try { document.documentElement.dataset.theme = localStorage.getItem("delineate-theme") || "day"; } catch {}
+    </script>
     <link rel="stylesheet" href="hand/hand.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -14,40 +20,40 @@
     <div class="rails" aria-hidden="true"></div>
     <p class="opening" aria-hidden="true">d3lin3at3</p>
 
-    <nav class="nav" data-section>
+    <header class="bar" data-section>
       <div class="wrap">
-        <a class="brand" href="#"><span class="brand-mark">d</span><span class="brand-name">d3lin3at3</span></a>
-        <ul class="links" data-build="slots">
-          <li>Garden</li>
-          <li>Footers</li>
-          <li>Portraits</li>
-          <li>Characters</li>
-          <li>Collage</li>
-        </ul>
-        <a class="source" href="https://github.com/appautomaton/delineate">Source</a>
+        <a class="brand" href="../" aria-label="delineate, home">delineate</a>
+        <nav class="links" aria-label="Work" data-build="slots">
+          <a href="../#garden">Garden</a>
+          <a href="../#footers">Footers</a>
+          <a href="../#characters">Characters</a>
+          <a href="../#collage">Collage</a>
+          <a href="../#portraits">Portraits</a>
+        </nav>
+        <button class="light" type="button" aria-pressed="false">Night</button>
       </div>
-    </nav>
+    </header>
 
-    <header class="hero" data-section>
+    <section class="hero" data-section>
       <div class="wrap">
         <div class="hero-copy">
-          <p class="kicker">A studio of drawings in code</p>
-          <h1 data-build="headline">Drawings that move when you do.</h1>
-          <p class="lede">Portraits that come apart, gardens that grow as you scroll, and small worlds at the foot of a page. Each is drawn in code as SVG, and each comes with the skill an agent follows to make one like it.</p>
+          <p class="kicker">Assembly</p>
+          <h1 data-build="headline">Watch the page get made.</h1>
+          <p class="lede">Nothing here was ready when you arrived. Each part of this page is laid out, lettered and drawn as it comes into view, by hands that move the way people do.</p>
           <div class="actions">
-            <a class="button button--ink" href="#work">See the work</a>
-            <a class="button button--line" href="https://github.com/appautomaton/delineate">Read the source</a>
+            <a class="button button--ink" href="https://github.com/appautomaton/delineate/tree/main/assembly">Read the source</a>
+            <a class="button button--line" href="../">Back to delineate</a>
           </div>
         </div>
         <div class="hero-art">{{BOUQUET}}</div>
       </div>
-    </header>
+    </section>
 
-    <section class="index" id="work" data-section>
+    <section class="index" data-section>
       <div class="wrap">
         <div class="head">
           <p class="kicker">The work</p>
-          <h2>Five pieces, each drawn by its own hand.</h2>
+          <h2>Six pieces, each drawn by its own hand.</h2>
           <p class="aside">Every piece is a folder of TypeScript that Node runs as it stands, with no build step and nothing to install at run time.</p>
         </div>
         <ol class="works">
@@ -66,25 +72,32 @@
             <p class="work-medium">Seven media</p>
           </li>
           <li class="work">
-            <div class="work-art">{{EMBLEM_PORTRAITS}}</div>
-            <p class="work-n">03</p>
-            <h3>Portraits</h3>
-            <p class="work-text">Portraits redrawn as planes, each at its own depth. Pull them apart and they keep moving.</p>
-            <p class="work-medium">Layered vector</p>
-          </li>
-          <li class="work">
             <div class="work-art">{{EMBLEM_CHARACTERS}}</div>
-            <p class="work-n">04</p>
+            <p class="work-n">03</p>
             <h3>Characters</h3>
             <p class="work-text">A picture made of letters that spell the name, ring by ring from each edge inward.</p>
             <p class="work-medium">Type as image</p>
           </li>
           <li class="work">
             <div class="work-art">{{EMBLEM_COLLAGE}}</div>
-            <p class="work-n">05</p>
+            <p class="work-n">04</p>
             <h3>Collage</h3>
             <p class="work-text">Five sculptures from museum scans, engraved, screened and laid among scraps of paper.</p>
             <p class="work-medium">Engraving and paper</p>
+          </li>
+          <li class="work">
+            <div class="work-art">{{EMBLEM_PORTRAITS}}</div>
+            <p class="work-n">05</p>
+            <h3>Portraits</h3>
+            <p class="work-text">Portraits redrawn as planes, each at its own depth. Pull them apart and they keep moving.</p>
+            <p class="work-medium">Layered vector</p>
+          </li>
+          <li class="work work--here">
+            <div class="work-art">{{EMBLEM_ASSEMBLY}}</div>
+            <p class="work-n">06 · You are here</p>
+            <h3>Assembly</h3>
+            <p class="work-text">A page made in front of you by a crew of hands, from the first guide to the last stroke.</p>
+            <p class="work-medium">Pointers and crayon</p>
           </li>
         </ol>
       </div>
@@ -94,24 +107,23 @@
       <div class="wrap">
         <div class="method-copy">
           <p class="kicker">Method</p>
-          <h2>Every mark is code.</h2>
-          <p>A crayon stroke is not one line. It is a sheaf of fine strands that follow one path, each offset across the tip and wandering a little, each with its own weight and pressure. Every strand keeps the moment the hand reached it, so the page can draw it on in the order it was made.</p>
-          <p class="path">footers/crayon/hand.ts</p>
+          <h2>Read the page backwards.</h2>
+          <p>The page is written whole, as it will stand. The crew measures it, takes it apart into the work a design team would do, and gives each piece to the nearest free hand: guides first, then frames, words and drawings.</p>
+          <p class="path">assembly/hand/crew.ts</p>
         </div>
         <div class="editor">
-          <div class="editor-bar"><i></i><i></i><i></i><span>bouquet.ts</span></div>
+          <div class="editor-bar"><i></i><i></i><i></i><span>hand.ts</span></div>
           <div class="editor-lines">
-            <p class="c">// A stroke is a sheaf of strands along one path.</p>
-            <p>const hand = new Hand(seed);</p>
-            <p>hand.stroke(stem, "green", {</p>
-            <p>  width: 10, n: 6,</p>
-            <p>  weight: [1.3, 2.6],</p>
-            <p>  secs: 0.35,</p>
-            <p>});</p>
-            <p>hand.fill(petal, "red", { angle: -35 });</p>
-            <p>hand.line(petal, "maroon", { closed: true });</p>
-            <p class="c">// Each strand carries its moment: --d, --t.</p>
-            <p>const svg = hand.take();</p>
+            <p class="c">// A hand reaches as a person does:</p>
+            <p class="c">// a quick throw, then a smaller correction.</p>
+            <p>await hand.reach(frame);</p>
+            <p>await hand.press();</p>
+            <p>await hand.reachPoint(corner, 3, 1.2);</p>
+            <p>hand.release();</p>
+            <p class="c">// Keys fall unevenly, slower between words.</p>
+            <p>await hand.type(headline, write);</p>
+            <p class="c">// The pen goes where the wax goes down.</p>
+            <p>await hand.follow(tip, 1 / 60);</p>
           </div>
         </div>
       </div>
@@ -120,10 +132,10 @@
     <section class="numbers" data-section>
       <div class="wrap">
         <dl class="stats">
-          <div class="stat"><dt>5</dt><dd>works, each with its source</dd></div>
-          <div class="stat"><dt>12</dt><dd>gardens from real climates</dd></div>
-          <div class="stat"><dt>7</dt><dd>footer worlds, day and night</dd></div>
-          <div class="stat"><dt>0</dt><dd>runtime dependencies</dd></div>
+          <div class="stat"><dt>32</dt><dd>hands at most, fewer on a small screen</dd></div>
+          <div class="stat"><dt>6</dt><dd>kinds of work, from guides to crayon</dd></div>
+          <div class="stat"><dt>{{STRANDS}}</dt><dd>strands of wax in the still life</dd></div>
+          <div class="stat"><dt>0</dt><dd>frames of video; all of it live</dd></div>
         </dl>
       </div>
     </section>
@@ -133,8 +145,8 @@
         <div class="close-copy">
           <h2>Let the hands draw it.</h2>
           <div class="underline">{{UNDERLINE}}</div>
-          <p>Open the repository in your agent and ask for what you want, a garden for the Patagonian steppe or a portrait as a line engraving. The matching skill takes it from there.</p>
-          <a class="button button--ink" href="https://github.com/appautomaton/delineate">Open the source</a>
+          <p>Open the repository in your agent and ask for a page like this one, made of your own words and drawings. The Assembly skill takes it from there.</p>
+          <a class="button button--ink" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/assembly">Open the skill</a>
         </div>
         <div class="confession">
           <p class="confession-lead">This page was drawn by 32 hands while you scrolled.</p>
@@ -145,20 +157,25 @@
 
     <footer class="foot" data-section>
       <div class="wrap">
-        <p class="foot-brand">d3lin3at3</p>
+        <div class="foot-lead">
+          <a class="foot-name" href="../">delineate</a>
+          <p>Drawings that move when you do, with the source and the skills to make your own.</p>
+        </div>
         <ul class="foot-col">
           <li class="foot-head">Work</li>
-          <li>Garden</li>
-          <li>Footers</li>
-          <li>Portraits</li>
+          <li><a href="../#garden">Garden</a></li>
+          <li><a href="../#footers">Footers</a></li>
+          <li><a href="../#characters">Characters</a></li>
+          <li><a href="../#collage">Collage</a></li>
+          <li><a href="../#portraits">Portraits</a></li>
+          <li><a href="./">Assembly</a></li>
         </ul>
         <ul class="foot-col">
-          <li class="foot-head">Source</li>
-          <li>GitHub</li>
-          <li>Skills</li>
-          <li>Licence</li>
+          <li class="foot-head">Take</li>
+          <li><a href="https://github.com/appautomaton/delineate">Source</a></li>
+          <li><a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Agent skills</a></li>
         </ul>
-        <p class="foot-sign">© 2026 delineate · MIT</p>
+        <p class="foot-sign">© 2026 delineate</p>
       </div>
     </footer>
 

@@ -253,6 +253,20 @@ export const EMBLEMS: Record<string, () => string> = {
     ]),
 };
 
+// Assembly's own emblem: a folded paper dart in flight, its two faces in two crayons, and the loop of its flight
+// behind it, the pointer the hands work with.
+EMBLEMS.assembly = () =>
+  drawing("em-assembly", "0 0 160 120", 15, [
+    (h, s) => {
+      h.stroke([[14, 104], [30, 78], [24, 58], [40, 50], [58, 64]], "graphite", { width: 3, n: 2, secs: 0.3, alpha: [0.35, 0.6], weight: [1, 1.6] });
+      const trail = h.take();
+      const top = coloured(s, h, sides([[140, 22], [54, 52], [86, 64]]), "blue", { edge: "deep", edgeWidth: 3 });
+      const under = coloured(s, h, sides([[140, 22], [86, 64], [96, 94]]), "cloud", { edge: "deep", edgeWidth: 3, angle: 40 });
+      h.stroke([[140, 22], [86, 64]], "deep", { width: 3, n: 2, secs: 0.12, weight: [1.2, 2] });
+      return [trail, under, top, h.take()];
+    },
+  ]);
+
 // A crayon line drawn under a headline: one stroke, a little wavy, as an editor marks what matters.
 export function underline(): string {
   return drawing("ul", "0 0 600 40", 13, [

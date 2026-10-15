@@ -124,7 +124,8 @@ export class Crew {
       for (const child of el.children) {
         if (!(child instanceof HTMLElement || child instanceof SVGSVGElement)) continue;
         const build = (child as HTMLElement).dataset.build;
-        if (build === "skip") continue;
+        // What the screen does not show, at this width, is no one's work.
+        if (build === "skip" || child.getClientRects().length === 0) continue;
         if (build === "draw") {
           child.querySelectorAll<SVGGElement>("g[data-hand]").forEach((g) => this.#add(section, [...guides, ...parent], this.#draw(g)));
           continue;
@@ -155,10 +156,35 @@ export class Crew {
     return task;
   }
 
-  // The two column guides, at the inner edges of the section's measure.
+  // The guides the section is laid against: a column guide at each edge of its measure, pulled down from the top
+  // ruler, and, where the section has a heading, a guide across the page at the top of it, pulled out from the
+  // left ruler.
   #guides(section: Section): Task[] {
     const wrap = section.el.querySelector<HTMLElement>(".wrap") ?? section.el;
-    return [0, 1].map((side) =>
+    const heading = section.el.querySelector<HTMLElement>("h1, h2");
+    const across = heading
+      ? [
+          this.#add(section, [], {
+            where: () => ({ x: scrollX + 40, y: textBox(heading).y }),
+            run: async (h) => {
+              const y = textBox(heading).y;
+              const x0 = scrollX + 26;
+              h.tool = "cross";
+              await h.reachPoint({ x: x0, y }, 2);
+              await h.press();
+              const guide = this.#marks.guide(y, true);
+              section.guides.push(guide);
+              const stop = this.#clock.each(() => guide.span(x0, h.pos.x));
+              await h.reachPoint({ x: x0 + h.random.uniform(260, 420), y }, 2, 1.1);
+              stop();
+              guide.span(scrollX, scrollX + document.documentElement.clientWidth);
+              h.release();
+              h.tool = "arrow";
+            },
+          }),
+        ]
+      : [];
+    return [...across, ...[0, 1].map((side) =>
       this.#add(section, [], {
         where: () => {
           const b = boxOf(wrap);
@@ -185,7 +211,7 @@ export class Crew {
           h.tool = "arrow";
         },
       }),
-    );
+    )];
   }
 
   // Drags out a frame over `box`, grey inside if `fill`, the hand pressing at one corner and letting go at the
@@ -197,9 +223,17 @@ export class Crew {
     const o = { ...h.pos };
     frame.set({ x: o.x, y: o.y, w: 0, h: 0 });
     await h.press();
+    // While the frame is drawn, dashed lines run out from its corner, to the page's left edge and up the page,
+    // showing where it lies.
+    const left = this.#marks.extension();
+    const up = this.#marks.extension();
+    left.set(scrollX, o.y, o.x, o.y);
+    up.set(o.x, Math.max(scrollY, o.y - 240), o.x, o.y);
     const stop = this.#clock.each(() => frame.set({ x: o.x, y: o.y, w: h.pos.x - o.x, h: h.pos.y - o.y }));
     await h.reachPoint({ x: box.x + box.w, y: box.y + box.h }, 3, 1.15);
     stop();
+    left.remove();
+    up.remove();
     frame.set(box);
     h.release();
     return frame;

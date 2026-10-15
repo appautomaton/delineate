@@ -14,14 +14,19 @@ const HERE = fileURLToPath(new URL("./", import.meta.url));
 export const DIST = join(HERE, "dist");
 const TSC = fileURLToPath(new URL("../node_modules/.bin/tsc", import.meta.url));
 
-// The drawings, made once: they are seeded, so every build draws them the same.
+// The drawings, made once: they are seeded, so every build draws them the same. The page also says how many
+// strands of wax the still life takes, counted from the drawing itself.
 let drawings: Record<string, string> | undefined;
-const drawn = () =>
-  (drawings ??= {
-    BOUQUET: bouquet(),
+function drawn(): Record<string, string> {
+  if (drawings) return drawings;
+  const still = bouquet();
+  return (drawings = {
+    BOUQUET: still,
+    STRANDS: (still.match(/<path /g) ?? []).length.toLocaleString("en"),
     UNDERLINE: underline(),
     ...Object.fromEntries(Object.entries(EMBLEMS).map(([k, draw]) => [`EMBLEM_${k.toUpperCase()}`, draw()])),
   });
+}
 
 // A page with its scripts pointing at the compiled modules and its holes filled.
 function page(path: string) {

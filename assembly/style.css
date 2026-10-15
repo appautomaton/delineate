@@ -1,34 +1,36 @@
-/* delineate's page, as the hands leave it: one sheet of warm paper, serif display over a quiet grotesque, mono for
-   what a machine would say, and the crayon of the rest of the site. */
+/* Assembly's page, as the hands leave it. It keeps delineate's paper, ink, crayons and margins, by day and by
+   night, so it sits in the site as its other works do; its type is its own: Hedvig Letters Serif for display, its
+   sister Hedvig Letters Sans for reading, and Fragment Mono for everything the tool says. */
 
 :root {
   --paper: #f8f7f2;
   --ink: #1b1b19;
-  --soft: #5f5d57;
-  --quiet: #8b8880;
-  --rule: rgb(27 27 25 / 0.12);
+  --soft: #62625c;
+  --quiet: color-mix(in srgb, var(--ink) 48%, var(--paper));
+  --rule: color-mix(in srgb, var(--ink) 14%, transparent);
+  --card: color-mix(in srgb, var(--paper) 72%, #fff);
   --serif: "Hedvig Letters Serif", Georgia, serif;
   --sans: "Hedvig Letters Sans", system-ui, sans-serif;
   --mono: "Fragment Mono", ui-monospace, monospace;
-  --measure: 1240px;
-  --gutter: 56px;
-  --c-blue: #2f4fb8;
-  --c-deep: #1e2f7e;
-  --c-ochre: #d9a532;
-  --c-red: #cf3f2c;
-  --c-maroon: #8e2a24;
-  --c-green: #4c7e37;
-  --c-olive: #8c9b3c;
-  --c-pink: #de7c93;
-  --c-violet: #6b55b3;
-  --c-graphite: #3a3a38;
-  --c-pine: #2f5a2e;
-  --c-rust: #b5652a;
-  --c-lilac: #a99bd8;
-  --c-wheat: #e3c26a;
-  --c-cloud: #c8d3e6;
-  --c-mist: #8e9dba;
-  --c-sage: #9db08a;
+  --margin: clamp(1.25rem, 5vw, 5rem);
+  --c-blue: #2f4fb8; --c-deep: #1e2f7e; --c-ochre: #d9a532; --c-red: #cf3f2c; --c-maroon: #8e2a24;
+  --c-green: #4c7e37; --c-olive: #8c9b3c; --c-pink: #de7c93; --c-violet: #6b55b3; --c-graphite: #3a3a38;
+  --c-pine: #2f5a2e; --c-rust: #b5652a; --c-cloud: #c8d3e6; --c-mist: #8e9dba; --c-lilac: #a99bd8;
+  --c-sage: #9db08a; --c-wheat: #e3c26a;
+  color-scheme: light;
+}
+
+/* Night: the same page on dark paper, where crayon reads as pastel; the same values as delineate's own. */
+:root[data-theme="night"] {
+  --paper: #1b2036;
+  --ink: #f1ede2;
+  --soft: #aeb0be;
+  --card: color-mix(in srgb, var(--paper) 88%, #fff);
+  --c-blue: #8098f2; --c-deep: #bfc9ff; --c-ochre: #f3d27a; --c-red: #f27e66; --c-maroon: #efa996;
+  --c-green: #8fcb7a; --c-olive: #c9d27a; --c-pink: #f5acbe; --c-violet: #b9a8f4; --c-graphite: #ece7da;
+  --c-pine: #a8da94; --c-rust: #f2a66b; --c-cloud: #464f78; --c-mist: #7f8bb3; --c-lilac: #8e82c4;
+  --c-sage: #7e9874; --c-wheat: #cdb463;
+  color-scheme: dark;
 }
 
 * {
@@ -38,17 +40,19 @@
 html {
   background: var(--paper);
   color: var(--ink);
-  font: 400 16px/1.55 var(--sans);
+  font: 400 1.0625rem/1.6 var(--sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
   /* Each face comes in one weight; a weight the browser makes up would undo it. */
   font-synthesis: none;
+  transition: background-color 0.5s, color 0.5s;
 }
 
 body {
   position: relative;
   margin: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Until the crew has read the page, none of it shows. */
@@ -75,14 +79,19 @@ h3 {
   font-weight: inherit;
 }
 
-.wrap {
-  position: relative;
-  max-width: var(--measure);
-  margin: 0 auto;
-  padding: 0 var(--gutter);
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
-/* Two hairlines down the whole page at the edges of the measure: the sheet's own margins. */
+/* Every section lies between the site's margins; the column guides fall on them. */
+.wrap {
+  position: relative;
+  padding-inline: var(--margin);
+}
+
+/* Two hairlines down the whole page at the margins: the sheet's own edges. */
 .rails {
   position: absolute;
   inset: 0;
@@ -95,14 +104,14 @@ h3 {
   position: absolute;
   top: 0;
   bottom: 0;
+  left: var(--margin);
   width: 1px;
   background: var(--rule);
-  left: max(var(--gutter), calc(50% - var(--measure) / 2 + var(--gutter)));
 }
 
 .rails::after {
   left: auto;
-  right: max(var(--gutter), calc(50% - var(--measure) / 2 + var(--gutter)));
+  right: var(--margin);
 }
 
 [data-section] + [data-section] {
@@ -112,10 +121,9 @@ h3 {
 .kicker,
 .path,
 .work-n,
-.work-medium,
-.readout {
-  font: 400 11.5px/1.4 var(--mono);
-  letter-spacing: 0.06em;
+.work-medium {
+  font: 400 0.6875rem/1.4 var(--mono);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--quiet);
 }
@@ -123,8 +131,8 @@ h3 {
 h1,
 h2,
 h3,
-.brand-mark,
-.foot-brand,
+.brand,
+.foot-name,
 .stat dt {
   font-family: var(--serif);
   font-weight: 400;
@@ -137,6 +145,10 @@ h2 {
   text-wrap: balance;
 }
 
+p {
+  text-wrap: pretty;
+}
+
 /* The opening: the name, faint, at the middle of the screen, that the hands circle before they start. */
 .opening {
   position: fixed;
@@ -144,9 +156,9 @@ h2 {
   top: 46%;
   translate: -50% -50%;
   margin: 0;
-  font: 400 clamp(56px, 9vw, 120px) / 1 var(--serif);
+  font: 400 clamp(3.5rem, 9vw, 7.5rem) / 1 var(--serif);
   letter-spacing: -0.03em;
-  color: rgb(27 27 25 / 0.07);
+  color: color-mix(in srgb, var(--ink) 7%, transparent);
   pointer-events: none;
   transition: opacity 900ms ease, scale 900ms ease;
 }
@@ -156,100 +168,87 @@ h2 {
   scale: 0.96;
 }
 
-/* Nav. */
+/* The bar, as on every page of delineate: the name home at the left, the light at the right. */
 
-.nav .wrap {
+.bar .wrap {
   display: flex;
   align-items: center;
-  gap: 40px;
-  height: 76px;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  height: 4.5rem;
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 19px;
+  font-size: 1.375rem;
   line-height: 1;
-  padding-bottom: 2px;
-}
-
-.brand-name {
-  font-weight: 400;
-  letter-spacing: 0.01em;
 }
 
 .links {
   display: flex;
-  gap: 30px;
+  gap: clamp(1rem, 2.2vw, 1.75rem);
   margin-left: auto;
   color: var(--soft);
-  font-size: 14.5px;
+  font-size: 0.9375rem;
 }
 
-.links li {
+.links a {
   display: inline-block;
   white-space: nowrap;
 }
 
-.source {
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 14px;
-  font-weight: 400;
+.links a:hover {
+  color: var(--ink);
 }
 
-/* Hero. */
+.light {
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent);
+  color: var(--ink);
+  font: 400 0.875rem/1 var(--sans);
+  cursor: pointer;
+}
+
+/* The first screen: words at the left, the still life at the right. */
 
 .hero .wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  min-height: min(760px, calc(100svh - 76px));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  min-height: calc(100svh - 4.5rem);
+  align-items: center;
 }
 
 .hero-copy {
-  align-self: center;
-  padding: 72px 0 96px;
+  padding: 4rem 0 5rem;
 }
 
 .hero h1 {
-  margin: 22px 0 26px;
-  font-size: clamp(54px, 6.4vw, 92px);
+  margin: 1.25rem 0 1.5rem;
+  font-size: clamp(2.75rem, 6vw, 5.5rem);
   line-height: 0.98;
-  max-width: 9.5em;
+  max-width: 9em;
 }
 
 .lede {
-  max-width: 30em;
-  font-size: 18px;
-  line-height: 1.55;
+  max-width: 29rem;
+  font-size: 1.125rem;
   color: var(--soft);
 }
 
 .actions {
   display: flex;
-  gap: 12px;
-  margin-top: 36px;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
 }
 
 .button {
   display: inline-block;
-  padding: 13px 22px;
+  padding: 0.8rem 1.35rem;
   border-radius: 999px;
-  font-size: 15px;
-  font-weight: 400;
+  font-size: 0.9375rem;
   line-height: 1.2;
 }
 
@@ -259,17 +258,16 @@ h2 {
 }
 
 .button--line {
-  box-shadow: inset 0 0 0 1px rgb(27 27 25 / 0.28);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 28%, transparent);
 }
 
 /* The still life stands whole in its column and whole on the first screen, table and all; only the ends of the
    table's line fade into the paper. */
 .hero-art {
   position: relative;
-  align-self: center;
   justify-self: end;
   width: 100%;
-  max-height: calc(100svh - 76px - 120px);
+  max-height: calc(100svh - 4.5rem - 7rem);
   aspect-ratio: 900 / 1000;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
@@ -287,48 +285,55 @@ h2 {
 .head {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  column-gap: 48px;
-  padding: 110px 0 56px;
+  column-gap: 3rem;
+  padding: clamp(4.5rem, 9vw, 7rem) 0 clamp(2.5rem, 4vw, 3.5rem);
 }
 
 .head .kicker {
   grid-column: 1 / -1;
-  margin-bottom: 18px;
+  margin-bottom: 1.1rem;
 }
 
 h2 {
-  font-size: clamp(36px, 3.7vw, 52px);
+  font-size: clamp(2.25rem, 3.8vw, 3.4rem);
   line-height: 1.04;
 }
 
 .aside {
   align-self: end;
-  max-width: 26em;
   justify-self: end;
+  max-width: 25rem;
   color: var(--soft);
 }
 
-/* The works. */
+/* The works, three to a row, their edges shared. */
 
 .works {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  padding-bottom: 120px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-bottom: clamp(4.5rem, 9vw, 7rem);
 }
 
 .work {
   display: flex;
   flex-direction: column;
-  padding: 22px 22px 26px;
+  padding: 1.5rem 1.5rem 1.75rem;
   border: 1px solid var(--rule);
-  margin-left: -1px;
-  background: #fbfaf6;
+  margin: 0 0 -1px -1px;
+  background: var(--card);
+}
+
+.work--here {
+  box-shadow: inset 0 0 0 1px var(--c-red);
+}
+
+.work--here .work-n {
+  color: var(--c-red);
 }
 
 .work-art {
-  height: 120px;
-  margin: 0 -6px 26px;
+  height: 9.5rem;
+  margin: 0 -0.25rem 1.5rem;
 }
 
 .work-art .wax {
@@ -338,22 +343,21 @@ h2 {
 }
 
 .work h3 {
-  margin: 6px 0 10px;
-  font-size: 28px;
+  margin: 0.4rem 0 0.6rem;
+  font-size: 1.85rem;
   line-height: 1.1;
 }
 
 .work-text {
-  font-size: 14.5px;
+  flex: 1;
+  font-size: 0.9375rem;
   line-height: 1.5;
   color: var(--soft);
-  flex: 1;
 }
 
 .work-medium {
-  margin-top: 22px;
-  color: var(--ink);
-  opacity: 0.6;
+  margin-top: 1.4rem;
+  color: var(--soft);
 }
 
 /* Method. */
@@ -361,23 +365,22 @@ h2 {
 .method .wrap {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 72px;
-  padding-top: 120px;
-  padding-bottom: 120px;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
   align-items: center;
+  padding-block: clamp(4.5rem, 9vw, 7.5rem);
 }
 
 .method-copy h2 {
-  margin: 18px 0 22px;
+  margin: 1.1rem 0 1.4rem;
 }
 
 .method-copy > p:not(.kicker, .path) {
-  max-width: 30em;
+  max-width: 29rem;
   color: var(--soft);
 }
 
 .path {
-  margin-top: 24px;
+  margin-top: 1.5rem;
   color: var(--c-red);
 }
 
@@ -385,19 +388,24 @@ h2 {
   border-radius: 14px;
   background: #1d1d1f;
   color: #e9e6dc;
-  box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.04) inset,
-    0 30px 60px -30px rgb(27 27 25 / 0.45);
+  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.45);
   overflow: hidden;
+}
+
+:root[data-theme="night"] .editor {
+  background: #10142a;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 30px 60px -30px rgb(0 0 0 / 0.6);
 }
 
 .editor-bar {
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 13px 16px;
+  padding: 0.8rem 1rem;
   border-bottom: 1px solid rgb(255 255 255 / 0.07);
-  font: 12px var(--mono);
+  font: 0.75rem var(--mono);
   color: #8e8b83;
 }
 
@@ -409,13 +417,13 @@ h2 {
 }
 
 .editor-bar span {
-  margin-left: 10px;
+  margin-left: 0.6rem;
 }
 
 .editor-lines {
-  padding: 22px 26px 26px;
-  font: 13.5px/1.75 var(--mono);
-  counter-reset: line;
+  padding: 1.4rem 1.6rem 1.6rem;
+  font: 0.8125rem/1.8 var(--mono);
+  overflow-x: auto;
 }
 
 .editor-lines p {
@@ -431,11 +439,12 @@ h2 {
 .stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  padding: 96px 0;
+  row-gap: 2.5rem;
+  padding-block: clamp(4rem, 8vw, 6rem);
 }
 
 .stat {
-  padding: 4px 28px 8px;
+  padding: 0.25rem 1.75rem 0.5rem;
   border-left: 1px solid var(--rule);
 }
 
@@ -444,14 +453,15 @@ h2 {
 }
 
 .stat dt {
-  font-size: clamp(56px, 6vw, 84px);
+  font-size: clamp(3rem, 5.5vw, 5rem);
   line-height: 1;
 }
 
 .stat dd {
-  margin-top: 14px;
+  margin-top: 0.9rem;
+  max-width: 13rem;
   color: var(--soft);
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 /* Close. */
@@ -459,19 +469,18 @@ h2 {
 .close .wrap {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-  gap: 72px;
-  padding-top: 130px;
-  padding-bottom: 130px;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  padding-block: clamp(5rem, 10vw, 8rem);
 }
 
 .close h2 {
-  font-size: clamp(48px, 5.4vw, 76px);
+  font-size: clamp(2.75rem, 5.4vw, 4.75rem);
 }
 
 .underline {
-  width: min(560px, 82%);
-  height: 30px;
-  margin: 4px 0 26px -6px;
+  width: min(35rem, 82%);
+  height: 1.9rem;
+  margin: 0.25rem 0 1.6rem -0.4rem;
 }
 
 .underline .wax {
@@ -481,83 +490,89 @@ h2 {
 }
 
 .close-copy > p {
-  max-width: 30em;
+  max-width: 30rem;
+  margin-bottom: 2rem;
   color: var(--soft);
-  margin-bottom: 32px;
 }
 
 .confession {
   align-self: end;
-  padding: 4px 0 4px 26px;
+  padding: 0.25rem 0 0.25rem 1.6rem;
   border-left: 2px solid var(--c-red);
 }
 
 .confession-lead {
-  font: 400 13px/1.6 var(--mono);
+  margin-bottom: 0.75rem;
+  font: 400 0.8125rem/1.6 var(--mono);
   color: var(--c-red);
-  margin-bottom: 12px;
 }
 
 .confession p:not(.confession-lead) {
   color: var(--soft);
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
-/* Foot. */
+/* Foot, as on every page of delineate: the name home, a line, and the way to the work. */
 
 .foot .wrap {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  grid-template-rows: auto auto;
-  row-gap: 64px;
-  padding-top: 64px;
-  padding-bottom: 48px;
+  gap: 2.5rem;
+  padding-block: clamp(2.5rem, 5vw, 4rem) 3rem;
 }
 
-.foot-brand {
-  font-size: 30px;
+.foot-name {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1;
+}
+
+.foot-lead p {
+  max-width: 24rem;
+  margin-top: 0.75rem;
+  color: var(--soft);
 }
 
 .foot-col {
   display: grid;
-  gap: 8px;
-  font-size: 14.5px;
+  align-content: start;
+  gap: 0.35rem;
   color: var(--soft);
 }
 
-.foot-head {
+.foot-col a:hover {
   color: var(--ink);
-  font-weight: 400;
+}
+
+.foot-head {
+  margin-bottom: 0.25rem;
+  color: var(--ink);
 }
 
 .foot-sign {
   grid-column: 1 / -1;
-  font: 12px var(--mono);
-  color: var(--quiet);
+  font-size: 0.875rem;
+  color: var(--soft);
 }
 
-/* The readout: what the crew is doing, as a tool's status bar says it. */
+/* The readout: what the crew is doing, as a tool's status bar says it, in ink on the paper of either light. */
 .readout {
   position: fixed;
   left: 50%;
-  bottom: 22px;
+  bottom: 1.25rem;
   translate: -50% 0;
   z-index: 1001;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   margin: 0;
-  padding: 9px 16px;
+  padding: 0.55rem 1rem;
   border-radius: 999px;
-  background: rgb(27 27 25 / 0.9);
-  color: #e9e6dc;
-  font-size: 12px;
-  letter-spacing: 0.01em;
-  text-transform: none;
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  color: var(--paper);
+  font: 400 0.75rem/1.4 var(--mono);
   white-space: pre;
-  box-shadow: 0 10px 30px -12px rgb(27 27 25 / 0.5);
+  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.5);
   backdrop-filter: blur(8px);
-  transition: opacity 600ms ease;
 }
 
 .readout-dot {
@@ -565,15 +580,15 @@ h2 {
   height: 7px;
   border-radius: 50%;
   background: #48c26b;
-  box-shadow: 0 0 0 3px rgb(72 194 107 / 0.18);
+  box-shadow: 0 0 0 3px rgb(72 194 107 / 0.2);
 }
 
 .readout-meter {
   position: relative;
-  width: 84px;
+  width: 5.25rem;
   height: 2px;
   border-radius: 1px;
-  background: rgb(255 255 255 / 0.14);
+  background: color-mix(in srgb, var(--paper) 18%, transparent);
   overflow: hidden;
 }
 
@@ -581,13 +596,93 @@ h2 {
   position: absolute;
   inset: 0 auto 0 0;
   width: var(--done, 0%);
-  background: #e9e6dc;
+  background: var(--paper);
   transition: width 300ms ease;
 }
 
 .is-built .readout-dot {
   background: var(--c-ochre);
-  box-shadow: 0 0 0 3px rgb(217 165 50 / 0.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-ochre) 25%, transparent);
+}
+
+/* A tablet: the still life under the words, works two to a row. */
+@media (max-width: 64rem) {
+  .hero .wrap {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .hero-copy {
+    padding: 3.5rem 0 0;
+  }
+
+  .hero-art {
+    justify-self: center;
+    width: min(100%, 34rem);
+    max-height: 72svh;
+    margin-bottom: 3rem;
+  }
+
+  .works {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .method .wrap,
+  .close .wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat:nth-child(3) {
+    border-left-color: var(--ink);
+  }
+}
+
+/* A phone: one column, the bar down to the name and the light. */
+@media (max-width: 40rem) {
+  .links {
+    display: none;
+  }
+
+  .light {
+    margin-left: auto;
+  }
+
+  .head {
+    grid-template-columns: 1fr;
+    row-gap: 1.25rem;
+  }
+
+  .aside {
+    justify-self: start;
+  }
+
+  .works {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    border-left-color: var(--ink);
+  }
+
+  .foot .wrap {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .foot-lead {
+    grid-column: 1 / -1;
+  }
+
+  .readout-meter {
+    display: none;
+  }
 }
 
 /* Crayon: each strand drawn on by the hand that lays it. */
@@ -601,6 +696,13 @@ h2 {
   stroke-linejoin: round;
   stroke-dasharray: 1 1;
   stroke-dashoffset: 1;
+}
+
+/* Without motion, the page is simply there, drawn. */
+@media (prefers-reduced-motion: reduce) {
+  .wax path {
+    stroke-dashoffset: 0;
+  }
 }
 
 .k-blue { stroke: var(--c-blue); }

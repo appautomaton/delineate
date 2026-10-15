@@ -109,7 +109,7 @@
 }
 
 .frame.is-fill {
-  background: rgb(27 27 25 / 0.07);
+  background: color-mix(in srgb, var(--ink, #1b1b19) 8%, transparent);
 }
 
 .frame.is-conflict {
@@ -137,8 +137,28 @@
   transition: opacity 600ms ease;
 }
 
+.guide.is-across {
+  width: auto;
+  height: 1px;
+  margin: -0.5px 0 0;
+}
+
+/* A guide glows a little, as a line of light on a screen does. */
+.guide {
+  box-shadow: 0 0 3px rgb(242 72 34 / 0.35);
+}
+
 .guide.is-leaving {
   opacity: 0;
+}
+
+.extension {
+  position: absolute;
+  background: repeating-linear-gradient(to bottom, #0d99ff 0 3px, transparent 3px 6px);
+}
+
+.extension.is-across {
+  background: repeating-linear-gradient(to right, #0d99ff 0 3px, transparent 3px 6px);
 }
 
 .align {

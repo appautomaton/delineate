@@ -69,25 +69,55 @@ export class Frame {
   }
 }
 
+// A guide: down the page at `at` px across, or, if `across`, across the page at `at` px down.
 export class Guide {
   readonly el: HTMLElement;
-  readonly x: number;
+  readonly #across: boolean;
 
-  constructor(layer: HTMLElement, x: number) {
-    this.x = x;
+  constructor(layer: HTMLElement, at: number, across = false) {
+    this.#across = across;
     this.el = document.createElement("div");
-    this.el.className = "guide";
-    this.el.style.left = px(x);
+    this.el.className = across ? "guide is-across" : "guide";
+    this.el.style[across ? "top" : "left"] = px(at);
     layer.append(this.el);
   }
 
-  span(y0: number, y1: number) {
-    Object.assign(this.el.style, { top: px(Math.min(y0, y1)), height: px(Math.abs(y1 - y0)) });
+  // How far the guide runs, from one end to the other along its own way.
+  span(a0: number, a1: number) {
+    const [start, length] = this.#across ? ["left", "width"] : ["top", "height"];
+    Object.assign(this.el.style, { [start]: px(Math.min(a0, a1)), [length]: px(Math.abs(a1 - a0)) });
   }
 
   remove() {
     this.el.classList.add("is-leaving");
     setTimeout(() => this.el.remove(), 600);
+  }
+}
+
+// A dashed line that runs out from an edge while a frame is drawn, to show where the edge lies on the page.
+export class Extension {
+  readonly el: HTMLElement;
+
+  constructor(layer: HTMLElement) {
+    this.el = document.createElement("div");
+    this.el.className = "extension";
+    layer.append(this.el);
+  }
+
+  // From one point to another, straight across or straight down.
+  set(x0: number, y0: number, x1: number, y1: number) {
+    const across = Math.abs(x1 - x0) >= Math.abs(y1 - y0);
+    this.el.classList.toggle("is-across", across);
+    Object.assign(this.el.style, {
+      left: px(Math.min(x0, x1)),
+      top: px(Math.min(y0, y1)),
+      width: px(across ? Math.abs(x1 - x0) : 1),
+      height: px(across ? 1 : Math.abs(y1 - y0)),
+    });
+  }
+
+  remove() {
+    this.el.remove();
   }
 }
 
@@ -114,8 +144,12 @@ export class Marks {
     return f;
   }
 
-  guide(x: number): Guide {
-    return new Guide(this.layer, x);
+  guide(at: number, across = false): Guide {
+    return new Guide(this.layer, at, across);
+  }
+
+  extension(): Extension {
+    return new Extension(this.layer);
   }
 
   // A blue line from one point to another, along a shared edge, that flashes and goes.
