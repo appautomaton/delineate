@@ -1,0 +1,622 @@
+/* delineate's page, as the hands leave it: one sheet of warm paper, serif display over a quiet grotesque, mono for
+   what a machine would say, and the crayon of the rest of the site. */
+
+:root {
+  --paper: #f8f7f2;
+  --ink: #1b1b19;
+  --soft: #5f5d57;
+  --quiet: #8b8880;
+  --rule: rgb(27 27 25 / 0.12);
+  --serif: "Hedvig Letters Serif", Georgia, serif;
+  --sans: "Hedvig Letters Sans", system-ui, sans-serif;
+  --mono: "Fragment Mono", ui-monospace, monospace;
+  --measure: 1240px;
+  --gutter: 56px;
+  --c-blue: #2f4fb8;
+  --c-deep: #1e2f7e;
+  --c-ochre: #d9a532;
+  --c-red: #cf3f2c;
+  --c-maroon: #8e2a24;
+  --c-green: #4c7e37;
+  --c-olive: #8c9b3c;
+  --c-pink: #de7c93;
+  --c-violet: #6b55b3;
+  --c-graphite: #3a3a38;
+  --c-pine: #2f5a2e;
+  --c-rust: #b5652a;
+  --c-lilac: #a99bd8;
+  --c-wheat: #e3c26a;
+  --c-cloud: #c8d3e6;
+  --c-mist: #8e9dba;
+  --c-sage: #9db08a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Each face comes in one weight; a weight the browser makes up would undo it. */
+  font-synthesis: none;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Until the crew has read the page, none of it shows. */
+.is-preparing [data-section] .wrap {
+  visibility: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol,
+dl,
+dd,
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-weight: inherit;
+}
+
+.wrap {
+  position: relative;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* Two hairlines down the whole page at the edges of the measure: the sheet's own margins. */
+.rails {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rails::before,
+.rails::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule);
+  left: max(var(--gutter), calc(50% - var(--measure) / 2 + var(--gutter)));
+}
+
+.rails::after {
+  left: auto;
+  right: max(var(--gutter), calc(50% - var(--measure) / 2 + var(--gutter)));
+}
+
+[data-section] + [data-section] {
+  border-top: 1px solid var(--rule);
+}
+
+.kicker,
+.path,
+.work-n,
+.work-medium,
+.readout {
+  font: 400 11.5px/1.4 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+h1,
+h2,
+h3,
+.brand-mark,
+.foot-brand,
+.stat dt {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+/* No headline ends on a word alone. */
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+/* The opening: the name, faint, at the middle of the screen, that the hands circle before they start. */
+.opening {
+  position: fixed;
+  left: 50%;
+  top: 46%;
+  translate: -50% -50%;
+  margin: 0;
+  font: 400 clamp(56px, 9vw, 120px) / 1 var(--serif);
+  letter-spacing: -0.03em;
+  color: rgb(27 27 25 / 0.07);
+  pointer-events: none;
+  transition: opacity 900ms ease, scale 900ms ease;
+}
+
+.is-open .opening {
+  opacity: 0;
+  scale: 0.96;
+}
+
+/* Nav. */
+
+.nav .wrap {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  height: 76px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 19px;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+
+.brand-name {
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.links {
+  display: flex;
+  gap: 30px;
+  margin-left: auto;
+  color: var(--soft);
+  font-size: 14.5px;
+}
+
+.links li {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.source {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Hero. */
+
+.hero .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  min-height: min(760px, calc(100svh - 76px));
+}
+
+.hero-copy {
+  align-self: center;
+  padding: 72px 0 96px;
+}
+
+.hero h1 {
+  margin: 22px 0 26px;
+  font-size: clamp(54px, 6.4vw, 92px);
+  line-height: 0.98;
+  max-width: 9.5em;
+}
+
+.lede {
+  max-width: 30em;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--soft);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 36px;
+}
+
+.button {
+  display: inline-block;
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.button--ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.button--line {
+  box-shadow: inset 0 0 0 1px rgb(27 27 25 / 0.28);
+}
+
+/* The still life stands whole in its column and whole on the first screen, table and all; only the ends of the
+   table's line fade into the paper. */
+.hero-art {
+  position: relative;
+  align-self: center;
+  justify-self: end;
+  width: 100%;
+  max-height: calc(100svh - 76px - 120px);
+  aspect-ratio: 900 / 1000;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+
+.hero-art .wax {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Section heads. */
+
+.head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 48px;
+  padding: 110px 0 56px;
+}
+
+.head .kicker {
+  grid-column: 1 / -1;
+  margin-bottom: 18px;
+}
+
+h2 {
+  font-size: clamp(36px, 3.7vw, 52px);
+  line-height: 1.04;
+}
+
+.aside {
+  align-self: end;
+  max-width: 26em;
+  justify-self: end;
+  color: var(--soft);
+}
+
+/* The works. */
+
+.works {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  padding-bottom: 120px;
+}
+
+.work {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 22px 26px;
+  border: 1px solid var(--rule);
+  margin-left: -1px;
+  background: #fbfaf6;
+}
+
+.work-art {
+  height: 120px;
+  margin: 0 -6px 26px;
+}
+
+.work-art .wax {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.work h3 {
+  margin: 6px 0 10px;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.work-text {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--soft);
+  flex: 1;
+}
+
+.work-medium {
+  margin-top: 22px;
+  color: var(--ink);
+  opacity: 0.6;
+}
+
+/* Method. */
+
+.method .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 72px;
+  padding-top: 120px;
+  padding-bottom: 120px;
+  align-items: center;
+}
+
+.method-copy h2 {
+  margin: 18px 0 22px;
+}
+
+.method-copy > p:not(.kicker, .path) {
+  max-width: 30em;
+  color: var(--soft);
+}
+
+.path {
+  margin-top: 24px;
+  color: var(--c-red);
+}
+
+.editor {
+  border-radius: 14px;
+  background: #1d1d1f;
+  color: #e9e6dc;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 30px 60px -30px rgb(27 27 25 / 0.45);
+  overflow: hidden;
+}
+
+.editor-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 16px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.07);
+  font: 12px var(--mono);
+  color: #8e8b83;
+}
+
+.editor-bar i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3a3a3c;
+}
+
+.editor-bar span {
+  margin-left: 10px;
+}
+
+.editor-lines {
+  padding: 22px 26px 26px;
+  font: 13.5px/1.75 var(--mono);
+  counter-reset: line;
+}
+
+.editor-lines p {
+  white-space: pre;
+}
+
+.editor-lines .c {
+  color: #8e8b83;
+}
+
+/* Numbers. */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 96px 0;
+}
+
+.stat {
+  padding: 4px 28px 8px;
+  border-left: 1px solid var(--rule);
+}
+
+.stat:first-child {
+  border-left-color: var(--ink);
+}
+
+.stat dt {
+  font-size: clamp(56px, 6vw, 84px);
+  line-height: 1;
+}
+
+.stat dd {
+  margin-top: 14px;
+  color: var(--soft);
+  font-size: 15px;
+}
+
+/* Close. */
+
+.close .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 72px;
+  padding-top: 130px;
+  padding-bottom: 130px;
+}
+
+.close h2 {
+  font-size: clamp(48px, 5.4vw, 76px);
+}
+
+.underline {
+  width: min(560px, 82%);
+  height: 30px;
+  margin: 4px 0 26px -6px;
+}
+
+.underline .wax {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.close-copy > p {
+  max-width: 30em;
+  color: var(--soft);
+  margin-bottom: 32px;
+}
+
+.confession {
+  align-self: end;
+  padding: 4px 0 4px 26px;
+  border-left: 2px solid var(--c-red);
+}
+
+.confession-lead {
+  font: 400 13px/1.6 var(--mono);
+  color: var(--c-red);
+  margin-bottom: 12px;
+}
+
+.confession p:not(.confession-lead) {
+  color: var(--soft);
+  font-size: 15px;
+}
+
+/* Foot. */
+
+.foot .wrap {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  row-gap: 64px;
+  padding-top: 64px;
+  padding-bottom: 48px;
+}
+
+.foot-brand {
+  font-size: 30px;
+}
+
+.foot-col {
+  display: grid;
+  gap: 8px;
+  font-size: 14.5px;
+  color: var(--soft);
+}
+
+.foot-head {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.foot-sign {
+  grid-column: 1 / -1;
+  font: 12px var(--mono);
+  color: var(--quiet);
+}
+
+/* The readout: what the crew is doing, as a tool's status bar says it. */
+.readout {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  translate: -50% 0;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: rgb(27 27 25 / 0.9);
+  color: #e9e6dc;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  white-space: pre;
+  box-shadow: 0 10px 30px -12px rgb(27 27 25 / 0.5);
+  backdrop-filter: blur(8px);
+  transition: opacity 600ms ease;
+}
+
+.readout-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #48c26b;
+  box-shadow: 0 0 0 3px rgb(72 194 107 / 0.18);
+}
+
+.readout-meter {
+  position: relative;
+  width: 84px;
+  height: 2px;
+  border-radius: 1px;
+  background: rgb(255 255 255 / 0.14);
+  overflow: hidden;
+}
+
+.readout-meter i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--done, 0%);
+  background: #e9e6dc;
+  transition: width 300ms ease;
+}
+
+.is-built .readout-dot {
+  background: var(--c-ochre);
+  box-shadow: 0 0 0 3px rgb(217 165 50 / 0.2);
+}
+
+/* Crayon: each strand drawn on by the hand that lays it. */
+.wax {
+  overflow: visible;
+}
+
+.wax path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+
+.k-blue { stroke: var(--c-blue); }
+.k-deep { stroke: var(--c-deep); }
+.k-ochre { stroke: var(--c-ochre); }
+.k-red { stroke: var(--c-red); }
+.k-maroon { stroke: var(--c-maroon); }
+.k-green { stroke: var(--c-green); }
+.k-olive { stroke: var(--c-olive); }
+.k-pink { stroke: var(--c-pink); }
+.k-violet { stroke: var(--c-violet); }
+.k-graphite { stroke: var(--c-graphite); }
+.k-pine { stroke: var(--c-pine); }
+.k-rust { stroke: var(--c-rust); }
+.k-lilac { stroke: var(--c-lilac); }
+.k-wheat { stroke: var(--c-wheat); }
+.k-cloud { stroke: var(--c-cloud); }
+.k-mist { stroke: var(--c-mist); }
+.k-sage { stroke: var(--c-sage); }

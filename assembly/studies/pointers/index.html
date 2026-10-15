@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pointers · a specimen sheet</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" />
+    <link rel="stylesheet" href="../../hand/hand.css" />
+    <style>
+      :root { --mono: "IBM Plex Mono", ui-monospace, monospace; }
+      body { margin: 0; padding: 48px 56px; background: #f8f7f2; color: #1b1b19; font: 13px/1.5 var(--mono); }
+      h1 { margin: 0 0 4px; font: 500 13px var(--mono); }
+      p { margin: 0 0 36px; color: #8b8880; }
+      .row { display: grid; grid-template-columns: 120px repeat(6, 1fr); align-items: center; height: 120px; border-top: 1px solid rgb(27 27 25 / 0.1); }
+      .row span { color: #8b8880; }
+      .cell { position: relative; height: 100%; }
+      .cell .pointer { position: absolute; left: 50%; top: 50%; }
+      .big .cell .pointer { scale: 4; }
+      .row.dark { background: #1b2036; }
+      /* The hot spot, marked, so the shapes can be checked against it. */
+      .cell::after { content: ""; position: absolute; left: calc(50% - 2px); top: calc(50% - 2px); width: 4px; height: 4px; border-radius: 50%; background: #f24822; opacity: 0.0; }
+      .big .cell::after { opacity: 0.9; }
+    </style>
+  </head>
+  <body>
+    <h1>Pointers</h1>
+    <p>Each tool, at four times its size with its hot spot marked in red, then at its own size on paper and on night paper, and tagged.</p>
+    <div class="sheet"></div>
+    <script type="module" src="main.ts"></script>
+  </body>
+</html>
