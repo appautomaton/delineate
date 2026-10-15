@@ -12,15 +12,11 @@
 //     sylvaticum*), lingonberry (*Vaccinium vitis-idaea*), cloudberry (*Rubus chamaemorus*), and
 //     creeping twinflower (*Linnaea borealis*) in the foreground.
 
-import { TAU, rad, P1, add, sub, mul, lerp, polar, rot, quad, closed, line, sample, wobble, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
+import { TAU, rad, P1, add, sub, mul, lerp, polar, rot, quad, closed, line, sample, wobble, vars, shape, stalk, tone, grow, part, gate, roundPts, fallsAt } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
 import { blade, palmate } from "./mediterranean.ts";
-
-// Deterministic shedding time from attachment coordinates so timing never shifts the random stream.
-const fallsAt = (from: number, span: number) => ([x, y]: Pt) =>
-  from + ((((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 20) * span;
 
 const glint = (c: Pt, rx: number, ry: number, rotA = 0) =>
   `<path class="wash shine" d="${closed(roundPts(c, rx, ry, rotA, 7))}"/>`;

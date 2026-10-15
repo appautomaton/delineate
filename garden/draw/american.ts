@@ -19,15 +19,11 @@
 //     valves, 6-ribbed Dutchman's-pipe hanging baskets, split milkweed pods spilling white silk
 //     comas, coal-black coneflower cones, dark compass-plant skeletal cups, and standing bluestem.
 
-import { TAU, rad, P1, add, sub, mul, lerp, polar, rot, quad, closed, line, sample, glaze, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
+import { TAU, rad, P1, add, sub, mul, lerp, polar, rot, quad, closed, line, sample, glaze, vars, shape, stalk, tone, grow, part, gate, roundPts, fallsAt } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
 import { blade, bladeBunch } from "./mediterranean.ts";
-
-// Deterministic leaf-fall timing from spatial position so timing never shifts the random stream.
-const fallsAt = (from: number, span: number) => ([x, y]: Pt) =>
-  from + ((((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 20) * span;
 
 // ---------------------------------------------------------------------------
 // 1. Tulip tree (Liriodendron tulipifera): smooth reddish-brown limbs with flattened duck-bill

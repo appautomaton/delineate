@@ -170,6 +170,11 @@ export function part<T>(out: Out, g: number, origin: Pt, fn: () => T, leave?: nu
   return res;
 }
 
+// When a leaf falls: somewhere in a tree's shedding, which starts at `from` and lasts `span`,
+// at a moment taken from where the leaf hangs, not from the random stream, so timing never moves
+// the drawing.
+export const fallsAt = (from: number, span: number) => ([x, y]: Pt) => from + ((((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 20) * span;
+
 // The gate at which a limb growing from g0 to g1 reaches the share t of its length, so whatever
 // sits there appears just as the growing tip passes it.
 export const along = (g0: number, g1: number, t: number) => g0 + (g1 - g0) * t + 0.015;

@@ -15,7 +15,7 @@
 //     paulownia capsules and furred buds, wisteria pods, dry hydrangea heads, broken winter lotus
 //     stalks with dry pods, spider-lily leaves, and the plum flowering again on bare wood.
 
-import { rad, P1, add, sub, mul, lerp, polar, rot, quad, closed, line, sample, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
+import { rad, P1, add, sub, mul, lerp, polar, rot, quad, closed, line, sample, vars, shape, stalk, tone, grow, part, gate, roundPts, fallsAt } from "./lib.ts";
 import type { Out, Pt, Rng } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
@@ -23,11 +23,6 @@ import { palmate, blade, bladeBunch } from "./mediterranean.ts";
 
 const BARK = { pc: "--bark-ginkgo" };
 const STALK = { pc: "--stem-green" };
-
-// When a leaf falls: somewhere in a tree's shedding, which starts at `from` and lasts `span`,
-// at a moment taken from where the leaf hangs, not from the random stream, so timing never moves
-// the drawing.
-const fallsAt = (from: number, span: number) => ([x, y]: Pt) => from + ((((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 20) * span;
 
 // ---------------------------------------------------------------------------
 // 1. Ginkgo (Ginkgo biloba): stout grey-brown limbs forking into ascending wood studded with

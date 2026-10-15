@@ -22,15 +22,11 @@
 //     foxglove capsule stalks, collapsed bronze bracken, winter-blooming gorse, and new hazel
 //     catkins expanding yellow for the coming spring.
 
-import { TAU, rad, P1, add, sub, mul, lerp, polar, rot, through, quad, closed, line, sample, vars, shape, stalk, tone, grow, part, gate, roundPts } from "./lib.ts";
+import { TAU, rad, P1, add, sub, mul, lerp, polar, rot, through, quad, closed, line, sample, vars, shape, stalk, tone, grow, part, gate, roundPts, fallsAt } from "./lib.ts";
 import type { Out, Pt, Rng, Tone } from "./lib.ts";
 import { limb, branch, angleOf } from "./woody.ts";
 import type { Limb } from "./woody.ts";
 import { blade, bladeBunch } from "./mediterranean.ts";
-
-// Deterministic autumn shedding time based on attachment position rather than the RNG stream.
-const fallsAt = (from: number, span: number) => ([x, y]: Pt) =>
-  from + ((((Math.round(x * 7 + y * 13) % 20) + 20) % 20) / 20) * span;
 
 // ---------------------------------------------------------------------------
 // 1. Pedunculate oak (Quercus robur): stout, wide-spreading, crooked limbs with deeply fissured
