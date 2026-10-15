@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Characters · delineate</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta name="description" content="A picture made of letters, gathering into shapes and letting go of them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@3.3.0/build/victormono-nf-obl.css">
+<style>
+  /* The page is the field: letters across the whole sheet, parting round the words. */
+  :root {
+    --paper: #F8F7F2; --ink: #1B1B19; --soft: #62625C; --leaf: #4E6B3B;
+    --serif: "Hedvig Letters Serif", Georgia, serif; --sans: "General Sans", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  :root[data-theme="night"] { --paper: #1B2036; --ink: #F1EDE2; --soft: #AEB0BE; --leaf: #A9C48E; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.6 var(--sans); transition: background .5s, color .5s; }
+  .field { position: fixed; inset: 0; }
+  .field canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .bar { position: fixed; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1.25rem clamp(1.25rem, 4vw, 3rem); z-index: 1; }
+  .bar a { color: inherit; text-decoration: none; font: 400 1.375rem/1 var(--serif); }
+  main { position: relative; z-index: 1; min-height: 100%; display: grid; place-items: center; padding: 6rem 1.5rem; pointer-events: none; }
+  .words { text-align: center; max-width: 30rem; pointer-events: auto; }
+  h1 { margin: 0; font: 400 clamp(2.75rem, 7vw, 5rem)/1 var(--serif); letter-spacing: -.01em; }
+  .words p { margin: 1rem auto 0; color: var(--soft); text-wrap: pretty; }
+  .choose { margin: 1.75rem 0 0; display: inline-flex; gap: .25rem; padding: .25rem; border-radius: 999px; background: color-mix(in srgb, var(--paper) 82%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 14%, transparent); }
+  button { font: 500 .875rem/1 var(--sans); color: var(--ink); background: none; border: 0; border-radius: 999px; padding: .6rem 1rem; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .light { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent); }
+  button:focus-visible, .bar a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+</style>
+</head>
+<body>
+  <div class="field" aria-hidden="true"><canvas></canvas></div>
+  <header class="bar">
+    <a href="../" aria-label="delineate, home">delineate</a>
+    <button class="light" type="button" aria-pressed="false">Night</button>
+  </header>
+  <main>
+    <div class="words">
+      <h1>Characters</h1>
+      <p>A picture made of letters, gathering into shapes and letting go of them. From each edge inward they spell the name; at the heart, something grows.</p>
+      <div class="choose" role="group" aria-label="What grows at the heart">
+        <button type="button" data-bloom="garden" aria-pressed="true">Garden</button>
+        <button type="button" data-bloom="moon" aria-pressed="false">Moon</button>
+        <button type="button" data-bloom="stars" aria-pressed="false">Stars</button>
+      </div>
+    </div>
+  </main>
+  <script type="module">
+    import { mount } from "./field.js";
+    const field = mount(document.querySelector(".field canvas"), { clear: [...document.querySelectorAll(".words, .bar a, .light")] });
+    for (const b of document.querySelectorAll("[data-bloom]")) b.addEventListener("click", () => {
+      field.bloom(b.dataset.bloom);
+      for (const o of document.querySelectorAll("[data-bloom]")) o.setAttribute("aria-pressed", String(o === b));
+    });
+    const light = document.querySelector(".light");
+    light.addEventListener("click", () => {
+      const night = document.documentElement.dataset.theme !== "night";
+      document.documentElement.dataset.theme = night ? "night" : "day";
+      light.textContent = night ? "Day" : "Night";
+      light.setAttribute("aria-pressed", String(night));
+    });
+  </script>
+</body>
+</html>

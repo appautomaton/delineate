@@ -11,7 +11,7 @@ region maps, which are media and stay local.
 - **`page.html`**: the page, with `{{NAME}}` holes for what is drawn. In order: the opening, a headline beside a
   crayon bouquet that parts as the page scrolls; Garden, plants from six gardens round its words, each
   growing as the Garden grows it while the bed crosses the screen; Footers, the component itself, so the section
-  is the world; Characters, a field of letters; Portraits, Paprika Girl's planes, parted along the section's view
+  is the world; Characters, the piece's own field of letters (`characters/field.js`); Portraits, Paprika Girl's planes, parted along the section's view
   timeline and tilted by the pointer; and the page's own footer, a crayon landscape in six planes. The corner
   button switches day and night for the whole page by pressing the footer's own switch, which keeps the light.
 - **`build.ts`**: fills the holes and writes `dist/`. From Footers it takes the crayon world's generator for the
@@ -19,8 +19,8 @@ region maps, which are media and stay local.
   grain, and the component built as a kit for this site (`footers/sites/delineate.html`). From Garden, its tokens,
   paint and anchors, and the plants the page's `PLANTS` names. From Portraits, Paprika Girl. Beside the page it
   writes the work each section opens, each as it stands on its own: the Garden at `garden/` (built by
-  `garden/build.ts`, its paths relative to the page), the Footers demo at `footers/`, and Paprika Girl's
-  separation page at `portraits/paprika-girl/`. Each wears the site's tab mark, since a page with no icon of its
+  `garden/build.ts`, its paths relative to the page), the Footers demo at `footers/`, Characters at
+  `characters/`, and Paprika Girl's separation page at `portraits/paprika-girl/`. Each wears the site's tab mark, since a page with no icon of its
   own has the browser ask for a `/favicon.ico` the site does not have.
 - **`hero.ts`**, **`icons.ts`**: the bouquet and the icons, drawn with the Footers' crayon (`footers/crayon/`).
   `icons.ts` also draws the tab's mark, flat, since at sixteen pixels the grain is only noise.

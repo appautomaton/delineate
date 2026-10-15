@@ -23,8 +23,9 @@ a 3. On the project's page the 3s turn over as you scroll and show the e on thei
 | **Garden** | Twelve gardens from around the world, drawn plant by plant in watercolour and ink. They grow in as you scroll, and four of them run through a whole year. | [`garden/`](garden) | [climate-garden](.agents/skills/climate-garden) |
 | **Footers** | The bottom of a web page drawn as a small world that rises as you arrive. Seven worlds, each in its own medium, from gouache to crayon, by day and by night. | [`footers/`](footers) | |
 | **Portraits** | Illustrated portraits redrawn in vector as planes, each at its own depth. Pull them apart and they keep moving. | [`portraits/`](portraits) | [layered-svg](.agents/skills/layered-svg) |
+| **Characters** | A picture made of letters. Ring by ring from each shape's edge inward they spell the name, and at the heart leaves and flowers grow, or moons, or stars. | [`characters/`](characters) | |
 
-Characters, a picture made of letters, and Collage, one built from scraps of paper, are on the way.
+Collage, a picture built from scraps of paper, is on the way.
 [`site/`](site) builds delineate's own page, which shows all of it on one long sheet.
 
 ## Agent skills
@@ -57,7 +58,7 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run look` | Takes screenshots of every garden layout, by day and by night. |
 | `npm run footers` | Writes the Footers demo to `footers/automaton.html`. Add `?world=crayon`, or another world, to choose one. |
 | `npm run bench` | Serves the portrait bench at http://localhost:5288. |
-| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, and Paprika Girl's separation page that its sections open. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, and Paprika Girl's separation page that its sections open. |
 | `npm run check` | Type-checks every part of the repository. |
 
 ## What is not in the repository
@@ -72,6 +73,7 @@ repository alone.
 ```
 garden/      the Garden: plants drawn in code, and the site that grows them
 footers/     the Footers component and its seven worlds
+characters/  the field of letters and its page
 portraits/   the portrait pieces and the harness that builds them
 site/        delineate's own page
 tools/       the small static server the dev tools share

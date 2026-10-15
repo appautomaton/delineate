@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap">
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@3.3.0/build/victormono-nf-obl.css">
 <link rel="stylesheet" href="assets/garden/tokens.css">
 <link rel="stylesheet" href="assets/garden/paint.css">
 <link rel="stylesheet" href="assets/garden/anchors.css">
@@ -229,7 +230,8 @@
   .footer-show .show-take a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25em; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
 
   /* Characters, soon: a picture made of letters, shown working. */
-  .field { position: relative; height: clamp(18rem, 46svh, 28rem); }
+  .field { position: relative; height: clamp(18rem, 46svh, 28rem); --leaf: #4E6B3B; }
+  :root[data-theme="night"] .field { --leaf: #A9C48E; }
   .field canvas { position: absolute; inset: 0; width: 100%; height: 100%; mask-image: radial-gradient(closest-side, #000 62%, transparent); }
 
   /* The page's own foot: its words, then a crayon landscape in six depths that rises into place as the page
@@ -342,7 +344,8 @@
         <div class="piece-art field" data-field aria-hidden="true"><canvas></canvas></div>
         <div class="piece-text">
           <h2 id="characters">Characters</h2>
-          <p>A picture made of letters, gathering into shapes and letting go of them. Coming soon, with Collage, a picture built from scraps of paper.</p>
+          <p>A picture made of letters, gathering into shapes and letting go of them. From each edge inward they spell the name; at the heart, something grows.</p>
+          <div class="take"><a class="link" href="characters/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/characters">Source</a></div>
         </div>
       </article>
 
@@ -585,57 +588,8 @@
     addEventListener("scroll", follow, { passive: true });
   }
 
-  // Characters: a field of letters where a slow noise gathers into shapes. It runs a dozen frames a
-  // second, only while on screen and while someone is there.
-  const field = document.querySelector("[data-field]"), canvas = field.querySelector("canvas"), ctx = canvas.getContext("2d");
-  const RAMP = " .,:;-=+*%#@";
-  let seen = false, stirred = performance.now(), last = 0, cols = 0, rows = 0, cell = 14;
-  for (const type of ["pointermove", "scroll", "keydown", "touchstart", "wheel"]) addEventListener(type, () => (stirred = performance.now()), { passive: true });
-  new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) requestAnimationFrame(tick); }).observe(field);
-  const fit = () => {
-    const r = field.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio);
-    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cell = r.width < 600 ? 11 : 14; cols = Math.ceil(r.width / (cell * .62)); rows = Math.ceil(r.height / cell);
-    ctx.font = `500 ${cell}px ui-monospace, "SF Mono", Menlo, monospace`; ctx.textBaseline = "top";
-  };
-  new ResizeObserver(fit).observe(field);
-  // Value noise on a hashed lattice, three octaves, its domain warped a little so shapes bend as they drift.
-  const hash = (x, y) => { let h = x * 374761393 + y * 668265263; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
-  const smooth = (t) => t * t * (3 - 2 * t);
-  const value = (x, y) => {
-    const xi = Math.floor(x), yi = Math.floor(y), u = smooth(x - xi), v = smooth(y - yi);
-    const a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
-    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
-  };
-  const fbm = (x, y) => .55 * value(x, y) + .3 * value(x * 2.1 + 7, y * 2.1 + 3) + .15 * value(x * 4.3 + 1, y * 4.3 + 9);
-  function tick(now) {
-    if (!seen) return;
-    requestAnimationFrame(tick);
-    if (now - last < 83 || now - stirred > 20000) return;
-    last = now;
-    const t = now / 4000, w = field.clientWidth, h = field.clientHeight, step = cell * .62;
-    // The letters take the page's ink and blue, by day and by night.
-    const css = getComputedStyle(document.documentElement), ink = css.getPropertyValue("--ink").trim(), blue = css.getPropertyValue("--c-blue").trim();
-    ctx.clearRect(0, 0, w, h);
-    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
-      const x = i / 9, y = j / 6;
-      const wx = x + .9 * value(x * .5 + t * .3, y * .5), wy = y + .9 * value(x * .5 + 11, y * .5 - t * .25);
-      const v = fbm(wx + t * .35, wy - t * .2);
-      const x0 = i * step, y0 = j * cell;
-      if (v < .5) {
-        // The field: a faint dot in every cell, so the shapes rise out of a ground, not out of nothing.
-        ctx.fillStyle = ink; ctx.globalAlpha = .16;
-        ctx.fillText(".", x0, y0);
-        continue;
-      }
-      const k = Math.min(RAMP.length - 1, 2 + Math.floor((v - .5) / .32 * (RAMP.length - 2)));
-      ctx.fillStyle = v > .74 ? blue : ink;
-      ctx.globalAlpha = Math.min(1, .45 + (v - .5) * 2.2);
-      ctx.fillText(RAMP[k], x0, y0);
-    }
-    ctx.globalAlpha = 1;
-  }
+  // Characters: the piece's own field of letters (characters/field.js), in the page's ink and light.
+  import("./characters/field.js").then(({ mount }) => mount(document.querySelector("[data-field] canvas"), { cell: 11, gather: 0.6 }));
 
   // A drawn icon draws itself again when a pointer comes to it.
   const redraw = (el) => {
