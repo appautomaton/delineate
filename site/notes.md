@@ -9,7 +9,7 @@ region maps, which are media and stay local.
 ## How it is built
 
 - **`page.html`**: the page, with `{{NAME}}` holes for what is drawn. In order: the opening, a headline beside a
-  crayon bouquet that parts as the page scrolls; Garden, plants from six gardens massed round its words, each
+  crayon bouquet that parts as the page scrolls; Garden, plants from six gardens round its words, each
   growing as the Garden grows it while the bed crosses the screen; Footers, the component itself, so the section
   is the world; Characters, a field of letters; Portraits, Paprika Girl's planes, parted along the section's view
   timeline and tilted by the pointer; and the page's own footer, a crayon landscape in six planes. The corner
@@ -49,9 +49,12 @@ region maps, which are media and stay local.
   shape of screen.
 - **Fade into the paper.** No piece sits in a box: every edge that meets the page is masked to transparent,
   and stems and planes run on past the frame, so parting them never shows a cut end.
-- **Mass the plants; never line them up.** Plants standing apart on one baseline read as a specimen sheet.
-  Massed in counterpoint across the diagonal, overlapping, led by one large plant and filled by small ones,
-  and rooted below a foot that fades into the paper, they read as a garden. An upright bed keeps them to the
+- **Each plant reads by its own silhouette.** Massed and overlapping, plants pile into one another and none can
+  be told apart. Each stands clear of the others, overlapping only at the feet, back to front, never core over
+  core; heights and depths vary, the corners are held by the tallest, and the roots sink into a foot that fades
+  into the paper, so they read as a garden and not a specimen sheet. Work the row out from each plant's width
+  (its height times its aspect ratio, in `anchors.css`) at the narrowest bed it must fit, and measure it there.
+  The row along the foot needs a bed 1.4 times as wide as it is high; a narrower one keeps the plants to the
   bands above and below the words.
 - **Grow a plant as the Garden does.** Scaling a plant up whole from its base makes every plant grow alike and
   none as it does. The bed runs the Garden's own growth, limbs extending and parts unfolding, pared down to

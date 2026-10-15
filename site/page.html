@@ -206,9 +206,10 @@
     translate: calc(var(--bx) * -100%) calc(var(--by) * -100%); transform-origin: calc(var(--bx) * 100%) calc(var(--by) * 100%);
     rotate: var(--r, 0deg); scale: var(--flip, 1) 1; pointer-events: none; }
   .grow svg { display: block; width: 100%; height: 100%; overflow: visible; }
-  /* On an upright bed the words fill the middle, so each plant takes its upright place, in the bands above and
-     below them, and is held to a share of the bed's height as well as its width. */
-  @container (aspect-ratio < 1.25) {
+  /* On an upright bed, or one too near square for the row of plants along the foot, the words fill the middle,
+     so each plant takes its upright place, in the bands above and below them, and is held to a share of the bed's
+     height as well as its width. */
+  @container (aspect-ratio < 1.4) {
     .grow { --x: var(--ux); --y: var(--uy); --h: var(--uh); --unit: min(.7cqh, .95cqw); }
   }
 
@@ -438,21 +439,21 @@
     stage.addEventListener("pointerleave", () => { tilt.style.transform = ""; });
   }
 
-  // Garden: plants from six gardens, massed round the words: a thicket rising at the lower left answers a
-  // canopy reaching in at the upper right, and one olive branch keeps the open corner. Each is anchored at its
-  // base, back to front: positions are fractions of the bed, heights percentages of its height, and a base
-  // below the bed's foot is rooted in the ground the bed fades into. `upright` places a plant on an upright bed.
+  // Garden: plants from six gardens round the words, each clear of the others so it reads by its own silhouette.
+  // An olive and a thorn branch reach in at the upper corners; a monstera and a bird of paradise, turned to face
+  // in, hold the lower ones; a king protea and a silver lady's mantle stand between them under the words. Only
+  // feet meet: a rabbit-ear iris stands in front of the monstera's stalks, under its leaves. The row fits a bed
+  // 1.4 times as wide as it is high and spreads on a wider one; a narrower bed takes the `upright` places. Each
+  // is anchored at its base, back to front: positions are fractions of the bed, heights percentages of its
+  // height, and a base below the bed's foot is rooted in the ground the bed fades into.
   const PLANTS = [
     { name: "olive", x: 0, y: .2, h: 24, upright: { y: .13, h: 22 } },
     { name: "thorn", x: 1, y: .46, h: 36, flip: true, upright: { y: .27, h: 22 } },
-    { name: "bougainvillea", x: .84, y: -.02, h: 42, upright: { x: .74, h: 36 } },
-    { name: "monstera", x: .06, y: 1.04, h: 74, upright: { x: .1, y: .98, h: 54 } },
-    { name: "strelitzia", x: .8, y: 1.05, h: 50, upright: { x: .78, y: .99, h: 46 } },
-    { name: "kingprotea", x: .2, y: 1.06, h: 50, upright: { x: .3, y: .99, h: 40 } },
-    { name: "alchemilla", x: .12, y: 1.04, h: 22, upright: { y: .97, h: 18 } },
-    { name: "lavender", x: .34, y: 1.03, h: 24, upright: { x: .48, y: .96, h: 20 } },
-    { name: "iris", x: .7, y: 1.02, h: 17, until: .42, upright: { x: .6, y: .96, h: 14 } },
-    { name: "agave", x: .95, y: 1.07, h: 32, upright: { x: .97, y: 1, h: 28 } },
+    { name: "monstera", x: .045, y: 1.04, h: 56, upright: { x: .07, y: .98, h: 40 } },
+    { name: "iris", x: .05, y: 1, h: 16, until: .42, upright: { x: .06, y: .97, h: 16 } },
+    { name: "kingprotea", x: .415, y: 1.06, h: 36, upright: { x: .45, y: .98, h: 26 } },
+    { name: "alchemilla", x: .655, y: .99, h: 19, upright: { x: .69, y: .94, h: 14 } },
+    { name: "strelitzia", x: .885, y: 1.04, h: 44, flip: true, upright: { x: .925, y: .98, h: 34 } },
   ];
 
   // Each grows as it does in the Garden (garden/src/main.ts, pared down to a single moment): one progress value
