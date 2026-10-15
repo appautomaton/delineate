@@ -5,9 +5,14 @@
 // page.html is the page, with {{NAME}} holes for what is drawn: the opening bouquet (hero.ts), the icons and the
 // tab's mark (icons.ts), the foot of the page, drawn by the Footers' crayon world, and the Footers piece itself,
 // the real component built as a kit for this site. Beside it go what it borrows: Garden's stylesheets and the
-// plants its bed grows, and Paprika Girl split into planes (portrait.ts).
+// plants its bed grows, and Paprika Girl split into planes (portrait.ts). Beside that goes the work each section
+// opens: the Garden at garden/, the Footers' demo at footers/, and Paprika Girl's separation page at
+// portraits/paprika-girl/.
 
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { DIST as GARDEN, build as buildGarden } from "../garden/build.ts";
 import { WORLDS, component, kit } from "../footers/component.ts";
 import { TOOTH } from "../footers/crayon/hand.ts";
 import { fixed } from "../footers/lib/number.ts";
@@ -80,5 +85,17 @@ for (const [, name] of template.matchAll(/\{ name: "([\w-]+)"/g)) {
 const layers = planes(readFileSync(made("portraits/pieces/paprika-girl/paprika-girl.svg", "npm run paprika-girl"), "utf8"));
 for (const { name, svg } of layers) write(`assets/portrait/${name}.svg`, svg);
 write("assets/portrait/layers.json", JSON.stringify(layers.map(({ name, title }) => ({ name, title })), null, 1));
+
+// The work each section opens, each as it stands on its own, but wearing this site's tab mark: a page with no
+// icon of its own has the browser ask for /favicon.ico, which is not here.
+buildGarden();
+cpSync(GARDEN, new URL("garden/", DIST), { recursive: true });
+mkdirSync(new URL("footers/", DIST), { recursive: true });
+execFileSync(process.execPath, [fileURLToPath(new URL("footers/build.ts", ROOT)), fileURLToPath(new URL("footers/index.html", DIST))]);
+write("portraits/paprika-girl/index.html", readFileSync(made("portraits/pieces/paprika-girl/index.html", "npm run paprika-girl"), "utf8"));
+for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html"]) {
+  const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);
+  write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));
+}
 
 console.log(`wrote site/dist: index.html ${Math.floor(Buffer.byteLength(page) / 1024)} KB, the bouquet draws in ${heroTime}s, ${layers.length} portrait planes`);

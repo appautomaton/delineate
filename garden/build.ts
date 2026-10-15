@@ -1,5 +1,5 @@
-// Builds the Garden into garden/dist, to serve from a domain's root as it stands: its two pages, their scripts
-// compiled from TypeScript a module to a file, their stylesheets, and the plants as drawn.
+// Builds the Garden into garden/dist, to serve as it stands, at a domain's root or under any path: its two pages,
+// their scripts compiled from TypeScript a module to a file, their stylesheets, and the plants as drawn.
 //
 //   node garden/build.ts        (npm run build, after npm run check; dev and look build first too)
 

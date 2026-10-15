@@ -165,7 +165,7 @@ function scaleInk() {
 }
 
 const studyOf = (name: string) => text(`./details/${name}.svg`);
-const drawingOf = (name: string) => fetch(`/garden/${name}.svg`).then((r) => r.text());
+const drawingOf = (name: string) => fetch(`../garden/${name}.svg`).then((r) => r.text());
 
 let garden = chosenGarden(GARDENS[0].key);
 let showing = 0;
@@ -177,7 +177,7 @@ async function show() {
   const [drawings, studies] = await Promise.all([Promise.all(plants.map((p) => drawingOf(p.name))), Promise.all(plants.map((p) => studyOf(p.name)))]);
   if (at !== showing) return;
   document.title = `${g.name} garden tokens`;
-  document.querySelector<HTMLAnchorElement>("[data-garden-back]")!.href = `/?garden=${garden}`;
+  document.querySelector<HTMLAnchorElement>("[data-garden-back]")!.href = `../?garden=${garden}`;
   const heading = document.querySelector<HTMLElement>("[data-garden-name]")!;
   heading.style.setProperty("--tone", `var(${g.tone})`);
   heading.innerHTML = `${emblem(g)}<span>${g.name} garden</span>`;

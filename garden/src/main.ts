@@ -195,7 +195,7 @@ async function plantGarden(growing = false) {
       bed.dataset.planted = "1";
       // Measured now, while layout is clean, so the new plant is styled once with its ink scale.
       const height = bed.offsetHeight;
-      const res = await fetch(`/garden/${bed.dataset.plant}.svg`);
+      const res = await fetch(`garden/${bed.dataset.plant}.svg`);
       if (!res.ok) return;
       bed.innerHTML = await res.text();
       // A seasonal garden keeps every plant on the calendar; others stagger their growth a little.
@@ -647,6 +647,6 @@ function setupTheme() {
 // The gallery link opens the token gallery on the garden on show, its fan in that garden's tone.
 function linkGallery() {
   const link = document.querySelector<HTMLAnchorElement>("[data-gallery-link]")!;
-  link.href = `/gallery/?garden=${garden}`;
+  link.href = `gallery/?garden=${garden}`;
   link.style.setProperty("--tone", `var(${GARDENS.find((g) => g.key === garden)!.tone})`);
 }

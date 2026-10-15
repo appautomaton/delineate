@@ -1,9 +1,10 @@
 # Site
 
-delineate's own page: one sheet of paper, the work lying on it, each piece shown as itself. `npm run site` writes
-it to `site/dist/` (not tracked), ready to serve as it stands: `node tools/serve.ts site/dist`. It
-draws the garden first (`npm run draw`), and reads Paprika Girl as `npm run paprika-girl` last wrote it; that
-build needs the piece's region maps, which are media and stay local.
+delineate's own page: one sheet of paper, the work lying on it, each piece shown as itself, and each section
+opening the work it shows. `npm run site` writes it to `site/dist/` (not tracked), ready to serve as it stands,
+at a domain's root or under any path: `node tools/serve.ts site/dist`. It draws the garden first
+(`npm run draw`), and reads Paprika Girl as `npm run paprika-girl` last wrote it; that build needs the piece's
+region maps, which are media and stay local.
 
 ## How it is built
 
@@ -16,7 +17,11 @@ build needs the piece's region maps, which are media and stay local.
 - **`build.ts`**: fills the holes and writes `dist/`. From Footers it takes the crayon world's generator for the
   foot of the page (under ids of its own, since the Footers section may show the same world), the crayon's
   grain, and the component built as a kit for this site (`footers/sites/delineate.html`). From Garden, its tokens,
-  paint and anchors, and the plants the page's `PLANTS` names. From Portraits, Paprika Girl.
+  paint and anchors, and the plants the page's `PLANTS` names. From Portraits, Paprika Girl. Beside the page it
+  writes the work each section opens, each as it stands on its own: the Garden at `garden/` (built by
+  `garden/build.ts`, its paths relative to the page), the Footers demo at `footers/`, and Paprika Girl's
+  separation page at `portraits/paprika-girl/`. Each wears the site's tab mark, since a page with no icon of its
+  own has the browser ask for a `/favicon.ico` the site does not have.
 - **`hero.ts`**, **`icons.ts`**: the bouquet and the icons, drawn with the Footers' crayon (`footers/crayon/`).
   `icons.ts` also draws the tab's mark, flat, since at sixteen pixels the grain is only noise.
 - **`portrait.ts`**: splits a layered portrait into one standalone SVG per plane, each keeping the frame and
@@ -60,9 +65,6 @@ build needs the piece's region maps, which are media and stay local.
 
 ## Not yet done
 
-- **Links.** Portraits' picture links to `#`, and Garden's Open expects the Garden app at `garden/`; both wait on
-  where the site is deployed. Garden fetches its plants from `/garden/…`, so it can live only at a domain's
-  root until those paths are made relative to the page.
 - **Checks.** The opening is checked from `375x667` to `1920x1080`, the Garden bed at `390x844`, `768x1024`,
   `1024x768`, `1440x900` and `1920x1080`, and the foot at `390x844` and `1440x900`, by day and by night; the
   rest of the page at desktop width only. Performance needs tracing again. When the

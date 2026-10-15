@@ -57,7 +57,7 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run look` | Takes screenshots of every garden layout, by day and by night. |
 | `npm run footers` | Writes the Footers demo to `footers/automaton.html`. Add `?world=crayon`, or another world, to choose one. |
 | `npm run bench` | Serves the portrait bench at http://localhost:5288. |
-| `npm run site` | Builds delineate's page into `site/dist/`. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, and Paprika Girl's separation page that its sections open. |
 | `npm run check` | Type-checks every part of the repository. |
 
 ## What is not in the repository

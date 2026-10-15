@@ -11,7 +11,7 @@ Paths here are inside `garden/`, unless they start with it.
 - `npm run check`: types for the garden, the drawing kit, the portraits, and the repository's other
   pieces and tools.
 - `npm run build`: check, then the garden built into `garden/dist` (a generated folder), its
-  scripts compiled a module to a file, to serve from a domain's root as it stands.
+  scripts compiled a module to a file, to serve as it stands, at a domain's root or under any path.
 - `npm run look`: every layout by day and night, below.
 - `npm run dev [-- <port>]`, from the repository root, in the background: draws the plants, builds
   the garden, serves it, and builds it again whenever a source changes, every open page reloading
