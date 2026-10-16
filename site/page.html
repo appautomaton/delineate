@@ -281,19 +281,19 @@
      slides in, a hairline grows with the way travelled, and the portrait opens once the row has arrived. The words
      rise into place once, as the row arrives. For a visitor who asks for less motion, or where scroll timelines
      are unknown, the fitted row stands still and the run is a strip to swipe, snapping from work to work. */
-  .trio { --n: 3; --fit: 16rem; --art: clamp(16rem, 25vw, 24rem); --gutter: clamp(2rem, 3.5vw, 3.5rem); --card: min(78vw, 24rem); padding: clamp(3rem, 6vw, 4.5rem) 0; view-timeline: --row block; }
-  .trio-track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--gutter); padding-inline: var(--margin); }
-  .trio-along { display: none; }
-  .trio.is-run { --art: clamp(15rem, 60vw, 21rem); }
-  .trio.is-run .trio-track {
+  .lineup { --fit: 16rem; --art: clamp(16rem, 25vw, 24rem); --gutter: clamp(2rem, 3.5vw, 3.5rem); --card: min(78vw, 24rem); padding: clamp(3rem, 6vw, 4.5rem) 0; view-timeline: --row block; }
+  .lineup-track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--gutter); padding-inline: var(--margin); }
+  .lineup-along { display: none; }
+  .lineup.is-run { --art: clamp(15rem, 60vw, 21rem); }
+  .lineup.is-run .lineup-track {
     grid-auto-columns: var(--card);
     overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--margin);
     scrollbar-width: none; scroll-marker-group: after;
   }
-  .trio.is-run .work { scroll-snap-align: start; }
-  .trio.is-run .trio-track::scroll-marker-group { display: flex; justify-content: center; gap: .75rem; padding-top: 1.75rem; }
-  .trio.is-run .work::scroll-marker { content: "" / attr(data-name); width: .5rem; height: .5rem; border-radius: 50%; background: color-mix(in srgb, var(--ink) 22%, transparent); }
-  .trio.is-run .work::scroll-marker:target-current { background: var(--ink); }
+  .lineup.is-run .work { scroll-snap-align: start; }
+  .lineup.is-run .lineup-track::scroll-marker-group { display: flex; justify-content: center; gap: .75rem; padding-top: 1.75rem; }
+  .lineup.is-run .work::scroll-marker { content: "" / attr(data-name); width: .5rem; height: .5rem; border-radius: 50%; background: color-mix(in srgb, var(--ink) 22%, transparent); }
+  .lineup.is-run .work::scroll-marker:target-current { background: var(--ink); }
   .work { display: grid; align-content: start; gap: clamp(1.25rem, 2.5vw, 2rem); }
   .work-art { position: relative; height: var(--art); }
   .work-art .field { height: 100%; }
@@ -316,23 +316,23 @@
      through the frame, which only the row itself answers a touch in. */
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
-      .trio.is-run { --travel: calc(var(--n) * var(--card) + (var(--n) - 1) * var(--gutter) + 2 * var(--margin) - 100vw); --hold: 80svh; height: calc(100svh + var(--travel) + var(--hold)); padding: 0;
+      .lineup.is-run { --travel: calc(var(--n) * var(--card) + (var(--n) - 1) * var(--gutter) + 2 * var(--margin) - 100vw); --hold: 80svh; height: calc(100svh + var(--travel) + var(--hold)); padding: 0;
         margin-block: calc(-1 * var(--blank, 0px)); position: relative; pointer-events: none; }
-      .trio.is-run :is(.trio-track, .trio-along) { pointer-events: auto; }
-      .trio.is-run .trio-frame { position: sticky; top: 0; height: 100svh; overflow: clip; container-type: inline-size; display: grid; align-content: center; }
-      .trio.is-run .trio-track { overflow: visible; scroll-snap-type: none; scroll-marker-group: none; width: max-content;
+      .lineup.is-run :is(.lineup-track, .lineup-along) { pointer-events: auto; }
+      .lineup.is-run .lineup-frame { position: sticky; top: 0; height: 100svh; overflow: clip; container-type: inline-size; display: grid; align-content: center; }
+      .lineup.is-run .lineup-track { overflow: visible; scroll-snap-type: none; scroll-marker-group: none; width: max-content;
         animation: pan linear both; animation-timeline: --row; animation-range: contain 0px contain var(--travel); }
       @keyframes pan { to { translate: calc(100cqw - 100%) 0; } }
-      .trio.is-run .trio-along { display: block; position: relative; height: 1px; margin: 2.25rem var(--margin) 0; background: color-mix(in srgb, var(--ink) 16%, transparent); }
-      .trio.is-run .trio-along::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%;
+      .lineup.is-run .lineup-along { display: block; position: relative; height: 1px; margin: 2.25rem var(--margin) 0; background: color-mix(in srgb, var(--ink) 16%, transparent); }
+      .lineup.is-run .lineup-along::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%;
         animation: along linear both; animation-timeline: --row; animation-range: contain 0% contain 100%; }
       @keyframes along { from { scale: 0 1; } }
       /* The first is on screen as the row arrives; each after it develops over its own share of the travel. */
-      .trio.is-run .work { --k: calc(sibling-index() - 2); }
-      .trio.is-run .work .work-art, .trio.is-run .work .work-art::after {
+      .lineup.is-run .work { --k: calc(sibling-index() - 2); }
+      .lineup.is-run .work .work-art, .lineup.is-run .work .work-art::after {
         animation-range: contain calc(var(--travel) * (var(--k) / (var(--n) - 1) + .05)) contain calc(var(--travel) * ((var(--k) + 1) / (var(--n) - 1) - .05)); }
-      .trio.is-run .work:first-child .work-art, .trio.is-run .work:first-child .work-art::after { animation-range: entry 40% contain 0%; }
-      .trio.is-run .stage { animation-name: explode-run; animation-range: contain var(--travel) contain 100%; }
+      .lineup.is-run .work:first-child .work-art, .lineup.is-run .work:first-child .work-art::after { animation-range: entry 40% contain 0%; }
+      .lineup.is-run .stage { animation-name: explode-run; animation-range: contain var(--travel) contain 100%; }
       @keyframes explode-run { 0%, 6% { --apart: 0; } 40%, 62% { --apart: 1; } 96%, 100% { --apart: 0; } }
     }
   }
@@ -453,9 +453,9 @@
 {{FOOTER_KIT}}
       </article>
 
-      <div class="trio">
-        <div class="trio-frame">
-          <div class="trio-track">
+      <div class="lineup">
+        <div class="lineup-frame">
+          <div class="lineup-track">
             <article class="work" style="--i: 0" data-name="Characters" aria-labelledby="characters">
               <div class="work-art"><div class="field" data-field aria-hidden="true"><canvas></canvas></div></div>
               <div class="piece-text">
@@ -493,7 +493,7 @@
               </div>
             </article>
           </div>
-          <div class="trio-along" aria-hidden="true"></div>
+          <div class="lineup-along" aria-hidden="true"></div>
         </div>
       </div>
 
@@ -816,24 +816,24 @@
     card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); } });
   });
 
-  // The row of works (see .trio in the styles): how many there are; whether they fit the width side by side, each
+  // The row of works (see .lineup in the styles): how many there are; whether they fit the width side by side, each
   // at least --fit wide, or must run sideways through a pinned screen (.is-run); and, running, how much of its
   // screen-tall frame the row leaves empty above and below, which the neighbours close over. Nothing counts on
   // how many works there are: add one and the row makes room for it.
   {
-    const trio = document.querySelector(".trio"), frame = trio.querySelector(".trio-frame"), track = trio.querySelector(".trio-track");
+    const lineup = document.querySelector(".lineup"), frame = lineup.querySelector(".lineup-frame"), track = lineup.querySelector(".lineup-track");
     const px = (length) => parseFloat(length) * (length.trim().endsWith("rem") ? parseFloat(getComputedStyle(document.documentElement).fontSize) : 1);
     const measure = () => {
       const n = track.querySelectorAll(":scope > .work").length;
-      trio.style.setProperty("--n", n);
+      lineup.style.setProperty("--n", n);
       const style = getComputedStyle(track);
-      const needs = n * px(getComputedStyle(trio).getPropertyValue("--fit")) + (n - 1) * parseFloat(style.columnGap) + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
-      trio.classList.toggle("is-run", trio.clientWidth < needs);
+      const needs = n * px(getComputedStyle(lineup).getPropertyValue("--fit")) + (n - 1) * parseFloat(style.columnGap) + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      lineup.classList.toggle("is-run", lineup.clientWidth < needs);
       const content = [...frame.children].reduce((h, el) => h + el.getBoundingClientRect().height + parseFloat(getComputedStyle(el).marginTop), 0);
-      trio.style.setProperty("--blank", `${Math.max(0, (frame.clientHeight - content) / 2)}px`);
+      lineup.style.setProperty("--blank", `${Math.max(0, (frame.clientHeight - content) / 2)}px`);
     };
     const watch = new ResizeObserver(measure);
-    for (const el of [trio, frame, ...frame.children]) watch.observe(el);
+    for (const el of [lineup, frame, ...frame.children]) watch.observe(el);
     new MutationObserver(measure).observe(track, { childList: true });
   }
 

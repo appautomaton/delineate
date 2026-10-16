@@ -1,11 +1,12 @@
 // A palette rolled by its structure, then morphed into.
 //
 // A roll never picks colours one by one. It starts from the flowers in the vase, inside the colours
-// their real plants grow in (each plant names its window), then sets the card across the wheel from
-// the hero flower, deep enough to be a colour and not a grey. Glass, water and ground take the
-// card's hue; greens hold the middle values; white and silver are left for the few marks that should
-// catch the eye. Every colour is set in OKLCH, so lightness is a number the structure controls: any
-// roll keeps the same ladder of values, which is what keeps it from going muddy.
+// their real plants grow in (each plant names its window), then sets the card by one of three schemes
+// (across the wheel from the hero, split to either side of there, or the hero's own hue taken deep),
+// turned clear of the stems' green and of the accent, deep enough to be a colour and not a grey.
+// Glass, water and ground take the card's hue; greens hold the middle values; white and silver are
+// left for the few marks that should catch the eye. Every colour is set in OKLCH, so lightness is a
+// number the structure controls: any roll keeps the same ladder of values.
 //
 // Tokens are named by role, not by species (a protea and a peony are both the hero), carry a prefix
 // so they never meet a host page's own, and are set on the card's element, never on the page.

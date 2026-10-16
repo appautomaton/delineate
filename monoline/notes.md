@@ -15,7 +15,8 @@ the next, and grows the next.
 
 1. **Colour by structure.** Flowers inside the colours their plants grow in; the card across the wheel from
    the hero, split from there, or the hero's hue taken deep; clear of the stems' green and the accent; an
-   accent 60 degrees or more from the hero. Lightness in OKLCH, one ladder for every roll.
+   accent 60 degrees or more from the hero wherever the garden offers one. Lightness in OKLCH, one ladder
+   for every roll.
 2. **Stems never cross.** They leave the mouth in the order their heads stand, spread across it, on the
    pen's three angles.
 3. **What rides a form comes from the form.** Highlights and shaded lines follow the walls.

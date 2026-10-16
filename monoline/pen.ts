@@ -1,9 +1,12 @@
-// The pen: every mark in a monoline drawing is one of four, and all of them come from here.
+// The pen: every mark in a monoline drawing comes from here.
 //
 //   line   a stroke of the one pen, round at its ends and corners
 //   run    a line broken into pieces, gaps and single dots: the drawing's signature
 //   dot    a filled circle, the pen set down and lifted
 //   block  a filled shape with its corners rounded by the pen's own radius
+//   leaf   two blocks along a spine, the light half and the dark: the only shading
+//   oval   for the one flower a card may draw round; shape, any filled path
+//   path   points on the pen's three angles
 //
 // A mark is SVG text. Colours are token names the caller passes ("--protea"), which the page's
 // stylesheet gives a value by day and by night; a literal colour also works while a study is tuned.

@@ -1,9 +1,9 @@
 // An arrangement: a garden, a bottle, and flowers set in it as ikebana sets them, from one seed.
 //
 // The tallest line (shin) stands off the axis to one side, a second line (soe) answers it lower on
-// the other, the hero sits low and heavy near the mouth, opposite the tallest; an accent answers the
-// hero across the bottle, foliage reaches out where the hero is, and filler scatters where the stems
-// part. A narrow neck takes fewer stems than a wide one.
+// the other, the hero sits low and heavy near the mouth, mostly opposite the tallest; an accent
+// answers the hero across the bottle, foliage reaches out on the hero's side, and filler scatters
+// where the stems part. A narrow neck takes fewer stems than a wide one.
 //
 // Stems leave the mouth in the order their heads stand, left to right, spread across it, and every
 // stem runs on the pen's three angles: down from its head, then on the diagonal to its place in the
