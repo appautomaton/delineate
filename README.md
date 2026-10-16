@@ -5,7 +5,7 @@
 [![Node.js 24+](https://img.shields.io/badge/node-24%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![TypeScript 7](https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Runtime dependencies: none](https://img.shields.io/badge/runtime%20dependencies-none-2ea44f)](package.json)
-[![Agent skills: 3](https://img.shields.io/badge/agent%20skills-3-8957e5)](.agents/skills)
+[![Agent skills: 4](https://img.shields.io/badge/agent%20skills-4-8957e5)](.agents/skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/appautomaton/delineate)](https://github.com/appautomaton/delineate/commits/main)
 
@@ -28,14 +28,14 @@ a 3. On the project's page the 3s turn over as you scroll and show the e on thei
 | **Characters** | A picture made of letters. Ring by ring from each shape's edge inward they spell the name, and at the heart leaves and flowers grow, or moons, or stars. | [`characters/`](characters) | |
 | **Collage** | Five sculptures from their museums' scans, each drawn as an engraving, a line screen, flat marble and a single line, and laid among scraps of paper on a card that cuts from hand to hand. | [`collage/`](collage) | |
 | **Assembly** | A page made in front of you by a crew of hands that move the way people do: guides pulled down, frames dragged out, words typed key by key, and a still life drawn in crayon, stroke by stroke, by twenty pens at once. | [`assembly/`](assembly) | [assembly](.agents/skills/assembly) |
-| **Monoline** | Flowers from the Garden's climates put in glass, drawn with one pen on three angles. An arrangement grows, is taken back into its bottle, and the bottle becomes the next, under a palette rolled for its flowers. | [`monoline/`](monoline) | |
+| **Monoline** | Flowers from the Garden's climates put in glass, drawn with one pen on three angles. An arrangement grows, is taken back into its bottle, and the bottle becomes the next, under a palette rolled for its flowers. | [`monoline/`](monoline) | [monoline-geometric](.agents/skills/monoline-geometric) |
 | **Flotsam** | The page for an address that leads nowhere. It has sunk: the window is a tank of water and the 404 floats in it, cut from plywood. Shake the window, or tip your phone, and the water slops; fish a numeral out and throw it back. | [`flotsam/`](flotsam) | |
 
 [`site/`](site) builds delineate's own page, which shows all of it on one long sheet.
 
 ## Agent skills
 
-A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The three
+A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The four
 here live in [`.agents/skills/`](.agents/skills), and `.claude/skills/` links to them for Claude Code.
 
 - **climate-garden** researches how a set of real plants looks, draws each one, colours the garden
@@ -45,6 +45,8 @@ here live in [`.agents/skills/`](.agents/skills), and `.claude/skills/` links to
 - **assembly** makes a page that a crew of hands builds in front of its reader, from the first
   guide to the last crayon stroke, moving the way people move and working the way a design team
   works.
+- **monoline-geometric** puts flowers in glass on the Monoline card: a plant, a garden or a bottle
+  drawn with one pen on three angles, under a palette rolled for its flowers.
 
 Open the repository in your agent and ask for what you want, such as "a garden for the Patagonian
 steppe" or "this portrait as a line engraving". The matching skill takes it from there.
