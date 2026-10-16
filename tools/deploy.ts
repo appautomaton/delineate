@@ -17,6 +17,11 @@ const ROOT = fileURLToPath(new URL("../", import.meta.url));
 // The domain Pages serves the site at; it lives in the branch's CNAME file, so every deploy writes it again.
 const DOMAIN = "delineate.appautomaton.com";
 const DIST = join(ROOT, "site/dist");
+// The pre-push hook runs this with git's own variables set, and from a worktree GIT_DIR is absolute: left in place,
+// the git init below would reach past its scratch directory into the repository itself.
+for (const key of ["GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR", "GIT_OBJECT_DIRECTORY", "GIT_PREFIX"]) {
+  delete process.env[key];
+}
 const git = (cwd: string, ...args: string[]) => execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
 
 if (!existsSync(join(DIST, "index.html"))) throw new Error("site/dist is empty: run npm run site first");
