@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>This page sank · delineate</title>
+    <meta name="description" content="Nothing is at this address. The page has sunk, and its numerals float." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Sans&family=Hedvig+Letters+Serif:opsz@12..24&family=Fragment+Mono&display=swap" />
+    <script>
+      // The light the visitor chose on delineate's pages, set before the first paint so nothing flashes; day if none.
+      try { document.documentElement.dataset.theme = localStorage.getItem("delineate-theme") || "day"; } catch {}
+    </script>
+    <link rel="stylesheet" href="/flotsam/style.css" />
+  </head>
+  <body>
+    <header class="bar">
+      <a class="brand" href="/">delineate</a>
+      <button class="light" type="button" aria-label="Switch between day and night">Light</button>
+    </header>
+
+    <main class="sunk">
+      <p class="kicker">404 · Nothing at this address</p>
+      <h1>This page sank.</h1>
+      <p class="lede">Whatever was here has gone under. Give the window a shake to stir the water, or fish a numeral out and throw it back in.</p>
+      <a class="surface" href="/">Back to the surface</a>
+    </main>
+
+    <div class="afloat"></div>
+    <canvas class="water" aria-hidden="true"></canvas>
+
+    <script type="module" src="/flotsam/main.ts"></script>
+  </body>
+</html>

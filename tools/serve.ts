@@ -72,7 +72,14 @@ export function serve(folder: string, { port = 0, mounts = {}, routes = {}, relo
       if (reload && extname(file) === ".html") body = body.toString().replace("</body>", `${RELOAD}</body>`);
       res.writeHead(200, { "content-type": typeOf(file), "cache-control": "no-store" }).end(body);
     } catch {
-      res.writeHead(404, { "content-type": "text/plain" }).end("not found");
+      // A path that names nothing gets the folder's 404.html, if it has one, as GitHub Pages serves it.
+      try {
+        let body = (await readFile(join(root, "404.html"))).toString();
+        if (reload) body = body.replace("</body>", `${RELOAD}</body>`);
+        res.writeHead(404, { "content-type": TYPES[".html"], "cache-control": "no-store" }).end(body);
+      } catch {
+        res.writeHead(404, { "content-type": "text/plain" }).end("not found");
+      }
     }
   });
   return new Promise((done) =>

@@ -1,0 +1,158 @@
+/* Flotsam: a page that has sunk. delineate's paper and ink, by day and by night, with water over everything:
+   the words lie on the page, the numerals float in the water, and the water lies over both, so whatever it
+   reaches is seen through it. */
+
+:root {
+  --paper: #f8f7f2;
+  --ink: #1b1b19;
+  --soft: #62625c;
+  --serif: "Hedvig Letters Serif", Georgia, serif;
+  --sans: "Hedvig Letters Sans", system-ui, sans-serif;
+  --mono: "Fragment Mono", ui-monospace, monospace;
+  --margin: clamp(1.25rem, 5vw, 5rem);
+  --water-deep: #0f6676;
+  --water-shallow: #3fb1a8;
+  --water-thin: #9fe0d5;
+  --water-foam: #f1fbf7;
+  --water-line: #ffffff;
+  --water-edge: #2d6f78;
+  --water-opacity: 0.62;
+  color-scheme: light;
+}
+
+:root[data-theme="night"] {
+  --paper: #1b2036;
+  --ink: #f1ede2;
+  --soft: #aeb0be;
+  --water-deep: #0b2735;
+  --water-shallow: #1c5664;
+  --water-thin: #4e979c;
+  --water-foam: #cfeee8;
+  --water-line: #e9fbf7;
+  --water-edge: #0b2735;
+  --water-opacity: 0.74;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1rem/1.55 var(--sans);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+a {
+  color: inherit;
+}
+
+.bar {
+  position: fixed;
+  inset: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem var(--margin);
+}
+
+.brand {
+  font: 400 1.25rem/1 var(--serif);
+  text-decoration: none;
+}
+
+.light {
+  padding: 0.45rem 0.9rem;
+  border: 0;
+  border-radius: 99px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent);
+  background: none;
+  color: inherit;
+  font: 400 0.6875rem/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sunk {
+  position: absolute;
+  inset: 13vh var(--margin) auto;
+  max-width: 34rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.kicker {
+  margin: 0 0 1rem;
+  font: 400 0.6875rem/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+h1 {
+  margin: 0;
+  font: 400 clamp(2.5rem, 6vw, 4.25rem)/1.02 var(--serif);
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 1rem auto 0;
+  max-width: 28rem;
+  color: var(--soft);
+  text-wrap: balance;
+}
+
+.surface {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 40%, transparent);
+  font: 400 0.6875rem/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/* The numerals float under the water's surface drawing, so the water lies over what of them is under it. */
+.afloat,
+.water {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.water {
+  width: 100vw;
+  height: 100vh;
+}
+
+.numeral > canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.is-over,
+.is-over a {
+  cursor: grab;
+}
+
+.is-holding,
+.is-holding * {
+  cursor: grabbing;
+}

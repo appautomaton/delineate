@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "rootDir": ".",
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": ["main.ts", "numerals.ts", "water"]
+}
