@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="assets/garden/paint.css">
 <link rel="stylesheet" href="assets/garden/anchors.css">
 <link rel="stylesheet" href="collage/card.css">
+<link rel="stylesheet" href="monoline/card.css">
 <style>
   /* One sheet of paper. Drawings lie on it, not in boxes; words sit beside them. */
   :root {
@@ -272,29 +273,27 @@
   :root[data-theme="night"] .field { --leaf: #A9C48E; }
   .field canvas { position: absolute; inset: 0; width: 100%; height: 100%; mask-image: radial-gradient(closest-side, #000 62%, transparent); }
 
-  /* Characters, Collage and Portraits: one row, each piece above its words, presented by the scroll.
-     Wide, the three stand side by side and develop in turn as the row comes up the screen, left to right, a beat
-     apart: a veil of the page's paper lifts as each settles from a little larger and lower. Narrower, the section
-     pins for a screen and scrolling down carries the row sideways through it: each work develops as it slides in,
-     a hairline grows with the way travelled, and the portrait, last in, opens once it has arrived. The words rise
-     into place once, as the row arrives. For a visitor who asks for less motion, or where scroll timelines are
-     unknown, the wide row stands still and the narrow one is a strip to swipe, snapping from work to work. */
-  .trio { --art: clamp(16rem, 25vw, 24rem); --gutter: clamp(2rem, 3.5vw, 3.5rem); --card: min(78vw, 24rem); padding: clamp(3rem, 6vw, 4.5rem) 0; view-timeline: --row block; }
-  .trio-track { display: grid; gap: var(--gutter); padding-inline: var(--margin); }
+  /* The row of works: one row, never wrapped, each piece above its words, presented by the scroll. Where the
+     whole row fits the width, the works stand side by side and develop in turn as the row comes up the screen,
+     left to right, a beat apart: a veil of the page's paper lifts as each settles from a little larger and lower.
+     Where it does not (the page decides, from how many works there are and how wide each must be: .is-run), the
+     section pins for a screen and scrolling down carries the row sideways through it: each work develops as it
+     slides in, a hairline grows with the way travelled, and the portrait opens once the row has arrived. The words
+     rise into place once, as the row arrives. For a visitor who asks for less motion, or where scroll timelines
+     are unknown, the fitted row stands still and the run is a strip to swipe, snapping from work to work. */
+  .trio { --n: 3; --fit: 16rem; --art: clamp(16rem, 25vw, 24rem); --gutter: clamp(2rem, 3.5vw, 3.5rem); --card: min(78vw, 24rem); padding: clamp(3rem, 6vw, 4.5rem) 0; view-timeline: --row block; }
+  .trio-track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--gutter); padding-inline: var(--margin); }
   .trio-along { display: none; }
-  @media (min-width: 64rem) { .trio-track { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (max-width: 63.99rem) {
-    .trio { --art: clamp(15rem, 60vw, 21rem); }
-    .trio-track {
-      grid-auto-flow: column; grid-auto-columns: var(--card);
-      overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--margin);
-      scrollbar-width: none; scroll-marker-group: after;
-    }
-    .work { scroll-snap-align: start; }
-    .trio-track::scroll-marker-group { display: flex; justify-content: center; gap: .75rem; padding-top: 1.75rem; }
-    .work::scroll-marker { content: "" / attr(data-name); width: .5rem; height: .5rem; border-radius: 50%; background: color-mix(in srgb, var(--ink) 22%, transparent); }
-    .work::scroll-marker:target-current { background: var(--ink); }
+  .trio.is-run { --art: clamp(15rem, 60vw, 21rem); }
+  .trio.is-run .trio-track {
+    grid-auto-columns: var(--card);
+    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--margin);
+    scrollbar-width: none; scroll-marker-group: after;
   }
+  .trio.is-run .work { scroll-snap-align: start; }
+  .trio.is-run .trio-track::scroll-marker-group { display: flex; justify-content: center; gap: .75rem; padding-top: 1.75rem; }
+  .trio.is-run .work::scroll-marker { content: "" / attr(data-name); width: .5rem; height: .5rem; border-radius: 50%; background: color-mix(in srgb, var(--ink) 22%, transparent); }
+  .trio.is-run .work::scroll-marker:target-current { background: var(--ink); }
   .work { display: grid; align-content: start; gap: clamp(1.25rem, 2.5vw, 2rem); }
   .work-art { position: relative; height: var(--art); }
   .work-art .field { height: 100%; }
@@ -310,22 +309,30 @@
   }
   /* The pinned run: the section is as tall as a screen, the row's overflow and a hold. Over the first, scrolling
      moves the row exactly its own width less the screen's, so the last work lands a margin from the right edge;
-     over the hold the row rests and the portrait opens and closes, before the section lets go. */
-  @media (max-width: 63.99rem) and (prefers-reduced-motion: no-preference) {
+     over the hold the row rests and the portrait opens and closes, before the section lets go. Nothing here counts
+     the works: the page sets --n to however many there are, and each develops in its own share of the travel.
+     The row sits centred in a screen-tall frame, which leaves the screen empty above and below it as the section
+     comes and goes; the page measures that emptiness (--blank) and the section's neighbours close over it, seen
+     through the frame, which only the row itself answers a touch in. */
+  @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
-      .trio { --travel: calc(3 * var(--card) + 2 * var(--gutter) + 2 * var(--margin) - 100vw); --hold: 80svh; height: calc(100svh + var(--travel) + var(--hold)); padding: 0; }
-      .trio-frame { position: sticky; top: 0; height: 100svh; overflow: clip; container-type: inline-size; display: grid; align-content: center; }
-      .trio-track { overflow: visible; scroll-snap-type: none; scroll-marker-group: none; width: max-content;
+      .trio.is-run { --travel: calc(var(--n) * var(--card) + (var(--n) - 1) * var(--gutter) + 2 * var(--margin) - 100vw); --hold: 80svh; height: calc(100svh + var(--travel) + var(--hold)); padding: 0;
+        margin-block: calc(-1 * var(--blank, 0px)); position: relative; pointer-events: none; }
+      .trio.is-run :is(.trio-track, .trio-along) { pointer-events: auto; }
+      .trio.is-run .trio-frame { position: sticky; top: 0; height: 100svh; overflow: clip; container-type: inline-size; display: grid; align-content: center; }
+      .trio.is-run .trio-track { overflow: visible; scroll-snap-type: none; scroll-marker-group: none; width: max-content;
         animation: pan linear both; animation-timeline: --row; animation-range: contain 0px contain var(--travel); }
       @keyframes pan { to { translate: calc(100cqw - 100%) 0; } }
-      .trio-along { display: block; position: relative; height: 1px; margin: 2.25rem var(--margin) 0; background: color-mix(in srgb, var(--ink) 16%, transparent); }
-      .trio-along::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%;
+      .trio.is-run .trio-along { display: block; position: relative; height: 1px; margin: 2.25rem var(--margin) 0; background: color-mix(in srgb, var(--ink) 16%, transparent); }
+      .trio.is-run .trio-along::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%;
         animation: along linear both; animation-timeline: --row; animation-range: contain 0% contain 100%; }
       @keyframes along { from { scale: 0 1; } }
-      .work:nth-child(1) .work-art, .work:nth-child(1) .work-art::after { animation-range: entry 40% contain 0%; }
-      .work:nth-child(2) .work-art, .work:nth-child(2) .work-art::after { animation-range: contain calc(var(--travel) * .05) contain calc(var(--travel) * .45); }
-      .work:nth-child(3) .work-art, .work:nth-child(3) .work-art::after { animation-range: contain calc(var(--travel) * .5) contain calc(var(--travel) * .92); }
-      .stage { animation-name: explode-run; animation-range: contain var(--travel) contain 100%; }
+      /* The first is on screen as the row arrives; each after it develops over its own share of the travel. */
+      .trio.is-run .work { --k: calc(sibling-index() - 2); }
+      .trio.is-run .work .work-art, .trio.is-run .work .work-art::after {
+        animation-range: contain calc(var(--travel) * (var(--k) / (var(--n) - 1) + .05)) contain calc(var(--travel) * ((var(--k) + 1) / (var(--n) - 1) - .05)); }
+      .trio.is-run .work:first-child .work-art, .trio.is-run .work:first-child .work-art::after { animation-range: entry 40% contain 0%; }
+      .trio.is-run .stage { animation-name: explode-run; animation-range: contain var(--travel) contain 100%; }
       @keyframes explode-run { 0%, 6% { --apart: 0; } 40%, 62% { --apart: 1; } 96%, 100% { --apart: 0; } }
     }
   }
@@ -338,6 +345,8 @@
 
   /* Collage: one card, dealt from the five, playing as it does on its own page; it stays paper by night. */
   .collage-card { display: block; height: 100%; aspect-ratio: 1; max-width: 100%; border-radius: .5rem; }
+  .work-art .ml { height: 100%; max-width: 100%; border-radius: .5rem; }
+  .work-art .ml:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
   .collage-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
   /* The page's own foot: its words, then a crayon landscape in six depths that rises into place as the page
@@ -474,6 +483,15 @@
                 <div class="take"><a class="link" href="portraits/paprika-girl/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/portraits">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/layered-svg">Skill</a></div>
               </div>
             </article>
+
+            <article class="work" style="--i: 3" data-name="Monoline" aria-labelledby="monoline">
+              <div class="work-art"><div data-monoline role="button" tabindex="0" aria-label="Another vase"></div></div>
+              <div class="piece-text">
+                <h2 id="monoline"><span>Monoline</span></h2>
+                <p>Flowers from the Garden’s climates, cut and put in glass, drawn with one pen on three angles. Each vase grows in, stands a while, and gives way to the next, in another bottle, under another palette.</p>
+                <div class="take"><a class="link" href="https://github.com/appautomaton/delineate/tree/main/monoline">Source</a></div>
+              </div>
+            </article>
           </div>
           <div class="trio-along" aria-hidden="true"></div>
         </div>
@@ -515,6 +533,31 @@
   function settle(el) {
     el.classList.remove("is-drawing");
     el.classList.add("is-drawn");
+    if (!calm) film(el);
+  }
+
+  // A drawing is drawn at 24 frames a second, as film is. Its strands' animations are held, then moved together on
+  // the screen's own frames, each to the time of the film frame it falls in, measured from the start, so the
+  // cadence never drifts and no frame is skipped; at the end they are finished, as they would have been.
+  const FPS = 24;
+  function film(el) {
+    const strands = el.getAnimations({ subtree: true }).filter((a) => a.timeline === document.timeline);
+    if (!strands.length) return;
+    for (const a of strands) a.pause();
+    const start = performance.now();
+    const end = Math.max(...strands.map((a) => a.effect.getComputedTiming().endTime));
+    let shown = -1;
+    const frame = (now) => {
+      const k = Math.floor(((now - start) / 1000) * FPS);
+      if (k !== shown) {
+        shown = k;
+        const t = Math.min(end, (k * 1000) / FPS);
+        for (const a of strands) a.currentTime = t;
+      }
+      if ((k * 1000) / FPS < end) requestAnimationFrame(frame);
+      else for (const a of strands) a.finish();
+    };
+    requestAnimationFrame(frame);
   }
   // Every link to a work, its source or its skill is underlined in crayon, one of four lines in turn, drawn as it
   // comes into view and again when the pointer comes to it.
@@ -548,6 +591,7 @@
       draw.unobserve(el);
       if (calm) { settle(el); continue; }
       el.classList.add("is-drawing");
+      film(el);
       setTimeout(() => settle(el), (Number(el.dataset.time) + .2) * 1000);
     }
   }, { threshold: .2 });
@@ -765,13 +809,42 @@
   // Assembly: a few hands building a miniature of Assembly's page on a sheet, again and again, while it is in view.
   import("./assembly/show.js").then(({ mount }) => mount(document.querySelector("[data-assembly]")));
 
+  // Monoline: a vase that keeps itself, one arrangement giving way to the next while it is in view (monoline/show.js).
+  import("./monoline/show.js").then(({ mount }) => {
+    const card = document.querySelector("[data-monoline]");
+    mount(card);
+    card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); } });
+  });
+
+  // The row of works (see .trio in the styles): how many there are; whether they fit the width side by side, each
+  // at least --fit wide, or must run sideways through a pinned screen (.is-run); and, running, how much of its
+  // screen-tall frame the row leaves empty above and below, which the neighbours close over. Nothing counts on
+  // how many works there are: add one and the row makes room for it.
+  {
+    const trio = document.querySelector(".trio"), frame = trio.querySelector(".trio-frame"), track = trio.querySelector(".trio-track");
+    const px = (length) => parseFloat(length) * (length.trim().endsWith("rem") ? parseFloat(getComputedStyle(document.documentElement).fontSize) : 1);
+    const measure = () => {
+      const n = track.querySelectorAll(":scope > .work").length;
+      trio.style.setProperty("--n", n);
+      const style = getComputedStyle(track);
+      const needs = n * px(getComputedStyle(trio).getPropertyValue("--fit")) + (n - 1) * parseFloat(style.columnGap) + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      trio.classList.toggle("is-run", trio.clientWidth < needs);
+      const content = [...frame.children].reduce((h, el) => h + el.getBoundingClientRect().height + parseFloat(getComputedStyle(el).marginTop), 0);
+      trio.style.setProperty("--blank", `${Math.max(0, (frame.clientHeight - content) / 2)}px`);
+    };
+    const watch = new ResizeObserver(measure);
+    for (const el of [trio, frame, ...frame.children]) watch.observe(el);
+    new MutationObserver(measure).observe(track, { childList: true });
+  }
+
   // A drawn icon draws itself again when a pointer comes to it.
   const redraw = (el) => {
     if (calm || el.classList.contains("is-drawing")) return;
     el.classList.remove("is-drawn");
     void el.offsetWidth;
     el.classList.add("is-drawing");
-    setTimeout(() => { el.classList.remove("is-drawing"); el.classList.add("is-drawn"); }, (Number(el.dataset.time) + .2) * 1000);
+    film(el);
+    setTimeout(() => settle(el), (Number(el.dataset.time) + .2) * 1000);
   };
   document.querySelectorAll(".tipped, .marked").forEach((el) => el.addEventListener("pointerenter", () => redraw(el)));
 

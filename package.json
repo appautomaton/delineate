@@ -7,7 +7,7 @@
   "scripts": {
     "draw": "node garden/draw/draw.ts",
     "precheck": "npm run draw",
-    "check": "tsc -p garden && tsc -p garden/tsconfig.node.json && tsc -p portraits && tsc -p footers && tsc -p collage && tsc -p site && tsc -p tools && tsc -p assembly && tsc -p assembly/tsconfig.node.json && tsc -p flotsam && tsc -p flotsam/tsconfig.node.json",
+    "check": "tsc -p garden && tsc -p garden/tsconfig.node.json && tsc -p portraits && tsc -p footers && tsc -p collage && tsc -p site && tsc -p tools && tsc -p assembly && tsc -p assembly/tsconfig.node.json && tsc -p flotsam && tsc -p flotsam/tsconfig.node.json && tsc -p monoline && tsc -p monoline/tsconfig.node.json",
     "predev": "npm run draw",
     "dev": "node garden/dev.ts",
     "assembly": "node assembly/dev.ts",
@@ -15,6 +15,8 @@
     "flotsam": "node flotsam/dev.ts",
     "flotsam:build": "node flotsam/build.ts",
     "flotsam:measure": "node flotsam/measure.ts",
+    "monoline": "node monoline/dev.ts",
+    "monoline:build": "node monoline/build.ts",
     "build": "npm run check && node garden/build.ts",
     "preview": "node tools/serve.ts garden/dist 4173",
     "prelook": "npm run draw",
