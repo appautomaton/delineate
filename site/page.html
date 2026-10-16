@@ -195,11 +195,13 @@
   .take a, .footer-show .show-take a { position: relative; padding-bottom: .55rem; color: inherit; text-decoration: none; }
   .take .mark, .show-take .mark { left: -4%; bottom: -.15rem; width: 108%; height: .7rem; }
   h2 > span { display: inline-block; }
-  /* As a work arrives its words rise into place, once, a beat apart, the name from under its own edge. */
+  /* As a work arrives its words rise into place, once, a beat apart, the name from under its own edge.
+     The Footers' words sit in the footer's .brand, named outright: a selector such as :has(> .show-title) > *
+     makes every change to the page's layout restyle all of its fourteen thousand elements. */
   @media (prefers-reduced-motion: no-preference) {
     @supports (timeline-trigger: --t view()) and (animation-trigger: --t play-once) {
-      .piece-text, :has(> .show-title) { timeline-trigger: --words view() entry 75% exit 25%; }
-      .piece-text > :not(h2), :has(> .show-title) > :not(h2) { animation: rise-words .95s cubic-bezier(.16, .84, .24, 1) calc(var(--i, 0) * 140ms + (sibling-index() - 1) * 90ms) both; animation-trigger: --words play-once; }
+      .piece-text, .footer-show .brand { timeline-trigger: --words view() entry 75% exit 25%; }
+      .piece-text > :not(h2), .footer-show .brand > :not(h2) { animation: rise-words .95s cubic-bezier(.16, .84, .24, 1) calc(var(--i, 0) * 140ms + (sibling-index() - 1) * 90ms) both; animation-trigger: --words play-once; }
       .piece-text > h2, .show-title { overflow: clip; padding-bottom: .08em; margin-bottom: -.08em; }
       .piece-text > h2 > span, .show-title > span { animation: rise-line 1s cubic-bezier(.16, .84, .24, 1) calc(var(--i, 0) * 140ms + 60ms) both; animation-trigger: --words play-once; }
       @keyframes rise-words { from { opacity: 0; translate: 0 14px; } }

@@ -17,5 +17,6 @@ Each of these cost a round once. Check them before blaming the approach.
 | A headline ends on one word | No balance | `text-wrap: balance` on headings. |
 | A face looks bolded wrong | The browser synthesised a weight the face lacks | `font-synthesis: none`, and only the weights the face has. |
 | The hands on a stage drift from their work | Page coordinates on a moving stage | A stage space (`hand/space.ts`) so the hands move with it. |
+| A stage stutters on another page, smooth on its own | Every layout change restyles the whole host page (on delineate's page, a `:has()` selector over thousands of SVG elements) | Change a word on the host and time the next `getBoundingClientRect()`; anything over a millisecond is the host's to fix, so find the rule by turning stylesheets off one by one. |
 | The dev server dies with EMFILE | The sandbox blocks file events | Run it outside the sandbox. |
 | `drawings.ts` changes do not show | Drawings are made when the server starts | Restart `npm run assembly`. |

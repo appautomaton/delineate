@@ -59,6 +59,11 @@ region maps, which are media and stay local.
 - **Grow a plant as the Garden does.** Scaling a plant up whole from its base makes every plant grow alike and
   none as it does. The bed runs the Garden's own growth, limbs extending and parts unfolding, pared down to
   one moment of the year; a plant from a garden that shows a year stops at late spring, its fullest.
+- **Name what a rule styles; never reach it through `:has()`.** The page holds fourteen thousand elements, nearly
+  all of them inside drawings. A selector of the form `:has(> .show-title) > :not(h2)` made every change to the
+  layout anywhere restyle all of them, about 150 ms a time; nothing showed it until Assembly's sheet, which
+  changes the layout every frame, stuttered. To find such a cost, change a word in a paragraph and time the next
+  `getBoundingClientRect()`: on this page it should take well under a millisecond.
 
 ## Checking the work
 
