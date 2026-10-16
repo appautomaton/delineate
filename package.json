@@ -14,6 +14,7 @@
     "assembly:build": "node assembly/build.ts",
     "flotsam": "node flotsam/dev.ts",
     "flotsam:build": "node flotsam/build.ts",
+    "flotsam:measure": "node flotsam/measure.ts",
     "build": "npm run check && node garden/build.ts",
     "preview": "node tools/serve.ts garden/dist 4173",
     "prelook": "npm run draw",

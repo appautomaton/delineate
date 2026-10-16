@@ -10,8 +10,9 @@
 [![Last commit](https://img.shields.io/github/last-commit/appautomaton/delineate)](https://github.com/appautomaton/delineate/commits/main)
 
 Portraits that come apart, gardens that grow as you scroll, small worlds at the foot of a web page,
-and a page made in front of you by a crew of hands. Everything is drawn in code as SVG, and each
-piece comes with its source and a skill your AI agent can follow to make one like it.
+a page made in front of you by a crew of hands, and a page not found that has sunk. Everything is
+drawn in code, and each piece comes with its source, and most with a skill your AI agent can follow
+to make one like it.
 
 The name is *delineate*: to draw the outline of something. Its handle, d3lin3at3, writes each e as
 a 3. On the project's page the 3s turn over as you scroll and show the e on their backs.
@@ -26,6 +27,7 @@ a 3. On the project's page the 3s turn over as you scroll and show the e on thei
 | **Characters** | A picture made of letters. Ring by ring from each shape's edge inward they spell the name, and at the heart leaves and flowers grow, or moons, or stars. | [`characters/`](characters) | |
 | **Collage** | Five sculptures from their museums' scans, each drawn as an engraving, a line screen, flat marble and a single line, and laid among scraps of paper on a card that cuts from hand to hand. | [`collage/`](collage) | |
 | **Assembly** | A page made in front of you by a crew of hands that move the way people do: guides pulled down, frames dragged out, words typed key by key, and a still life drawn in crayon, stroke by stroke, by twenty pens at once. | [`assembly/`](assembly) | [assembly](.agents/skills/assembly) |
+| **Flotsam** | The page for an address that leads nowhere. It has sunk: the window is a tank of water and the 404 floats in it, cut from plywood. Shake the window, or tip your phone, and the water slops; fish a numeral out and throw it back. | [`flotsam/`](flotsam) | |
 
 [`site/`](site) builds delineate's own page, which shows all of it on one long sheet.
 
@@ -65,7 +67,9 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run collage:render -- <motif>` | Renders a Collage motif's sculpture scan in Blender into the passes its drawings are made from. |
 | `npm run collage:draw` | Draws every Collage motif in each of its hands into `collage/art/`. |
 | `npm run assembly` | Serves Assembly at http://localhost:5310/, with the pointers' specimen sheet at `studies/pointers/`, and rebuilds when a source changes. |
-| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, Paprika Girl's separation page and Assembly that its sections open. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
+| `npm run flotsam` | Serves Flotsam at http://localhost:5340/, at every address, and rebuilds when a source changes. |
+| `npm run flotsam:measure` | Measures Flotsam in a Chrome of its own: the page's frames, the water's thread, and whether the water sleeps when still. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, Paprika Girl's separation page and Assembly that its sections open, and Flotsam as its `404.html`. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
 | `npm run deploy` | Builds the site and publishes it to GitHub Pages, at https://delineate.appautomaton.com/. Pushing `main` runs it first, and holds the push back if the site fails to build; `git push --no-verify` skips it. |
 | `npm run check` | Type-checks every part of the repository. |
 
@@ -85,6 +89,8 @@ footers/     the Footers component and its seven worlds
 characters/  the field of letters and its page
 collage/     the collage cards, their page, and the scripts that render and draw them
 portraits/   the portrait pieces and the harness that builds them
+assembly/    the crew of hands, its engine, and the page they build
+flotsam/     the page not found: its water, its numerals and its sea floor
 site/        delineate's own page
 tools/       the small static server the dev tools share
 .agents/     the agent skills

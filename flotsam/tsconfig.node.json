@@ -1,8 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "lib": ["ES2023"],
+    // DOM, for the functions measure.ts hands to the page to run there.
+    "lib": ["ES2023", "DOM"],
     "types": ["node"]
   },
-  "include": ["build.ts", "dev.ts", "drawings.ts"]
+  "include": ["build.ts", "dev.ts", "drawings.ts", "measure.ts"]
 }
