@@ -4,6 +4,8 @@
 // Collage's drawings and the portraits' planes are made from sources kept on this machine.
 //
 //   npm run deploy        (builds the site, then publishes it)
+//
+// Pushing main runs it, through .githooks/pre-push, which npm install turns on.
 
 import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";

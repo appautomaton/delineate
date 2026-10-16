@@ -1,0 +1,31 @@
+#!/bin/sh
+# Publishes the site whenever main is pushed. delineate is built on this machine, from drawings whose sources
+# never leave it, so the push that moves main is the moment to publish the build that matches it
+# (npm run deploy, tools/deploy.ts). If the site fails to build, main is not pushed. Pushes to any other branch
+# pass straight through; git push --no-verify pushes main without publishing.
+#
+# npm install turns this on (the prepare script sets core.hooksPath to .githooks).
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$remote_ref" = refs/heads/main ] || continue
+  case $local_sha in *[!0]*) ;; *) continue ;; esac # deleting main publishes nothing
+
+  if [ "$local_sha" != "$(git rev-parse HEAD)" ]; then
+    echo "pre-push: the site is built from the checkout, but this push sends main from elsewhere; check out main and push again" >&2
+    exit 1
+  fi
+  if [ -n "$(git status --porcelain)" ]; then
+    echo "pre-push: the checkout has uncommitted changes, and the site must match the commit it is built from; commit or stash them first" >&2
+    exit 1
+  fi
+  # main has moved on at GitHub: git will refuse this push, so there is nothing to publish.
+  case $remote_sha in
+    *[!0]*) git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null || continue ;;
+  esac
+
+  echo "pre-push: publishing the site built from $(git rev-parse --short HEAD) before main goes up"
+  npm run deploy </dev/null || {
+    echo "pre-push: the site did not build or publish, so main was not pushed" >&2
+    exit 1
+  }
+done

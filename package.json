@@ -31,7 +31,8 @@
     "collage:draw": "node collage/draw/draw.ts",
     "presite": "npm run draw",
     "site": "node site/build.ts",
-    "deploy": "npm run site && node tools/deploy.ts"
+    "deploy": "npm run site && node tools/deploy.ts",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "devDependencies": {
     "@huggingface/transformers": "4.3.0",

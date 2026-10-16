@@ -66,7 +66,7 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run collage:draw` | Draws every Collage motif in each of its hands into `collage/art/`. |
 | `npm run assembly` | Serves Assembly at http://localhost:5310/, with the pointers' specimen sheet at `studies/pointers/`, and rebuilds when a source changes. |
 | `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, Paprika Girl's separation page and Assembly that its sections open. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
-| `npm run deploy` | Builds the site and publishes it to GitHub Pages, at https://delineate.appautomaton.com/. |
+| `npm run deploy` | Builds the site and publishes it to GitHub Pages, at https://delineate.appautomaton.com/. Pushing `main` runs it first, and holds the push back if the site fails to build; `git push --no-verify` skips it. |
 | `npm run check` | Type-checks every part of the repository. |
 
 ## What is not in the repository
@@ -88,6 +88,7 @@ portraits/   the portrait pieces and the harness that builds them
 site/        delineate's own page
 tools/       the small static server the dev tools share
 .agents/     the agent skills
+.githooks/   the hook that publishes the site when main is pushed
 ```
 
 Each part keeps notes beside its code: [`footers/notes.md`](footers/notes.md),
