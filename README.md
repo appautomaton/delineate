@@ -96,15 +96,16 @@ collage/     the collage cards, their page, and the scripts that render and draw
 portraits/   the portrait pieces and the harness that builds them
 assembly/    the crew of hands, its engine, and the page they build
 flotsam/     the page not found: its water, its numerals and its sea floor
+monoline/    the vase that keeps changing its flowers: pen, bottles, plants and palette
 site/        delineate's own page
 tools/       the small static server the dev tools share
 .agents/     the agent skills
 .githooks/   the hook that publishes the site when main is pushed
+AGENTS.md    how to work here: a worktree per piece of work, and what a push to main does
 ```
 
-Each part keeps notes beside its code: [`footers/notes.md`](footers/notes.md),
-[`site/notes.md`](site/notes.md), and [`garden/climates.md`](garden/climates.md) for the gardens'
-botany.
+Assembly, Characters, Flotsam, Footers, Monoline and the site keep a `notes.md` beside their code with
+the rules a change must keep; [`garden/climates.md`](garden/climates.md) holds the gardens' botany.
 
 ## License
 
