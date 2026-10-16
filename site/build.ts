@@ -8,12 +8,15 @@
 // plants its bed grows, and Paprika Girl split into planes (portrait.ts). Beside that goes the work each section
 // opens: the Garden at garden/, the Footers' demo at footers/, Characters at characters/, Collage at collage/ (its
 // card, which this page also shows, and the drawings npm run collage:draw makes), Paprika Girl's separation page at
-// portraits/paprika-girl/, and Assembly at assembly/ (its sheet, show.js, is what this page shows of it).
+// portraits/paprika-girl/, and Assembly at assembly/ (its sheet, show.js, is what this page shows of it). Flotsam
+// is the page for every address that leads nowhere: 404.html, which GitHub Pages serves for those, with its
+// scripts under flotsam/.
 
 import { execFileSync } from "node:child_process";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { build as buildAssembly } from "../assembly/build.ts";
+import { build as buildFlotsam } from "../flotsam/build.ts";
 import { DIST as GARDEN, build as buildGarden } from "../garden/build.ts";
 import { WORLDS, componentApart, kit } from "../footers/component.ts";
 import { TOOTH } from "../footers/crayon/hand.ts";
@@ -108,6 +111,7 @@ for (const file of ["index.html", "page.js", "card.js", "card.css", "motifs.js"]
 cpSync(made("collage/art/", "npm run collage:draw"), new URL("collage/art/", DIST), { recursive: true });
 write("portraits/paprika-girl/index.html", readFileSync(made("portraits/pieces/paprika-girl/index.html", "npm run paprika-girl"), "utf8"));
 buildAssembly(fileURLToPath(new URL("assembly/", DIST)));
+buildFlotsam(fileURLToPath(DIST));
 for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html"]) {
   const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);
   write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));
