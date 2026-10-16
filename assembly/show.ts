@@ -43,13 +43,20 @@ export async function mount(stage: HTMLElement): Promise<void> {
   const middle = () => ({ x: stage.clientWidth / 2, y: stage.clientHeight / 2 });
   const hands = NAMES.map((name, i) => new Hand(clock, stage.querySelector(".hands")!, { name, colour: COLOURS[i], seed: 4001 + i * 17, start: middle(), style: STYLE }));
 
-  // Work only while the sheet can be seen.
+  // Work only while the sheet can be seen: a new build waits for it, and off screen, or in a tab put aside, the
+  // clock sleeps, so the hands stop where they are, mid-stroke, and pick up there.
   let seen: () => void = () => {};
-  let visible = false;
+  let visible = false, near = false;
+  const rest = () => (near && !document.hidden ? clock.wake() : clock.sleep());
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
     if (visible) seen();
   }, { threshold: 0.4 }).observe(stage);
+  new IntersectionObserver(([e]) => {
+    near = e.isIntersecting;
+    rest();
+  }).observe(stage);
+  document.addEventListener("visibilitychange", rest);
   const inView = () => (visible ? Promise.resolve() : new Promise<void>((done) => (seen = done)));
 
   for (;;) {

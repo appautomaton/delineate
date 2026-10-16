@@ -1,5 +1,6 @@
 // The time hands keep: seconds that run at a rate of their own, so a scene can be slowed to study a movement or
-// paused, and every hand waits on the same clock.
+// paused, and every hand waits on the same clock. A clock can also sleep: it asks for no frames at all, and wakes
+// where it left off, so a scene nobody can see costs nothing.
 
 export class Clock {
   // Seconds since the clock started, at its own rate.
@@ -8,18 +9,33 @@ export class Clock {
   paused = false;
   #waits: { at: number; done: () => void }[] = [];
   #frames = new Set<(now: number) => void>();
+  #asleep = false;
+  #last = performance.now();
 
   constructor() {
-    let last = performance.now();
-    const tick = (ms: number) => {
-      // A frame after the tab was hidden counts as one frame, not the whole absence.
-      const dt = Math.min((ms - last) / 1000, 1 / 20);
-      last = ms;
-      if (!this.paused) this.#advance(dt * this.rate);
-      for (const frame of this.#frames) frame(this.now);
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+    requestAnimationFrame(this.#tick);
+  }
+
+  #tick = (ms: number) => {
+    if (this.#asleep) return;
+    // A frame after the tab was hidden counts as one frame, not the whole absence.
+    const dt = Math.min((ms - this.#last) / 1000, 1 / 20);
+    this.#last = ms;
+    if (!this.paused) this.#advance(dt * this.rate);
+    for (const frame of this.#frames) frame(this.now);
+    requestAnimationFrame(this.#tick);
+  };
+
+  // Stops asking for frames; time stands still until the clock wakes.
+  sleep(): void {
+    this.#asleep = true;
+  }
+
+  wake(): void {
+    if (!this.#asleep) return;
+    this.#asleep = false;
+    this.#last = performance.now();
+    requestAnimationFrame(this.#tick);
   }
 
   // Resolves once the clock reaches `at`.
