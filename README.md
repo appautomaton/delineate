@@ -5,13 +5,13 @@
 [![Node.js 24+](https://img.shields.io/badge/node-24%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![TypeScript 7](https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Runtime dependencies: none](https://img.shields.io/badge/runtime%20dependencies-none-2ea44f)](package.json)
-[![Agent skills: 2](https://img.shields.io/badge/agent%20skills-2-8957e5)](.agents/skills)
+[![Agent skills: 3](https://img.shields.io/badge/agent%20skills-3-8957e5)](.agents/skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/appautomaton/delineate)](https://github.com/appautomaton/delineate/commits/main)
 
-Portraits that come apart, gardens that grow as you scroll, and small worlds at the foot of a web
-page. Everything is drawn in code as SVG, and each piece comes with its source and a skill your AI
-agent can follow to make one like it.
+Portraits that come apart, gardens that grow as you scroll, small worlds at the foot of a web page,
+and a page made in front of you by a crew of hands. Everything is drawn in code as SVG, and each
+piece comes with its source and a skill your AI agent can follow to make one like it.
 
 The name is *delineate*: to draw the outline of something. Its handle, d3lin3at3, writes each e as
 a 3. On the project's page the 3s turn over as you scroll and show the e on their backs.
@@ -25,18 +25,22 @@ a 3. On the project's page the 3s turn over as you scroll and show the e on thei
 | **Portraits** | Illustrated portraits redrawn in vector as planes, each at its own depth. Pull them apart and they keep moving. | [`portraits/`](portraits) | [layered-svg](.agents/skills/layered-svg) |
 | **Characters** | A picture made of letters. Ring by ring from each shape's edge inward they spell the name, and at the heart leaves and flowers grow, or moons, or stars. | [`characters/`](characters) | |
 | **Collage** | Five sculptures from their museums' scans, each drawn as an engraving, a line screen, flat marble and a single line, and laid among scraps of paper on a card that cuts from hand to hand. | [`collage/`](collage) | |
+| **Assembly** | A page made in front of you by a crew of hands that move the way people do: guides pulled down, frames dragged out, words typed key by key, and a still life drawn in crayon, stroke by stroke, by twenty pens at once. | [`assembly/`](assembly) | [assembly](.agents/skills/assembly) |
 
 [`site/`](site) builds delineate's own page, which shows all of it on one long sheet.
 
 ## Agent skills
 
-A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The two
+A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The three
 here live in [`.agents/skills/`](.agents/skills), and `.claude/skills/` links to them for Claude Code.
 
 - **climate-garden** researches how a set of real plants looks, draws each one, colours the garden
   for day and night, lays it out for every screen, and checks the result.
 - **layered-svg** turns a picture into a layered, animated SVG in a style you choose, working from
   coarse to fine the way a painter does.
+- **assembly** makes a page that a crew of hands builds in front of its reader, from the first
+  guide to the last crayon stroke, moving the way people move and working the way a design team
+  works.
 
 Open the repository in your agent and ask for what you want, such as "a garden for the Patagonian
 steppe" or "this portrait as a line engraving". The matching skill takes it from there.
@@ -60,7 +64,8 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run bench` | Serves the portrait bench at http://localhost:5288. |
 | `npm run collage:render -- <motif>` | Renders a Collage motif's sculpture scan in Blender into the passes its drawings are made from. |
 | `npm run collage:draw` | Draws every Collage motif in each of its hands into `collage/art/`. |
-| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, and Paprika Girl's separation page that its sections open. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
+| `npm run assembly` | Serves Assembly at http://localhost:5310/, with the pointers' specimen sheet at `studies/pointers/`, and rebuilds when a source changes. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, Paprika Girl's separation page and Assembly that its sections open. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
 | `npm run deploy` | Builds the site and publishes it to GitHub Pages, at https://delineate.appautomaton.com/. |
 | `npm run check` | Type-checks every part of the repository. |
 

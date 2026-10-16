@@ -35,6 +35,8 @@ the pace they scroll: every frame of it should hold as a page, mid-build or done
   - `crew.ts`: reads a finished page into work and deals it out. See its header for the kinds of work and the
     `data-build` marks a page uses to steer it.
   - `flock.ts`: the opening ring and the closing flock (boids, each hand seeking its own point about the target).
+  - `space.ts`: where hands and marks are measured from: the page, or a stage set into another page, so the
+    hands move with whatever holds the stage.
 - **`drawings.ts`**: the crayon drawings, made with the Footers' crayon (`footers/crayon/`) when the server
   starts, each crayon hand's strands in a `<g data-hand>` so one pointer follows one group. The opening picture
   is a still life, a glass vase of flowers on a table, twenty-one hands at once: poppies, an anemone, tulips,
@@ -46,7 +48,12 @@ the pace they scroll: every frame of it should hold as a page, mid-build or done
   one family; Fragment Mono for everything the tool says (tags, badges, rulers, the readout, code). Each comes in
   one weight, so the page sets `font-synthesis: none` and never asks for another.
 - **`index.html`, `style.css`, `main.ts`**: the page the crew builds.
-- **`build.ts`**, **`dev.ts`**: the build, into any folder, and the dev server around it.
+- **`show.ts`**, **`show.html`**, **`show.css`**: Assembly as delineate's page shows it, a sheet on which six
+  hands build a miniature of its first screen, rest, clear it and build it again while it is in view.
+- **`build.ts`**, **`dev.ts`**: the build, into any folder, and the dev server around it. The site builds
+  Assembly at `assembly/` with the same `build`.
+- The skill that makes pages like this one is `.agents/skills/assembly/`; what the work teaches goes here first,
+  and into the skill once it holds.
 - **`studies/pointers/`**: a specimen sheet of every pointer shape in the hands' colours, at four times size with
   the hot spot marked, at size on day and night paper, and tagged. Judge a change to a shape here first.
 
