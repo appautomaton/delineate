@@ -4,5 +4,5 @@
     "lib": ["ES2023"],
     "types": ["node"]
   },
-  "include": ["build.ts", "dev.ts"]
+  "include": ["build.ts", "dev.ts", "drawings.ts"]
 }

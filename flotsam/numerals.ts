@@ -87,6 +87,30 @@ export async function cut(text: string, size: number, seed: number, into: HTMLEl
   const points = new Float64Array(pts.length);
   for (let k = 0; k < pts.length; k += 2) (points[k] = pts[k] - centre.x), (points[k + 1] = pts[k + 1] - centre.y);
 
+  // How far every point about the glyph is from its outline, negative inside, on a grid half a cell fine and a
+  // cell beyond the drawing all round: what another numeral's outline is tested against when the two meet.
+  const step = cell / 2;
+  const fc = Math.ceil(w / step) + 3, fr = Math.ceil(h / step) + 3;
+  const solid = (x: number, y: number) => {
+    const px = Math.floor(x * dpr), py = Math.floor(y * dpr);
+    return px >= 0 && py >= 0 && px < mask.width && py < mask.height && alpha[(py * mask.width + px) * 4 + 3] > 127;
+  };
+  const node = (i: number, j: number) => solid((i - 1) * step, (j - 1) * step);
+  const rim: number[] = [];
+  for (let j = 0; j < fr; j++)
+    for (let i = 0; i < fc; i++)
+      if (node(i, j) && (!node(i - 1, j) || !node(i + 1, j) || !node(i, j - 1) || !node(i, j + 1))) rim.push((i - 1) * step, (j - 1) * step);
+  const d = new Float32Array(fc * fr);
+  for (let j = 0; j < fr; j++)
+    for (let i = 0; i < fc; i++) {
+      const x = (i - 1) * step, y = (j - 1) * step;
+      let m = Infinity;
+      for (let k = 0; k < rim.length; k += 2) m = Math.min(m, (rim[k] - x) ** 2 + (rim[k + 1] - y) ** 2);
+      // The outline lies half a step beyond the outermost solid nodes.
+      d[j * fc + i] = node(i, j) ? -(Math.sqrt(m) + step * 0.5) : Math.sqrt(m) - step * 0.5;
+    }
+  const field = { x0: -step - centre.x, y0: -step - centre.y, step, cols: fc, rows: fr, d };
+
   // The face: birch, its grain running across in long, slow waves, a darker figure here and there, the cut's
   // edge caught by the light along the upper left.
   const rand = random(seed);
@@ -140,7 +164,7 @@ export async function cut(text: string, size: number, seed: number, into: HTMLEl
     layers.push(c);
   }
   into.append(el);
-  return { el, layers, centre, shape: { points, weight, edge: Uint8Array.from(edge), cell } };
+  return { el, layers, centre, shape: { points, weight, edge: Uint8Array.from(edge), cell, field } };
 }
 
 // Sets a numeral where its body is: x, y and angle, on the screen, the tank's corner at origin.

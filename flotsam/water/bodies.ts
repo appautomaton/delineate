@@ -5,7 +5,8 @@
 // floats a thing lighter than water with that share of it submerged; the water drags it toward the water's own
 // motion, so a wave carries it and turns it; and as it moves it knocks aside the water it runs into, losing the
 // momentum it gives, so a numeral thrown in splashes and slows. The walls and the other numerals stop it, with a
-// little bounce and some friction. A hand holds it by one point, softly, so it hangs from where it is held and
+// little bounce and some friction: a numeral's outline is tested against the other's distance field, so however
+// deep one has gone into the other, it knows the way out. A hand holds it by one point, softly, so it hangs from where it is held and
 // keeps the hand's speed when let go.
 
 import type { Pt, Water } from "./sim.ts";
@@ -15,7 +16,26 @@ export type Shape = {
   weight: Float64Array; // each point's density, as a share of the shape's mean
   edge: Uint8Array; // 1 where a point lies on the outline: only these touch walls and each other
   cell: number; // the side of each point's square
+  field: Field;
 };
+
+// How far each point of a grid about the shape lies from its outline, negative inside, in px; the grid's corner is
+// at (x0, y0) about the centre of mass, its nodes `step` apart.
+export type Field = { x0: number; y0: number; step: number; cols: number; rows: number; d: Float32Array };
+
+// The distance at a point about the centre of mass, and which way it grows, by the grid's bilinear interpolation.
+function distance(f: Field, x: number, y: number): { d: number; gx: number; gy: number } {
+  const u = (x - f.x0) / f.step, v = (y - f.y0) / f.step;
+  if (u < 0 || v < 0 || u >= f.cols - 1 || v >= f.rows - 1) return { d: Infinity, gx: 0, gy: 0 };
+  const i = Math.floor(u), j = Math.floor(v), a = u - i, b = v - j;
+  const at = (ii: number, jj: number) => f.d[jj * f.cols + ii];
+  const d00 = at(i, j), d10 = at(i + 1, j), d01 = at(i, j + 1), d11 = at(i + 1, j + 1);
+  return {
+    d: d00 * (1 - a) * (1 - b) + d10 * a * (1 - b) + d01 * (1 - a) * b + d11 * a * b,
+    gx: (d10 - d00) * (1 - b) + (d11 - d01) * b,
+    gy: (d01 - d00) * (1 - a) + (d11 - d10) * a,
+  };
+}
 
 const WOOD = 0.55; // density, as a share of water's
 const DRAG = 5; // how fast water brings a submerged cell to its own speed, per second
@@ -176,39 +196,48 @@ function hold(b: Body, dt: number): void {
   b.w *= Math.exp(-4 * dt); // held things do not spin
 }
 
-// Two bodies touch where outline points of each come within a cell of each other; each such touch pushes them
-// apart along the line between the points.
+// Two bodies touch where an outline point of one lies within a hair of the other's outline, or inside it: each
+// such point is pushed out along the other's distance field, both bodies taking their share, and their closing
+// speed there is stopped with a little bounce.
 function collide(A: Body, B: Body): void {
   if (Math.hypot(A.x - B.x, A.y - B.y) > A.radius + B.radius) return;
-  const pa = outline(A), pb = outline(B);
-  const reach = (A.shape.cell + B.shape.cell) * 0.5;
+  touch(A, B);
+  touch(B, A);
+}
+
+function touch(A: Body, B: Body): void {
+  const pa = outline(A);
+  const c = Math.cos(-B.a), s = Math.sin(-B.a), cb = Math.cos(B.a), sb = Math.sin(B.a);
+  const skin = B.shape.cell * 0.25;
   let sx = 0, sy = 0, n = 0;
-  for (let i = 0; i < pa.length; i += 4)
-    for (let j = 0; j < pb.length; j += 4) {
-      const dx = pb[j] - pa[i], dy = pb[j + 1] - pa[i + 1], d2 = dx * dx + dy * dy;
-      if (d2 >= reach * reach || d2 < 1e-9) continue;
-      const d = Math.sqrt(d2), nx = dx / d, ny = dy / d;
-      const rax = pa[i + 2], ray = pa[i + 3], rbx = pb[j + 2], rby = pb[j + 3];
-      const va = A.velocity(rax, ray), vb = B.velocity(rbx, rby);
-      const vn = (vb.x - va.x) * nx + (vb.y - va.y) * ny;
-      if (vn < 0) {
-        const ra = rax * ny - ray * nx, rb = rbx * ny - rby * nx;
-        const k = 1 / A.mass + 1 / B.mass + (ra * ra) / A.inertia + (rb * rb) / B.inertia;
-        const jn = (-(1 + BOUNCE) * vn) / k / 4; // shared among the few touches a contact makes
-        A.push(-nx * jn, -ny * jn, rax, ray);
-        B.push(nx * jn, ny * jn, rbx, rby);
-      }
-      sx += nx * (reach - d);
-      sy += ny * (reach - d);
-      n++;
+  for (let i = 0; i < pa.length; i += 4) {
+    // The point in B's own frame, and how far it is from B's outline.
+    const dx = pa[i] - B.x, dy = pa[i + 1] - B.y;
+    const q = distance(B.shape.field, c * dx - s * dy, s * dx + c * dy);
+    if (q.d >= skin) continue;
+    const g = Math.hypot(q.gx, q.gy) || 1;
+    const nx = (cb * q.gx - sb * q.gy) / g, ny = (sb * q.gx + cb * q.gy) / g; // out of B, in the world
+    const rax = pa[i + 2], ray = pa[i + 3], rbx = pa[i] - B.x, rby = pa[i + 1] - B.y;
+    const va = A.velocity(rax, ray), vb = B.velocity(rbx, rby);
+    const vn = (va.x - vb.x) * nx + (va.y - vb.y) * ny;
+    if (vn < 0) {
+      const ra = rax * ny - ray * nx, rb = rbx * ny - rby * nx;
+      const k = 1 / A.mass + 1 / B.mass + (ra * ra) / A.inertia + (rb * rb) / B.inertia;
+      const jn = (-(1 + BOUNCE) * vn) / k / 4; // shared among the few points a contact makes
+      A.push(nx * jn, ny * jn, rax, ray);
+      B.push(-nx * jn, -ny * jn, rbx, rby);
     }
-  // And apart, so they never rest inside each other.
+    sx += nx * (skin - q.d);
+    sy += ny * (skin - q.d);
+    n++;
+  }
+  // And apart, so they never rest inside each other: the deepest of them, shared by mass.
   if (n) {
-    const total = A.mass + B.mass, k = 0.5 / n;
-    A.x -= sx * k * (B.mass / total);
-    A.y -= sy * k * (B.mass / total);
-    B.x += sx * k * (A.mass / total);
-    B.y += sy * k * (A.mass / total);
+    const total = A.mass + B.mass, k = 0.6 / n;
+    A.x += sx * k * (B.mass / total);
+    A.y += sy * k * (B.mass / total);
+    B.x -= sx * k * (A.mass / total);
+    B.y -= sy * k * (A.mass / total);
   }
 }
 

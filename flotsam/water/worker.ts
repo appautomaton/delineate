@@ -2,8 +2,11 @@
 // wherever the page last said the tank is, and sends back where everything is. The page draws the latest it has,
 // so a slow step slows the water and never the page.
 //
-// When nothing moves (the water still, the window still, no hand in it) the thread sleeps and sends nothing,
-// so a page left open costs nothing.
+// When nothing moves (the water still, the window still, no hand in it) the thread sleeps and sends nothing but
+// answers to the page's probes, so a page left open costs next to nothing.
+//
+// Probes are points in the window where the page wants to know how much water there is and how it moves: where
+// a frond's segments stand, where a fish swims. Each tick answers them, three numbers a point.
 
 import { Body, step as float, type Shape } from "./bodies.ts";
 import { Water, type Options, type Pt } from "./sim.ts";
@@ -13,10 +16,15 @@ export type Hold = { body: number; ax: number; ay: number } | null;
 
 export type ToWater =
   | { type: "start"; W: number; H: number; origin: Pt; options?: Partial<Options>; shapes: { shape: Shape; at: Pt; angle: number }[] }
-  | { type: "tank"; origin: Pt; hand: Hand; hold: Hold }
+  | { type: "tank"; origin: Pt; hand: Hand; hold: Hold; probes: Float32Array }
   | { type: "return"; buffer: Float32Array };
 
-export type FromWater = {
+export type FromWater =
+  | Frame
+  // While the water sleeps, only the answers to the probes.
+  | { type: "found"; found: Float32Array };
+
+export type Frame = {
   type: "frame";
   water: Float32Array; // x, y, speed (a share of a brisk pace) for every particle, on the screen
   bodies: Float64Array; // x, y, angle for every body, on the screen
@@ -26,6 +34,7 @@ export type FromWater = {
   ms: number;
   stir: number; // mean speed of the water, px/s
   rocking: number; // the fastest numeral's speed, its turning included, px/s
+  found: Float32Array; // for every probe: the share of it under water, and the water's velocity there, px/s
 };
 
 const RATE = 240; // steps a second
@@ -40,6 +49,7 @@ let water: Water;
 let bodies: Body[] = [];
 let target: Pt, at: Pt;
 let hand: Hand = { on: false, x: 0, y: 0, vx: 0, vy: 0 };
+let probes: Float32Array = new Float32Array(0);
 let last = 0;
 let owed = 0; // seconds of water not yet stepped
 let running = false;
@@ -57,6 +67,7 @@ onmessage = ({ data: m }: MessageEvent<ToWater>) => {
   } else if (m.type === "tank") {
     target = m.origin;
     hand = m.hand;
+    probes = m.probes;
     for (const [i, b] of bodies.entries()) {
       const held = m.hold?.body === i;
       b.held = held ? { ax: m.hold!.ax, ay: m.hold!.ay, x: hand.x + target.x, y: hand.y + target.y, vx: hand.vx, vy: hand.vy } : null;
@@ -71,8 +82,11 @@ function tick() {
   let dx = target.x - at.x, dy = target.y - at.y;
   const holding = bodies.some((b) => b.held);
 
-  // Asleep: nothing to do until something moves.
+  // Asleep: nothing to do until something moves, but answer the probes.
   if (!dx && !dy && !hand.on && !holding && quiet > 30) {
+    const found = answer();
+    const reply: FromWater = { type: "found", found };
+    postMessage(reply, { transfer: [found.buffer] });
     setTimeout(tick, TICK);
     return;
   }
@@ -127,7 +141,18 @@ function tick() {
   const placed = new Float64Array(bodies.length * 3);
   bodies.forEach((b, i) => placed.set([b.x, b.y, b.a], i * 3));
   const ms = performance.now() - now;
-  const frame: FromWater = { type: "frame", water: out, bodies: placed, N, h, steps: n, ms, stir, rocking };
-  postMessage(frame, { transfer: [out.buffer] });
+  const found = answer();
+  const frame: Frame = { type: "frame", water: out, bodies: placed, N, h, steps: n, ms, stir, rocking, found };
+  postMessage(frame, { transfer: [out.buffer, found.buffer] });
   setTimeout(tick, Math.max(0, TICK - ms));
+}
+
+// The water at each probe, from the grid the last step built.
+function answer(): Float32Array {
+  const found = new Float32Array((probes.length / 2) * 3);
+  for (let k = 0; k < probes.length / 2; k++) {
+    const p = water.probe(at.x + probes[2 * k], at.y + probes[2 * k + 1]);
+    found.set([Math.min(1, p.full), p.vx, p.vy], k * 3);
+  }
+  return found;
 }

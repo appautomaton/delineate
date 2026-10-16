@@ -3,11 +3,13 @@
 // left behind, slops against its walls; a hand can fish a numeral out and throw it back.
 //
 // The water and the numerals are worked out on their own thread (water/worker.ts); this page only tells it where
-// the window is and what the hand is doing, and draws the latest it hears back.
+// the window is and what the hand is doing, and draws the latest it hears back. The life of the sea floor
+// (sea.ts) runs here, asking the water about the places it lives.
 
 import { cut, hit, place, type Numeral } from "./numerals.ts";
+import { Sea } from "./sea.ts";
 import { WaterView } from "./water/view.ts";
-import type { FromWater, Hand, Hold, ToWater } from "./water/worker.ts";
+import type { Frame, FromWater, Hand, Hold, ToWater } from "./water/worker.ts";
 import type { Pt } from "./water/sim.ts";
 
 const root = document.documentElement;
@@ -26,6 +28,7 @@ document.querySelector<HTMLButtonElement>(".light")?.addEventListener("click", (
 const canvas = document.querySelector<HTMLCanvasElement>("canvas.water")!;
 const floating = document.querySelector<HTMLElement>(".afloat")!;
 const view = new WaterView(canvas);
+const sea = new Sea(document.querySelector<HTMLElement>(".sea")!);
 const sim = new Worker(new URL("./water/worker.js", import.meta.url), { type: "module" });
 const send = (m: ToWater, transfer: Transferable[] = []) => sim.postMessage(m, transfer);
 
@@ -41,10 +44,13 @@ const origin = (): Pt => fixed ?? { x: screenX + swing(performance.now()), y: sc
 
 let W = 0, H = 0;
 let numerals: Numeral[] = [];
-let latest: FromWater | null = null;
+let latest: Frame | null = null;
+let found: Float32Array | null = null;
 
 let heard = 0;
 sim.onmessage = ({ data }: MessageEvent<FromWater>) => {
+  found = data.found;
+  if (data.type !== "frame") return;
   if (latest) send({ type: "return", buffer: latest.water }, [latest.water.buffer]);
   latest = data;
   heard++;
@@ -61,7 +67,9 @@ async function begin() {
   for (const n of numerals) n.el.remove();
   numerals = cuts;
   latest = null;
+  found = null;
   const o = origin(), surface = H * 0.62;
+  sea.layout(W, H, surface);
   send({
     type: "start",
     W,
@@ -128,7 +136,7 @@ addEventListener("pointerup", release);
 addEventListener("pointercancel", release);
 
 // ---- Time
-function frame() {
+function frame(now: number) {
   if (innerWidth !== W || innerHeight !== H) {
     W = innerWidth;
     H = innerHeight;
@@ -136,7 +144,10 @@ function frame() {
     resizing = setTimeout(begin, 200);
   }
   const o = origin();
-  send({ type: "tank", origin: o, hand, hold });
+  const probes = sea.probes();
+  send({ type: "tank", origin: o, hand, hold, probes }, [probes.buffer]);
+  sea.step((now - then) / 1000, found);
+  then = now;
   if (latest) {
     view.draw(latest.water, latest.N, latest.h, o);
     numerals.forEach((n, i) => place(n, latest!.bodies[i * 3], latest!.bodies[i * 3 + 1], latest!.bodies[i * 3 + 2], o));
@@ -144,6 +155,7 @@ function frame() {
   requestAnimationFrame(frame);
 }
 let resizing: ReturnType<typeof setTimeout> | undefined;
+let then = performance.now();
 
 await document.fonts.ready;
 await begin();

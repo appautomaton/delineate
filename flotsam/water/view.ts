@@ -1,11 +1,12 @@
 // Draws the water. Each particle adds a soft disc to a density field at half the screen's resolution, mirrored
 // across the walls so water meets the glass as water and not as an edge; the field is smoothed, so the surface is
 // one water and not a crowd of discs; and its level line is the surface: a body below it, a bright hairline
-// along it, thin water (a droplet, a sheet, the crest of a wave) paler, and foam where it runs fast.
+// along it, thin water (a droplet, a sheet, the crest of a wave) paler, foam where it runs fast, and shafts of
+// light slanting down through it from the upper left, drifting slowly and fading as they go deeper.
 //
 // Its colours are the page's: --water-deep, --water-shallow, --water-thin, --water-foam, --water-line (the bright
-// hairline) and --water-edge (a fine line outside it, against the paper) on the canvas, read again whenever the
-// light changes.
+// hairline) and --water-edge (a fine line outside it, against the paper), and --water-rays for how bright the
+// shafts are, on the canvas, read again whenever the light changes.
 
 import type { Pt } from "./sim.ts";
 
@@ -64,7 +65,7 @@ const SURFACE = `#version 300 es
   precision highp float;
   in vec2 uv;
   uniform sampler2D field;
-  uniform float level, dpr, opacity;
+  uniform float level, dpr, opacity, time, aspect, rays;
   uniform vec3 deep, shallow, thin, foam, line, edge;
   out vec4 o;
   void main() {
@@ -82,6 +83,12 @@ const SURFACE = `#version 300 es
     vec3 c = mix(deep, shallow, smoothstep(0.0, 0.75, uv.y));
     c = mix(c, thin, sheet * 0.5);
     c = mix(c, foam, clamp(speed * 1.6 - 0.35, 0.0, 1.0) * sheet * 0.6);
+    // Shafts of light: soft bands slanting down to the right, a few at once, each drifting at its own pace.
+    float s = uv.x * aspect + (1.0 - uv.y) * 0.42;
+    float shaft = pow(0.5 + 0.5 * sin(s * 6.3 + time * 0.11), 7.0) * 0.7
+      + pow(0.5 + 0.5 * sin(s * 11.7 - time * 0.07 + 1.9), 9.0) * 0.5
+      + pow(0.5 + 0.5 * sin(s * 3.1 + time * 0.05 + 4.2), 5.0) * 0.4;
+    c = mix(c, thin, clamp(shaft * rays * smoothstep(0.0, 0.7, uv.y), 0.0, 0.6));
     c = mix(c, line, rim);
     // Deeper water is denser to the eye: clear at the top of the tank, a good deal less so at the foot.
     float a = body * mix(min(0.96, opacity * mix(1.25, 0.9, uv.y)), 1.0, rim);
@@ -116,6 +123,7 @@ export class WaterView {
   #dpr = 1;
   #colours: Record<string, number[]> = {};
   #opacity = 0.85;
+  #rays = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     const gl = canvas.getContext("webgl2", { alpha: true, premultipliedAlpha: true, antialias: false });
@@ -143,6 +151,7 @@ export class WaterView {
     const read = (name: string) => rgb(style.getPropertyValue(`--water-${name}`).trim() || "#000");
     for (const name of ["deep", "shallow", "thin", "foam", "line", "edge"]) this.#colours[name] = read(name);
     this.#opacity = parseFloat(style.getPropertyValue("--water-opacity")) || 0.85;
+    this.#rays = parseFloat(style.getPropertyValue("--water-rays")) || 0;
   }
 
   resize(W: number, H: number): void {
@@ -206,6 +215,9 @@ export class WaterView {
     gl.uniform1f(u(s, "level"), LEVEL * gain);
     gl.uniform1f(u(s, "dpr"), this.#dpr);
     gl.uniform1f(u(s, "opacity"), this.#opacity);
+    gl.uniform1f(u(s, "rays"), this.#rays);
+    gl.uniform1f(u(s, "time"), performance.now() / 1000);
+    gl.uniform1f(u(s, "aspect"), this.#W / this.#H);
     for (const [name, c] of Object.entries(this.#colours)) gl.uniform3fv(u(s, name), c);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
