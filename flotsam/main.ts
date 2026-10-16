@@ -43,9 +43,11 @@ let W = 0, H = 0;
 let numerals: Numeral[] = [];
 let latest: FromWater | null = null;
 
+let heard = 0;
 sim.onmessage = ({ data }: MessageEvent<FromWater>) => {
   if (latest) send({ type: "return", buffer: latest.water }, [latest.water.buffer]);
   latest = data;
+  heard++;
 };
 
 // Everything afresh for the window as it now is: the numerals cut to its size and set afloat in the middle of it.
@@ -68,7 +70,7 @@ async function begin() {
     options: { fill: 0.38 },
     shapes: numerals.map((n, i) => ({
       shape: n.shape,
-      at: { x: o.x + W / 2 + (i - 1) * size * 0.78, y: o.y + surface - size * (0.05 + i * 0.04) },
+      at: { x: o.x + W / 2 + (i - 1) * size * 0.92, y: o.y + surface + size * (0.06 - (i % 2) * 0.04) },
       angle: (i - 1) * 0.06,
     })),
   });
@@ -151,7 +153,7 @@ requestAnimationFrame(frame);
 // For checking the work from the console: how the water is doing, and a shake in place.
 Object.assign(window, {
   flotsam: {
-    stats: () => latest && { N: latest.N, steps: latest.steps, ms: latest.ms, stir: latest.stir },
+    stats: () => latest && { N: latest.N, h: latest.h, steps: latest.steps, ms: latest.ms, stir: latest.stir, rocking: latest.rocking, heard },
     // Where each numeral is in the window, and its angle.
     numerals: () => {
       const o = origin();

@@ -25,18 +25,23 @@ export type FromWater = {
   steps: number;
   ms: number;
   stir: number; // mean speed of the water, px/s
+  rocking: number; // the fastest numeral's speed, its turning included, px/s
 };
 
 const RATE = 240; // steps a second
 const MOST = 16; // steps a tick
 const TICK = 1000 / 60;
-const STILL = 4; // px/s: water slower than this, on average, is still
+// Below these, in interaction radii a second, the water's jitter and a numeral's rocking are too small to see:
+// the water's mean speed, and a numeral's speed and the speed of its far end as it turns.
+const CALM = 0.8;
+const STILL = 0.5;
 
 let water: Water;
 let bodies: Body[] = [];
 let target: Pt, at: Pt;
 let hand: Hand = { on: false, x: 0, y: 0, vx: 0, vy: 0 };
 let last = 0;
+let owed = 0; // seconds of water not yet stepped
 let running = false;
 let quiet = 0;
 const spare: Float32Array[] = [];
@@ -83,8 +88,19 @@ function tick() {
     dx -= dx * k;
     dy -= dy * k;
   }
-  const n = Math.min(MOST, Math.max(Math.round(elapsed * RATE) || 1, Math.ceil(Math.hypot(dx, dy) / (0.35 * water.h))));
-  const dt = elapsed / n;
+  // Steps of one length, a 240th of a second, as many as the time since the last tick holds: the water reads its
+  // velocities back from how far it moved, so a step of changing length would read the same push as a different
+  // speed, and the water would never quite come to rest. Only when the walls must sweep further than a step
+  // allows are the steps of this tick made shorter, and more.
+  owed += elapsed;
+  let n = Math.floor(owed * RATE), dt = 1 / RATE;
+  owed -= n * dt;
+  const sweeps = Math.ceil(Math.hypot(dx, dy) / (0.35 * water.h));
+  if (sweeps > n) {
+    const span = Math.max(n, 1) * dt;
+    n = Math.min(MOST, sweeps);
+    dt = span / n;
+  }
   for (let k = 1; k <= n; k++) {
     const ox = at.x + (dx * k) / n, oy = at.y + (dy * k) / n;
     water.step(dt, ox, oy);
@@ -93,11 +109,11 @@ function tick() {
     for (const b of bodies) if (b.held) (b.held.x = ox + hand.x), (b.held.y = oy + hand.y);
     float(bodies, water, dt, ox, oy);
   }
-  at = { x: at.x + dx, y: at.y + dy };
+  at = { ...target }; // exactly, or rounding would keep the tank forever a hair from where it is, and awake
 
   const stir = water.stir();
-  const moving = bodies.some((b) => Math.hypot(b.vx, b.vy) > STILL || Math.abs(b.w) > 0.02);
-  quiet = stir < STILL && !moving && !dx && !dy ? quiet + 1 : 0;
+  const rocking = Math.max(0, ...bodies.map((b) => Math.hypot(b.vx, b.vy) + Math.abs(b.w) * b.radius));
+  quiet = stir < CALM * water.h && rocking < STILL * water.h && !dx && !dy ? quiet + 1 : 0;
 
   const { N, X, Y, VX, VY, h } = water;
   let out = spare.pop();
@@ -111,7 +127,7 @@ function tick() {
   const placed = new Float64Array(bodies.length * 3);
   bodies.forEach((b, i) => placed.set([b.x, b.y, b.a], i * 3));
   const ms = performance.now() - now;
-  const frame: FromWater = { type: "frame", water: out, bodies: placed, N, h, steps: n, ms, stir };
+  const frame: FromWater = { type: "frame", water: out, bodies: placed, N, h, steps: n, ms, stir, rocking };
   postMessage(frame, { transfer: [out.buffer] });
   setTimeout(tick, Math.max(0, TICK - ms));
 }

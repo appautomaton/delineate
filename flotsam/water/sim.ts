@@ -21,6 +21,7 @@ export type Options = {
   near: number;
   viscosity: number; // linear, of the closing speed, per step
   viscosity2: number; // quadratic
+  smoothing: number; // how far each velocity is drawn toward its neighbours', per step
   gravity: number; // px/s²
 };
 
@@ -32,6 +33,7 @@ export const OPTIONS: Options = {
   near: 0.03,
   viscosity: 0.2,
   viscosity2: 0.2,
+  smoothing: 0.1,
   gravity: 2600,
 };
 
@@ -249,6 +251,27 @@ export class Water {
       VY[i] -= I * uy;
       VX[j] += I * ux;
       VY[j] += I * uy;
+    }
+
+    // Each velocity drawn a little toward its neighbours' (XSPH, Monaghan 1989): it stills the jitter a particle
+    // method has at rest, and leaves alone whatever moves together, a wave or a slop.
+    const c = P.smoothing / r0;
+    if (c > 0) {
+      const sx = rho, sy = rhoN; // done with, for this step
+      sx.fill(0);
+      sy.fill(0);
+      for (let k = 0; k < n; k++) {
+        const i = pi[k], j = pj[k], m = 1 - pq[k], w = m * m;
+        const dx = (VX[j] - VX[i]) * w, dy = (VY[j] - VY[i]) * w;
+        sx[i] += dx;
+        sy[i] += dy;
+        sx[j] -= dx;
+        sy[j] -= dy;
+      }
+      for (let i = 0; i < N; i++) {
+        VX[i] += c * sx[i];
+        VY[i] += c * sy[i];
+      }
     }
   }
 
