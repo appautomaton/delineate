@@ -8,6 +8,8 @@
 
 import { cut, hit, place, type Numeral } from "./numerals.ts";
 import { Sea } from "./sea.ts";
+import { Sound } from "./sound.ts";
+import { tilt } from "./tilt.ts";
 import { WaterView } from "./water/view.ts";
 import type { Frame, FromWater, Hand, Hold, ToWater } from "./water/worker.ts";
 import type { Pt } from "./water/sim.ts";
@@ -29,10 +31,12 @@ const canvas = document.querySelector<HTMLCanvasElement>("canvas.water")!;
 const floating = document.querySelector<HTMLElement>(".afloat")!;
 const view = new WaterView(canvas);
 const sea = new Sea(document.querySelector<HTMLElement>(".sea")!);
+const sound = new Sound(document.querySelector<HTMLButtonElement>(".sound"));
 const sim = new Worker(new URL("./water/worker.js", import.meta.url), { type: "module" });
 const send = (m: ToWater, transfer: Transferable[] = []) => sim.postMessage(m, transfer);
 
-// The tank is the window, where the screen has it. With less motion asked for, it stays put whatever the window does.
+// The tank is the window, where the screen has it. With less motion asked for, it stays put whatever the window
+// does, the phone's tilt is not followed, and the sea's life holds still.
 let fixed: Pt | null = null;
 // A shake in place, for checking the work without moving the window: a side-to-side swing dying away.
 let shaken = -Infinity;
@@ -42,18 +46,26 @@ const swing = (now: number) => {
 };
 const origin = (): Pt => fixed ?? { x: screenX + swing(performance.now()), y: screenY };
 
+// On a phone, which way the water falls, as the phone is tipped; until the phone says, straight down.
+let down: Pt | null = null;
+if (!still) tilt(2600, (d) => (down = d));
+
 let W = 0, H = 0;
 let numerals: Numeral[] = [];
 let latest: Frame | null = null;
 let found: Float32Array | null = null;
 
 let heard = 0;
+const splashes: number[] = [];
 sim.onmessage = ({ data }: MessageEvent<FromWater>) => {
   found = data.found;
-  if (data.type !== "frame") return;
+  if (data.type !== "frame") return sound.hear(0, 0, 1);
+  sound.hear(data.stir, data.splash, data.h);
   if (latest) send({ type: "return", buffer: latest.water }, [latest.water.buffer]);
   latest = data;
   heard++;
+  splashes.push(data.splash);
+  if (splashes.length > 600) splashes.shift();
 };
 
 // Everything afresh for the window as it now is: the numerals cut to its size and set afloat in the middle of it.
@@ -70,6 +82,7 @@ async function begin() {
   found = null;
   const o = origin(), surface = H * 0.62;
   sea.layout(W, H, surface);
+  sea.step(0, null);
   send({
     type: "start",
     W,
@@ -145,11 +158,11 @@ function frame(now: number) {
   }
   const o = origin();
   const probes = sea.probes();
-  send({ type: "tank", origin: o, hand, hold, probes }, [probes.buffer]);
-  sea.step((now - then) / 1000, found);
+  send({ type: "tank", origin: o, hand, hold, probes, down }, [probes.buffer]);
+  if (!still) sea.step((now - then) / 1000, found);
   then = now;
   if (latest) {
-    view.draw(latest.water, latest.N, latest.h, o);
+    view.draw(latest.water, latest.N, latest.h, o, still ? 0 : now / 1000);
     numerals.forEach((n, i) => place(n, latest!.bodies[i * 3], latest!.bodies[i * 3 + 1], latest!.bodies[i * 3 + 2], o));
   }
   requestAnimationFrame(frame);
@@ -172,5 +185,7 @@ Object.assign(window, {
       return numerals.map((_, i) => latest && { x: latest.bodies[i * 3] - o.x, y: latest.bodies[i * 3 + 1] - o.y, a: latest.bodies[i * 3 + 2] });
     },
     shake: () => (shaken = performance.now()),
+    // The splash of every recent tick of the water.
+    splashes: () => splashes.slice(),
   },
 });

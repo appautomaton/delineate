@@ -167,7 +167,8 @@ export class WaterView {
     this.#targets = [this.#target(), this.#target()];
   }
 
-  draw(water: Float32Array, N: number, h: number, origin: Pt): void {
+  // The water as it stands, the tank's corner at origin; time, in seconds, moves the shafts of light.
+  draw(water: Float32Array, N: number, h: number, origin: Pt, time: number): void {
     const gl = this.#gl, gain = this.#float ? 1 : 0.16;
     const [a, b] = this.#targets;
     const u = (p: WebGLProgram, name: string) => gl.getUniformLocation(p, name);
@@ -216,7 +217,7 @@ export class WaterView {
     gl.uniform1f(u(s, "dpr"), this.#dpr);
     gl.uniform1f(u(s, "opacity"), this.#opacity);
     gl.uniform1f(u(s, "rays"), this.#rays);
-    gl.uniform1f(u(s, "time"), performance.now() / 1000);
+    gl.uniform1f(u(s, "time"), time);
     gl.uniform1f(u(s, "aspect"), this.#W / this.#H);
     for (const [name, c] of Object.entries(this.#colours)) gl.uniform3fv(u(s, name), c);
     gl.drawArrays(gl.TRIANGLES, 0, 3);

@@ -84,7 +84,13 @@ a {
   text-decoration: none;
 }
 
-.light {
+.controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.light,
+.sound {
   padding: 0.45rem 0.9rem;
   border: 0;
   border-radius: 99px;
@@ -124,6 +130,21 @@ h1 {
   max-width: 28rem;
   color: var(--soft);
   text-wrap: balance;
+}
+
+/* A phone is tipped, not its window moved. */
+.by-hand {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .by-window {
+    display: none;
+  }
+
+  .by-hand {
+    display: inline;
+  }
 }
 
 .surface {

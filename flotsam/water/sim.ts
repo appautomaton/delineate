@@ -50,6 +50,9 @@ export class Water {
   readonly s: number; // spacing at rest
   readonly h: number; // interaction radius
   readonly rho0: number;
+  // Which way and how hard the water falls, px/s²: straight down at the gravity it was made with, unless a phone
+  // tips it.
+  down: Pt;
   readonly X: Float64Array;
   readonly Y: Float64Array;
   readonly VX: Float64Array;
@@ -75,6 +78,7 @@ export class Water {
 
   constructor(W: number, H: number, origin: Pt, options: Partial<Options> = {}) {
     const P = (this.P = { ...OPTIONS, ...options });
+    this.down = { x: 0, y: P.gravity };
     this.W = W;
     this.H = H;
     // Seeded at rest: a hexagonal lattice filling the foot of the tank.
@@ -193,9 +197,10 @@ export class Water {
     const PX = this.#PX, PY = this.#PY, rho = this.#rho, rhoN = this.#rhoN;
     const pi = this.#pi, pj = this.#pj, pq = this.#pq, pu = this.#pu, pv = this.#pv;
 
-    const g = P.gravity * dt;
+    const gx = this.down.x * dt, gy = this.down.y * dt;
     for (let i = 0; i < N; i++) {
-      VY[i] += g;
+      VX[i] += gx;
+      VY[i] += gy;
       PX[i] = X[i];
       PY[i] = Y[i];
       X[i] += VX[i] * dt;

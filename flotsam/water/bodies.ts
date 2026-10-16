@@ -111,12 +111,15 @@ export class Body {
   }
 }
 
-export function step(bodies: Body[], water: Water, dt: number, ox: number, oy: number): void {
-  const g = water.P.gravity;
+// One step for every body; returns how much momentum they knocked into the water, as speed given to a body of
+// water as big as one interaction radius squared: what a splash sounds like.
+export function step(bodies: Body[], water: Water, dt: number, ox: number, oy: number): number {
+  let knocked = 0;
+  const g = water.down;
   for (const b of bodies) {
     const { points, cell } = b.shape;
     const area = cell * cell, c = Math.cos(b.a), s = Math.sin(b.a);
-    let fx = 0, fy = b.mass * g, tau = 0, wet = 0;
+    let fx = b.mass * g.x, fy = b.mass * g.y, tau = 0, wet = 0;
     for (let k = 0; k < points.length; k += 2) {
       const rx = c * points[k] - s * points[k + 1], ry = s * points[k] + c * points[k + 1];
       const px = b.x + rx, py = b.y + ry;
@@ -125,7 +128,7 @@ export function step(bodies: Body[], water: Water, dt: number, ox: number, oy: n
       const f = Math.min(1, here.full);
       wet += f;
       // Held up by the water it displaces; dragged toward the water's motion, or slowed by the air.
-      let ex = 0, ey = -g * area * f;
+      let ex = -g.x * area * f, ey = -g.y * area * f;
       ex += area * (DRAG * f * (here.vx - v.x) - AIR * (1 - f) * v.x);
       ey += area * (DRAG * f * (here.vy - v.y) - AIR * (1 - f) * v.y);
       fx += ex;
@@ -134,6 +137,7 @@ export function step(bodies: Body[], water: Water, dt: number, ox: number, oy: n
       // Running into water, it knocks the water aside and gives up the momentum.
       if (f > 0.05 && (v.x || v.y)) {
         const p = water.bump(px, py, v.x, v.y, Math.max(cell * 1.5, water.h), KNOCK / Math.max(1, (water.h / cell) ** 2 / 4));
+        knocked += Math.hypot(p.x, p.y);
         fx -= p.x / dt;
         fy -= p.y / dt;
         tau -= (rx * p.y - ry * p.x) / dt;
@@ -173,6 +177,7 @@ export function step(bodies: Body[], water: Water, dt: number, ox: number, oy: n
     b.y += b.vy * dt;
     b.a += b.w * dt;
   }
+  return knocked / (water.h * water.h);
 }
 
 // A hand holds the body by one point: each step the point is given, softly, the velocity that would carry it to

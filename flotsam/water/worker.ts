@@ -16,7 +16,7 @@ export type Hold = { body: number; ax: number; ay: number } | null;
 
 export type ToWater =
   | { type: "start"; W: number; H: number; origin: Pt; options?: Partial<Options>; shapes: { shape: Shape; at: Pt; angle: number }[] }
-  | { type: "tank"; origin: Pt; hand: Hand; hold: Hold; probes: Float32Array }
+  | { type: "tank"; origin: Pt; hand: Hand; hold: Hold; probes: Float32Array; down: Pt | null }
   | { type: "return"; buffer: Float32Array };
 
 export type FromWater =
@@ -35,6 +35,7 @@ export type Frame = {
   stir: number; // mean speed of the water, px/s
   rocking: number; // the fastest numeral's speed, its turning included, px/s
   found: Float32Array; // for every probe: the share of it under water, and the water's velocity there, px/s
+  splash: number; // the momentum the numerals knocked into the water this tick (see bodies.ts)
 };
 
 const RATE = 240; // steps a second
@@ -68,6 +69,11 @@ onmessage = ({ data: m }: MessageEvent<ToWater>) => {
     target = m.origin;
     hand = m.hand;
     probes = m.probes;
+    if (m.down && water) {
+      // A tip of the phone wakes the water as a move of the window does.
+      if (Math.hypot(m.down.x - water.down.x, m.down.y - water.down.y) > water.P.gravity * 0.02) quiet = 0;
+      water.down = m.down;
+    }
     for (const [i, b] of bodies.entries()) {
       const held = m.hold?.body === i;
       b.held = held ? { ax: m.hold!.ax, ay: m.hold!.ay, x: hand.x + target.x, y: hand.y + target.y, vx: hand.vx, vy: hand.vy } : null;
@@ -115,13 +121,14 @@ function tick() {
     n = Math.min(MOST, sweeps);
     dt = span / n;
   }
+  let splash = 0;
   for (let k = 1; k <= n; k++) {
     const ox = at.x + (dx * k) / n, oy = at.y + (dy * k) / n;
     water.step(dt, ox, oy);
     // A hand in the water, not holding anything, stirs it.
     if (hand.on && !holding) water.drag(ox + hand.x, oy + hand.y, hand.vx, hand.vy, 3 * water.h, 0.2);
     for (const b of bodies) if (b.held) (b.held.x = ox + hand.x), (b.held.y = oy + hand.y);
-    float(bodies, water, dt, ox, oy);
+    splash += float(bodies, water, dt, ox, oy);
   }
   at = { ...target }; // exactly, or rounding would keep the tank forever a hair from where it is, and awake
 
@@ -142,7 +149,7 @@ function tick() {
   bodies.forEach((b, i) => placed.set([b.x, b.y, b.a], i * 3));
   const ms = performance.now() - now;
   const found = answer();
-  const frame: Frame = { type: "frame", water: out, bodies: placed, N, h, steps: n, ms, stir, rocking, found };
+  const frame: Frame = { type: "frame", water: out, bodies: placed, N, h, steps: n, ms, stir, rocking, found, splash };
   postMessage(frame, { transfer: [out.buffer, found.buffer] });
   setTimeout(tick, Math.max(0, TICK - ms));
 }

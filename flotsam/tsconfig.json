@@ -5,5 +5,5 @@
     "rootDir": ".",
     "rewriteRelativeImportExtensions": true
   },
-  "include": ["main.ts", "numerals.ts", "water"]
+  "include": ["main.ts", "numerals.ts", "sea.ts", "sound.ts", "tilt.ts", "water"]
 }
