@@ -1,0 +1,530 @@
+// A crew of hands that makes a finished page in front of the reader. The page is written whole, as it will stand;
+// the crew reads it, takes it apart into the work a design team would do, and does that work section by section
+// as each one comes into view:
+//
+//   guides   two red column guides, pulled down the section first, that the rest is laid against;
+//   blocks   anything with a fill, an edge or a shadow: a frame dragged out corner to corner, grey inside, that
+//            takes the element's look when the button comes up;
+//   text     a text frame dragged out, or a click in a small one, then typed key by key; a headline is typed
+//            small and pulled up to its size by its corner handle;
+//   slots    a row of labels typed at once by several hands, who all type the first label, see they have done
+//            the same work, and put it right;
+//   drawings crayon, each group of strands followed by one pen, its tip where the wax is being laid.
+//
+// Each free hand takes the nearest piece of work whose ground is laid, in the earliest section still open. Marks
+// in the page say how to read it: data-section on each section, data-build="skip" for what the crew leaves alone,
+// "type", "block" or "headline" to choose for an element, "slots" on a row of labels, "draw" on a crayon drawing.
+import { PAGE } from "./space.js";
+const centre = (b) => ({ x: b.x + b.w / 2, y: b.y + b.h / 2 });
+const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+function painted(el) {
+    const s = getComputedStyle(el);
+    const bg = s.backgroundColor;
+    const hasBg = bg !== "transparent" && !/,\s*0\)$/.test(bg);
+    const hasBorder = ["Top", "Right", "Bottom", "Left"].some((side) => parseFloat(s.getPropertyValue(`border-${side.toLowerCase()}-width`)) > 0 && s.getPropertyValue(`border-${side.toLowerCase()}-style`) !== "none");
+    return hasBg || hasBorder || s.boxShadow !== "none" || el instanceof SVGSVGElement || el instanceof HTMLImageElement;
+}
+const isLeaf = (el) => el.children.length === 0 && (el.textContent ?? "").trim() !== "";
+export class Crew {
+    stats = { total: 0, done: 0, busy: 0, conflicts: 0, settled: 0 };
+    onchange = () => { };
+    finished;
+    #hands;
+    #marks;
+    #clock;
+    #sections = [];
+    #writings = new Map();
+    #space;
+    #finish;
+    #over = false;
+    // `space` is where the hands and marks are measured from: the page, or a stage set into another page.
+    constructor(root, hands, marks, clock, space = PAGE) {
+        this.#hands = hands;
+        this.#marks = marks;
+        this.#clock = clock;
+        this.#space = space;
+        this.finished = new Promise((done) => (this.#finish = done));
+        root.querySelectorAll("[data-section]").forEach((el, index) => {
+            const section = { el, index, active: false, tasks: [], guides: [], built: [] };
+            this.#sections.push(section);
+            this.#read(section);
+        });
+        this.stats.total = this.#sections.reduce((n, s) => n + s.tasks.length, 0);
+    }
+    // Sets the crew to work: each section opens as it comes into view, and every hand looks for work.
+    start() {
+        const watch = new IntersectionObserver((entries) => {
+            for (const e of entries) {
+                if (!e.isIntersecting)
+                    continue;
+                const s = this.#sections.find((s) => s.el === e.target);
+                if (s)
+                    s.active = true;
+            }
+        }, { rootMargin: "0px 0px -18% 0px" });
+        for (const s of this.#sections)
+            watch.observe(s.el);
+        for (const h of this.#hands)
+            this.#work(h);
+    }
+    // Stops taking work; the hands finish what they hold.
+    stop() {
+        this.#over = true;
+    }
+    // ——— Reading the page into work ———
+    #read(section) {
+        const guides = this.#guides(section);
+        const walk = (el, parent) => {
+            for (const child of el.children) {
+                if (!(child instanceof HTMLElement || child instanceof SVGSVGElement))
+                    continue;
+                const build = child.dataset.build;
+                // What the screen does not show, at this width, is no one's work.
+                if (build === "skip" || child.getClientRects().length === 0)
+                    continue;
+                if (build === "draw") {
+                    child.querySelectorAll("g[data-hand]").forEach((g) => this.#add(section, [...guides, ...parent], this.#draw(g)));
+                    continue;
+                }
+                if (build === "slots") {
+                    const slots = [...child.children];
+                    const row = this.#row(slots);
+                    slots.forEach((slot, i) => this.#add(section, [...guides, ...parent], this.#slot(slot, i, row)));
+                    continue;
+                }
+                const el = child;
+                const block = build === "block" || (build !== "type" && build !== "headline" && painted(el));
+                if (block) {
+                    const t = this.#add(section, [...guides, ...parent], this.#block(el));
+                    if (isLeaf(el))
+                        this.#add(section, [...guides, t], this.#text(el, true));
+                    else
+                        walk(el, [t]);
+                }
+                else if (isLeaf(el) || build === "type" || build === "headline") {
+                    this.#add(section, [...guides, ...parent], this.#text(el, false));
+                }
+                else
+                    walk(el, parent);
+            }
+        };
+        walk(section.el, []);
+    }
+    #add(section, deps, work) {
+        const task = { section, deps, state: "waiting", ...work };
+        section.tasks.push(task);
+        return task;
+    }
+    // The guides the section is laid against: a column guide at each edge of its measure, pulled down from the top
+    // ruler, and, where the section has a heading, a guide across the page at the top of it, pulled out from the
+    // left ruler.
+    #guides(section) {
+        const wrap = section.el.querySelector(".wrap") ?? section.el;
+        const heading = section.el.querySelector("h1, h2");
+        const across = heading
+            ? [
+                this.#add(section, [], {
+                    where: () => ({ x: this.#space.view().x + 40, y: this.#space.text(heading).y }),
+                    run: async (h) => {
+                        const v = this.#space.view();
+                        const y = this.#space.text(heading).y;
+                        const x0 = v.x + Math.min(26, v.w * 0.04);
+                        h.tool = "cross";
+                        await h.reachPoint({ x: x0, y }, 2);
+                        await h.press();
+                        const guide = this.#marks.guide(y, true);
+                        section.guides.push(guide);
+                        const stop = this.#clock.each(() => guide.span(x0, h.pos.x));
+                        await h.reachPoint({ x: x0 + v.w * h.random.uniform(0.2, 0.32), y }, 2, 1.1);
+                        stop();
+                        guide.span(v.x, v.x + v.w);
+                        h.release();
+                        h.tool = "arrow";
+                    },
+                }),
+            ]
+            : [];
+        return [...across, ...[0, 1].map((side) => this.#add(section, [], {
+                where: () => {
+                    const b = this.#space.box(wrap);
+                    return { x: side ? b.x + b.w : b.x, y: Math.max(b.y, this.#space.view().y + 40) };
+                },
+                run: async (h) => {
+                    const b = this.#space.box(wrap);
+                    const s = getComputedStyle(wrap);
+                    const x = side ? b.x + b.w - parseFloat(s.paddingRight) : b.x + parseFloat(s.paddingLeft);
+                    const top = this.#space.box(section.el).y;
+                    const bottom = top + section.el.offsetHeight;
+                    const v = this.#space.view();
+                    const y0 = clamp(v.y + Math.min(60, v.h * 0.1) + h.random.uniform(0, Math.min(80, v.h * 0.1)), top, bottom - 20);
+                    h.tool = "cross";
+                    await h.reachPoint({ x, y: y0 }, 2);
+                    await h.press();
+                    const guide = this.#marks.guide(x);
+                    section.guides.push(guide);
+                    const stop = this.#clock.each(() => guide.span(y0, h.pos.y));
+                    await h.reachPoint({ x, y: clamp(y0 + v.h * h.random.uniform(0.22, 0.4), top, bottom) }, 2, 1.1);
+                    stop();
+                    // Let go, and the guide runs the section's height, as a ruler guide does.
+                    guide.span(top, bottom);
+                    h.release();
+                    h.tool = "arrow";
+                },
+            }))];
+    }
+    // Drags out a frame over `box`, grey inside if `fill`, the hand pressing at one corner and letting go at the
+    // other; the frame snaps to the box when the button comes up.
+    async #dragFrame(h, box, fill) {
+        h.tool = "cross";
+        await h.reachPoint({ x: box.x, y: box.y }, 3);
+        const frame = this.#marks.frame().fill(fill);
+        const o = { ...h.pos };
+        frame.set({ x: o.x, y: o.y, w: 0, h: 0 });
+        await h.press();
+        // While the frame is drawn, dashed lines run out from its corner, to the page's left edge and up the page,
+        // showing where it lies.
+        const left = this.#marks.extension();
+        const up = this.#marks.extension();
+        const v = this.#space.view();
+        left.set(v.x, o.y, o.x, o.y);
+        up.set(o.x, Math.max(v.y, o.y - 240), o.x, o.y);
+        const stop = this.#clock.each(() => frame.set({ x: o.x, y: o.y, w: h.pos.x - o.x, h: h.pos.y - o.y }));
+        await h.reachPoint({ x: box.x + box.w, y: box.y + box.h }, 3, 1.15);
+        stop();
+        left.remove();
+        up.remove();
+        frame.set(box);
+        h.release();
+        return frame;
+    }
+    #block(el) {
+        el.classList.add("is-unbuilt");
+        return {
+            where: () => centre(this.#space.box(el)),
+            run: async (h) => {
+                const box = this.#space.box(el);
+                if (box.w < 32 || box.h < 24) {
+                    // Too small to draw out: placed with a click.
+                    await h.reach(box);
+                    await h.click();
+                    this.#reveal(el);
+                    return;
+                }
+                const frame = await this.#dragFrame(h, box, true);
+                this.#reveal(el);
+                frame.fill(false);
+                this.#aligned(this.#sectionOf(el), box);
+                await h.rest(0.18);
+                frame.remove();
+                h.tool = "arrow";
+            },
+        };
+    }
+    #reveal(el) {
+        el.classList.remove("is-unbuilt");
+        el.classList.add("is-arriving");
+        el.addEventListener("animationend", () => el.classList.remove("is-arriving"), { once: true });
+    }
+    #sectionOf(el) {
+        return this.#sections.find((s) => s.el.contains(el));
+    }
+    // Blue lines where the new box's left or top edge meets an edge already laid in the section.
+    #aligned(section, box) {
+        let shown = 0;
+        for (const b of section.built) {
+            if (shown >= 2)
+                break;
+            if (Math.abs(b.x - box.x) < 1.5) {
+                this.#marks.align(box.x, Math.min(b.y, box.y), box.x, Math.max(b.y + b.h, box.y + box.h));
+                shown++;
+            }
+            else if (Math.abs(b.y - box.y) < 1.5) {
+                this.#marks.align(Math.min(b.x, box.x), box.y, Math.max(b.x + b.w, box.x + box.w), box.y);
+                shown++;
+            }
+        }
+        section.built.push(box);
+    }
+    #writing(el) {
+        const full = el.textContent ?? "";
+        const typed = document.createTextNode("");
+        const caret = document.createElement("span");
+        caret.className = "type-caret";
+        const rest = document.createElement("span");
+        rest.className = "type-rest";
+        rest.textContent = full;
+        el.replaceChildren(typed, caret, rest);
+        const w = { el, full, typed, caret, rest };
+        this.#writings.set(el, w);
+        return w;
+    }
+    #write(w, shown, held = true) {
+        w.typed.data = shown;
+        w.rest.textContent = held ? w.full.slice(shown.length) : "";
+    }
+    #done(w) {
+        w.el.textContent = w.full;
+    }
+    // Types into `w` with the caret in the hand's colour. A long passage is typed faster, so no one hand keeps the
+    // page waiting while the rest stand idle.
+    async #typeInto(h, w, text, held = true) {
+        w.caret.style.background = h.colour;
+        w.el.classList.add("is-typing");
+        await h.type(text, (shown) => this.#write(w, shown, held), clamp(text.length / 80, 1, 2.6));
+        w.el.classList.remove("is-typing");
+    }
+    #text(el, inBlock) {
+        const w = this.#writing(el);
+        const headline = el.dataset.build === "headline";
+        return {
+            where: () => centre(this.#space.box(el)),
+            run: async (h) => {
+                // A headline is set small first, its final height held so nothing below it moves.
+                const size = parseFloat(getComputedStyle(el).fontSize);
+                if (headline) {
+                    el.style.minHeight = `${this.#space.box(el).h}px`;
+                    el.style.fontSize = `${size * 0.36}px`;
+                }
+                const box = this.#space.text(el);
+                let frame;
+                if (box.w >= 140 && !inBlock)
+                    frame = await this.#dragFrame(h, box, false);
+                else {
+                    await h.reach(box);
+                    await h.click();
+                    frame = this.#marks.frame().set(box).bare(true);
+                }
+                h.tool = "text";
+                await h.reachPoint({ x: box.x + 4, y: box.y + Math.min(box.h, size * 1.2) / 2 }, 3, 0.7);
+                const keep = this.#clock.each(() => frame.set(this.#space.text(el)));
+                await this.#typeInto(h, w, w.full);
+                if (headline)
+                    await this.#enlarge(h, el, size);
+                keep();
+                this.#done(w);
+                el.style.minHeight = "";
+                this.#aligned(this.#sectionOf(el), this.#space.text(el));
+                await h.rest(0.12);
+                frame.remove();
+                h.tool = "arrow";
+            },
+        };
+    }
+    // Takes a headline's corner handle and pulls it out until the type stands at full size.
+    async #enlarge(h, el, size) {
+        const small = parseFloat(el.style.fontSize);
+        const start = this.#space.text(el);
+        el.style.fontSize = "";
+        const end = this.#space.text(el);
+        el.style.fontSize = `${small}px`;
+        const from = { x: start.x + start.w, y: start.y + start.h };
+        const to = { x: end.x + end.w, y: end.y + end.h };
+        const span = (to.x - from.x) ** 2 + (to.y - from.y) ** 2 || 1;
+        h.tool = "resize";
+        await h.reachPoint(from, 3);
+        await h.press();
+        const stop = this.#clock.each(() => {
+            const k = clamp(((h.pos.x - from.x) * (to.x - from.x) + (h.pos.y - from.y) * (to.y - from.y)) / span, 0, 1);
+            el.style.fontSize = `${small + (size - small) * k}px`;
+        });
+        await h.reachPoint(to, 3, 1.3);
+        stop();
+        el.style.fontSize = "";
+        h.release();
+    }
+    // A row of labels set at once: each holds its final width, so a wrong label never moves its neighbours.
+    #row(slots) {
+        const row = { n: slots.length, typed: 0, wrong: (slots[0].textContent ?? "").trim(), all: Promise.resolve(), arrive: () => { } };
+        row.all = new Promise((done) => (row.arrive = () => void (++row.typed === row.n && done())));
+        for (const s of slots)
+            s.style.minWidth = `${s.getBoundingClientRect().width}px`;
+        return row;
+    }
+    #slot(el, i, row) {
+        const w = this.#writing(el);
+        return {
+            where: () => centre(this.#space.box(el)),
+            run: async (h) => {
+                const box = this.#space.box(el);
+                await h.reach(box);
+                await h.click();
+                const frame = this.#marks.frame().set(box);
+                h.tool = "text";
+                const wrong = i > 0;
+                await this.#typeInto(h, w, wrong ? row.wrong : w.full, !wrong);
+                if (wrong) {
+                    frame.conflict(true).label("duplicate");
+                    this.stats.conflicts++;
+                    this.onchange();
+                }
+                row.arrive();
+                await row.all;
+                await h.rest(h.random.uniform(0.25, 0.9));
+                if (wrong) {
+                    // Select the label and type the right one over it.
+                    el.classList.add("is-selected");
+                    await h.rest(0.28);
+                    el.classList.remove("is-selected");
+                    this.#write(w, "");
+                    frame.conflict(false).label(null);
+                    await this.#typeInto(h, w, w.full);
+                    this.stats.settled++;
+                }
+                this.#done(w);
+                await h.rest(0.1);
+                frame.remove();
+                h.tool = "arrow";
+            },
+        };
+    }
+    // A crayon group, followed by one pen. Each strand carries the moment the crayon reached it (--d) and how long
+    // it took (--t). The pen's tip, at any moment, is the head of the strands most lately begun; where it jumps,
+    // the hand lifts the pen and carries it over, and the drawing waits for it.
+    #draw(g) {
+        const strands = [...g.querySelectorAll("path")].map((p) => {
+            const style = p.getAttribute("style") ?? "";
+            const d = parseFloat(style.match(/--d:\s*([\d.]+)s/)?.[1] ?? "0");
+            const t = parseFloat(style.match(/--t:\s*([\d.]+)s/)?.[1] ?? "0.1");
+            return { p, d, t, len: 0, shown: 0 };
+        });
+        const t0 = Math.min(...strands.map((s) => s.d));
+        for (const s of strands)
+            s.d -= t0;
+        const end = Math.max(...strands.map((s) => s.d + s.t));
+        const show = (tau) => {
+            for (const s of strands) {
+                const k = clamp((tau - s.d) / s.t, 0, 1);
+                if (k !== s.shown) {
+                    s.shown = k;
+                    s.p.style.strokeDashoffset = String(1 - k);
+                }
+            }
+        };
+        return {
+            where: () => centre(this.#space.box(g)),
+            run: async (h) => {
+                for (const s of strands)
+                    s.len = s.p.getTotalLength();
+                // Where the tip is at each sixtieth of a second, in the crew's space, or null while it is lifted.
+                const DT = 1 / 60;
+                const tips = [];
+                for (let tau = 0; tau <= end; tau += DT) {
+                    const live = strands.filter((s) => s.d <= tau && tau < s.d + s.t);
+                    if (!live.length) {
+                        tips.push(null);
+                        continue;
+                    }
+                    const newest = Math.max(...live.map((s) => s.d));
+                    const lead = live.filter((s) => s.d >= newest - 0.05);
+                    let x = 0;
+                    let y = 0;
+                    for (const s of lead) {
+                        const m = s.p.getScreenCTM();
+                        const q = s.p.getPointAtLength((s.len * (tau - s.d)) / s.t).matrixTransform(m);
+                        x += q.x;
+                        y += q.y;
+                    }
+                    tips.push(this.#space.point(x / lead.length, y / lead.length));
+                }
+                // Runs of the tip without a lift or a jump: each is one movement of the pen.
+                const runs = [];
+                tips.forEach((p, i) => {
+                    const last = runs[runs.length - 1];
+                    const prev = last?.points[last.points.length - 1];
+                    if (!p)
+                        return;
+                    if (!last || tips[i - 1] === null || !prev || Math.hypot(p.x - prev.x, p.y - prev.y) > 26)
+                        runs.push({ from: i, points: [p] });
+                    else
+                        last.points.push(p);
+                });
+                let tau = 0;
+                const stop = this.#clock.each(() => show(tau));
+                h.tool = "pen";
+                for (const run of runs) {
+                    await h.reachPoint(run.points[0], 2, 0.75);
+                    if (run.points.length < 2)
+                        continue;
+                    h.pointer.tagged = true;
+                    const begun = h.clock.now;
+                    const from = run.from * DT;
+                    const step = this.#clock.each((now) => (tau = from + Math.min(now - begun, (run.points.length - 1) * DT)));
+                    await h.follow(run.points, DT);
+                    step();
+                    tau = from + (run.points.length - 1) * DT;
+                }
+                tau = end;
+                show(end);
+                stop();
+                h.release();
+                h.tool = "arrow";
+            },
+        };
+    }
+    // ——— The hands at work ———
+    async #work(h) {
+        while (!this.#over) {
+            const task = this.#take(h);
+            if (!task) {
+                await this.#idle(h);
+                continue;
+            }
+            task.state = "taken";
+            this.stats.busy++;
+            this.onchange();
+            await task.run(h);
+            task.state = "done";
+            this.stats.busy--;
+            this.stats.done++;
+            this.onchange();
+            this.#closed(task.section);
+        }
+    }
+    // The nearest piece of work whose ground is laid, in the earliest open section.
+    #take(h) {
+        let best = null;
+        let score = Infinity;
+        for (const s of this.#sections) {
+            if (!s.active)
+                continue;
+            for (const t of s.tasks) {
+                if (t.state !== "waiting" || t.deps.some((d) => d.state !== "done"))
+                    continue;
+                const p = t.where();
+                const sc = s.index * 1e5 + Math.hypot(p.x - h.pos.x, p.y - h.pos.y);
+                if (sc < score) {
+                    score = sc;
+                    best = t;
+                }
+            }
+            if (best)
+                break;
+        }
+        return best;
+    }
+    // A hand without work drifts about the screen, now and then, and keeps an eye out for work.
+    async #idle(h) {
+        const v = this.#space.view();
+        const [mx, my] = [Math.min(40, v.w * 0.08), Math.min(60, v.h * 0.1)];
+        const view = { x: v.x + mx, y: v.y + my, w: v.w - 2 * mx, h: v.h - 2 * my };
+        const off = h.pos.y < view.y - 40 || h.pos.y > view.y + view.h + 40;
+        if (off || h.random.chance(0.18)) {
+            const target = off
+                ? { x: view.x + h.random.uniform(0, view.w), y: view.y + h.random.uniform(0, view.h) }
+                : { x: clamp(h.pos.x + h.random.normal(0, view.w * 0.1), view.x, view.x + view.w), y: clamp(h.pos.y + h.random.normal(0, view.h * 0.1), view.y, view.y + view.h) };
+            await h.reachPoint(target, 12, 1.4);
+        }
+        await h.rest(h.random.uniform(0.2, 0.6));
+    }
+    #closed(section) {
+        if (section.tasks.some((t) => t.state !== "done"))
+            return;
+        for (const g of section.guides)
+            g.remove();
+        section.guides = [];
+        if (this.#sections.every((s) => s.tasks.every((t) => t.state === "done"))) {
+            this.#over = true;
+            this.#finish();
+        }
+    }
+}

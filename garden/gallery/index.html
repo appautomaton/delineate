@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Garden tokens</title>
+    <link rel="stylesheet" href="../src/tokens.css" />
+    <link rel="stylesheet" href="../src/garden/paint.css" />
+    <link rel="stylesheet" href="../src/garden/anchors.css" />
+    <link rel="stylesheet" href="../src/garden/switcher.css" />
+    <link rel="stylesheet" href="./gallery.css" />
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+</head>
+  <body>
+    <button class="garden-switch" type="button" popovertarget="garden-list" aria-haspopup="menu" data-garden-switch></button>
+    <div class="garden-list" id="garden-list" popover role="menu" aria-label="Gardens" data-garden-list></div>
+    <header class="intro">
+      <p class="eyebrow"><a href="../" data-garden-back>The garden</a> · tokens</p>
+      <h1 data-garden-name></h1>
+      <p>
+        Every color and plant this garden is drawn with, by day and by night, read straight from the
+        files that ship: <code>src/tokens.css</code>, <code>src/garden/paint.css</code>,
+        <code>src/garden/plants.json</code>, and the plant drawings.
+      </p>
+    </header>
+    <main>
+      <section>
+        <h2>Palette</h2>
+        <p class="lede">Paper and ink, and every token this garden's drawings reach. Each color sits on its own paper, day and night.</p>
+        <div data-palette></div>
+      </section>
+      <section>
+        <h2>Pen</h2>
+        <p class="lede">One pen at every plant size. The lit edge of a shape takes the thin line and the shadow edge the thick one.</p>
+        <div class="lights">
+          <div class="light pen garden" data-pen></div>
+          <div class="light pen garden night" data-pen></div>
+        </div>
+      </section>
+      <section>
+        <h2>Plants</h2>
+        <p class="lede">In order of rank, the order in which a crowded screen keeps them.</p>
+        <div class="plants garden" data-plants></div>
+      </section>
+    </main>
+    <script type="module" src="./gallery.js"></script>
+  </body>
+</html>

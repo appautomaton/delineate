@@ -1,0 +1,55 @@
+/* The Cape fynbos garden's layouts. Each layout lists the plants it shows, and plants it leaves
+   out are never fetched. Wider screens show more plants. The thatching reed and the bugle lily
+   carry the height on the right, the king protea carries the focal bowl on the left, and the
+   hooded pagoda and blue sceptre stand in the open ground between them; the silver tree and the
+   tree pincushion reach in from the right edge, and the sugarbush (draped with Cassytha threads)
+   reaches in on the left. Nothing hangs from the top, so the sky stays open. */
+
+/* Portrait screens. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-silvertree { display: block; --x: 100%; --y: 26%; --h: 30; --flip: -1; }
+  .plant.g-kingprotea { display: block; --x: 24%; --y: calc(100svh + var(--u) * 3); --h: 46; }
+  .plant.g-pagoda { display: block; --x: 56%; --y: calc(100svh + var(--u) * 2); --h: 34; }
+  .plant.g-restio { display: block; --x: 84%; --y: calc(100svh + var(--u) * 2); --h: 50; }
+}
+
+/* Portrait tablets and tall windows: the sugarbush on the left and the everlasting in the bed. */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-sugarbush { display: block; --x: 0%; --y: 44%; --h: 32; }
+  .plant.g-phaenocoma { display: block; --x: 70%; --y: calc(100svh + var(--u) * 2); --h: 20; }
+}
+
+/* Landscape screens. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-silvertree { display: block; --x: 100%; --y: 40%; --h: 36; --flip: -1; }
+  .plant.g-pincushion { display: block; --x: 100%; --y: 78%; --h: 42; --flip: -1; }
+  .plant.g-sugarbush { display: block; --x: 0%; --y: 44%; --h: 38; }
+  .plant.g-fireheath { display: block; --x: 4%; --y: calc(100svh + var(--u) * 2); --h: 22; }
+  .plant.g-kingprotea { display: block; --x: 21%; --y: calc(100svh + var(--u) * 3); --h: 56; }
+  .plant.g-pagoda { display: block; --x: 44%; --y: calc(100svh + var(--u) * 2); --h: 40; }
+  .plant.g-restio { display: block; --x: 68%; --y: calc(100svh + var(--u) * 3); --h: 62; }
+  .plant.g-phaenocoma { display: block; --x: 83%; --y: calc(100svh + var(--u) * 2); --h: 20; }
+}
+
+/* Wider screens: the blue sceptre and the bugle lily. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-aristea { display: block; --x: 54%; --y: calc(100svh + var(--u) * 2); --h: 44; }
+  .plant.g-watsonia { display: block; --x: 90%; --y: calc(100svh + var(--u) * 2); --h: 54; }
+}
+
+/* Large screens: the hooded pelargonium and the kolkol in the open ground. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1600px) {
+  .plant.g-pelargonium { display: block; --x: 34%; --y: calc(100svh + var(--u) * 2); --h: 18; }
+  .plant.g-berzelia { display: block; --x: 61%; --y: calc(100svh + var(--u) * 2); --h: 22; }
+}
+
+/* Short landscape phones: the king protea, the thatching reed, and the silver tree branch. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-silvertree { display: block; --x: 100%; --y: 54%; --h: 40; --flip: -1; }
+  .plant.g-kingprotea { display: block; --x: 20%; --y: calc(100svh + var(--u) * 3); --h: 58; }
+  .plant.g-pagoda { display: block; --x: 48%; --y: calc(100svh + var(--u) * 2); --h: 42; }
+  .plant.g-restio { display: block; --x: 74%; --y: calc(100svh + var(--u) * 2); --h: 58; }
+}
