@@ -21,7 +21,7 @@ region maps, which are media and stay local.
   writes the work each section opens, each as it stands on its own: the Garden at `garden/` (built by
   `garden/build.ts`, its paths relative to the page), the Footers demo at `footers/`, Characters at
   `characters/`, Paprika Girl's separation page at `portraits/paprika-girl/`, and the studies the footer lists
-  under Studies, small pieces the page does not show: Rain at `rain/`. Each wears the site's tab mark, since a page with no icon of its
+  under Studies, small pieces the page does not show: Rain at `rain/` and Glass at `glass/`. Each wears the site's tab mark, since a page with no icon of its
   own has the browser ask for a `/favicon.ico` the site does not have.
 - **`hero.ts`**, **`icons.ts`**: the bouquet and the icons, drawn with the Footers' crayon (`footers/crayon/`).
   `icons.ts` also draws the tab's mark, flat, since at sixteen pixels the grain is only noise.
