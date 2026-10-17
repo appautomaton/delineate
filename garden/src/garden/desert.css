@@ -1,0 +1,54 @@
+/* The desert's layouts. Each layout lists the plants it shows, and plants it leaves out are never
+   fetched. Wider screens show more plants. Mesquite and palo verde reach in from the sides up
+   high, ocotillo and creosote sweep in from the bottom corners, and the saguaro carries the height
+   from the bed, with gaps of open ground between what rises there. Nothing hangs from the top,
+   so the sky stays open. */
+
+/* Portrait screens. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-paloverde { display: block; --x: 100%; --y: 26%; --h: 34; --flip: -1; }
+  .plant.g-saguaro { display: block; --x: 18%; --y: calc(100svh + var(--u) * 3); --h: 66; }
+  .plant.g-ferocactus { display: block; --x: 52%; --y: calc(100svh + var(--u) * 1); --h: 20; }
+  .plant.g-opuntia { display: block; --x: 84%; --y: calc(100svh + var(--u) * 4); --h: 30; }
+}
+
+/* Portrait tablets and tall windows: ocotillo sweeps in from the right corner, mesquite from the
+   left. */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-mesquite { display: block; --x: 0%; --y: 12%; --h: 28; }
+  .plant.g-ocotillo { display: block; --x: 100%; --y: calc(100svh + var(--u) * 2); --h: 44; --flip: -1; }
+}
+
+/* Landscape screens. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-mesquite { display: block; --x: 0%; --y: 14%; --h: 32; }
+  .plant.g-paloverde { display: block; --x: 100%; --y: 32%; --h: 40; --flip: -1; }
+  .plant.g-saguaro { display: block; --x: 16%; --y: calc(100svh + var(--u) * 3); --h: 80; }
+  .plant.g-ferocactus { display: block; --x: 30%; --y: calc(100svh + var(--u) * 1); --h: 24; }
+  .plant.g-organpipe { display: block; --x: 56%; --y: calc(100svh + var(--u) * 3); --h: 48; }
+  .plant.g-opuntia { display: block; --x: 76%; --y: calc(100svh + var(--u) * 4); --h: 34; }
+  .plant.g-ocotillo { display: block; --x: 100%; --y: calc(100svh + var(--u) * 2); --h: 56; --flip: -1; }
+}
+
+/* Wider screens: creosote sweeps in from the left corner. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-creosote { display: block; --x: 0%; --y: calc(100svh + var(--u) * 2); --h: 30; }
+}
+
+/* Large screens: a cholla and a brittlebush in the open ground, and the gourd vine trailing in
+   under the saguaro. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1600px) {
+  .plant.g-cholla { display: block; --x: 42%; --y: calc(100svh + var(--u) * 2); --h: 26; }
+  .plant.g-brittlebush { display: block; --x: 66%; --y: calc(100svh + var(--u) * 2); --h: 16; }
+  .plant.g-ibervillea { display: block; --x: 0%; --y: 97%; --h: 14; }
+}
+
+/* Short landscape phones: the saguaro, a palo verde branch, and the prickly pear. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-paloverde { display: block; --x: 100%; --y: 52%; --h: 44; --flip: -1; }
+  .plant.g-saguaro { display: block; --x: 10%; --y: calc(100svh + var(--u) * 3); --h: 84; }
+  .plant.g-opuntia { display: block; --x: 88%; --y: calc(100svh + var(--u) * 4); --h: 40; }
+}

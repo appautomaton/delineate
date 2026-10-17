@@ -1,0 +1,55 @@
+/* The Afroalpine garden's layouts. Each layout lists the plants it shows, and plants it leaves
+   out are never fetched. Wider screens show more plants. The giant groundsel carries the height
+   from the bed, Teleki's lobelia and the thistle stand up from the open ground to its right, and
+   the sides fill from beyond the frame: the tree heath reaches in high on the right, its lichen
+   hanging, and a young groundsel leans in below it; the Mount Kenya heath reaches in on the left,
+   and silver lady's mantle sweeps in from the bottom left corner. Nothing hangs from the top, so
+   the sky stays open. */
+
+/* Portrait screens. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-heath { display: block; --x: 100%; --y: 24%; --h: 34; --flip: -1; }
+  .plant.g-groundsel { display: block; --x: 24%; --y: calc(100svh + var(--u) * 3); --h: 70; }
+  .plant.g-telekii { display: block; --x: 74%; --y: calc(100svh + var(--u) * 2); --h: 40; }
+  .plant.g-cabbage { display: block; --x: 52%; --y: calc(100svh + var(--u) * 2); --h: 18; }
+}
+
+/* Portrait tablets and tall windows: the thistle, and the lady's mantle from the left corner. */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-thistle { display: block; --x: 92%; --y: calc(100svh + var(--u) * 2); --h: 34; }
+  .plant.g-alchemilla { display: block; --x: 0%; --y: calc(100svh + var(--u) * 2); --h: 18; }
+}
+
+/* Landscape screens. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-heath { display: block; --x: 100%; --y: 33%; --h: 40; --flip: -1; }
+  .plant.g-trimera { display: block; --x: 0%; --y: 64%; --h: 22; }
+  .plant.g-groundsel { display: block; --x: 21%; --y: calc(100svh + var(--u) * 3); --h: 84; }
+  .plant.g-sapling { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 52; }
+  .plant.g-cabbage { display: block; --x: 36%; --y: calc(100svh + var(--u) * 2); --h: 24; }
+  .plant.g-telekii { display: block; --x: 60%; --y: calc(100svh + var(--u) * 2); --h: 58; }
+  .plant.g-helichrysum { display: block; --x: 71%; --y: calc(100svh + var(--u) * 2); --h: 12; }
+  .plant.g-thistle { display: block; --x: 79%; --y: calc(100svh + var(--u) * 2); --h: 44; }
+  .plant.g-alchemilla { display: block; --x: 0%; --y: calc(100svh + var(--u) * 2); --h: 27; }
+}
+
+/* Wider screens: a tussock at the foot of the thistle. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-tussock { display: block; --x: 94%; --y: calc(100svh + var(--u) * 2); --h: 14; }
+}
+
+/* Large screens: the water lobelia and the haplocarpha in the open ground. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1600px) {
+  .plant.g-gregoriana { display: block; --x: 48%; --y: calc(100svh + var(--u) * 2); --h: 18; }
+  .plant.g-haplocarpha { display: block; --x: 53%; --y: calc(100svh + var(--u) * 1); --h: 8; }
+}
+
+/* Short landscape phones: the groundsel, Teleki's lobelia, and the heath branch. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-heath { display: block; --x: 100%; --y: 48%; --h: 46; --flip: -1; }
+  .plant.g-groundsel { display: block; --x: 12%; --y: calc(100svh + var(--u) * 3); --h: 84; }
+  .plant.g-telekii { display: block; --x: 62%; --y: calc(100svh + var(--u) * 2); --h: 54; }
+}

@@ -1,0 +1,58 @@
+/* The Namib and Namaqualand garden's layouts. Each layout lists the plants it shows, and plants it
+   leaves out are never fetched. Wider screens show more plants. The quiver tree carries the height
+   with its forked trunk and blue-green rosettes, Welwitschia spreads its two frayed straps across
+   the gravel floor, and the gifboom (with its crimson mistletoe) and Bushman's grass stand in the
+   open ground; the halfmens rises on the right slope tilting toward the sun, and the butter tree
+   and Damara milk-bush lean in from the bottom corners. Nothing hangs from the top, so the sky
+   stays open. */
+
+/* Portrait screens. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-quivertree { display: block; --x: 24%; --y: calc(100svh + var(--u) * 3); --h: 66; }
+  .plant.g-welwitschia { display: block; --x: 52%; --y: calc(100svh + var(--u) * 2); --h: 20; }
+  .plant.g-gifboom { display: block; --x: 78%; --y: calc(100svh + var(--u) * 2); --h: 42; }
+  .plant.g-halfmens { display: block; --x: 96%; --y: calc(100svh + var(--u) * 3); --h: 54; --flip: -1; }
+}
+
+/* Portrait tablets and tall windows: the butter tree on the left. */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-buttertree { display: block; --x: 2%; --y: calc(100svh + var(--u) * 3); --h: 35; }
+}
+
+/* Landscape screens. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-buttertree { display: block; --x: 0%; --y: calc(100svh + var(--u) * 3); --h: 35; }
+  .plant.g-quivertree { display: block; --x: 19%; --y: calc(100svh + var(--u) * 3); --h: 76; }
+  .plant.g-hoodia { display: block; --x: 27%; --y: calc(100svh + var(--u) * 2); --h: 19; }
+  .plant.g-welwitschia { display: block; --x: 47%; --y: calc(100svh + var(--u) * 2); --h: 17; }
+  .plant.g-gifboom { display: block; --x: 73%; --y: calc(100svh + var(--u) * 2); --h: 42; }
+  .plant.g-dunegrass { display: block; --x: 85%; --y: calc(100svh + var(--u) * 2); --h: 38; }
+  .plant.g-damara { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 26; --flip: -1; }
+  .plant.g-halfmens { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 58; --flip: -1; }
+}
+
+/* Wider screens: the nara melon and the Bushman's candle. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-nara { display: block; --x: 9%; --y: calc(100svh + var(--u) * 2); --h: 19; }
+  .plant.g-bushmanscandle { display: block; --x: 61%; --y: calc(100svh + var(--u) * 2); --h: 15; }
+}
+
+/* Large screens: Rusch's living stones in the foreground gravel. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1600px) {
+  .plant.g-hoodia { --x: 25%; --h: 19; }
+  .plant.g-lithops { display: block; --x: 34%; --y: calc(100svh + var(--u) * 1); --h: 10; }
+  .plant.g-welwitschia { --x: 48%; --h: 16; }
+  .plant.g-bushmanscandle { --x: 62%; --h: 15; }
+  .plant.g-gifboom { --x: 74%; --h: 42; }
+}
+
+/* Short landscape phones: the quiver tree, Welwitschia, gifboom, and halfmens. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-quivertree { display: block; --x: 20%; --y: calc(100svh + var(--u) * 3); --h: 78; }
+  .plant.g-welwitschia { display: block; --x: 52%; --y: calc(100svh + var(--u) * 2); --h: 24; }
+  .plant.g-gifboom { display: block; --x: 78%; --y: calc(100svh + var(--u) * 2); --h: 48; }
+  .plant.g-halfmens { display: block; --x: 96%; --y: calc(100svh + var(--u) * 3); --h: 56; --flip: -1; }
+}
