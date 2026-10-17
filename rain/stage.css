@@ -1,0 +1,13 @@
+/* A Rain stage, wherever it is shown: square, its own sky, the two canvases stacked over it. Its sky is the
+   --rain-sky token show.ts sets on the stage's element as the colours ease, so it never takes, or gives, a
+   host page's own. */
+
+.rain {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--rain-sky);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.rain > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }

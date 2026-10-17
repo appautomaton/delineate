@@ -1,0 +1,21 @@
+/* Rain's own page, where it is made: one stage, as large as the window allows, the page its sky. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font: 13px/1.4 ui-sans-serif, system-ui, sans-serif;
+}
+
+.sheet {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 3vh 16px;
+}
+.frame { margin: 0; display: grid; gap: 10px; }
+.frame .rain { width: min(86vh, calc(100vw - 32px)); }
+figcaption { display: flex; align-items: baseline; gap: 0.4em; opacity: 0.6; letter-spacing: 0.02em; }
+figcaption a { color: inherit; text-decoration: none; }
+figcaption a:hover { text-decoration: underline; text-underline-offset: 3px; }
+figcaption button { all: unset; margin-left: auto; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+figcaption button:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
