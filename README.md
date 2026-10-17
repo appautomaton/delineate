@@ -5,7 +5,7 @@
 [![Node.js 24+](https://img.shields.io/badge/node-24%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![TypeScript 7](https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Runtime dependencies: none](https://img.shields.io/badge/runtime%20dependencies-none-2ea44f)](package.json)
-[![Agent skills: 4](https://img.shields.io/badge/agent%20skills-4-8957e5)](.agents/skills)
+[![Agent skills: 5](https://img.shields.io/badge/agent%20skills-5-8957e5)](.agents/skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/appautomaton/delineate)](https://github.com/appautomaton/delineate/commits/main)
 
@@ -31,11 +31,17 @@ a 3. On the project's page the 3s turn over as you scroll and show the e on thei
 | **Monoline** | Flowers from the Garden's climates put in glass, drawn with one pen on three angles. An arrangement grows, is taken back into its bottle, and the bottle becomes the next, under a palette rolled for its flowers. | [`monoline/`](monoline) | [monoline-geometric](.agents/skills/monoline-geometric) |
 | **Flotsam** | The page for an address that leads nowhere. It has sunk: the window is a tank of water and the 404 floats in it, cut from plywood. Shake the window, or tip your phone, and the water slops; fish a numeral out and throw it back. | [`flotsam/`](flotsam) | |
 
+And the studies, smaller pieces that delineate's page lists in its footer rather than shows:
+
+| | What it is | Code | Skill |
+|---|---|---|---|
+| **Rain** | A figure seen from behind under an umbrella, in a rain of written characters that trail rings, break on the canopy and lie down where they land. She becomes him and he becomes her, and the colours turn, by day or by night. | [`rain/`](rain) | [glyph-rain](.agents/skills/glyph-rain) |
+
 [`site/`](site) builds delineate's own page, which shows all of it on one long sheet.
 
 ## Agent skills
 
-A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The four
+A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The five
 here live in [`.agents/skills/`](.agents/skills), and `.claude/skills/` links to them for Claude Code.
 
 - **climate-garden** researches how a set of real plants looks, draws each one, colours the garden
@@ -47,6 +53,8 @@ here live in [`.agents/skills/`](.agents/skills), and `.claude/skills/` links to
   works.
 - **monoline-geometric** puts flowers in glass on the Monoline card: a plant, a garden or a bottle
   drawn with one pen on three angles, under a palette rolled for its flowers.
+- **glyph-rain** makes Rain: a person built bone by bone, with no line drawn, under a rain of
+  characters, in quiet palettes for dark and light.
 
 Open the repository in your agent and ask for what you want, such as "a garden for the Patagonian
 steppe" or "this portrait as a line engraving". The matching skill takes it from there.
@@ -73,8 +81,9 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run assembly` | Serves Assembly at http://localhost:5310/, with the pointers' specimen sheet at `studies/pointers/`, and rebuilds when a source changes. |
 | `npm run flotsam` | Serves Flotsam at http://localhost:5340/, at every address, and rebuilds when a source changes. |
 | `npm run monoline` | Serves Monoline's card at http://localhost:5350/, with `?sheet` for a dozen arrangements at once and `?layers` for one layer alone, and rebuilds when a source changes. |
+| `npm run rain` | Serves Rain at http://localhost:5360/, with `?rate=0` for the figure alone and `?mode=` for dark or light, and rebuilds when a source changes. |
 | `npm run flotsam:measure` | Measures Flotsam in a Chrome of its own: the page's frames, the water's thread, and whether the water sleeps when still. |
-| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, Paprika Girl's separation page and Assembly that its sections open, and Flotsam as its `404.html`. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page, and the Garden, the Footers demo, Characters, Collage, Paprika Girl's separation page and Assembly that its sections open, Rain, which its footer lists, and Flotsam as its `404.html`. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
 | `npm run deploy` | Builds the site and publishes it to GitHub Pages, at https://delineate.appautomaton.com/. Pushing `main` runs it first, and holds the push back if the site fails to build; `git push --no-verify` skips it. |
 | `npm run check` | Type-checks every part of the repository. |
 
@@ -97,6 +106,7 @@ portraits/   the portrait pieces and the harness that builds them
 assembly/    the crew of hands, its engine, and the page they build
 flotsam/     the page not found: its water, its numerals and its sea floor
 monoline/    the vase that keeps changing its flowers: pen, bottles, plants and palette
+rain/        the figure in a rain of characters: bodies, umbrella, rain and palettes
 site/        delineate's own page
 tools/       the small static server the dev tools share
 .agents/     the agent skills
@@ -104,7 +114,7 @@ tools/       the small static server the dev tools share
 AGENTS.md    how to work here: a worktree per piece of work, and what a push to main does
 ```
 
-Assembly, Characters, Flotsam, Footers, Monoline and the site keep a `notes.md` beside their code with
+Assembly, Characters, Flotsam, Footers, Monoline, Rain and the site keep a `notes.md` beside their code with
 the rules a change must keep; [`garden/climates.md`](garden/climates.md) holds the gardens' botany.
 
 ## License

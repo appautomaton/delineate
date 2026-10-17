@@ -9,9 +9,10 @@
 // opens: the Garden at garden/, the Footers' demo at footers/, Characters at characters/, Collage at collage/ (its
 // card, which this page also shows, and the drawings npm run collage:draw makes), Paprika Girl's separation page at
 // portraits/paprika-girl/, and Assembly at assembly/ (its sheet, show.js, is what this page shows of it). Monoline
-// has no page of its own here: its card (monoline/show.js and card.css) lives in the row of works. Flotsam is the
-// page for every address that leads nowhere: 404.html, which GitHub Pages serves for those, with its scripts
-// under flotsam/.
+// has no page of its own here: its card (monoline/show.js and card.css) lives in the row of works. The studies,
+// small pieces the page does not show and the footer lists, each go at their own path with their own page: Rain at
+// rain/. Flotsam is the page for every address that leads nowhere: 404.html, which GitHub Pages serves for those,
+// with its scripts under flotsam/.
 
 import { execFileSync } from "node:child_process";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -19,6 +20,7 @@ import { fileURLToPath } from "node:url";
 import { build as buildAssembly } from "../assembly/build.ts";
 import { build as buildFlotsam } from "../flotsam/build.ts";
 import { build as buildMonoline } from "../monoline/build.ts";
+import { build as buildRain } from "../rain/build.ts";
 import { DIST as GARDEN, build as buildGarden } from "../garden/build.ts";
 import { WORLDS, componentApart, kit } from "../footers/component.ts";
 import { TOOTH } from "../footers/crayon/hand.ts";
@@ -115,7 +117,8 @@ write("portraits/paprika-girl/index.html", readFileSync(made("portraits/pieces/p
 buildAssembly(fileURLToPath(new URL("assembly/", DIST)));
 buildFlotsam(fileURLToPath(DIST));
 buildMonoline(fileURLToPath(DIST), { page: false });
-for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html"]) {
+buildRain(fileURLToPath(new URL("rain/", DIST)));
+for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html", "rain/index.html"]) {
   const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);
   write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));
 }

@@ -20,7 +20,8 @@ region maps, which are media and stay local.
   paint and anchors, and the plants the page's `PLANTS` names. From Portraits, Paprika Girl. Beside the page it
   writes the work each section opens, each as it stands on its own: the Garden at `garden/` (built by
   `garden/build.ts`, its paths relative to the page), the Footers demo at `footers/`, Characters at
-  `characters/`, and Paprika Girl's separation page at `portraits/paprika-girl/`. Each wears the site's tab mark, since a page with no icon of its
+  `characters/`, Paprika Girl's separation page at `portraits/paprika-girl/`, and the studies the footer lists
+  under Studies, small pieces the page does not show: Rain at `rain/`. Each wears the site's tab mark, since a page with no icon of its
   own has the browser ask for a `/favicon.ico` the site does not have.
 - **`hero.ts`**, **`icons.ts`**: the bouquet and the icons, drawn with the Footers' crayon (`footers/crayon/`).
   `icons.ts` also draws the tab's mark, flat, since at sixteen pixels the grain is only noise.
