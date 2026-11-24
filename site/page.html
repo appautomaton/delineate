@@ -16,6 +16,8 @@
 <link rel="stylesheet" href="assets/garden/anchors.css">
 <link rel="stylesheet" href="collage/card.css">
 <link rel="stylesheet" href="monoline/card.css">
+<link rel="stylesheet" href="moments/moments/stage.css">
+<link rel="stylesheet" href="moments/moments/card.css">
 <style>
   /* One sheet of paper. Drawings lie on it, not in boxes; words sit beside them. */
   :root {
@@ -343,6 +345,16 @@
   .assembly-host { display: block; }
   .assembly-host > div { aspect-ratio: 16 / 9; }
 
+  /* Moments: a compact single-row rotating preview card mirroring Assembly's spread, wearing this page's own paper
+     and ink while cycling slot-by-slot through all twenty controls by day and by night (moments/moments/card.js). */
+  .moments-show { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: clamp(1.75rem, 4vw, 3rem); padding: clamp(2rem, 4vw, 3rem) var(--margin) clamp(4rem, 8vw, 6rem); }
+  @media (min-width: 64rem) {
+    .moments-show { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); }
+    .moments-show .piece-text { order: 2; }
+    .moments-show .moments-host { order: 1; }
+  }
+  .moments-host { min-width: 0; }
+
   /* Collage: one card, dealt from the five, playing as it does on its own page; it stays paper by night. */
   .collage-card { display: block; height: 100%; aspect-ratio: 1; max-width: 100%; border-radius: .5rem; }
   .work-art .ml { height: 100%; max-width: 100%; border-radius: .5rem; }
@@ -505,6 +517,15 @@
         </div>
         <a class="assembly-host" href="assembly/" aria-label="Open Assembly"><div data-assembly aria-hidden="true"></div></a>
       </article>
+
+      <article class="work moments-show" aria-labelledby="moments">
+        <div class="piece-text">
+          <h2 id="moments"><span>Moments</span></h2>
+          <p>Twenty monochrome controls driven by nonlinear spring, surface tension, gravity, and fluid slosh rather than flat easing. Open the sheet to touch, drag, pluck, or hear them all.</p>
+          <div class="take"><a class="link" href="moments/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/moments">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/ui-moments">Skill</a></div>
+        </div>
+        <a class="moments-host" href="moments/" aria-label="Open Moments"><div data-moments-card aria-hidden="true"></div></a>
+      </article>
     </div>
   </main>
 
@@ -515,7 +536,7 @@
         <p>Drawings that move when you do, with the source and the skills to make your own.</p>
       </div>
       <nav aria-label="Footer">
-        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#collage">Collage</a></li><li><a href="#portraits">Portraits</a></li><li><a href="#assembly">Assembly</a></li></ul></div>
+        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#collage">Collage</a></li><li><a href="#portraits">Portraits</a></li><li><a href="#assembly">Assembly</a></li><li><a href="#moments">Moments</a></li></ul></div>
         <div><h3>Studies</h3><ul><li><a href="rain/">Rain</a></li><li><a href="glass/">Glass</a></li></ul></div>
         <div><h3>Take</h3><ul><li><a href="https://github.com/appautomaton/delineate">Source</a></li><li><a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Agent skills</a></li></ul></div>
       </nav>
@@ -809,6 +830,9 @@
 
   // Assembly: a few hands building a miniature of Assembly's page on a sheet, again and again, while it is in view.
   import("./assembly/show.js").then(({ mount }) => mount(document.querySelector("[data-assembly]")));
+
+  // Moments: a compact single-row strip rotating three live nonlinear controls at a time across all twenty.
+  import("./moments/moments/card.js").then(({ mountCard }) => mountCard(document.querySelector("[data-moments-card]")));
 
   // Monoline: a vase that keeps itself, one arrangement giving way to the next while it is in view (monoline/show.js).
   import("./monoline/show.js").then(({ mount }) => {

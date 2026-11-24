@@ -131,6 +131,14 @@ export const CARDS: Card[] = [
       await settle(page, 1500);
     },
   },
+  {
+    page: "moments/",
+    render: "moments/?light=night&mode=play",
+    alt: "Moments: twenty monochrome UI micro-interactions arranged on a dark specimen sheet.",
+    async prepare(page) {
+      await settle(page, 600);
+    },
+  },
 ];
 
 // The card's file, beside its page.
