@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "rootDir": ".",
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": [
+    "main.ts",
+    "show.ts",
+    "card.ts",
+    "physics.ts",
+    "sound.ts",
+    "tile.ts",
+    "tiles/*.ts"
+  ]
+}
