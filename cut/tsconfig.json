@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "rootDir": ".",
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": [
+    "main.ts",
+    "embed.ts",
+    "shader.ts",
+    "cv.ts",
+    "mockups.ts",
+    "scenes.ts",
+    "audio.ts",
+    "palette.ts",
+    "ui-icons.ts"
+  ]
+}

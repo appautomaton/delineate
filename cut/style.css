@@ -1,0 +1,209 @@
+/* Cut: full-bleed 16:9 24 fps cinema frame with minimalist scrubbable director's HUD.
+   World 01 · Silver Gelatin & Cinnabar (Leica Darkroom x delineate Monochrome). */
+
+:root {
+  --c-bg: #08090B;
+  --c-hud: rgba(14, 15, 19, 0.76);
+  --c-border: rgba(242, 239, 233, 0.13);
+  --c-ink: #F2EFE9;
+  --c-soft: rgba(242, 239, 233, 0.58);
+  --c-red: #D9412B;
+  --c-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --c-sans: "Switzer", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--c-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cinema-shell {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(65% 60% at 50% 50%, #121418 0%, #08090B 100%);
+}
+
+.cinema-frame {
+  position: relative;
+  width: min(100vw, calc(100dvh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  background: #08090B;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(242, 239, 233, 0.07);
+  overflow: hidden;
+}
+
+.cinema-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+/* ── Minimalist Director's HUD ── */
+.hud {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: min(820px, calc(100vw - 28px));
+  padding: 10px 14px 11px;
+  border-radius: 14px;
+  background: var(--c-hud);
+  border: 1px solid var(--c-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 20;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+body.hud-hidden .hud {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 10px);
+  transition: none;
+}
+
+.hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hud-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-btn {
+  appearance: none;
+  border: 1px solid var(--c-border);
+  background: rgba(242, 239, 233, 0.05);
+  color: var(--c-soft);
+  font: 500 10px/1 var(--c-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: border-color 140ms ease, color 140ms ease, background-color 140ms ease;
+}
+
+.hud-btn:hover {
+  color: var(--c-ink);
+  border-color: rgba(242, 239, 233, 0.34);
+}
+
+.hud-btn[aria-pressed="true"] {
+  background: var(--c-ink);
+  color: #08090B;
+  border-color: var(--c-ink);
+}
+
+.hud-btn.is-icon {
+  padding: 6px 8px;
+}
+
+.hud-readout {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 500 10.5px/1 var(--c-mono);
+  letter-spacing: 0.08em;
+  color: var(--c-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-fps {
+  color: var(--c-red);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.hud-fps::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c-red);
+}
+
+.hud-scene-name {
+  color: var(--c-ink);
+  min-width: 148px;
+}
+
+/* ── 10-Scene Scrubbable Film Strip Timeline ── */
+.timeline {
+  position: relative;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.tl-seg {
+  position: relative;
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(242, 239, 233, 0.14);
+  overflow: hidden;
+  transition: height 140ms ease, background-color 140ms ease;
+}
+
+.timeline:hover .tl-seg {
+  height: 9px;
+}
+
+.tl-seg.is-past {
+  background: rgba(242, 239, 233, 0.42);
+}
+
+.tl-seg.is-current {
+  background: rgba(242, 239, 233, 0.24);
+}
+
+.tl-seg-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: var(--c-ink);
+}
+
+.tl-playhead {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--c-red);
+  box-shadow: 0 0 8px rgba(217, 65, 43, 0.85);
+  pointer-events: none;
+  will-change: transform;
+}

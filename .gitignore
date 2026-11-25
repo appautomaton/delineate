@@ -3,10 +3,12 @@ node_modules/
 dist/
 .cache/
 
-# Media stays out of git
+# Media stays out of git (except Cut's curated film plates & poster)
 *.png
 *.jpg
 *.jpeg
+!cut/assets/*.jpg
+!cut/assets/plates/*.jpg
 *.webp
 *.gif
 *.avif

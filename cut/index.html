@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cut — 24 fps WebGL2 Motion Direction · delineate</title>
+  <meta name="description" content="A 24 fps browser-native motion-direction film built purely with multi-pass WebGL2 optical/ASCII/quadtree/bloom shaders, Switzer & Zodiak typography, Computer Vision telemetry, and an original 134 BPM Setloom techno score.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090B'/%3E%3Cg fill='%23F5F3EE' transform='matrix(.24 0 -.0204 .24 16.8 17.5)'%3E%3Cpath d='M-39-17.6H8.4V1.9H-20V16.5L-39 24.96Z'/%3E%3Cpath d='M14-41.5L33.5-50.2V40.6H-39V31.09L-16.56 21.1H14Z'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&f[]=zodiak@400,500&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5/400.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-mono@5/500.css">
+  <link rel="stylesheet" href="cut/style.css">
+</head>
+<body>
+  <main class="cinema-shell">
+    <div class="cinema-frame">
+      <canvas class="cinema-canvas" data-gl width="1280" height="720"></canvas>
+    </div>
+  </main>
+
+  <aside class="hud" data-hud aria-label="Director timeline controls">
+    <div class="hud-top">
+      <div class="hud-group">
+        <button class="hud-btn" type="button" data-toggle="play" aria-pressed="true" title="Play / Pause (Space)">Pause</button>
+        <button class="hud-btn is-icon" type="button" data-step="-1" title="Previous frame (←)">‹</button>
+        <button class="hud-btn is-icon" type="button" data-step="1" title="Next frame (→)">›</button>
+        <button class="hud-btn" type="button" data-toggle="sound" aria-pressed="false" title="Toggle original 134 BPM Setloom techno score (M)">Sound</button>
+      </div>
+      <div class="hud-readout">
+        <span class="hud-fps">24 FPS</span>
+        <span class="hud-scene-name" data-scene-label>01 · YEAR ROLL</span>
+        <span data-frame-label>F 000 / 432</span>
+        <span data-time-label>00:00.00</span>
+      </div>
+    </div>
+    <div class="timeline" data-timeline>
+      <div class="tl-playhead" data-playhead></div>
+    </div>
+  </aside>
+
+  <script type="module" src="cut/main.ts"></script>
+</body>
+</html>

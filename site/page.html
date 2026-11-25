@@ -236,6 +236,43 @@
     }
   }
 
+  /* Cut: an eighteen-second 24 fps cinema piece framed above Garden. At rest it is a single static
+     keyframe poster (zero WebGL2, zero audio, zero compute); clicking Play lazily imports cut/embed.js,
+     unlocks 134 BPM sound on that gesture, pauses when scrolled away, and frees GPU memory on close. */
+  .cut-show { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: clamp(1.75rem, 4vw, 3.25rem); padding: clamp(3.5rem, 8vw, 6rem) var(--margin) clamp(2rem, 5vw, 4rem); }
+  @media (min-width: 64rem) { .cut-show { grid-template-columns: minmax(0, 1fr) minmax(0, 1.85fr); } }
+  .cut-stage { position: relative; aspect-ratio: 16 / 9; border-radius: .6rem; overflow: hidden; background: #08090B;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 14%, transparent), 0 28px 60px -36px rgba(8, 9, 11, 0.55); }
+  .cut-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .75s var(--settle); }
+  .cut-play { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; border: 0; padding: clamp(.85rem, 2vw, 1.25rem); background: linear-gradient(to top, rgba(8, 9, 11, 0.42), rgba(8, 9, 11, 0.04) 42%, rgba(8, 9, 11, 0.24)); cursor: pointer;
+    display: grid; grid-template-rows: auto 1fr auto; align-items: center; color: #F2EFE9; text-align: left; }
+  .cut-play:hover .cut-poster, .cut-stage:hover .cut-poster { transform: scale(1.018); }
+  .cut-meta { display: inline-flex; align-items: center; gap: .45rem; font: 500 .65rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: rgba(242, 239, 233, 0.74); }
+  .cut-dot { width: 5px; height: 5px; border-radius: 50%; background: #D9412B; }
+  .cut-play-badge { justify-self: center; width: 3.5rem; height: 3.5rem; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(8, 9, 11, 0.56); border: 1px solid rgba(242, 239, 233, 0.28); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42); transition: transform .35s var(--settle), border-color .2s ease, background-color .2s ease; }
+  .cut-play:hover .cut-play-badge, .cut-play:focus-visible .cut-play-badge { transform: scale(1.08); border-color: rgba(242, 239, 233, 0.62); background: rgba(8, 9, 11, 0.72); }
+  .cut-play-hint { justify-self: end; font: 500 .65rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: rgba(242, 239, 233, 0.64); transition: color .2s ease; }
+  .cut-play:hover .cut-play-hint { color: #F2EFE9; }
+  .cut-stage.is-live .cut-play { display: none; }
+  .cut-embed { position: absolute; inset: 0; z-index: 3; background: #08090B; }
+  .cut-embed-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
+  .cut-embed-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: rgba(242, 239, 233, 0.14); pointer-events: none; z-index: 2; }
+  .cut-embed-progress-fill { width: 100%; height: 100%; background: #D9412B; transform-origin: 0 50%; transform: scaleX(0); }
+  .cut-embed-bar { position: absolute; left: .75rem; right: .75rem; bottom: .75rem; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+    padding: .42rem .55rem; border-radius: .5rem; background: rgba(8, 9, 11, 0.74); border: 1px solid rgba(242, 239, 233, 0.14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    opacity: 0; transition: opacity .22s ease; }
+  .cut-embed:hover .cut-embed-bar, .cut-embed.is-paused .cut-embed-bar, .cut-embed:focus-within .cut-embed-bar { opacity: 1; }
+  .cut-embed-grp { display: inline-flex; align-items: center; gap: .38rem; }
+  .cut-embed-btn { appearance: none; border: 1px solid rgba(242, 239, 233, 0.16); background: rgba(242, 239, 233, 0.06); color: rgba(242, 239, 233, 0.78);
+    font: 500 .625rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: .36rem .56rem; border-radius: .35rem; cursor: pointer; text-decoration: none;
+    transition: color .15s ease, border-color .15s ease, background-color .15s ease; }
+  .cut-embed-btn:hover { color: #F2EFE9; border-color: rgba(242, 239, 233, 0.42); }
+  .cut-embed-btn[aria-pressed="true"] { background: #F2EFE9; color: #08090B; border-color: #F2EFE9; }
+  .cut-embed-close { padding: .36rem .5rem; font-size: .8rem; }
+  .cut-embed-time { font: 500 .625rem/1 var(--mono); letter-spacing: .08em; color: rgba(242, 239, 233, 0.56); font-variant-numeric: tabular-nums; margin-left: .2rem; }
+
   /* Garden: what the garden is for, a frame of plants growing in round the words. The bed's edges fade into the
      paper, so the plants rise out of the ground instead of standing on a line. */
   .bed {
@@ -453,6 +490,22 @@
     </section>
 
     <div id="work">
+      <article class="work cut-show" aria-labelledby="cut">
+        <div class="piece-text">
+          <h2 id="cut"><span>Cut</span></h2>
+          <p>An eighteen-second film rendered live at 24 frames a second in WebGL2, scored to 134 BPM warehouse techno—every cut, optical flare, and grain drawn on the fly.</p>
+          <div class="take"><a class="link" href="cut/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/cut">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/kinetic-cut">Skill</a></div>
+        </div>
+        <div class="cut-stage" data-cut-stage>
+          <img class="cut-poster" src="cut/cut/assets/poster.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Cut — smoked optical crystal prism pierced by a champagne light beam beside the word Form">
+          <button class="cut-play" type="button" data-cut-play aria-label="Play Cut film with 134 BPM sound">
+            <span class="cut-meta"><span class="cut-dot" aria-hidden="true"></span>24 fps · 00:18 · 134 bpm</span>
+            <span class="cut-play-badge" aria-hidden="true"><svg width="16" height="18" viewBox="0 0 16 18" fill="none"><path d="M2.5 1.8L14.2 9L2.5 16.2V1.8Z" fill="#F2EFE9"/></svg></span>
+            <span class="cut-play-hint">Watch with sound</span>
+          </button>
+        </div>
+      </article>
+
       <article class="bed garden" aria-labelledby="garden" data-bed>
         <div class="piece-text">
           <h2 id="garden"><span>Garden</span></h2>
@@ -536,7 +589,7 @@
         <p>Drawings that move when you do, with the source and the skills to make your own.</p>
       </div>
       <nav aria-label="Footer">
-        <div><h3>Work</h3><ul><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#collage">Collage</a></li><li><a href="#portraits">Portraits</a></li><li><a href="#assembly">Assembly</a></li><li><a href="#moments">Moments</a></li></ul></div>
+        <div><h3>Work</h3><ul><li><a href="#cut">Cut</a></li><li><a href="#garden">Garden</a></li><li><a href="#footers">Footers</a></li><li><a href="#characters">Characters</a></li><li><a href="#collage">Collage</a></li><li><a href="#portraits">Portraits</a></li><li><a href="#assembly">Assembly</a></li><li><a href="#moments">Moments</a></li></ul></div>
         <div><h3>Studies</h3><ul><li><a href="rain/">Rain</a></li><li><a href="glass/">Glass</a></li></ul></div>
         <div><h3>Take</h3><ul><li><a href="https://github.com/appautomaton/delineate">Source</a></li><li><a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills">Agent skills</a></li></ul></div>
       </nav>
@@ -817,6 +870,38 @@
       else removeEventListener("scroll", follow);
       follow();
     }, { rootMargin: "50% 0px" }).observe(bed);
+  }
+
+  // Cut: zero GPU / zero audio until the visitor clicks Play; synchronously unlocks AudioContext on that
+  // gesture, lazily imports cut/embed.js, pauses automatically when scrolled away, and restores the poster on close.
+  {
+    const stage = document.querySelector("[data-cut-stage]");
+    const btn = stage?.querySelector("[data-cut-play]");
+    let loading = false;
+    btn?.addEventListener("click", async () => {
+      if (loading || stage.classList.contains("is-live")) return;
+      loading = true;
+      let ac = null;
+      try {
+        const AC = window.AudioContext ?? window.webkitAudioContext;
+        if (AC && !calm) { ac = new AC(); ac.resume().catch(() => {}); }
+      } catch {}
+      try {
+        const { mountCutEmbed } = await import("./cut/cut/embed.js");
+        stage.classList.add("is-live");
+        mountCutEmbed(stage, {
+          assetRoot: "cut/cut/assets/",
+          fullUrl: "cut/",
+          audioCtx: ac,
+          onClose: () => stage.classList.remove("is-live"),
+        });
+      } catch {
+        ac?.close?.();
+        location.href = "cut/";
+      } finally {
+        loading = false;
+      }
+    });
   }
 
   // Characters: the piece's own field of letters (characters/field.js), in the page's ink and light.

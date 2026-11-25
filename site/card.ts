@@ -42,7 +42,7 @@ export const CARDS: Card[] = [
           .headline { font-size: 80px; }
           .opening .works { max-width: none; margin: 2rem 0 0; font: 500 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--soft); }`,
       });
-      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Garden · Footers · Characters · Collage · Portraits · Assembly</p>')`);
+      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Cut · Garden · Footers · Characters · Collage · Portraits · Assembly · Moments</p>')`);
       await page.waitForFunction("document.querySelector('.headline.is-drawn') && document.querySelector('.bouquet.is-drawn')");
       await settle(page, 1600); // the headline's wash settles under its strokes
     },
@@ -137,6 +137,16 @@ export const CARDS: Card[] = [
     alt: "Moments: twenty monochrome UI micro-interactions arranged on a dark specimen sheet.",
     async prepare(page) {
       await settle(page, 600);
+    },
+  },
+  {
+    page: "cut/",
+    render: "cut/?frame=310&paused=1&hud=0",
+    title: "Cut · delineate",
+    description: "An eighteen-second film rendered live at 24 frames a second in WebGL2, scored to 134 BPM warehouse techno.",
+    alt: "Cut: a smoked optical crystal prism pierced diagonally by a champagne light beam beside the word Form.",
+    async prepare(page) {
+      await settle(page, 900);
     },
   },
 ];

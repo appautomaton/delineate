@@ -19,6 +19,7 @@ import { execFileSync } from "node:child_process";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { build as buildAssembly } from "../assembly/build.ts";
+import { build as buildCut } from "../cut/build.ts";
 import { build as buildFlotsam } from "../flotsam/build.ts";
 import { build as buildGlass } from "../glass/build.ts";
 import { build as buildMoments } from "../moments/build.ts";
@@ -123,6 +124,7 @@ buildMonoline(fileURLToPath(DIST), { page: false });
 buildRain(fileURLToPath(new URL("rain/", DIST)));
 buildGlass(fileURLToPath(new URL("glass/", DIST)));
 buildMoments(fileURLToPath(new URL("moments/", DIST)));
+buildCut(fileURLToPath(new URL("cut/", DIST)));
 for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html", "rain/index.html", "glass/index.html", "moments/index.html"]) {
   const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);
   write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));

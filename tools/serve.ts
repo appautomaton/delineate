@@ -18,6 +18,9 @@ const TYPES: Record<string, string> = {
   ".jpg": "image/jpeg",
   ".webp": "image/webp",
   ".mp4": "video/mp4",
+  ".m4a": "audio/mp4",
+  ".mp3": "audio/mpeg",
+  ".wav": "audio/wav",
   ".woff2": "font/woff2",
 };
 const typeOf = (file: string) => TYPES[extname(file)] ?? "application/octet-stream";
