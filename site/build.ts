@@ -67,8 +67,9 @@ const drawingTime = (...parts: string[]) =>
 const template = read("site/page.html");
 rmSync(DIST, { recursive: true, force: true });
 
-// delineate's own footer carries Crayon inline as its opening world; the other six wait in assets/footers/ until chosen.
-const footer = componentApart("delineate", "assets/footers/");
+// All seven footer worlds wait in assets/footers/ until the reader approaches the foot of the page, keeping the
+// first-screen HTML and DOM light while Crayon still opens first on arrival.
+const footer = componentApart("delineate", "assets/footers/", { all: true });
 const bouquet = markup();
 const heroTime = fixed(drawingTime(bouquet), 2);
 const page = fill(

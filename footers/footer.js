@@ -49,8 +49,10 @@
         .then((html) => { template.innerHTML = html; delete template.dataset.src; })
         .catch((error) => { delete scenes[id]; throw error; }));
     };
-    let wanted = null;
+    let wanted = null, mounted = false, near = null;
     const mount = async (id) => {
+      mounted = true;
+      near?.disconnect();
       wanted = id;
       try { await ensure(id); } catch { return; }
       if (wanted !== id) return;
@@ -78,7 +80,25 @@
       active?.setVisible?.(visible && !asleep && !calm.matches);
       if (clock) requestAnimationFrame(load);
     };
-    mount(root.dataset.world);
+    // Reflect the opening choice on the picker immediately; if its markup waits in a separate file (data-src, on a
+    // long host page where the footer sits far below the fold), defer fetching and cloning it until the reader comes
+    // within a screen of the footer or interacts with the picker.
+    for (const picker of pickers) {
+      for (const button of picker.querySelectorAll('button')) {
+        const on = button.dataset.world === root.dataset.world;
+        button.setAttribute('aria-checked', String(on));
+        button.tabIndex = on ? 0 : -1;
+      }
+    }
+    label(root.dataset.world);
+    if (!document.getElementById(`world-${root.dataset.world}`)?.dataset.src) {
+      mount(root.dataset.world);
+    } else {
+      near = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting && !mounted) mount(wanted ?? root.dataset.world);
+      }, { rootMargin: '100% 0px' });
+      near.observe(footer);
+    }
 
     const choose = (id) => {
       if (id === root.dataset.world) return;

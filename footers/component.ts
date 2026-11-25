@@ -91,10 +91,14 @@ export function component(site: Site): Record<string, string> {
   return parts(site).parts;
 }
 
-// The same, with every world but the first kept apart in files to be served from `at` (a path from the page), so
-// the page carries only the scene it opens on.
-export function componentApart(site: Site, at: string): { parts: Record<string, string>; files: Record<string, string> } {
-  return parts(site, { worlds: SITES[site].worlds.slice(1), at });
+// The same, with every world (or every world but the first) kept apart in files to be served from `at` (a path from
+// the page), so a host page where the footer sits many screens down carries none of the worlds in its initial HTML.
+export function componentApart(
+  site: Site,
+  at: string,
+  { all = false }: { all?: boolean } = {},
+): { parts: Record<string, string>; files: Record<string, string> } {
+  return parts(site, { worlds: all ? SITES[site].worlds : SITES[site].worlds.slice(1), at });
 }
 
 function parts(site: Site, apart?: { worlds: readonly World[]; at: string }): { parts: Record<string, string>; files: Record<string, string> } {

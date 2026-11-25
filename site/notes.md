@@ -18,9 +18,11 @@ region maps, which are media and stay local.
   floating corner sun/moon button and the footer's own switch share one `data-theme` state (`delineate-theme`),
   and the corner button docks away while the footer's own switch is in view.
 - **`build.ts`**: fills the holes and writes `dist/`. From Footers it takes the crayon's grain and the component
-  built apart for `delineate` (`footers/sites/delineate.html`), carrying Crayon inline and writing the other six
-  worlds into `assets/footers/`. From Garden, its tokens, paint and anchors, and the plants the page's `PLANTS`
-  names. From Portraits, Paprika Girl. Beside the page it writes the work each section opens, each as it stands on
+  built with all seven worlds apart (`footers/sites/delineate.html`), writing `crayon.html` and the other six worlds
+  into `assets/footers/` so the first screen carries none of the footer's SVG DOM until approached. From Garden, its
+  tokens, paint and anchors, and the plants the page's `PLANTS` names (fetched together with offscreen cards,
+  stylesheets, and fonts as each section approaches the viewport). From Portraits, Paprika Girl. Beside the page it
+  writes the work each section opens, each as it stands on
   its own: Cut at `cut/`, the Garden at `garden/` (built by `garden/build.ts`, its paths relative to the page),
   the Footers demo at `footers/`, Characters at `characters/`, Collage at `collage/`, Paprika Girl's separation
   page at `portraits/paprika-girl/`, Assembly at `assembly/`, Moments at `moments/`, Mesh Gradient at `mesh/`, and

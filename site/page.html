@@ -10,16 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap">
-<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=cabinet-grotesk@1&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@3.3.0/build/victormono-nf-obl.css">
-<link rel="stylesheet" href="assets/garden/tokens.css">
-<link rel="stylesheet" href="assets/garden/paint.css">
-<link rel="stylesheet" href="assets/garden/anchors.css">
-<link rel="stylesheet" href="collage/card.css">
-<link rel="stylesheet" href="monoline/card.css">
-<link rel="stylesheet" href="moments/moments/stage.css">
-<link rel="stylesheet" href="moments/moments/card.css">
-<link rel="stylesheet" href="mesh/mesh/card.css">
 <script>
 {{FOOTER_EARLY}}</script>
 <style>
@@ -294,7 +284,7 @@
      paper, so the plants rise out of the ground instead of standing on a line. */
   .bed {
     position: relative; height: clamp(30rem, 78svh, 44rem); margin: clamp(2rem, 5vw, 4rem) 0 clamp(1rem, 3vw, 2rem);
-    container-type: size; display: grid; place-items: center; text-align: center;
+    container-type: size; contain: layout paint; display: grid; place-items: center; text-align: center;
     mask-image: linear-gradient(transparent, #000 2rem, #000 calc(100% - 5rem), transparent);
   }
   .bed .piece-text { position: relative; z-index: 2; max-width: 30rem; padding: 0 1.5rem; }
@@ -302,7 +292,7 @@
   .bed .take { justify-content: center; }
   .grow { --x: var(--wx); --y: var(--wy); --h: var(--wh); --unit: min(1cqh, .95cqw);
     position: absolute; left: var(--x); top: var(--y); height: calc(var(--h) * var(--unit)); aspect-ratio: var(--ar);
-    translate: calc(var(--bx) * -100%) calc(var(--by) * -100%); transform-origin: calc(var(--bx) * 100%) calc(var(--by) * 100%);
+    contain: layout style; translate: calc(var(--bx) * -100%) calc(var(--by) * -100%); transform-origin: calc(var(--bx) * 100%) calc(var(--by) * 100%);
     rotate: var(--r, 0deg); scale: var(--flip, 1) 1; pointer-events: none; }
   .grow svg { display: block; width: 100%; height: 100%; overflow: visible; }
   /* On an upright bed, or one too near square for the row of plants along the foot, the words fill the middle,
@@ -400,13 +390,26 @@
     .moments-show .piece-text { order: 2; }
     .moments-show .moments-host { order: 1; }
   }
-  .moments-host { min-width: 0; }
+  .moments-host { display: block; min-width: 0; text-decoration: none; border-radius: 20px; }
+  .moments-host > [data-moments-card]:empty {
+    aspect-ratio: 3 / 1.1; border-radius: 20px;
+    background: color-mix(in srgb, var(--ink) 3.2%, var(--paper));
+    border: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
+  }
 
   /* Mesh Gradient: four live optical mesh studies sharing one WebGL2 canvas on this page's warm paper or
      night slate, alternating back to text-left / card-right after Moments (mesh/mesh/card.js). */
   .mesh-show { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: clamp(1.75rem, 4vw, 3rem); padding: clamp(3rem, 6vw, 4.5rem) var(--margin); }
   @media (min-width: 64rem) { .mesh-show { grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr); } }
-  .mesh-host { min-width: 0; }
+  .mesh-host { display: block; min-width: 0; text-decoration: none; border-radius: 20px; }
+  .mesh-host > [data-mesh-card]:empty {
+    aspect-ratio: 16 / 5.75; border-radius: 20px;
+    background: color-mix(in srgb, var(--ink) 3.2%, var(--paper));
+    border: 1px solid color-mix(in srgb, var(--ink) 11%, transparent);
+  }
+  @media (max-width: 35rem) {
+    .mesh-host > [data-mesh-card]:empty { aspect-ratio: 1 / 1.18; }
+  }
 
   /* Collage: one card, dealt from the five, playing as it does on its own page; it stays paper by night. */
   .collage-card { display: block; height: 100%; aspect-ratio: 1; max-width: 100%; border-radius: .5rem; }
@@ -685,20 +688,50 @@
     a.dataset.time = ".5";
   });
 
-  // The headline leans with the pointer: where it is across the screen, as -1 to 1, eased by the stylesheet.
+  // Viewport-priority helpers: stylesheets and heavy modules for offscreen sections wait until the reader scrolls
+  // within `margin` of them, so the first screen downloads and parses only what it shows.
+  const stylesLoaded = new Map();
+  const loadStyle = (href) => stylesLoaded.get(href) ?? stylesLoaded.set(href, new Promise((resolve) => {
+    const link = Object.assign(document.createElement("link"), { rel: "stylesheet", href });
+    link.onload = link.onerror = resolve;
+    document.head.append(link);
+  })).get(href);
+
+  const whenNear = (el, fn, rootMargin = "45% 0px") => {
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      fn();
+    }, { rootMargin });
+    io.observe(el);
+  };
+
+  // Both the headline and the bouquet lean with a fine pointer, coalesced into one animation frame and active only
+  // while the opening screen is in view so moving the pointer further down the page never restyles the bouquet.
+  const opening = document.querySelector(".opening");
   const headline = document.querySelector(".headline");
+  const bouquet = document.querySelector(".bouquet");
   if (!calm && matchMedia("(pointer: fine)").matches) {
-    let queued = false, px = 0, py = 0;
-    addEventListener("pointermove", (e) => {
-      [px, py] = [(e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1];
+    let queued = false, cx = innerWidth / 2, cy = innerHeight / 2;
+    const onMove = (e) => {
+      cx = e.clientX;
+      cy = e.clientY;
       if (queued) return;
       queued = true;
       requestAnimationFrame(() => {
         queued = false;
-        headline.style.setProperty("--px", px.toFixed(3));
-        headline.style.setProperty("--py", py.toFixed(3));
+        const nx = cx / innerWidth, ny = cy / innerHeight;
+        headline.style.setProperty("--px", (nx * 2 - 1).toFixed(3));
+        headline.style.setProperty("--py", (ny * 2 - 1).toFixed(3));
+        bouquet.style.setProperty("--px", (nx - .5).toFixed(3));
+        bouquet.style.setProperty("--py", (ny - .5).toFixed(3));
       });
-    }, { passive: true });
+    };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) addEventListener("pointermove", onMove, { passive: true });
+      else removeEventListener("pointermove", onMove);
+    }).observe(opening);
   }
 
   const draw = new IntersectionObserver((entries) => {
@@ -713,192 +746,6 @@
     }
   }, { threshold: .2 });
   document.querySelectorAll(".draw").forEach((el) => draw.observe(el));
-
-  // The bouquet leans away from a fine pointer, nearer planes further.
-  const bouquet = document.querySelector(".bouquet");
-  if (!calm && matchMedia("(pointer: fine)").matches) {
-    addEventListener("pointermove", (e) => {
-      bouquet.style.setProperty("--px", (e.clientX / innerWidth - .5).toFixed(3));
-      bouquet.style.setProperty("--py", (e.clientY / innerHeight - .5).toFixed(3));
-    }, { passive: true });
-  }
-
-  // Portraits: one plane per layer of the portrait, back to front.
-  const stack = document.querySelector("[data-layers]");
-  const layers = await (await fetch("assets/portrait/layers.json")).json();
-  stack.append(...layers.map((layer, i) => {
-    const plane = document.createElement("div");
-    plane.className = "plane";
-    plane.style.setProperty("--i", i);
-    plane.style.setProperty("--n", layers.length);
-    const img = new Image();
-    img.src = `assets/portrait/${layer.name}.svg`;
-    img.alt = "";
-    img.decoding = "async";
-    img.loading = "lazy";
-    plane.append(img);
-    return plane;
-  }));
-  const stage = document.querySelector(".stage"), tilt = stage.querySelector(".tilt");
-  if (!calm && matchMedia("(pointer: fine)").matches) {
-    stage.addEventListener("pointermove", (e) => {
-      const r = stage.getBoundingClientRect();
-      tilt.style.transform = `rotateY(${((e.clientX - r.left) / r.width - .5) * 16}deg) rotateX(${-((e.clientY - r.top) / r.height - .5) * 12}deg)`;
-    });
-    stage.addEventListener("pointerleave", () => { tilt.style.transform = ""; });
-  }
-
-  // Garden: plants from six gardens round the words, each clear of the others so it reads by its own silhouette.
-  // An olive and a thorn branch reach in at the upper corners; a monstera and a bird of paradise, turned to face
-  // in, hold the lower ones; a king protea and a silver lady's mantle stand between them under the words. Only
-  // feet meet: a rabbit-ear iris stands in front of the monstera's stalks, under its leaves. The row fits a bed
-  // 1.4 times as wide as it is high and spreads on a wider one; a narrower bed takes the `upright` places. Each
-  // is anchored at its base, back to front: positions are fractions of the bed, heights percentages of its
-  // height, and a base below the bed's foot is rooted in the ground the bed fades into.
-  const PLANTS = [
-    { name: "olive", x: 0, y: .2, h: 24, upright: { y: .13, h: 22 } },
-    { name: "thorn", x: 1, y: .46, h: 36, flip: true, upright: { y: .27, h: 22 } },
-    { name: "monstera", x: .045, y: 1.04, h: 56, upright: { x: .07, y: .98, h: 40 } },
-    { name: "iris", x: .05, y: 1, h: 16, until: .42, upright: { x: .06, y: .97, h: 16 } },
-    { name: "kingprotea", x: .415, y: 1.06, h: 36, upright: { x: .45, y: .98, h: 26 } },
-    { name: "alchemilla", x: .655, y: .99, h: 19, upright: { x: .69, y: .94, h: 14 } },
-    { name: "strelitzia", x: .885, y: 1.04, h: 44, flip: true, upright: { x: .925, y: .98, h: 34 } },
-  ];
-
-  // Each grows as it does in the Garden (garden/src/main.ts, pared down to a single moment): one progress value
-  // extends each limb inside a clip shaped like a shoot, and opens each leaf, flower and fruit from where it
-  // attaches. A plant from a garden that shows a year grows only `until` late spring, its fullest.
-  const NS = "http://www.w3.org/2000/svg", ROOM = 8, UNFOLD = .08;
-  const clamp = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
-  const unfold = (t) => 1 + 2.4 * (t - 1) ** 3 + 1.4 * (t - 1) ** 2;
-  const bed = document.querySelector("[data-bed]");
-  const plants = await Promise.all(PLANTS.map(async (p, n) => {
-    const el = document.createElement("div");
-    el.className = `grow g-${p.name}`;
-    const u = { ...p, ...p.upright };
-    el.style.cssText = `--wx:${p.x * 100}%;--wy:${p.y * 100}%;--wh:${p.h};--ux:${u.x * 100}%;--uy:${u.y * 100}%;--uh:${u.h}${p.flip ? ";--flip:-1" : ""}`;
-    el.innerHTML = await (await fetch(`assets/garden/${p.name}.svg`)).text();
-    const limbs = [...el.querySelectorAll(".gl")].map((g, i) => {
-      const v = g.dataset.sp.split(" ").map(Number), x = [], y = [], w = [], nx = [], ny = [], s = [0];
-      for (let k = 0; k < v.length; k += 3) x.push(v[k]), y.push(v[k + 1]), w.push(v[k + 2]);
-      for (let k = 0; k < x.length; k++) {
-        const a = Math.max(0, k - 1), b = Math.min(x.length - 1, k + 1), d = Math.hypot(x[b] - x[a], y[b] - y[a]) || 1;
-        nx.push(-(y[b] - y[a]) / d);
-        ny.push((x[b] - x[a]) / d);
-        if (k) s.push(s[k - 1] + Math.hypot(x[k] - x[k - 1], y[k] - y[k - 1]));
-      }
-      const clip = document.createElementNS(NS, "clipPath"), tip = document.createElementNS(NS, "path");
-      clip.id = `bed-${p.name}-${i}`;
-      tip.setAttribute("class", "ink mid");
-      g.before(clip);
-      g.after(tip);
-      return { g, clip: clip.appendChild(document.createElementNS(NS, "path")), tip, x, y, w, nx, ny, s, g0: +g.dataset.g0, g1: +g.dataset.g1, last: -1 };
-    });
-    const parts = [...el.querySelectorAll(".gp")].map((g, i) => {
-      const [x, y] = g.dataset.o.split(" ");
-      return { g, at: +g.dataset.g, o: `${x} ${y}`, back: `${-x} ${-y}`, turn: (i % 2 ? 1 : -1) * 22, last: -1 };
-    });
-    return { el, limbs, parts, k: 0, lag: n * .03, until: p.until ?? 1 };
-  }));
-  bed.prepend(...plants.map((p) => p.el));
-
-  // Clips a growing limb to its spine up to the share t of its length, widened by ROOM on both sides, and
-  // rounds the end into a shoot whose ink arc rides on the tip.
-  function shoot(l, t, k) {
-    const { x, y, w, nx, ny, s } = l, n = x.length, at = t * s[n - 1];
-    let j = 1;
-    while (j < n - 1 && s[j] < at) j++;
-    const u = (at - s[j - 1]) / (s[j] - s[j - 1] || 1);
-    const gx = x[j - 1] + (x[j] - x[j - 1]) * u, gy = y[j - 1] + (y[j] - y[j - 1]) * u, gw = w[j - 1] + (w[j] - w[j - 1]) * u;
-    const len = Math.hypot(x[j] - x[j - 1], y[j] - y[j - 1]) || 1, tx = (x[j] - x[j - 1]) / len, ty = (y[j] - y[j - 1]) / len;
-    const r = gw + .6 * k, pt = (px, py) => `${px.toFixed(1)} ${py.toFixed(1)}`;
-    const side = (i, e, back = 0) => pt(x[i] + nx[i] * e * (w[i] + ROOM) - ny[i] * back, y[i] + ny[i] * e * (w[i] + ROOM) + nx[i] * back);
-    const a = (e, rr) => pt(gx - ty * e * rr, gy + tx * e * rr);
-    let left = side(0, 1, ROOM), right = side(0, -1, ROOM);
-    for (let i = 0; i < j; i++) {
-      left += `L${side(i, 1)}`;
-      right = `${side(i, -1)}L${right}`;
-    }
-    l.clip.setAttribute("d", `M${left}L${a(1, gw + ROOM)}L${a(1, r)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 0 ${a(-1, r)}L${a(-1, gw + ROOM)}L${right}Z`);
-    l.tip.setAttribute("d", `M${a(1, gw)}A${gw.toFixed(1)} ${gw.toFixed(1)} 0 0 0 ${a(-1, gw)}`);
-  }
-
-  // Writes only what has moved since the last frame.
-  function grow(progress) {
-    for (const p of plants) {
-      const q = clamp((progress - p.lag) / (1 - p.lag)) * p.until;
-      for (const l of p.limbs) {
-        const t = clamp((q - l.g0) / (l.g1 - l.g0));
-        if (t === l.last) continue;
-        l.last = t;
-        l.g.style.visibility = t ? "" : "hidden";
-        if (t > 0 && t < 1) {
-          l.g.setAttribute("clip-path", `url(#${l.clip.parentNode.id})`);
-          shoot(l, t, p.k);
-        } else {
-          l.g.removeAttribute("clip-path");
-          l.tip.removeAttribute("d");
-        }
-      }
-      for (const part of p.parts) {
-        const t = clamp((q - part.at) / UNFOLD);
-        if (t === part.last) continue;
-        part.last = t;
-        part.g.style.visibility = t ? "" : "hidden";
-        part.g.style.opacity = t < .3 ? String(t / .3) : "";
-        if (t === 1) part.g.removeAttribute("transform");
-        else part.g.setAttribute("transform", `translate(${part.o}) rotate(${(1 - t) * part.turn}) scale(${unfold(t)}) translate(${part.back})`);
-      }
-    }
-  }
-
-  // The ink keeps one weight at any size: --k is the drawing units per pixel, and a limb's tip is drawn in them.
-  function pen() {
-    for (const p of plants) {
-      const k = +(p.el.querySelector("svg").viewBox.baseVal.height / p.el.clientHeight).toFixed(3);
-      if (k === p.k) continue;
-      p.k = k;
-      p.el.style.setProperty("--k", k);
-      p.limbs.forEach((l) => (l.last = -1));
-    }
-  }
-
-  // The bed grows from when a tenth of it has come into view until its middle sits a little below the screen's,
-  // and the growth eases after the scroll, closing about two thirds of the gap in 75 ms.
-  let aim = 1, shown = 1, then = 0, easing = false;
-  const ease = (now) => {
-    shown += (aim - shown) * (1 - Math.exp(-(now - then) / 75));
-    then = now;
-    if (Math.abs(aim - shown) < 5e-4) shown = aim;
-    grow(Math.round(shown * 400) / 400);
-    easing = shown !== aim;
-    if (easing) requestAnimationFrame(ease);
-  };
-  const place = () => {
-    const r = bed.getBoundingClientRect(), from = innerHeight - r.height * .1, to = innerHeight - .45 * (innerHeight + r.height);
-    return clamp((from - r.top) / (from - to));
-  };
-  const follow = () => {
-    aim = place();
-    if (easing) return;
-    easing = true;
-    then = performance.now();
-    requestAnimationFrame(ease);
-  };
-  new ResizeObserver(() => {
-    pen();
-    grow(Math.round(shown * 400) / 400);
-  }).observe(bed);
-  // The bed follows the scroll only while it is near the screen: elsewhere it rests as it was left, and the page's
-  // scrolling never stops to measure it.
-  if (!calm) {
-    shown = aim = place();
-    new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) addEventListener("scroll", follow, { passive: true });
-      else removeEventListener("scroll", follow);
-      follow();
-    }, { rootMargin: "50% 0px" }).observe(bed);
-  }
 
   // Cut: zero GPU / zero audio until the visitor clicks Play; synchronously unlocks AudioContext on that
   // gesture, lazily imports cut/embed.js, pauses automatically when scrolled away, and restores the poster on close.
@@ -932,30 +779,272 @@
     });
   }
 
-  // Characters: the piece's own field of letters (characters/field.js), in the page's ink and light.
-  import("./characters/field.js").then(({ mount }) => mount(document.querySelector("[data-field] canvas"), { cell: 11, gather: 0.6 }));
+  // Moments: loads its stylesheets and 20-control strip as the reader approaches section 2.
+  {
+    const host = document.querySelector("[data-moments-card]");
+    whenNear(host, async () => {
+      const [, , { mountCard }] = await Promise.all([
+        loadStyle("moments/moments/stage.css"),
+        loadStyle("moments/moments/card.css"),
+        import("./moments/moments/card.js"),
+      ]);
+      mountCard(host);
+    });
+  }
 
-  // Collage: one card from collage/card.js, a motif and an ink dealt at random, as the Collage page deals them.
-  Promise.all([import("./collage/card.js"), import("./collage/motifs.js")]).then(([{ mountCard }, { GROUNDS, MOTIFS }]) => {
-    const pick = (list) => list[Math.floor(Math.random() * list.length)];
-    mountCard(document.querySelector("[data-collage]"), pick(Object.keys(MOTIFS)), { art: "collage/art", ground: pick(Object.keys(GROUNDS)) });
-  });
+  // Mesh Gradient: defers WebGL2 context creation, shader compilation, and Cabinet Grotesk until approached.
+  {
+    const host = document.querySelector("[data-mesh-card]");
+    whenNear(host, async () => {
+      const [, , { mountCard }] = await Promise.all([
+        loadStyle("mesh/mesh/card.css"),
+        loadStyle("https://api.fontshare.com/v2/css?f%5B%5D=cabinet-grotesk@1&display=swap"),
+        import("./mesh/mesh/card.js"),
+      ]);
+      mountCard(host);
+    });
+  }
 
-  // Assembly: a few hands building a miniature of Assembly's page on a sheet, again and again, while it is in view.
-  import("./assembly/show.js").then(({ mount }) => mount(document.querySelector("[data-assembly]")));
+  // Assembly: defers its simulated-hand engine, CSS, and miniature page markup until approached.
+  {
+    const host = document.querySelector("[data-assembly]");
+    whenNear(host, async () => {
+      const { mount } = await import("./assembly/show.js");
+      mount(host);
+    });
+  }
 
-  // Moments: a compact single-row strip rotating three live nonlinear controls at a time across all twenty.
-  import("./moments/moments/card.js").then(({ mountCard }) => mountCard(document.querySelector("[data-moments-card]")));
+  // The horizontal row of works (Characters, Collage, Portraits, Monoline): all four wait until .lineup approaches.
+  {
+    const lineup = document.querySelector(".lineup");
+    whenNear(lineup, () => {
+      // Characters: loads NerdFont glyphs only when the row is near, then paints its glyph atlas once ready.
+      Promise.all([
+        loadStyle("https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@3.3.0/build/victormono-nf-obl.css"),
+        import("./characters/field.js"),
+      ]).then(async ([, { mount }]) => {
+        try { await document.fonts.load('400 16px "VictorMono NF Obl"'); } catch {}
+        mount(document.querySelector("[data-field] canvas"), { cell: 11, gather: 0.6 });
+      });
 
-  // Mesh Gradient: four live optical mesh plates sharing one WebGL2 canvas on the page's own paper and night slate.
-  import("./mesh/mesh/card.js").then(({ mountCard }) => mountCard(document.querySelector("[data-mesh-card]")));
+      // Collage: loads card styles and sculpture drawings only when near.
+      Promise.all([
+        loadStyle("collage/card.css"),
+        import("./collage/card.js"),
+        import("./collage/motifs.js"),
+      ]).then(([, { mountCard }, { GROUNDS, MOTIFS }]) => {
+        const pick = (list) => list[Math.floor(Math.random() * list.length)];
+        mountCard(document.querySelector("[data-collage]"), pick(Object.keys(MOTIFS)), { art: "collage/art", ground: pick(Object.keys(GROUNDS)) });
+      });
 
-  // Monoline: a vase that keeps itself, one arrangement giving way to the next while it is in view (monoline/show.js).
-  import("./monoline/show.js").then(({ mount }) => {
-    const card = document.querySelector("[data-monoline]");
-    mount(card);
-    card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); } });
-  });
+      // Portraits: one plane per layer of the portrait, back to front.
+      fetch("assets/portrait/layers.json").then((r) => r.json()).then((layers) => {
+        const stack = document.querySelector("[data-layers]");
+        stack.append(...layers.map((layer, i) => {
+          const plane = document.createElement("div");
+          plane.className = "plane";
+          plane.style.setProperty("--i", i);
+          plane.style.setProperty("--n", layers.length);
+          const img = new Image();
+          img.src = `assets/portrait/${layer.name}.svg`;
+          img.alt = "";
+          img.decoding = "async";
+          plane.append(img);
+          return plane;
+        }));
+      });
+      const stage = document.querySelector(".stage"), tilt = stage.querySelector(".tilt");
+      if (!calm && matchMedia("(pointer: fine)").matches) {
+        let tiltRaf = 0, tx = 0, ty = 0;
+        stage.addEventListener("pointermove", (e) => {
+          const r = stage.getBoundingClientRect();
+          tx = ((e.clientX - r.left) / r.width - .5) * 16;
+          ty = -((e.clientY - r.top) / r.height - .5) * 12;
+          if (!tiltRaf) tiltRaf = requestAnimationFrame(() => { tiltRaf = 0; tilt.style.transform = `rotateY(${tx.toFixed(2)}deg) rotateX(${ty.toFixed(2)}deg)`; });
+        });
+        stage.addEventListener("pointerleave", () => { tilt.style.transform = ""; });
+      }
+
+      // Monoline: loads card styles and procedural flower-in-glass engine when near.
+      Promise.all([loadStyle("monoline/card.css"), import("./monoline/show.js")]).then(([, { mount }]) => {
+        const card = document.querySelector("[data-monoline]");
+        mount(card);
+        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); } });
+      });
+    }, "50% 0px");
+  }
+
+  // Garden: deferred until the reader approaches the bottom of #work, with pre-baked O(1) limb prefix strings,
+  // cached DOM attribute/visibility state, and layout-free scroll tracking.
+  {
+    const PLANTS = [
+      { name: "olive", x: 0, y: .2, h: 24, upright: { y: .13, h: 22 } },
+      { name: "thorn", x: 1, y: .46, h: 36, flip: true, upright: { y: .27, h: 22 } },
+      { name: "monstera", x: .045, y: 1.04, h: 56, upright: { x: .07, y: .98, h: 40 } },
+      { name: "iris", x: .05, y: 1, h: 16, until: .42, upright: { x: .06, y: .97, h: 16 } },
+      { name: "kingprotea", x: .415, y: 1.06, h: 36, upright: { x: .45, y: .98, h: 26 } },
+      { name: "alchemilla", x: .655, y: .99, h: 19, upright: { x: .69, y: .94, h: 14 } },
+      { name: "strelitzia", x: .885, y: 1.04, h: 44, flip: true, upright: { x: .925, y: .98, h: 34 } },
+    ];
+    const NS = "http://www.w3.org/2000/svg", ROOM = 8, UNFOLD = .08;
+    const clamp = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
+    const unfold = (t) => 1 + 2.4 * (t - 1) ** 3 + 1.4 * (t - 1) ** 2;
+    const pt = (px, py) => `${px.toFixed(1)} ${py.toFixed(1)}`;
+    const bed = document.querySelector("[data-bed]");
+
+    whenNear(bed, async () => {
+      await Promise.all([
+        loadStyle("assets/garden/tokens.css"),
+        loadStyle("assets/garden/paint.css"),
+        loadStyle("assets/garden/anchors.css"),
+      ]);
+      const plants = await Promise.all(PLANTS.map(async (p, n) => {
+        const el = document.createElement("div");
+        el.className = `grow g-${p.name}`;
+        const u = { ...p, ...p.upright };
+        el.style.cssText = `--wx:${p.x * 100}%;--wy:${p.y * 100}%;--wh:${p.h};--ux:${u.x * 100}%;--uy:${u.y * 100}%;--uh:${u.h}${p.flip ? ";--flip:-1" : ""}`;
+        el.innerHTML = await (await fetch(`assets/garden/${p.name}.svg`)).text();
+        const limbs = [...el.querySelectorAll(".gl")].map((g, i) => {
+          const v = g.dataset.sp.split(" ").map(Number), x = [], y = [], w = [], nx = [], ny = [], s = [0];
+          for (let k = 0; k < v.length; k += 3) x.push(v[k]), y.push(v[k + 1]), w.push(v[k + 2]);
+          for (let k = 0; k < x.length; k++) {
+            const a = Math.max(0, k - 1), b = Math.min(x.length - 1, k + 1), d = Math.hypot(x[b] - x[a], y[b] - y[a]) || 1;
+            nx.push(-(y[b] - y[a]) / d);
+            ny.push((x[b] - x[a]) / d);
+            if (k) s.push(s[k - 1] + Math.hypot(x[k] - x[k - 1], y[k] - y[k - 1]));
+          }
+          // Pre-bake cumulative left/right outline prefixes once so shoot() is O(1) per frame during scroll.
+          const side = (idx, e, back = 0) => pt(x[idx] + nx[idx] * e * (w[idx] + ROOM) - ny[idx] * back, y[idx] + ny[idx] * e * (w[idx] + ROOM) + nx[idx] * back);
+          const leftPre = [side(0, 1, ROOM)], rightSuf = [side(0, -1, ROOM)];
+          for (let k = 0; k < x.length; k++) {
+            leftPre.push(`${leftPre[k]}L${side(k, 1)}`);
+            rightSuf.push(`${side(k, -1)}L${rightSuf[k]}`);
+          }
+          const clip = document.createElementNS(NS, "clipPath"), tip = document.createElementNS(NS, "path");
+          const clipUrl = `url(#bed-${p.name}-${i})`;
+          clip.id = `bed-${p.name}-${i}`;
+          tip.setAttribute("class", "ink mid");
+          g.before(clip);
+          g.after(tip);
+          return { g, clip: clip.appendChild(document.createElementNS(NS, "path")), clipUrl, tip, x, y, w, s, leftPre, rightSuf, g0: +g.dataset.g0, g1: +g.dataset.g1, last: -1, vis: true, clipped: false };
+        });
+        const parts = [...el.querySelectorAll(".gp")].map((g, i) => {
+          const [x, y] = g.dataset.o.split(" ");
+          return { g, at: +g.dataset.g, pre: `translate(${x} ${y}) rotate(`, suf: `) translate(${-x} ${-y})`, turn: (i % 2 ? 1 : -1) * 22, last: -1, vis: true, faded: false, settled: true };
+        });
+        return { el, svg: el.querySelector("svg"), limbs, parts, k: 0, lag: n * .03, until: p.until ?? 1 };
+      }));
+      bed.prepend(...plants.map((p) => p.el));
+
+      function shoot(l, t, k) {
+        const { x, y, w, s, leftPre, rightSuf } = l, n = x.length, at = t * s[n - 1];
+        let j = 1;
+        while (j < n - 1 && s[j] < at) j++;
+        const u = (at - s[j - 1]) / (s[j] - s[j - 1] || 1);
+        const gx = x[j - 1] + (x[j] - x[j - 1]) * u, gy = y[j - 1] + (y[j] - y[j - 1]) * u, gw = w[j - 1] + (w[j] - w[j - 1]) * u;
+        const len = Math.hypot(x[j] - x[j - 1], y[j] - y[j - 1]) || 1, tx = (x[j] - x[j - 1]) / len, ty = (y[j] - y[j - 1]) / len;
+        const r = gw + .6 * k, a = (e, rr) => pt(gx - ty * e * rr, gy + tx * e * rr);
+        l.clip.setAttribute("d", `M${leftPre[j]}L${a(1, gw + ROOM)}L${a(1, r)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 0 ${a(-1, r)}L${a(-1, gw + ROOM)}L${rightSuf[j]}Z`);
+        l.tip.setAttribute("d", `M${a(1, gw)}A${gw.toFixed(1)} ${gw.toFixed(1)} 0 0 0 ${a(-1, gw)}`);
+      }
+
+      function grow(progress) {
+        for (const p of plants) {
+          const q = clamp((progress - p.lag) / (1 - p.lag)) * p.until;
+          for (const l of p.limbs) {
+            const t = clamp((q - l.g0) / (l.g1 - l.g0));
+            if (t === l.last) continue;
+            l.last = t;
+            const show = t > 0;
+            if (show !== l.vis) { l.vis = show; l.g.style.visibility = show ? "" : "hidden"; }
+            if (t > 0 && t < 1) {
+              if (!l.clipped) { l.clipped = true; l.g.setAttribute("clip-path", l.clipUrl); }
+              shoot(l, t, p.k);
+            } else if (l.clipped) {
+              l.clipped = false;
+              l.g.removeAttribute("clip-path");
+              l.tip.removeAttribute("d");
+            }
+          }
+          for (const part of p.parts) {
+            const t = clamp((q - part.at) / UNFOLD);
+            if (t === part.last) continue;
+            part.last = t;
+            const show = t > 0;
+            if (show !== part.vis) { part.vis = show; part.g.style.visibility = show ? "" : "hidden"; }
+            if (!show) continue;
+            if (t < .3) {
+              part.faded = true;
+              part.g.style.opacity = (t / .3).toFixed(3);
+            } else if (part.faded) {
+              part.faded = false;
+              part.g.style.opacity = "";
+            }
+            if (t === 1) {
+              if (!part.settled) { part.settled = true; part.g.removeAttribute("transform"); }
+            } else {
+              part.settled = false;
+              part.g.setAttribute("transform", `${part.pre}${((1 - t) * part.turn).toFixed(2)}) scale(${unfold(t).toFixed(3)}${part.suf}`);
+            }
+          }
+        }
+      }
+
+      let bedTop = 0, bedHeight = 1;
+      const measureBed = () => {
+        const r = bed.getBoundingClientRect();
+        bedTop = r.top + scrollY;
+        bedHeight = r.height || 1;
+        for (const p of plants) {
+          const ch = p.el.clientHeight || 1;
+          const k = +(p.svg.viewBox.baseVal.height / ch).toFixed(3);
+          if (k === p.k) continue;
+          p.k = k;
+          p.el.style.setProperty("--k", k);
+          p.limbs.forEach((l) => (l.last = -1));
+        }
+      };
+      const place = () => {
+        const top = bedTop - scrollY, from = innerHeight - bedHeight * .1, to = innerHeight - .45 * (innerHeight + bedHeight);
+        return clamp((from - top) / (from - to));
+      };
+
+      let aim = 1, shown = 1, then = 0, easing = false;
+      const ease = (now) => {
+        shown += (aim - shown) * (1 - Math.exp(-(now - then) / 75));
+        then = now;
+        if (Math.abs(aim - shown) < 5e-4) shown = aim;
+        grow(Math.round(shown * 300) / 300);
+        easing = shown !== aim;
+        if (easing) requestAnimationFrame(ease);
+      };
+      const follow = () => {
+        aim = place();
+        if (easing) return;
+        easing = true;
+        then = performance.now();
+        requestAnimationFrame(ease);
+      };
+
+      measureBed();
+      if (calm) {
+        grow(1);
+      } else {
+        shown = aim = place();
+        grow(Math.round(shown * 300) / 300);
+        new IntersectionObserver(([e]) => {
+          measureBed();
+          if (e.isIntersecting) addEventListener("scroll", follow, { passive: true });
+          else removeEventListener("scroll", follow);
+          follow();
+        }, { rootMargin: "50% 0px" }).observe(bed);
+      }
+      new ResizeObserver(() => {
+        measureBed();
+        grow(Math.round(shown * 300) / 300);
+      }).observe(bed);
+    }, "65% 0px");
+  }
 
   // The row of works (see .lineup in the styles): how many there are; whether they fit the width side by side, each
   // at least --fit wide, or must run sideways through a pinned screen (.is-run); and, running, how much of its
