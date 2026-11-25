@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "rootDir": ".",
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": [
+    "main.ts",
+    "show.ts",
+    "card.ts",
+    "physics.ts",
+    "types.ts",
+    "palette.ts",
+    "renderer.ts",
+    "shaders/*.ts"
+  ]
+}

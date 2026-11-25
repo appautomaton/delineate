@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mesh Gradient · delineate</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070913'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%239EB0FF' stroke-width='3.5'/%3E%3C/svg%3E" type="image/svg+xml" />
+    <meta name="description" content="Four studies in how colour moves through a medium: a frosted ring with one sharp rim, warm plumes rising into clean paper, thin-film crystal splitting the sky, and backlit glass vessels smearing as they slide." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" />
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f%5B%5D=cabinet-grotesk@1&display=swap" />
+    <link rel="stylesheet" href="mesh/stage.css" />
+    <link rel="stylesheet" href="mesh/style.css" />
+  </head>
+  <body data-light="day">
+    <main class="bento-shell" data-exhibition>
+      <div class="bento-grid">
+        <!-- Row 1, Left-A (col 1 / span 4): 01 Frosted Halo -->
+        <article class="bento-tile tile-veil" id="veil" data-tile="veil" aria-labelledby="title-veil">
+          <div class="tile-canvas" data-stage="veil"></div>
+          <div class="tile-chrome">
+            <div class="tile-head">
+              <div class="tile-id">
+                <span class="tile-num" aria-hidden="true">01</span>
+                <h2 class="tile-name" id="title-veil">Frosted Halo</h2>
+              </div>
+            </div>
+            <div class="tile-foot">
+              <div class="spec-row" data-specimens="veil" role="group" aria-label="Frosted Halo forms"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Row 1, Left-B (col 5 / span 4): 02 Thin-Film Crystal -->
+        <article class="bento-tile tile-prism" id="prism" data-tile="prism" aria-labelledby="title-prism">
+          <div class="tile-canvas" data-stage="prism"></div>
+          <div class="tile-chrome">
+            <div class="tile-head">
+              <div class="tile-id">
+                <span class="tile-num" aria-hidden="true">02</span>
+                <h2 class="tile-name" id="title-prism">Thin-Film Crystal</h2>
+              </div>
+            </div>
+            <div class="tile-foot">
+              <div class="spec-row" data-specimens="prism" role="group" aria-label="Thin-Film Crystal solids"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Row 2, Left (col 1 / span 8): 03 Atmospheric Plumes -->
+        <article class="bento-tile tile-plume" id="plume" data-tile="plume" aria-labelledby="title-plume">
+          <div class="tile-strip">
+            <div class="tile-id">
+              <span class="tile-num" aria-hidden="true">03</span>
+              <h2 class="tile-name" id="title-plume">Atmospheric Plumes</h2>
+            </div>
+            <div class="spec-row" data-chords="plume" role="group" aria-label="Plume harmonic chords"></div>
+          </div>
+          <div class="tile-canvas plume-canvas-box" data-stage="plume"></div>
+        </article>
+
+        <!-- Right Pillar (col 9 / span 4; row 1 / span 2): 04 Backlit Vessels -->
+        <article class="bento-tile tile-lantern" id="lantern" data-tile="lantern" data-room="obsidian" aria-labelledby="title-lantern">
+          <div class="tile-canvas" data-stage="lantern"></div>
+          <div class="tile-chrome tile-chrome--lantern">
+            <div class="tile-head">
+              <div class="tile-id">
+                <span class="tile-num" aria-hidden="true">04</span>
+                <h2 class="tile-name" id="title-lantern">Backlit Vessels</h2>
+              </div>
+            </div>
+            <div class="tile-foot tile-foot--lantern">
+              <div class="spec-row" data-specimens="lantern" role="group" aria-label="Backlit Vessels"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Frameless bare-ground colophon & controls: zero card box, zero background colour -->
+      <footer class="bento-foot">
+        <span class="foot-id"><a href="../">delineate</a> / <b>Mesh Gradient</b></span>
+        <div class="foot-right">
+          <div class="foot-controls" role="toolbar" aria-label="Optical controls">
+            <button type="button" class="foot-btn" data-action="palette" title="Cycle harmonic palette">
+              <span class="swatch-dot" data-swatch aria-hidden="true"></span>
+              <span data-palette-label>Periwinkle</span>
+            </button>
+            <span class="foot-dot" aria-hidden="true">·</span>
+            <button type="button" class="foot-btn" data-toggle="motion" aria-pressed="true"><span>Drift</span></button>
+            <span class="foot-dot" aria-hidden="true">·</span>
+            <button type="button" class="foot-btn" data-toggle="light"><span>Night</span></button>
+          </div>
+          <span class="foot-sep" aria-hidden="true"></span>
+          <nav class="foot-nav" aria-label="Links">
+            <a href="https://github.com/appautomaton/delineate/tree/main/mesh">Source</a>
+            <a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/optical-mesh">Skill</a>
+          </nav>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="mesh/main.ts"></script>
+  </body>
+</html>
