@@ -56,6 +56,7 @@ if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
 
 async function run() {
   const clock = new Clock();
+  document.addEventListener("visibilitychange", () => (document.hidden ? clock.sleep() : clock.wake()));
   const marks = new Marks($(".marks"));
   const centre = (): Pt => ({ x: scrollX + innerWidth / 2, y: scrollY + innerHeight * 0.46 });
   const hands = Array.from(
@@ -100,15 +101,30 @@ async function run() {
   root.classList.add("is-built");
   text.textContent = `built by ${HANDS} hands  ·  ${stats.total} pieces  ·  ${stats.settled} clashes settled`;
 
-  // The reveal: the flock follows the reader's pointer, or, until it moves, a slow figure about the screen.
+  // The reveal: the flock follows the reader's pointer at 60 fps, steps down to 24 fps when idle, and sleeps after 10 s.
   let seen: Pt | null = null;
   let client: Pt = { x: innerWidth / 2, y: innerHeight / 2 };
+  let lastInputMs = performance.now();
+  let napTimer = 0;
+  const stir = () => {
+    lastInputMs = performance.now();
+    clock.fps = 60;
+    if (!document.hidden) clock.wake();
+    clearTimeout(napTimer);
+    napTimer = window.setTimeout(() => clock.sleep(), 10000);
+  };
   addEventListener("pointermove", (e) => {
     client = { x: e.clientX, y: e.clientY };
     seen = client;
+    stir();
   });
+  for (const type of ["scroll", "wheel", "keydown", "pointerdown", "touchstart"] as const) {
+    addEventListener(type, stir, { passive: true });
+  }
+  stir();
   const flock = new Flock(hands, clock, centre());
   clock.each((now) => {
+    clock.fps = performance.now() - lastInputMs < 2000 ? 60 : 24;
     flock.target = seen
       ? { x: client.x + scrollX, y: client.y + scrollY }
       : { x: scrollX + innerWidth * (0.5 + 0.3 * Math.sin(now * 0.5)), y: scrollY + innerHeight * (0.5 + 0.25 * Math.sin(now * 0.9)) };

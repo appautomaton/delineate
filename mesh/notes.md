@@ -53,7 +53,8 @@ triptych of analytical asymmetric silk-curtain plumes), and **04 Backlit Vessels
 - `card.ts` & `card.css`: the four-window landing-page preview card (`.mesh-show`), sharing ONE WebGL2 canvas
   across a `4 × 1` desktop (`2 × 2` narrow) grid on delineate's `--paper`/`--ink` tokens (`01`–`04` tabular
   `IBM Plex Mono` numerals + `Cabinet Grotesk` names), syncing hovered slots to `mesh/?plate=<plate>`, caching
-  rects strictly inside `ResizeObserver`, and sleeping completely off-screen.
+  rects strictly inside `ResizeObserver`, pacing ambient drift at `24 fps` (including during host-page scroll)
+  and ramping to `60 fps` on hover or spring motion, and sleeping completely off-screen.
 - `npm run mesh`: serves Mesh Gradient at http://localhost:5400/, rebuilding on save.
 
 ## Rules

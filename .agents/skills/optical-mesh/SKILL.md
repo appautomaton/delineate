@@ -80,7 +80,9 @@ Read `mesh/notes.md` first for the module map and shared layout contracts.
     morphs, or glides, and sleeps completely off-screen via `IntersectionObserver` + `document.hidden` (`0`
     off-screen draws).
   - On `delineate`'s landing card (`card.ts`), all 4 live plates share ONE `MeshRenderer` WebGL2 context via
-    `gl.scissor` + `gl.viewport` with `ResizeObserver`-cached rects (zero `getBoundingClientRect` in RAF).
+    `gl.scissor` + `gl.viewport` with `ResizeObserver`-cached rects (zero `getBoundingClientRect` in RAF),
+    pacing ambient drift at **24 fps** (including during host-page scroll) and ramping to **60 fps** on hover
+    or spring motion (`0` off-screen draws).
 
 ## The task
 

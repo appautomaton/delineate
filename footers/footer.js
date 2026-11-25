@@ -191,10 +191,13 @@
     }
     stir();
 
-    // Pointer parallax: nearer planes drift further, eased toward the pointer.
+    // Pointer parallax: nearer planes drift further, eased toward the pointer at 60 fps and 0 fps at rest.
     const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
-    let targetX = 0, targetY = 0, x = 0, y = 0, frame = 0;
-    const step = () => {
+    const STEP_60 = 1000 / 60, SLACK = 3.5;
+    let targetX = 0, targetY = 0, x = 0, y = 0, frame = 0, nextDue = 0;
+    const step = (now) => {
+      if (nextDue > 0 && now + SLACK < nextDue) { frame = requestAnimationFrame(step); return; }
+      nextDue = nextDue > now - STEP_60 ? nextDue + STEP_60 : now + STEP_60;
       x += (targetX - x) * 0.06;
       y += (targetY - y) * 0.06;
       for (const { el, sway } of planes) {
@@ -205,7 +208,7 @@
     const aim = (nx, ny) => {
       targetX = nx;
       targetY = ny;
-      if (!frame) frame = requestAnimationFrame(step);
+      if (!frame) { nextDue = 0; frame = requestAnimationFrame(step); }
     };
     footer.addEventListener('pointermove', (event) => {
       if (!finePointer.matches || calm.matches) return;

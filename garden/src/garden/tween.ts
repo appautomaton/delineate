@@ -7,15 +7,24 @@ type Options = { duration: number; power: number; onUpdate?: () => void; onCompl
 // The tween each object's numbers are following now, by key; a replaced tween stops at its next frame.
 const current = new WeakMap<object, Map<string, symbol>>();
 
+const STEP_24_MS = 1000 / 24;
+const VSYNC_SLACK_MS = 3.5;
+
 export function tween<T extends object>(target: T, key: keyof T & string, to: number, { duration, power, onUpdate, onComplete }: Options): void {
   const from = target[key] as number;
   const id = Symbol(key);
   if (!current.has(target)) current.set(target, new Map());
   current.get(target)!.set(key, id);
   let start = -1;
+  let nextDue = 0;
   const step = (now: number) => {
     if (current.get(target)!.get(key) !== id) return;
     if (start < 0) start = now;
+    if (nextDue > 0 && now + VSYNC_SLACK_MS < nextDue && now - start < duration) {
+      requestAnimationFrame(step);
+      return;
+    }
+    nextDue = nextDue > now - STEP_24_MS ? nextDue + STEP_24_MS : now + STEP_24_MS;
     const t = Math.min(1, (now - start) / duration);
     (target[key] as number) = from + (to - from) * (1 - (1 - t) ** power);
     onUpdate?.();

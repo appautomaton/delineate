@@ -76,14 +76,16 @@
       // Plankton drifting on their own at night, a quiet field the pointer can stir.
       const drifters = Array.from({ length: 40 }, () => ({ x: rand(0, 1600), y: rand(120, 560), ph: rand(0, 6.3), sp: rand(.2, .6) }));
 
-      let on = false, frame = 0, last = 0, clock = 0, lit = false;
+      const STEP_24 = 1000 / 24, SLACK = 3.5;
+      let on = false, frame = 0, last = 0, nextDue = 0, clock = 0, lit = false;
       const step = (now) => {
         frame = 0;
         if (!on) return;
         frame = requestAnimationFrame(step);
-        // Thirty drawings a second: smooth enough for a school, half the work of the display's rate.
+        // Twenty-four drawings a second, matching the film clock across every footer world.
+        if (nextDue > 0 && now + SLACK < nextDue) return;
+        nextDue = nextDue > now - STEP_24 ? nextDue + STEP_24 : now + STEP_24;
         const dt = Math.min((now - last) / 1000, .05);
-        if (dt < .03) return;
         last = now;
         clock += dt;
         const night = root.dataset.theme === 'night';
@@ -167,7 +169,8 @@
       };
       const setVisible = (visible) => {
         on = visible && !calm.matches;
-        if (on && !frame) { last = performance.now(); frame = requestAnimationFrame(step); }
+        if (on && !frame) { last = performance.now(); nextDue = 0; frame = requestAnimationFrame(step); }
+        else if (!on && frame) { cancelAnimationFrame(frame); frame = 0; }
       };
       return {
         setVisible,

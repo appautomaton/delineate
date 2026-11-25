@@ -91,7 +91,7 @@ export function mount(canvas, { word = "d3lin3at3", bloom = "garden", font = '"V
   let cols = 0, rows = 0, cw = 0, ch = 0, dpr = 1, size = 0;
   let atlas = null, tiles = new Map(), clearance = new Float32Array(0);
   let scale = 200; // px: the size of the field's features on this screen
-  let seen = false, stirred = performance.now(), last = 0, frame = 0;
+  let seen = false, stirred = performance.now(), last = 0, nextDue = 0, raf = 0, frame = 0;
 
   // Each glyph drawn once, in its color, into a strip the frame copies from.
   function paintAtlas() {
@@ -194,20 +194,38 @@ export function mount(canvas, { word = "d3lin3at3", bloom = "garden", font = '"V
     g.globalAlpha = 1;
   }
 
+  const STEP_MS = 1000 / FPS, SLACK_MS = 3.5;
+  function stop() {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  }
+  function schedule() {
+    if (!raf && seen && !document.hidden && !calm.matches) {
+      nextDue = 0;
+      raf = requestAnimationFrame(tick);
+    }
+  }
   function tick(now) {
-    if (!seen) return;
-    requestAnimationFrame(tick);
-    if (now - last < 1000 / FPS || now - stirred > REST) return;
+    raf = 0;
+    if (!seen || document.hidden || now - stirred > REST) return;
+    raf = requestAnimationFrame(tick);
+    if (nextDue > 0 && now + SLACK_MS < nextDue) return;
+    nextDue = nextDue > now - STEP_MS ? nextDue + STEP_MS : now + STEP_MS;
     last = now;
     frame = now / 7000;
     draw(frame);
   }
-  const wake = () => (stirred = performance.now());
+  const wake = () => {
+    stirred = performance.now();
+    schedule();
+  };
+  const onVis = () => (document.hidden ? stop() : schedule());
   for (const type of ["pointermove", "scroll", "keydown", "touchstart", "wheel"]) addEventListener(type, wake, { passive: true });
+  document.addEventListener("visibilitychange", onVis);
 
   const view = new IntersectionObserver(([e]) => {
     seen = e.isIntersecting;
-    if (seen && !calm.matches) requestAnimationFrame(tick);
+    if (seen) schedule();
+    else stop();
   });
   const resize = new ResizeObserver(() => fit());
   // The letters take the page's light: read the colors again when the root's theme changes.
@@ -227,10 +245,12 @@ export function mount(canvas, { word = "d3lin3at3", bloom = "garden", font = '"V
       draw(frame);
     },
     destroy() {
+      stop();
       view.disconnect();
       resize.disconnect();
       theme.disconnect();
       for (const type of ["pointermove", "scroll", "keydown", "touchstart", "wheel"]) removeEventListener(type, wake);
+      document.removeEventListener("visibilitychange", onVis);
       seen = false;
     },
   };

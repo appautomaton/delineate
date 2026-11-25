@@ -23,12 +23,14 @@ for subtle procedural cues synthesized per material.
 - `tiles/fluid.ts`: *Tide Progress*, *Magnet Grid*, *Ripple Pad*.
 - `tiles/index.ts`: the ordered 20-tile poster sequence, arranged so adjacent silhouettes contrast.
 - `show.ts`: mounts the sheet, a curated subset (`slugs`), or a single focused `?tile=`, manages the shared
-  `requestAnimationFrame` clock with automatic sleep when every tile settles, keeps per-tile Loop clocks so
+  `requestAnimationFrame` clock at `60 fps` during active spring motion, `24 fps` between Loop beats, and `0 fps`
+  automatic sleep when settled in Play mode or off-screen, keeps per-tile Loop clocks so
   user interaction never causes a phase jump on resume, pauses out of view or when hidden, and honors
   `prefers-reduced-motion`.
 - `card.ts` & `card.css`: the compact single-row (`3 × 1`) rotating preview card mounted on delineate's
   landing page (`.moments-show`), cycling slot-by-slot through all 20 controls on the host page's own
-  `--paper` and `--ink` in Day and Night, opening the full interactive sheet on click.
+  `--paper` and `--ink` in Day and Night at `24 / 60 fps` (`24 fps` idle or during host-page scroll, `60 fps`
+  during active spring beats, `0 fps` off-screen), opening the full interactive sheet on click.
 - `main.ts`: the standalone page, syncing light with delineate's `delineate-theme` key, syncing the header
   grid dimensions across breakpoints, and supporting `?light=day|night`, `?mode=play|loop`, `?tile=<slug>`,
   and `?sound=on`.

@@ -20,7 +20,9 @@ const SUMMER = 0.6;
 const FALL = 0.08; // the span a leaf or petal takes to fall
 const LOW_TIDE = 0.22; // the share of a water garden's depth shown before scrolling begins
 const UNFOLD = 0.08; // the span of progress a leaf, flower, or fruit takes to open
-const FPS = 30; // growth is slow, so the garden redraws at most this often
+const STEP_60_MS = 1000 / 60; // active scroll growth cadence
+const STEP_24_MS = 1000 / 24; // calm autonomous intro / garden-switch cadence
+const VSYNC_SLACK_MS = 3.5;
 const LAG = 75; // ms for the smoothed scroll to close about two thirds of the gap to the page
 const AUTOPLAY = 6000; // ms touch screens take to play the scroll part of the growth
 const GROW_IN = 1800; // ms a garden takes to grow in when it comes on show
@@ -39,6 +41,8 @@ type Limb = {
   nx: number[];
   ny: number[];
   s: number[];
+  leftPre: string[];
+  rightSuf: string[];
   g0: number;
   g1: number;
   // A stem that dies back in a garden that shows a year: when, and how it last bent.
@@ -46,10 +50,11 @@ type Limb = {
   last: number;
   fell: number;
   clipped: boolean;
+  vis: boolean;
 };
 // A part opens at g and, if it leaves, falls at d: dropping `drop` drawing units to the foot of
 // its plant, drifting `drift` aside and tilting `tilt` degrees as it goes.
-type Part = { el: SVGGElement; g: number; d: number; fade: boolean; o: string; back: string; turn: number; drop: number; drift: number; tilt: number; last: number; fell: number };
+type Part = { el: SVGGElement; g: number; d: number; fade: boolean; o: string; back: string; turn: number; drop: number; drift: number; tilt: number; last: number; fell: number; vis: boolean; opa: string };
 type Water = { body: SVGGElement; maskId: string; grad: SVGLinearGradientElement; edge: SVGPathElement; line: SVGPathElement; masked: boolean; wy: number };
 // boost scales a plant's growth: 1 normally, and rising from 0 while its garden grows in.
 // enter is how far, in CSS pixels, a plant starts from its place (null if it starts there), and
@@ -80,7 +85,8 @@ let frame = "";
 let tideDrawn = "";
 let waterFull = 0;
 let pending = false;
-let lastDraw = 0;
+let nextDue = 0;
+let scrolling = false;
 
 const root = document.documentElement;
 const gardenEl = document.querySelector<HTMLElement>(".garden")!;
@@ -148,13 +154,20 @@ function followScroll() {
     if (!frame) frame = requestAnimationFrame(step);
   };
   const step = (now: number) => {
+    scrolling = true;
     const dt = last ? Math.min(100, Math.max(0, now - last)) : 1000 / 60;
     growth.scroll += (target - growth.scroll) * (1 - Math.exp(-dt / LAG));
     if (Math.abs(target - growth.scroll) < 5e-4) growth.scroll = target;
     const s = growth.scroll;
     requestGarden();
-    last = s === target ? 0 : now;
-    frame = s === target ? 0 : requestAnimationFrame(step);
+    if (s === target) {
+      scrolling = false;
+      last = 0;
+      frame = 0;
+    } else {
+      last = now;
+      frame = requestAnimationFrame(step);
+    }
   };
   addEventListener("scroll", onScroll, { passive: true });
   addEventListener("resize", measure);
@@ -240,8 +253,17 @@ function collect(bed: HTMLElement, lag: number): Plant {
     tip.setAttribute("class", "ink mid");
     el.before(clipPath);
     el.after(tip);
+    const pt = (px: number, py: number) => `${px.toFixed(1)} ${py.toFixed(1)}`;
+    const side = (idx: number, e: number, back = 0) =>
+      pt(x[idx] + nx[idx] * e * (w[idx] + ROOM) - ny[idx] * back, y[idx] + ny[idx] * e * (w[idx] + ROOM) + nx[idx] * back);
+    const leftPre = [side(0, 1, ROOM)];
+    const rightSuf = [side(0, -1, ROOM)];
+    for (let k = 0; k < n; k++) {
+      leftPre.push(`${leftPre[k]}L${side(k, 1)}`);
+      rightSuf.push(`${side(k, -1)}L${rightSuf[k]}`);
+    }
     const d = el.dataset.d === undefined ? Infinity : +el.dataset.d;
-    return { el, id, clip, tip, x, y, w, nx, ny, s, g0: +el.dataset.g0!, g1: +el.dataset.g1!, d, last: -1, fell: -1, clipped: false };
+    return { el, id, clip, tip, x, y, w, nx, ny, s, leftPre, rightSuf, g0: +el.dataset.g0!, g1: +el.dataset.g1!, d, last: -1, fell: -1, clipped: false, vis: true };
   });
   const box = svg.viewBox.baseVal;
   const parts = [...bed.querySelectorAll<SVGGElement>(".gp")].map((el, i): Part => {
@@ -249,7 +271,7 @@ function collect(bed: HTMLElement, lag: number): Plant {
     const drop = box.y + box.height - +y;
     const side = i % 2 ? 1 : -1;
     const d = el.dataset.d === undefined ? Infinity : +el.dataset.d;
-    return { el, g: +el.dataset.g!, d, fade: el.hasAttribute("data-fade"), o: `${x} ${y}`, back: `${-x} ${-y}`, turn: side * 22, drop, drift: side * drop * (0.1 + ((i * 7) % 10) / 50), tilt: side * (50 + ((i * 37) % 70)), last: -1, fell: -1 };
+    return { el, g: +el.dataset.g!, d, fade: el.hasAttribute("data-fade"), o: `${x} ${y}`, back: `${-x} ${-y}`, turn: side * 22, drop, drift: side * drop * (0.1 + ((i * 7) % 10) / 50), tilt: side * (50 + ((i * 37) % 70)), last: -1, fell: -1, vis: true, opa: "" };
   });
   let water: Water | null = null;
   if (GARDENS.find((g) => g.key === bed.dataset.garden)?.water) {
@@ -330,14 +352,15 @@ function scaleInk(plant: Plant, height = plant.bed.offsetHeight) {
   plant.limbs.forEach((limb) => (limb.last = -1));
 }
 
-// The garden redraws at most FPS times a second.
+// The garden redraws at 60 fps during active scroll and 24 fps during calm autonomous growth.
 function requestGarden() {
   if (pending) return;
   pending = true;
   const tick = (now: number) => {
-    if (now - lastDraw < 1000 / FPS - 4) return void requestAnimationFrame(tick);
+    const stepMs = scrolling ? STEP_60_MS : STEP_24_MS;
+    if (nextDue > 0 && now + VSYNC_SLACK_MS < nextDue) return void requestAnimationFrame(tick);
+    nextDue = nextDue > now - stepMs ? nextDue + stepMs : now + stepMs;
     pending = false;
-    lastDraw = now;
     renderGarden();
   };
   requestAnimationFrame(tick);
@@ -434,7 +457,11 @@ function renderGarden() {
       if (t === limb.last && f === limb.fell) continue;
       limb.last = t;
       moved = true;
-      limb.el.style.visibility = t && f < 1 ? "" : "hidden";
+      const vis = Boolean(t && f < 1);
+      if (vis !== limb.vis) {
+        limb.vis = vis;
+        limb.el.style.visibility = vis ? "" : "hidden";
+      }
       if (f !== limb.fell) {
         // Dying back: the stem bends over from its base the way it leans, and fades.
         const n = limb.x.length - 1;
@@ -461,9 +488,14 @@ function renderGarden() {
       if (t === part.last && f === part.fell) continue;
       part.last = t;
       part.fell = f;
-      part.el.style.visibility = t && f < 1 ? "" : "hidden";
+      const vis = Boolean(t && f < 1);
+      if (vis !== part.vis) {
+        part.vis = vis;
+        part.el.style.visibility = vis ? "" : "hidden";
+      }
       if (f > 0 && part.fade) {
-        part.el.style.opacity = String(1 - f);
+        const opa = String(1 - f);
+        if (opa !== part.opa) part.el.style.opacity = part.opa = opa;
         part.el.removeAttribute("transform");
         continue;
       }
@@ -473,11 +505,13 @@ function renderGarden() {
         const sway = Math.sin(f * Math.PI * 3);
         const x = part.drift * f + Math.sign(part.drift) * part.drop * 0.06 * sway;
         const y = part.drop * f * (0.35 + 0.65 * f);
-        part.el.style.opacity = f < 0.5 ? "" : String((1 - f) * 2);
+        const opa = f < 0.5 ? "" : String((1 - f) * 2);
+        if (opa !== part.opa) part.el.style.opacity = part.opa = opa;
         part.el.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) translate(${part.o}) rotate(${(part.tilt * f + 18 * sway).toFixed(1)}) translate(${part.back})`);
         continue;
       }
-      part.el.style.opacity = t < 0.3 ? String(t / 0.3) : "";
+      const opa = t < 0.3 ? String(t / 0.3) : "";
+      if (opa !== part.opa) part.el.style.opacity = part.opa = opa;
       if (t === 1) part.el.removeAttribute("transform");
       else part.el.setAttribute("transform", `translate(${part.o}) rotate(${(1 - t) * part.turn}) scale(${unfold(t)}) translate(${part.back})`);
     }
@@ -554,7 +588,7 @@ function waterPlant(plant: Plant, wy: number) {
 // sides, and rounds the end into a shoot. The tip's ink arc rides on the end, and the clip
 // leaves just enough room past it for that line.
 function shoot(limb: Limb, t: number, k: number) {
-  const { x, y, w, nx, ny, s } = limb;
+  const { x, y, w, s, leftPre, rightSuf } = limb;
   const n = x.length;
   const at = t * s[n - 1];
   let j = 1;
@@ -568,19 +602,10 @@ function shoot(limb: Limb, t: number, k: number) {
   const ty = (y[j] - y[j - 1]) / len;
   const r = gw + 0.6 * k; // the tip's ink is 1.1px wide
   const pt = (px: number, py: number) => `${px.toFixed(1)} ${py.toFixed(1)}`;
-  // Each side runs ROOM past the edge, and starts ROOM behind the base.
-  const side = (i: number, e: number, back = 0) =>
-    pt(x[i] + nx[i] * e * (w[i] + ROOM) - ny[i] * back, y[i] + ny[i] * e * (w[i] + ROOM) + nx[i] * back);
-  let left = side(0, 1, ROOM);
-  let right = side(0, -1, ROOM);
-  for (let i = 0; i < j; i++) {
-    left += `L${side(i, 1)}`;
-    right = `${side(i, -1)}L${right}`;
-  }
   // Normal at the tip is (-ty, tx), so the arc from that side round the front to the other
   // turns through falling angles: sweep 0.
   const a = (e: number, rr: number) => pt(gx - ty * e * rr, gy + tx * e * rr);
-  limb.clip.setAttribute("d", `M${left}L${a(1, gw + ROOM)}L${a(1, r)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 0 ${a(-1, r)}L${a(-1, gw + ROOM)}L${right}Z`);
+  limb.clip.setAttribute("d", `M${leftPre[j]}L${a(1, gw + ROOM)}L${a(1, r)}A${r.toFixed(1)} ${r.toFixed(1)} 0 0 0 ${a(-1, r)}L${a(-1, gw + ROOM)}L${rightSuf[j]}Z`);
   limb.tip.setAttribute("d", `M${a(1, gw)}A${gw.toFixed(1)} ${gw.toFixed(1)} 0 0 0 ${a(-1, gw)}`);
 }
 

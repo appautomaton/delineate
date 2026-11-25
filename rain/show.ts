@@ -132,8 +132,9 @@ export async function mount(host: HTMLElement, o: Options = {}): Promise<Stage> 
   const tick = (now: number) => {
     owed += Math.min(0.25, (now - last) / 1000);
     last = now;
-    if (owed >= STEP) {
-      for (; owed >= STEP; owed -= STEP) step(STEP);
+    if (owed + 0.003 >= STEP) {
+      for (; owed + 0.003 >= STEP; owed -= STEP) step(STEP);
+      if (owed < 0) owed = 0;
       draw();
     }
     frame = requestAnimationFrame(tick);

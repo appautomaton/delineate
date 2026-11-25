@@ -38,6 +38,9 @@ type MountedTile = {
 };
 
 const USER_HOLD_MS = 4500;
+const STEP_60_MS = 1000 / 60;
+const STEP_24_MS = 1000 / 24;
+const VSYNC_SLACK_MS = 3.5;
 
 export function mount(host: HTMLElement, options: StageOptions = {}): Stage {
   const calm = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -66,6 +69,8 @@ export function mount(host: HTMLElement, options: StageOptions = {}): Stage {
   let rafId = 0;
   let inFrame = false;
   let lastNow = 0;
+  let nextDue = 0;
+  let anyAwakeState = true;
   let elapsed = 0;
   let visibleCount = 0;
   const mounted: MountedTile[] = [];
@@ -74,8 +79,10 @@ export function mount(host: HTMLElement, options: StageOptions = {}): Stage {
   const isRunning = () => visibleCount > 0 && !document.hidden;
 
   const schedule = () => {
+    anyAwakeState = true;
     if (rafId || inFrame || !isRunning()) return;
     lastNow = performance.now();
+    nextDue = 0;
     rafId = requestAnimationFrame(frame);
   };
 
@@ -163,6 +170,14 @@ export function mount(host: HTMLElement, options: StageOptions = {}): Stage {
   const frame = (now: number) => {
     rafId = 0;
     if (!isRunning()) return;
+
+    const stepMs = anyAwakeState ? STEP_60_MS : STEP_24_MS;
+    if (nextDue > 0 && now + VSYNC_SLACK_MS < nextDue) {
+      rafId = requestAnimationFrame(frame);
+      return;
+    }
+    nextDue = nextDue > now - stepMs ? nextDue + stepMs : now + stepMs;
+
     inFrame = true;
     const dt = Math.min(0.05, Math.max(0.001, (now - lastNow) / 1000));
     lastNow = now;
@@ -182,6 +197,7 @@ export function mount(host: HTMLElement, options: StageOptions = {}): Stage {
         if (m.awake) anyAwake = true;
       }
     }
+    anyAwakeState = anyAwake;
     inFrame = false;
 
     if (!rafId && (anyAwake || (mode === "loop" && visibleCount > 0))) {

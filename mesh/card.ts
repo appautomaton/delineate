@@ -20,6 +20,13 @@ const TRAY_MIX: Record<Light, number> = {
   night: 0.045,
 };
 
+const STEP_60_MS = 1000 / 60;
+const STEP_24_MS = 1000 / 24;
+const VSYNC_SLACK_MS = 3.5;
+
+const isHostScrolling = (now: number): boolean =>
+  (((window as { __delineateScrollUntil?: number }).__delineateScrollUntil ?? 0) > now);
+
 const mixSrgb = (paper: V3, ink: V3, t: number): V3 => [
   paper[0] + (ink[0] - paper[0]) * t,
   paper[1] + (ink[1] - paper[1]) * t,
@@ -144,6 +151,8 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
   let visible = false;
   let rafId = 0;
   let lastNow = 0;
+  let nextDue = 0;
+  let springsMoving = false;
   let elapsed = 0;
   let hoveredIndex = -1;
   let destroyed = false;
@@ -245,6 +254,14 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
     rafId = 0;
     if (!isRunning()) return;
 
+    const interactive = hoveredIndex >= 0 || (springsMoving && !isHostScrolling(now));
+    const stepMs = interactive ? STEP_60_MS : STEP_24_MS;
+    if (nextDue > 0 && now + VSYNC_SLACK_MS < nextDue) {
+      rafId = requestAnimationFrame(tick);
+      return;
+    }
+    nextDue = nextDue > now - stepMs ? nextDue + stepMs : now + stepMs;
+
     const dt = clamp((now - lastNow) / 1000, 0.001, 0.05);
     lastNow = now;
     if (!reducedMotion) elapsed += dt;
@@ -256,6 +273,7 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
       if (s.py.step(dt)) moving = true;
       if (s.hover.step(dt)) moving = true;
     }
+    springsMoving = moving;
 
     render();
 
@@ -267,6 +285,7 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
   const startLoop = () => {
     if (rafId || !isRunning()) return;
     lastNow = performance.now();
+    nextDue = 0;
     rafId = requestAnimationFrame(tick);
   };
 

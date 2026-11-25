@@ -66,14 +66,16 @@
         const [x, y] = bezier(band.crests[Math.floor(Math.random() * band.crests.length)], Math.random());
         return [x + rand([-3, 3]), y + rand([-2, 1])];
       };
-      let windOn = false, windLast = 0, windClock = 0, windFrame = 0;
+      const STEP_24 = 1000 / 24, SLACK = 3.5;
+      let windOn = false, windLast = 0, windNextDue = 0, windClock = 0, windFrame = 0;
       const blow = (now) => {
         windFrame = 0;
         if (!windOn) return;
         windFrame = requestAnimationFrame(blow);
-        // Thirty drawings a second: enough for blown sand, half the work of the display's rate.
+        // Twenty-four drawings a second, matching the film clock across every footer world.
+        if (windNextDue > 0 && now + SLACK < windNextDue) return;
+        windNextDue = windNextDue > now - STEP_24 ? windNextDue + STEP_24 : now + STEP_24;
         const dt = Math.min((now - windLast) / 1000, 0.05);
-        if (dt < 0.03) return;
         windLast = now;
         windClock += dt;
         // Gusts: a slow swell with a quicker flutter on top, so the sand comes in surges.
@@ -125,7 +127,8 @@
       };
       const setWind = (on) => {
         windOn = on && !calm.matches;
-        if (windOn && !windFrame) { windLast = performance.now(); windFrame = requestAnimationFrame(blow); }
+        if (windOn && !windFrame) { windLast = performance.now(); windNextDue = 0; windFrame = requestAnimationFrame(blow); }
+        else if (!windOn && windFrame) { cancelAnimationFrame(windFrame); windFrame = 0; }
       };
       return {
         setVisible: setWind,

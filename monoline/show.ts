@@ -110,9 +110,16 @@ function become(svg: SVGSVGElement, from: Arrangement, to: Arrangement, ms: numb
   // what the stems' layers held has been taken back
   for (const name of ["submerged", "inside", "bouquet-back", "bouquet"]) groups.get(name)?.replaceChildren();
   const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+  const STEP_24 = 1000 / 24, SLACK = 3.5;
   const t0 = performance.now();
+  let nextDue = 0;
   return new Promise((done) => {
     const frame = (now: number) => {
+      if (nextDue > 0 && now + SLACK < nextDue && now - t0 < ms) {
+        requestAnimationFrame(frame);
+        return;
+      }
+      nextDue = nextDue > now - STEP_24 ? nextDue + STEP_24 : now + STEP_24;
       const t = Math.min(1, (now - t0) / ms), k = ease(t);
       const half = from.half.map(([x, y], i): Pt => [x + (to.half[i][0] - x) * k, y + (to.half[i][1] - y) * k]);
       for (const [name, marks] of Object.entries(empty(half, from.water + (to.water - from.water) * k, "become"))) {

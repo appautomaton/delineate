@@ -54,7 +54,8 @@
         return c;
       })();
 
-      let on = false, frame = 0, last = 0, clock = 0, mx = 800;
+      const STEP_24 = 1000 / 24, SLACK = 3.5;
+      let on = false, frame = 0, last = 0, nextDue = 0, clock = 0, mx = 800;
       const spawn = (night) => {
         if (night) {
           // Most dashes fall in the moon's column, some in the lantern's.
@@ -74,8 +75,9 @@
         frame = 0;
         if (!on) return;
         frame = requestAnimationFrame(draw);
+        if (nextDue > 0 && now + SLACK < nextDue) return;
+        nextDue = nextDue > now - STEP_24 ? nextDue + STEP_24 : now + STEP_24;
         const dt = Math.min((now - last) / 1000, .05);
-        if (dt < .03) return;
         last = now;
         clock += dt;
         const night = root.dataset.theme === 'night';
@@ -119,7 +121,8 @@
       };
       const setVisible = (visible) => {
         on = visible && !calm.matches;
-        if (on && !frame) { last = performance.now(); mx = moonX(); frame = requestAnimationFrame(draw); }
+        if (on && !frame) { last = performance.now(); nextDue = 0; mx = moonX(); frame = requestAnimationFrame(draw); }
+        else if (!on && frame) { cancelAnimationFrame(frame); frame = 0; }
       };
       return {
         setVisible,

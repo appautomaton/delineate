@@ -169,7 +169,24 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
   let targetNx = 0.5;
   let targetNy = 0.5;
   let lastNow = performance.now();
+  let nextDue = 0;
   let rafId = 0;
+  const STEP_60_MS = 1000 / 60;
+  const VSYNC_SLACK_MS = 3.5;
+
+  const stopLoop = () => {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+  };
+
+  const schedule = () => {
+    if (disposed || document.hidden || !inView || rafId) return;
+    lastNow = performance.now();
+    nextDue = 0;
+    rafId = requestAnimationFrame(loop);
+  };
 
   const loadImage = (src: string, assign: (img: HTMLImageElement) => void) => {
     const img = new Image();
@@ -178,6 +195,7 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
       if (disposed) return;
       assign(img);
       dirty = true;
+      schedule();
     };
     img.src = src;
   };
@@ -187,7 +205,10 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
     loadImage(`${assetRoot}plates/${id}.jpg`, (img) => { assets.plates[id] = img; });
   }
   ensureCutFonts(() => {
-    if (!disposed) dirty = true;
+    if (!disposed) {
+      dirty = true;
+      schedule();
+    }
   });
 
   const syncUi = () => {
@@ -214,6 +235,7 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
     userPaused = !playing;
     audio.setPlaying(playing, curFrame / FPS);
     syncUi();
+    if (playing) schedule();
   };
 
   const toggleSound = () => {
@@ -227,11 +249,13 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
     targetNx = Math.max(0, Math.min(1, (e.clientX - r.left) / Math.max(1, r.width)));
     targetNy = Math.max(0, Math.min(1, (e.clientY - r.top) / Math.max(1, r.height)));
     pointer.active = true;
+    schedule();
   };
   const onLeave = () => {
     targetNx = 0.5;
     targetNy = 0.5;
     pointer.active = false;
+    schedule();
   };
 
   const onKey = (e: KeyboardEvent) => {
@@ -240,15 +264,11 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
 
   const onVis = () => {
     if (document.hidden) {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = 0;
-      }
+      stopLoop();
       audio.setPlaying(false, curFrame / FPS);
-    } else if (!disposed && !rafId) {
-      lastNow = performance.now();
+    } else if (!disposed) {
       if (playing && inView) audio.seek(curFrame / FPS, true);
-      rafId = requestAnimationFrame(loop);
+      schedule();
     }
   };
 
@@ -261,11 +281,14 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
           audio.setPlaying(false, curFrame / FPS);
           syncUi();
         }
-      } else if (!userPaused && !playing) {
-        playing = true;
-        lastNow = performance.now();
-        audio.seek(curFrame / FPS, true);
-        syncUi();
+        stopLoop();
+      } else {
+        if (!userPaused && !playing) {
+          playing = true;
+          audio.seek(curFrame / FPS, true);
+          syncUi();
+        }
+        schedule();
       }
     },
     { threshold: 0.12 },
@@ -283,34 +306,46 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
 
   const loop = (now: number) => {
     rafId = 0;
-    if (disposed || document.hidden) return;
+    if (disposed || document.hidden || !inView) return;
+    if (nextDue > 0 && now + VSYNC_SLACK_MS < nextDue) {
+      rafId = requestAnimationFrame(loop);
+      return;
+    }
+    nextDue = nextDue > now - STEP_60_MS ? nextDue + STEP_60_MS : now + STEP_60_MS;
+
     const dt = Math.min(0.1, Math.max(0, (now - lastNow) / 1000));
     lastNow = now;
 
     const damp = 1 - Math.exp(-dt * 8.5);
     const dx = targetNx - pointer.nx;
     const dy = targetNy - pointer.ny;
-    if (Math.abs(dx) > 0.0004 || Math.abs(dy) > 0.0004) {
+    const pointerMoving = Math.abs(dx) > 0.0004 || Math.abs(dy) > 0.0004;
+    if (pointerMoving) {
       pointer.nx += dx * damp;
       pointer.ny += dy * damp;
-      dirty = true;
+      if (!playing) dirty = true;
+    } else if (pointer.nx !== targetNx || pointer.ny !== targetNy) {
+      pointer.nx = targetNx;
+      pointer.ny = targetNy;
     }
 
-    if (playing && inView) {
+    if (playing) {
       accumSec += dt;
-      if (accumSec >= FRAME_DT) {
-        const steps = Math.min(3, Math.floor(accumSec / FRAME_DT));
-        accumSec -= steps * FRAME_DT;
+      if (accumSec + 0.003 >= FRAME_DT) {
+        const steps = Math.max(1, Math.min(3, Math.floor((accumSec + 0.003) / FRAME_DT)));
+        accumSec = Math.max(0, accumSec - steps * FRAME_DT);
         curFrame = (curFrame + steps) % TOTAL_FRAMES;
         dirty = true;
       }
     }
 
     if (dirty || curFrame !== lastRenderedFrame) {
-      drawFrame(curFrame, playing && inView);
+      drawFrame(curFrame, playing);
     }
 
-    rafId = requestAnimationFrame(loop);
+    if (playing || pointerMoving || dirty) {
+      rafId = requestAnimationFrame(loop);
+    }
   };
 
   function close(): void {
@@ -329,7 +364,7 @@ export function mountCutEmbed(host: HTMLElement, opts: EmbedOptions = {}): () =>
   syncUi();
   if (soundOn) audio.setEnabled(true, 0, playing);
   drawFrame(0, false);
-  rafId = requestAnimationFrame(loop);
+  schedule();
 
   return close;
 }

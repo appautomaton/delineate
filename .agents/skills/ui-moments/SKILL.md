@@ -52,8 +52,10 @@ Read `moments/notes.md` first for the module map and the invariants every tile m
   or hover directly into the same physics state that Loop mode drives via `demo(cycleTime, dt)`. Calling
   `ctx.interact()` grants a quiet user-ownership hold without breaking per-tile Loop clocks on resume;
   interrupting any control mid-flight preserves velocity and never snaps or teleports.
-- **Quiet when still, crisp at any refresh rate.** Analytical spring stepping behaves identically at
-  60 Hz, 120 Hz, and 144 Hz. Every `.moment-card` isolates paint with `contain: layout style paint` and is
+- **Quiet when still, crisp at 0 / 24 / 60 fps.** Analytical spring stepping behaves identically across
+  refresh rates while capping active motion at **60 fps** (never oversampling 120 Hz), pacing idle Loop checks
+  and host-page scroll at **24 fps**, and sleeping completely at **0 fps** off-screen or when settled in Play
+  mode. Every `.moment-card` isolates paint with `contain: layout style paint` and is
   culled individually by `IntersectionObserver` so off-screen tiles never tick. Settled tiles sleep between
   beats even in Loop mode (so every `demo()` must call `ctx.wake()` whenever it starts a beat or drives
   continuous motion), and `schedule()` guards re-entrant `ctx.wake()` inside `frame()` so a single shared

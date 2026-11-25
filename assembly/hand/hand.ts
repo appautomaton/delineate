@@ -43,6 +43,10 @@ export class Hand {
   #heading: number | null = null;
   #turn = 0;
   #presses = 0;
+  #placedX = NaN;
+  #placedY = NaN;
+  #placedTurn = NaN;
+  #placedShape: Shape | "" = "";
 
   constructor(clock: Clock, layer: HTMLElement, o: Options) {
     this.clock = clock;
@@ -191,7 +195,16 @@ export class Hand {
     const d = ((want - this.#turn + 540) % 360) - 180;
     this.#turn += d * (this.#heading === null ? 0.25 : 0.35);
     if (Math.abs(this.#turn) < 0.05 && this.#heading === null) this.#turn = 0;
-    this.pointer.shape = this.#heading === null ? this.tool : "arrow";
-    this.pointer.place(this.pos.x, this.pos.y, this.#turn);
+    const nextShape = this.#heading === null ? this.tool : "arrow";
+    if (nextShape !== this.#placedShape) {
+      this.#placedShape = nextShape;
+      this.pointer.shape = nextShape;
+    }
+    if (this.pos.x !== this.#placedX || this.pos.y !== this.#placedY || this.#turn !== this.#placedTurn) {
+      this.#placedX = this.pos.x;
+      this.#placedY = this.pos.y;
+      this.#placedTurn = this.#turn;
+      this.pointer.place(this.pos.x, this.pos.y, this.#turn);
+    }
   }
 }

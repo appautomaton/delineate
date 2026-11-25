@@ -8,6 +8,12 @@ import { TILES } from "./tiles/index.ts";
 const SLOTS = 3;
 const SWAP_INTERVAL_MS = 2700;
 const EXIT_MS = 230;
+const STEP_60_MS = 1000 / 60;
+const STEP_24_MS = 1000 / 24;
+const VSYNC_SLACK_MS = 3.5;
+
+const isHostScrolling = (now: number): boolean =>
+  (((window as { __delineateScrollUntil?: number }).__delineateScrollUntil ?? 0) > now);
 
 type Slot = {
   el: HTMLElement;
@@ -53,6 +59,8 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
 
   let rafId = 0;
   let lastNow = 0;
+  let nextDue = 0;
+  let anyAwake = true;
   let elapsed = 0;
   let visible = false;
   let swapTimer = 0;
@@ -82,6 +90,7 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
     const instance = spec.mount({
       wake() {
         slot.awake = true;
+        anyAwake = true;
       },
       sound() {},
       interact() {},
@@ -90,6 +99,7 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
     slot.stageEl.replaceChildren(instance.el);
     // Render one poised frame immediately so reduced-motion or first paint is crisp.
     slot.awake = instance.step(0.016, elapsed);
+    if (slot.awake) anyAwake = true;
   };
 
   for (let i = 0; i < SLOTS; i++) {
@@ -161,18 +171,29 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
   const frame = (now: number) => {
     rafId = 0;
     if (!isRunning()) return;
+
+    const stepMs = anyAwake && !isHostScrolling(now) ? STEP_60_MS : STEP_24_MS;
+    if (nextDue > 0 && now + VSYNC_SLACK_MS < nextDue) {
+      rafId = requestAnimationFrame(frame);
+      return;
+    }
+    nextDue = nextDue > now - stepMs ? nextDue + stepMs : now + stepMs;
+
     const dt = Math.min(0.05, Math.max(0.001, (now - lastNow) / 1000));
     lastNow = now;
     elapsed += dt;
 
+    let stillAwake = false;
     for (const s of slots) {
       s.demoTime += dt;
       s.instance.demo(s.demoTime, dt);
       if (s.awake) {
         s.awake = false;
         if (s.instance.step(dt, elapsed)) s.awake = true;
+        if (s.awake) stillAwake = true;
       }
     }
+    anyAwake = stillAwake;
 
     rafId = requestAnimationFrame(frame);
   };
@@ -181,6 +202,7 @@ export function mountCard(host: HTMLElement): { destroy(): void } {
     if (calm) return;
     if (!rafId && isRunning()) {
       lastNow = performance.now();
+      nextDue = 0;
       rafId = requestAnimationFrame(frame);
     }
     if (!swapTimer && isRunning()) {

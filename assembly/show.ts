@@ -46,8 +46,12 @@ export async function mount(stage: HTMLElement): Promise<void> {
   // Work only while the sheet can be seen: a new build waits for it, and off screen, or in a tab put aside, the
   // clock sleeps, so the hands stop where they are, mid-stroke, and pick up there.
   let seen: () => void = () => {};
-  let visible = false, near = false;
-  const rest = () => (near && !document.hidden ? clock.wake() : clock.sleep());
+  let visible = false, near = false, holding = false;
+  const rest = () => (near && !document.hidden && !holding ? clock.wake() : clock.sleep());
+  clock.each(() => {
+    const scrolling = (((window as { __delineateScrollUntil?: number }).__delineateScrollUntil ?? 0) > performance.now());
+    clock.fps = scrolling ? 24 : 60;
+  });
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
     if (visible) seen();
@@ -58,6 +62,16 @@ export async function mount(stage: HTMLElement): Promise<void> {
   }).observe(stage);
   document.addEventListener("visibilitychange", rest);
   const inView = () => (visible ? Promise.resolve() : new Promise<void>((done) => (seen = done)));
+  const holdStill = (ms: number) =>
+    new Promise<void>((done) => {
+      holding = true;
+      rest();
+      window.setTimeout(() => {
+        holding = false;
+        rest();
+        done();
+      }, ms);
+    });
 
   for (;;) {
     await inView();
@@ -66,10 +80,11 @@ export async function mount(stage: HTMLElement): Promise<void> {
     const crew = new Crew(sheet, hands, marks, clock, space);
     crew.start();
     await crew.finished;
-    // The finished sheet holds a while, then clears for the next.
-    await clock.wait(4.5);
+    // The finished sheet holds a while at 0 fps, then clears for the next.
+    await holdStill(4500);
+    await inView();
     sheet.classList.add("is-clearing");
-    await clock.wait(0.7);
+    await holdStill(700);
   }
 }
 

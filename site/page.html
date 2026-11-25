@@ -659,7 +659,8 @@
   // A drawing is drawn at 24 frames a second, as film is. Its strands' animations are held, then moved together on
   // the screen's own frames, each to the time of the film frame it falls in, measured from the start, so the
   // cadence never drifts and no frame is skipped; at the end they are finished, as they would have been.
-  const FPS = 24;
+  const FPS = 24, STEP_60 = 1000 / 60, SLACK = 3.5;
+  addEventListener("scroll", () => { window.__delineateScrollUntil = performance.now() + 140; }, { passive: true });
   function film(el) {
     const strands = el.getAnimations({ subtree: true }).filter((a) => a.timeline === document.timeline);
     if (!strands.length) return;
@@ -713,20 +714,23 @@
   const headline = document.querySelector(".headline");
   const bouquet = document.querySelector(".bouquet");
   if (!calm && matchMedia("(pointer: fine)").matches) {
-    let queued = false, cx = innerWidth / 2, cy = innerHeight / 2;
+    let queued = false, dueOpen = 0, cx = innerWidth / 2, cy = innerHeight / 2;
+    const applyOpen = (now) => {
+      if (now + SLACK < dueOpen) { requestAnimationFrame(applyOpen); return; }
+      dueOpen = Math.max(now, dueOpen) + STEP_60;
+      queued = false;
+      const nx = cx / innerWidth, ny = cy / innerHeight;
+      headline.style.setProperty("--px", (nx * 2 - 1).toFixed(3));
+      headline.style.setProperty("--py", (ny * 2 - 1).toFixed(3));
+      bouquet.style.setProperty("--px", (nx - .5).toFixed(3));
+      bouquet.style.setProperty("--py", (ny - .5).toFixed(3));
+    };
     const onMove = (e) => {
       cx = e.clientX;
       cy = e.clientY;
       if (queued) return;
       queued = true;
-      requestAnimationFrame(() => {
-        queued = false;
-        const nx = cx / innerWidth, ny = cy / innerHeight;
-        headline.style.setProperty("--px", (nx * 2 - 1).toFixed(3));
-        headline.style.setProperty("--py", (ny * 2 - 1).toFixed(3));
-        bouquet.style.setProperty("--px", (nx - .5).toFixed(3));
-        bouquet.style.setProperty("--py", (ny - .5).toFixed(3));
-      });
+      requestAnimationFrame(applyOpen);
     };
     new IntersectionObserver(([e]) => {
       if (e.isIntersecting) addEventListener("pointermove", onMove, { passive: true });
@@ -855,14 +859,20 @@
       });
       const stage = document.querySelector(".stage"), tilt = stage.querySelector(".tilt");
       if (!calm && matchMedia("(pointer: fine)").matches) {
-        let tiltRaf = 0, tx = 0, ty = 0;
+        let tiltRaf = 0, dueTilt = 0, tx = 0, ty = 0;
+        const applyTilt = (now) => {
+          if (now + SLACK < dueTilt) { tiltRaf = requestAnimationFrame(applyTilt); return; }
+          dueTilt = Math.max(now, dueTilt) + STEP_60;
+          tiltRaf = 0;
+          tilt.style.transform = `rotateY(${tx.toFixed(2)}deg) rotateX(${ty.toFixed(2)}deg)`;
+        };
         stage.addEventListener("pointermove", (e) => {
           const r = stage.getBoundingClientRect();
           tx = ((e.clientX - r.left) / r.width - .5) * 16;
           ty = -((e.clientY - r.top) / r.height - .5) * 12;
-          if (!tiltRaf) tiltRaf = requestAnimationFrame(() => { tiltRaf = 0; tilt.style.transform = `rotateY(${tx.toFixed(2)}deg) rotateX(${ty.toFixed(2)}deg)`; });
+          if (!tiltRaf) tiltRaf = requestAnimationFrame(applyTilt);
         });
-        stage.addEventListener("pointerleave", () => { tilt.style.transform = ""; });
+        stage.addEventListener("pointerleave", () => { if (tiltRaf) { cancelAnimationFrame(tiltRaf); tiltRaf = 0; } tilt.style.transform = ""; });
       }
 
       // Monoline: loads card styles and procedural flower-in-glass engine when near.
@@ -1009,8 +1019,10 @@
         return clamp((from - top) / (from - to));
       };
 
-      let aim = 1, shown = 1, then = 0, easing = false;
+      let aim = 1, shown = 1, then = 0, dueGarden = 0, easing = false;
       const ease = (now) => {
+        if (now + SLACK < dueGarden) { requestAnimationFrame(ease); return; }
+        dueGarden = Math.max(now, dueGarden) + STEP_60;
         shown += (aim - shown) * (1 - Math.exp(-(now - then) / 75));
         then = now;
         if (Math.abs(aim - shown) < 5e-4) shown = aim;

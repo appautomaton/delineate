@@ -44,8 +44,9 @@ const TILE_DPR_CAP: Record<TileId, number> = {
   veil: 1.5,
 };
 
-const ACTIVE_FRAME_MS = 15.5; // ~60 fps during drag, hover, scroll surge, morphs, or glides
-const AMBIENT_FRAME_MS = 41.0; // ~24 fps calm film cadence when all springs are settled
+const ACTIVE_FRAME_MS = 1000 / 60; // exact 60 fps during drag, hover, scroll surge, morphs, or glides
+const AMBIENT_FRAME_MS = 1000 / 24; // exact 24 fps calm film cadence when all springs are settled
+const VSYNC_SLACK_MS = 3.5; // locks cleanly onto every 2nd (60 fps) or 5th (24 fps) 120 Hz VSync without jitter
 
 const springActive = (s: Spring, epsPos = 5e-4, epsVel = 5e-3): boolean =>
   Math.abs(s.x - s.target) > epsPos || Math.abs(s.v) > epsVel;
@@ -216,6 +217,7 @@ export function mountBento(root: HTMLElement, options: BentoOptions = {}): Bento
 
   let rafId = 0;
   let lastDrawNow = 0;
+  let nextDueMs = 0;
   let lastInteractionMs = -1e9;
   let destroyed = false;
 
@@ -971,15 +973,17 @@ export function mountBento(root: HTMLElement, options: BentoOptions = {}): Bento
     if (!isDocActive()) return;
 
     const active = isActiveCadence(now);
-    const minIntervalMs = active ? ACTIVE_FRAME_MS : AMBIENT_FRAME_MS;
-    const elapsedSinceDraw = lastDrawNow > 0 ? now - lastDrawNow : minIntervalMs;
+    const stepMs = active ? ACTIVE_FRAME_MS : AMBIENT_FRAME_MS;
+    const dirtyVisible = hasDirtyVisible();
 
     // Adaptive 24 fps calm ambient cadence / 60 fps active interaction cadence (never saturates 120 Hz).
-    if (lastDrawNow > 0 && elapsedSinceDraw < minIntervalMs && !hasDirtyVisible()) {
+    if (!dirtyVisible && nextDueMs > 0 && now + VSYNC_SLACK_MS < nextDueMs) {
       rafId = requestAnimationFrame(tick);
       return;
     }
+    nextDueMs = !dirtyVisible && nextDueMs > now - stepMs ? nextDueMs + stepMs : now + stepMs;
 
+    const elapsedSinceDraw = lastDrawNow > 0 ? now - lastDrawNow : stepMs;
     const dt = clamp(elapsedSinceDraw / 1000, 0.001, 0.05);
     lastDrawNow = now;
 

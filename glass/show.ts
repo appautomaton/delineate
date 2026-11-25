@@ -216,9 +216,17 @@ export async function mount(host: HTMLElement, o: Options): Promise<Stage> {
     become();
   });
 
-  // Every frame the screen offers while the stage is in view; a long gap (a tab put aside) is not run through.
-  let seen = false, raf = 0, last = 0;
+  // 60 fps under the pointer or during a melt; 24 fps calm wander otherwise; 0 fps out of view.
+  const STEP_60 = 1000 / 60, STEP_24 = 1000 / 24, SLACK = 3.5;
+  let seen = false, raf = 0, last = 0, nextDue = 0;
   const tick = (now: number) => {
+    const active = pointer !== null || next >= 0 || coming >= 0 || !settled;
+    const stepMs = active ? STEP_60 : STEP_24;
+    if (nextDue > 0 && now + SLACK < nextDue) {
+      raf = requestAnimationFrame(tick);
+      return;
+    }
+    nextDue = nextDue > now - stepMs ? nextDue + stepMs : now + stepMs;
     advance(Math.min(0.05, (now - last) / 1000));
     last = now;
     frame();
@@ -226,7 +234,7 @@ export async function mount(host: HTMLElement, o: Options): Promise<Stage> {
   };
   const run = () => {
     const on = seen && !document.hidden;
-    if (on && !raf) (last = performance.now()), (raf = requestAnimationFrame(tick));
+    if (on && !raf) (last = performance.now()), (nextDue = 0), (raf = requestAnimationFrame(tick));
     else if (!on && raf) cancelAnimationFrame(raf), (raf = 0);
   };
   if (!still) {

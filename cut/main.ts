@@ -89,6 +89,7 @@ const loadImage = (src: string, assign: (img: HTMLImageElement) => void) => {
   img.onload = () => {
     assign(img);
     dirty = true;
+    schedule();
   };
   img.onerror = () => {
     // Graceful null fallback if optional plate asset is not present yet
@@ -155,6 +156,7 @@ const togglePlay = () => {
   playing = !playing;
   audio.setPlaying(playing, curFrame / FPS);
   syncButtons();
+  if (playing) schedule();
 };
 
 const toggleSound = () => {
@@ -169,6 +171,7 @@ const stepFrame = (delta: number) => {
   audio.seek(curFrame / FPS, false);
   dirty = true;
   syncButtons();
+  schedule();
 };
 
 const updateHud = (frame: number) => {
@@ -230,6 +233,7 @@ const scrubFromEvent = (e: PointerEvent) => {
   const u = Math.max(0, Math.min(0.9999, (e.clientX - r.left) / Math.max(1, r.width)));
   curFrame = Math.floor(u * TOTAL_FRAMES);
   dirty = true;
+  schedule();
 };
 
 timeline.addEventListener("pointerdown", (e) => {
@@ -256,11 +260,13 @@ glCanvas.addEventListener("pointermove", (e) => {
   targetNx = Math.max(0, Math.min(1, (e.clientX - r.left) / Math.max(1, r.width)));
   targetNy = Math.max(0, Math.min(1, (e.clientY - r.top) / Math.max(1, r.height)));
   pointer.active = true;
+  schedule();
 });
 glCanvas.addEventListener("pointerleave", () => {
   pointer.active = false;
   targetNx = 0.5;
   targetNy = 0.5;
+  schedule();
 });
 glCanvas.addEventListener("click", togglePlay);
 
@@ -282,23 +288,41 @@ addEventListener("keydown", (e) => {
   }
 });
 
-// Exact 24 fps quantized film scheduler + smooth exponential pointer damping
+// Exact 24 fps quantized film scheduler + 60 fps pointer damping + 0 fps paused sleep
+const STEP_60_MS = 1000 / 60;
+const VSYNC_SLACK_MS = 3.5;
 let lastNow = performance.now();
+let nextDue = 0;
 let rafId = 0;
+
+function schedule(): void {
+  if (document.hidden || rafId) return;
+  lastNow = performance.now();
+  nextDue = 0;
+  rafId = requestAnimationFrame(loop);
+}
 
 const loop = (now: number) => {
   rafId = 0;
   if (document.hidden) return;
+  if (nextDue > 0 && now + VSYNC_SLACK_MS < nextDue) {
+    rafId = requestAnimationFrame(loop);
+    return;
+  }
+  nextDue = nextDue > now - STEP_60_MS ? nextDue + STEP_60_MS : now + STEP_60_MS;
+
   const dt = Math.min(0.1, Math.max(0, (now - lastNow) / 1000));
   lastNow = now;
 
   // Smooth exponential spring glide toward pointer target (or back to optical center (0.5, 0.5))
+  let pointerMoving = false;
   if (!reduced) {
     const goalX = pointer.active ? targetNx : 0.5;
     const goalY = pointer.active ? targetNy : 0.5;
     const dx = goalX - pointer.nx;
     const dy = goalY - pointer.ny;
     if (Math.abs(dx) > 0.0004 || Math.abs(dy) > 0.0004) {
+      pointerMoving = true;
       const damp = 1 - Math.exp(-dt * 8.5);
       pointer.nx += dx * damp;
       pointer.ny += dy * damp;
@@ -311,9 +335,9 @@ const loop = (now: number) => {
 
   if (playing && !scrubbing) {
     accumSec += dt;
-    if (accumSec >= FRAME_DT) {
-      const steps = Math.min(3, Math.floor(accumSec / FRAME_DT));
-      accumSec -= steps * FRAME_DT;
+    if (accumSec + 0.003 >= FRAME_DT) {
+      const steps = Math.max(1, Math.min(3, Math.floor((accumSec + 0.003) / FRAME_DT)));
+      accumSec = Math.max(0, accumSec - steps * FRAME_DT);
       curFrame = (curFrame + steps) % TOTAL_FRAMES;
       dirty = true;
     }
@@ -323,7 +347,9 @@ const loop = (now: number) => {
     drawFrame(curFrame, playing && !scrubbing);
   }
 
-  rafId = requestAnimationFrame(loop);
+  if (playing || scrubbing || pointerMoving || dirty) {
+    rafId = requestAnimationFrame(loop);
+  }
 };
 
 document.addEventListener("visibilitychange", () => {
@@ -333,10 +359,9 @@ document.addEventListener("visibilitychange", () => {
       rafId = 0;
     }
     audio.setPlaying(false, curFrame / FPS);
-  } else if (!rafId) {
-    lastNow = performance.now();
+  } else {
     if (playing) audio.seek(curFrame / FPS, true);
-    rafId = requestAnimationFrame(loop);
+    schedule();
   }
 });
 
@@ -350,8 +375,9 @@ if (document.fonts) {
     .then(() => document.fonts.ready)
     .then(() => {
       dirty = true;
+      schedule();
     });
 }
 
 drawFrame(curFrame, false);
-rafId = requestAnimationFrame(loop);
+schedule();
