@@ -42,7 +42,7 @@ export const CARDS: Card[] = [
           .headline { font-size: 80px; }
           .opening .works { max-width: none; margin: 2rem 0 0; font: 500 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--soft); }`,
       });
-      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Cut · Moments · Mesh · Assembly · Characters · Collage · Portraits · Garden · Footers</p>')`);
+      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Cut · Moments · Mesh · Assembly · Patch · Characters · Collage · Portraits · Garden · Footers</p>')`);
       await page.waitForFunction("document.querySelector('.headline.is-drawn') && document.querySelector('.bouquet.is-drawn')");
       await settle(page, 1600); // the headline's wash settles under its strokes
     },
@@ -181,6 +181,21 @@ export const CARDS: Card[] = [
       await page.evaluate("document.fonts.ready");
       await page.waitForFunction("document.querySelector('.share .mg-tray')");
       await settle(page, 900);
+    },
+  },
+  {
+    page: "patch/",
+    render: "patch/?light=day&seed=2026&still=1",
+    alt: "Patch: six annual embroidered patches—APEX, PELAGIC, FLORA, HELIOS, KINETIC, and RELAY—laid at slight angles on warm paper across twill, wool felt, cotton duck, and ripstop.",
+    async prepare(page) {
+      await page.addStyleTag({
+        content: `.patch-foot { display: none !important; }
+          .patch-shell { min-height: 100vh !important; padding: 14px 28px !important; }
+          .patch-grid { grid-template-rows: repeat(2, 286px) !important; gap: 10px !important; }`,
+      });
+      await page.waitForFunction("Boolean(window.__PATCH_READY__)");
+      await page.evaluate("window.dispatchEvent(new Event('resize'))");
+      await settle(page, 500);
     },
   },
 ];

@@ -411,6 +411,11 @@
     .mesh-host > [data-mesh-card]:empty { aspect-ratio: 1 / 1.18; }
   }
 
+  /* Patch: one dealt embroidered badge resting at a slight angle on this page's paper, peeling to <svg> under the pointer. */
+  .patch-host { display: block; width: 100%; height: 100%; text-decoration: none; border-radius: .5rem; }
+  .patch-host > [data-patch-card] { width: 100%; height: 100%; }
+  .patch-host:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+
   /* Collage: one card, dealt from the five, playing as it does on its own page; it stays paper by night. */
   .collage-card { display: block; height: 100%; aspect-ratio: 1; max-width: 100%; border-radius: .5rem; }
   .work-art .ml { height: 100%; max-width: 100%; border-radius: .5rem; }
@@ -590,7 +595,16 @@
       <div class="lineup">
         <div class="lineup-frame">
           <div class="lineup-track">
-            <article class="work" style="--i: 0" data-name="Characters" aria-labelledby="characters">
+            <article class="work" style="--i: 0" data-name="Patch" aria-labelledby="patch">
+              <div class="work-art"><a class="patch-host" href="patch/" aria-label="Open Patch"><div data-patch-card aria-hidden="true"></div></a></div>
+              <div class="piece-text">
+                <h2 id="patch"><span>Patch</span></h2>
+                <p>Six embroidered patches stitched in WebGL2 from standalone vector blueprints—twill, wool felt, cotton duck, and ripstop, bound in Merrow thread. Sweep across one to peel the stitches back to the drawing.</p>
+                <div class="take"><a class="link" href="patch/">Open</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/patch">Source</a><a class="link" href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/embroidered-micrographic">Skill</a></div>
+              </div>
+            </article>
+
+            <article class="work" style="--i: 1" data-name="Characters" aria-labelledby="characters">
               <div class="work-art"><div class="field" data-field aria-hidden="true"><canvas></canvas></div></div>
               <div class="piece-text">
                 <h2 id="characters"><span>Characters</span></h2>
@@ -599,7 +613,7 @@
               </div>
             </article>
 
-            <article class="work" style="--i: 1" data-name="Collage" aria-labelledby="collage">
+            <article class="work" style="--i: 2" data-name="Collage" aria-labelledby="collage">
               <div class="work-art"><a class="collage-card" href="collage/" aria-label="Open Collage"><div data-collage></div></a></div>
               <div class="piece-text">
                 <h2 id="collage"><span>Collage</span></h2>
@@ -608,7 +622,7 @@
               </div>
             </article>
 
-            <article class="work" style="--i: 2" data-name="Portraits" aria-labelledby="portraits">
+            <article class="work" style="--i: 3" data-name="Portraits" aria-labelledby="portraits">
               <div class="work-art"><a class="stage" href="portraits/paprika-girl/" aria-label="Open Portraits">
                 <div class="tilt"><div class="stack" data-layers></div></div></a></div>
               <div class="piece-text">
@@ -618,7 +632,7 @@
               </div>
             </article>
 
-            <article class="work" style="--i: 3" data-name="Monoline" aria-labelledby="monoline">
+            <article class="work" style="--i: 4" data-name="Monoline" aria-labelledby="monoline">
               <div class="work-art"><div data-monoline role="button" tabindex="0" aria-label="Another vase"></div></div>
               <div class="piece-text">
                 <h2 id="monoline"><span>Monoline</span></h2>
@@ -818,10 +832,18 @@
     });
   }
 
-  // The horizontal row of works (Characters, Collage, Portraits, Monoline): all four wait until .lineup approaches.
+  // The horizontal row of works (Patch, Characters, Collage, Portraits, Monoline): all five wait until .lineup approaches.
   {
     const lineup = document.querySelector(".lineup");
     whenNear(lineup, () => {
+      // Patch: loads card styles and bakes one dealt embroidered badge into a 1x1 WebGL2 tile when near.
+      Promise.all([
+        loadStyle("patch/patch/card.css"),
+        import("./patch/patch/card.js"),
+      ]).then(([, { mountCard }]) => {
+        mountCard(document.querySelector("[data-patch-card]"));
+      });
+
       // Characters: loads NerdFont glyphs only when the row is near, then paints its glyph atlas once ready.
       Promise.all([
         loadStyle("https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@3.3.0/build/victormono-nf-obl.css"),

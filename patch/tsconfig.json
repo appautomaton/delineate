@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "rootDir": ".",
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": [
+    "main.ts",
+    "show.ts",
+    "card.ts",
+    "renderer.ts",
+    "shader.ts",
+    "badges.ts",
+    "shapes.ts",
+    "glyphs.ts",
+    "physics.ts"
+  ]
+}

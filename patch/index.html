@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Patch · Embroidered Micrographic · delineate</title>
+    <meta
+      name="description"
+      content="Six annual embroidered micrographic patches (2026–2031) rendered in real-time WebGL2 directly from homologous standalone SVG blueprints across six silhouettes and four woven textiles."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='6' width='28' height='20' rx='6' fill='%23141516' stroke='%23F2F2F4' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='5' fill='none' stroke='%23D9412B' stroke-width='1.8'/%3E%3C/svg%3E"
+      type="image/svg+xml"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f%5B%5D=cabinet-grotesk@1&display=swap"
+    />
+    <link rel="stylesheet" href="patch/style.css" />
+  </head>
+  <body data-light="day">
+    <main class="patch-shell" data-exhibition>
+      <!-- Single shared WebGL2 canvas overlay across the entire 3x2 grid & inspection modal -->
+      <canvas class="patch-gl" data-gl-canvas aria-hidden="true"></canvas>
+
+      <!-- Responsive 3x2 Specimen Sheet -->
+      <section class="patch-grid" data-grid aria-label="2026–2031 Embroidered Micrographic Specimen Sheet"></section>
+
+      <!-- Frameless bare-ground colophon & controls (zero box, zero SaaS chrome) -->
+      <footer class="patch-foot">
+        <span class="foot-id">
+          <a href="../">delineate</a> / <b>Patch</b>
+          <span class="foot-hint">· 2026–2031 · sweep across a badge for monochrome &lt;svg&gt;, click to inspect</span>
+        </span>
+        <div class="foot-right">
+          <div class="foot-controls" role="toolbar" aria-label="View controls">
+            <span class="foot-label">View</span>
+            <button type="button" class="foot-btn" data-view="stitch" aria-pressed="true">Stitch</button>
+            <span class="foot-dot" aria-hidden="true">·</span>
+            <button type="button" class="foot-btn" data-view="split" aria-pressed="false">Split</button>
+            <span class="foot-dot" aria-hidden="true">·</span>
+            <button type="button" class="foot-btn" data-view="svg" aria-pressed="false">Blueprint</button>
+            <span class="foot-sep" aria-hidden="true"></span>
+            <button type="button" class="foot-btn" data-action="shuffle">Shuffle</button>
+            <span class="foot-sep" aria-hidden="true"></span>
+            <button type="button" class="foot-btn" data-toggle="light"><span>Night</span></button>
+          </div>
+          <span class="foot-sep" aria-hidden="true"></span>
+          <nav class="foot-nav" aria-label="Links">
+            <a href="https://github.com/appautomaton/delineate/tree/main/patch">Source</a>
+            <a href="https://github.com/appautomaton/delineate/tree/main/.agents/skills/embroidered-micrographic">Skill</a>
+          </nav>
+        </div>
+      </footer>
+
+      <!-- Dual-Plate Museum Inspection Modal (?badge=2026..2031) -->
+      <div class="modal-backdrop" data-modal hidden aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-sheet">
+          <header class="modal-head">
+            <div class="modal-title-group">
+              <span class="modal-year" data-modal-year>2026</span>
+              <h2 class="modal-title" data-modal-title>APEX — Supersonic Flight Test</h2>
+              <span class="modal-meta" data-modal-meta>Rounded Rect · 2/1 Carbon Z-Twill</span>
+            </div>
+            <div class="modal-nav">
+              <button type="button" class="modal-icon-btn" data-modal-prev aria-label="Previous badge">←</button>
+              <button type="button" class="modal-icon-btn" data-modal-next aria-label="Next badge">→</button>
+              <button type="button" class="modal-icon-btn modal-close" data-modal-close aria-label="Close inspection">×</button>
+            </div>
+          </header>
+
+          <div class="modal-plates">
+            <!-- LEFT PLATE: Pure Standalone <svg> Vector Blueprint -->
+            <section class="modal-plate" aria-label="Standalone SVG vector blueprint">
+              <div class="plate-head">
+                <span class="plate-tag">01 · Vector Source &lt;svg&gt;</span>
+                <div class="plate-actions">
+                  <button type="button" class="plate-btn" data-action="copy-svg">Copy &lt;svg&gt;</button>
+                  <button type="button" class="plate-btn plate-btn--primary" data-action="export-svg">Export .svg</button>
+                </div>
+              </div>
+              <div class="plate-stage plate-stage--svg" data-modal-svg-host></div>
+              <div class="plate-foot">
+                <div class="modal-swatches" data-modal-swatches></div>
+              </div>
+            </section>
+
+            <!-- RIGHT PLATE: Large Macro WebGL2 Embroidered Patch + Draggable Split Loupe -->
+            <section class="modal-plate" aria-label="Macro WebGL2 embroidered render">
+              <div class="plate-head">
+                <span class="plate-tag">02 · WebGL2 Macro Embroidery</span>
+                <span class="plate-dim">drag hairline to scrub &lt;svg&gt; ↔ stitch</span>
+              </div>
+              <div class="plate-stage plate-stage--macro" data-modal-macro-stage>
+                <div class="card-svg-wrap" data-modal-macro-svg></div>
+                <div class="modal-hairline" data-modal-hairline aria-hidden="true"></div>
+                <div class="modal-handle" data-modal-handle aria-hidden="true">
+                  <span>‹ ›</span>
+                </div>
+              </div>
+              <div class="plate-foot">
+                <span class="plate-note">Live anisotropic studio sheen · 0.00 px registration</span>
+                <div class="plate-actions">
+                  <button type="button" class="plate-btn" data-modal-split="0" aria-pressed="true">Stitch</button>
+                  <button type="button" class="plate-btn" data-modal-split="0.5" aria-pressed="false">Split</button>
+                  <button type="button" class="plate-btn" data-modal-split="1" aria-pressed="false">SVG</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="patch/main.ts"></script>
+  </body>
+</html>
