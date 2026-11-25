@@ -33,7 +33,7 @@ export type World = keyof typeof WORLDS;
 // light it opens in when there is none yet (null: the system's).
 export const SITES = {
   automaton: { worlds: ["desert", "lijiang", "deep", "alfama", "glasshouse", "observatory", "crayon"], store: "automaton", theme: null },
-  delineate: { worlds: ["desert", "lijiang", "deep", "alfama", "glasshouse", "observatory", "crayon"], store: "delineate", theme: "day" },
+  delineate: { worlds: ["crayon", "desert", "lijiang", "deep", "alfama", "glasshouse", "observatory"], store: "delineate", theme: "day" },
 } satisfies Record<string, { worlds: World[]; store: string; theme: "day" | "night" | null }>;
 export type Site = keyof typeof SITES;
 

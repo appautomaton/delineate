@@ -9,20 +9,23 @@ region maps, which are media and stay local.
 ## How it is built
 
 - **`page.html`**: the page, with `{{NAME}}` holes for what is drawn. In order: the opening, a headline beside a
-  crayon bouquet that parts as the page scrolls; Garden, plants from six gardens round its words, each
-  growing as the Garden grows it while the bed crosses the screen; Footers, the component itself, so the section
-  is the world; Characters, the piece's own field of letters (`characters/field.js`); Portraits, Paprika Girl's planes, parted along the section's view
-  timeline and tilted by the pointer; and the page's own footer, a crayon landscape in six planes. The corner
-  button switches day and night for the whole page by pressing the footer's own switch, which keeps the light.
-- **`build.ts`**: fills the holes and writes `dist/`. From Footers it takes the crayon world's generator for the
-  foot of the page (under ids of its own, since the Footers section may show the same world), the crayon's
-  grain, and the component built as a kit for this site (`footers/sites/delineate.html`). From Garden, its tokens,
-  paint and anchors, and the plants the page's `PLANTS` names. From Portraits, Paprika Girl. Beside the page it
-  writes the work each section opens, each as it stands on its own: the Garden at `garden/` (built by
-  `garden/build.ts`, its paths relative to the page), the Footers demo at `footers/`, Characters at
-  `characters/`, Paprika Girl's separation page at `portraits/paprika-girl/`, and the studies the footer lists
-  under Studies, small pieces the page does not show: Rain at `rain/` and Glass at `glass/`. Each wears the site's tab mark, since a page with no icon of its
-  own has the browser ask for a `/favicon.ico` the site does not have.
+  crayon bouquet that parts as the page scrolls; Cut, an eighteen-second 24 fps WebGL2 film resting as a keyframe
+  poster until played; Moments, Mesh Gradient, and Assembly, alternating left and right across the sheet; the
+  horizontal row of works (Characters, Collage, Portraits, Monoline); Garden, plants from six gardens round its
+  words, growing as the bed crosses the screen directly above the horizon; and at the foot of the page, the real
+  Footers component itself as `delineate`'s own footer — opening on
+  the Crayon world as its first pill (on the page's own paper) and switching across all seven worlds. Both the
+  floating corner sun/moon button and the footer's own switch share one `data-theme` state (`delineate-theme`),
+  and the corner button docks away while the footer's own switch is in view.
+- **`build.ts`**: fills the holes and writes `dist/`. From Footers it takes the crayon's grain and the component
+  built apart for `delineate` (`footers/sites/delineate.html`), carrying Crayon inline and writing the other six
+  worlds into `assets/footers/`. From Garden, its tokens, paint and anchors, and the plants the page's `PLANTS`
+  names. From Portraits, Paprika Girl. Beside the page it writes the work each section opens, each as it stands on
+  its own: Cut at `cut/`, the Garden at `garden/` (built by `garden/build.ts`, its paths relative to the page),
+  the Footers demo at `footers/`, Characters at `characters/`, Collage at `collage/`, Paprika Girl's separation
+  page at `portraits/paprika-girl/`, Assembly at `assembly/`, Moments at `moments/`, Mesh Gradient at `mesh/`, and
+  the studies the footer lists under Studies: Rain at `rain/` and Glass at `glass/`. Each wears the site's tab mark,
+  since a page with no icon of its own has the browser ask for a `/favicon.ico` the site does not have.
 - **`hero.ts`**, **`icons.ts`**: the bouquet and the icons, drawn with the Footers' crayon (`footers/crayon/`).
   `icons.ts` also draws the tab's mark, flat, since at sixteen pixels the grain is only noise.
 - **`portrait.ts`**: splits a layered portrait into one standalone SVG per plane, each keeping the frame and

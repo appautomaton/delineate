@@ -2,7 +2,8 @@
 
 A site's footer as a small illustrated world, one of seven, each drawn in its own medium, entered by scroll
 in parallax planes, and shown by day or by night. It is a component: the Automaton demo page wears it, and
-delineate's own page shows it as its Footers section (see `site/notes.md`). `npm run footers` writes the demo
+delineate's own page wears it directly as its real site footer, opening on Crayon as its first pill (see
+`site/notes.md`). `npm run footers` writes the demo
 as one self-contained file, `footers/automaton.html` (about 3.9 MB, not tracked); open it with `?world=<id>` to
 choose a world. `node footers/build.ts --kit <site> <out.html>` writes the footer alone for a site to embed.
 Everything here is TypeScript that Node runs as it stands, with no build step and no dependencies.

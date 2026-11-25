@@ -42,7 +42,7 @@ export const CARDS: Card[] = [
           .headline { font-size: 80px; }
           .opening .works { max-width: none; margin: 2rem 0 0; font: 500 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--soft); }`,
       });
-      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Cut · Garden · Footers · Characters · Collage · Portraits · Assembly · Moments</p>')`);
+      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Cut · Moments · Mesh · Assembly · Characters · Collage · Portraits · Garden · Footers</p>')`);
       await page.waitForFunction("document.querySelector('.headline.is-drawn') && document.querySelector('.bouquet.is-drawn')");
       await settle(page, 1600); // the headline's wash settles under its strokes
     },
@@ -104,10 +104,17 @@ export const CARDS: Card[] = [
     description: "The bottom of a web page, drawn as a small world that rises as you arrive. Seven worlds, each in its own medium.",
     alt: "Footers, over the Li River at dawn drawn in ink and colour: karst peaks in mist and a fisherman's raft with cormorants.",
     async prepare(page) {
-      // The Footers section of delineate's page, its foot at the card's foot.
-      // Its links and its switch of light are for the page, not the card; the picker of seven worlds stays.
-      await page.addStyleTag({ content: ".bar, .fab, .footer-show .show-take, .footer-show .theme-toggle { display: none !important; }" });
-      await page.evaluate(`(() => { const s = document.querySelector(".footer-show"); scrollTo(0, s.getBoundingClientRect().bottom + scrollY - innerHeight); })()`);
+      // delineate's unified footer opened on Li River, framed at the card's foot as the Footers piece itself.
+      await page.addStyleTag({
+        content: `.bar, .fab, .site-footer .sitemap, .site-footer .signoff, .site-footer .theme-toggle { display: none !important; }
+          .site-footer .tagline { max-width: 28rem; }`,
+      });
+      await page.evaluate(`(() => {
+        document.querySelector(".site-footer .foot-name").textContent = "Footers";
+        document.querySelector(".site-footer .tagline").textContent = "The bottom of a web page, drawn as a small world that rises as you arrive. Seven worlds, each in its own medium.";
+        const s = document.querySelector(".site-footer");
+        scrollTo(0, s.getBoundingClientRect().bottom + scrollY - innerHeight);
+      })()`);
       await settle(page, 2500);
     },
   },
@@ -146,6 +153,33 @@ export const CARDS: Card[] = [
     description: "An eighteen-second film rendered live at 24 frames a second in WebGL2, scored to 134 BPM warehouse techno.",
     alt: "Cut: a smoked optical crystal prism pierced diagonally by a champagne light beam beside the word Form.",
     async prepare(page) {
+      await settle(page, 900);
+    },
+  },
+  {
+    page: "mesh/",
+    render: "mesh/?still",
+    alt: "Mesh Gradient: four optical mesh studies—frosted halo, rising laminar plumes, thin-film dispersive crystal, and backlit superellipse glass vessels.",
+    async prepare(page) {
+      await page.addStyleTag({ url: FONTS });
+      await page.addStyleTag({ url: "mesh/card.css" });
+      await page.addStyleTag({
+        content: `body > *:not(.share) { display: none !important; }
+          body { background: #F8F7F2; color: #1B1B19; --paper: #F8F7F2; --ink: #1B1B19; --soft: #62625C; --serif: "Hedvig Letters Serif", Georgia, serif; --sans: "Cabinet Grotesk", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; }
+          .share { height: 100vh; display: grid; grid-template-columns: 1fr 41rem; align-items: center; gap: 3rem; padding: 0 4.25rem 0 4.75rem; }
+          .share h1 { margin: 0; font: 400 72px/1.02 var(--serif); letter-spacing: -.018em; }
+          .share p { margin: 1.35rem 0 0; max-width: 24rem; color: var(--soft); font: 440 1.04rem/1.55 var(--sans); font-variation-settings: "wght" 440; }
+          .share .works { margin-top: 1.85rem; font: 500 .72rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: var(--soft); }
+          .share .mark { position: fixed; top: 1.5rem; left: 4.75rem; font: 400 1.375rem/1 var(--serif); }
+          .share .mg-foot { display: none; }`,
+      });
+      await page.evaluate(`(async () => {
+        document.body.insertAdjacentHTML("beforeend", '<div class="share"><span class="mark">delineate</span><div><h1>Mesh<br>Gradient</h1><p>Four studies in how colour moves through a medium: frosted halo, laminar plume, thin-film crystal, and backlit glass.</p><p class="works">4 optical plates · WebGL2 · OKLab</p></div><div class="host"></div></div>');
+        const { mountCard } = await import("./mesh/card.js");
+        mountCard(document.querySelector(".share .host"));
+      })()`);
+      await page.evaluate("document.fonts.ready");
+      await page.waitForFunction("document.querySelector('.share .mg-tray')");
       await settle(page, 900);
     },
   },

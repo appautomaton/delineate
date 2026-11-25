@@ -3,17 +3,17 @@
 //   node site/build.ts        (npm run site, which draws the garden first)
 //
 // page.html is the page, with {{NAME}} holes for what is drawn: the opening bouquet (hero.ts), the icons and the
-// tab's mark (icons.ts), the foot of the page, drawn by the Footers' crayon world, and the Footers piece itself,
-// the real component built as a kit for this site. Beside it go what it borrows: Garden's stylesheets and the
-// plants its bed grows, and Paprika Girl split into planes (portrait.ts). Beside that goes the work each section
-// opens: the Garden at garden/, the Footers' demo at footers/, Characters at characters/, Collage at collage/ (its
-// card, which this page also shows, and the drawings npm run collage:draw makes), Paprika Girl's separation page at
-// portraits/paprika-girl/, Assembly at assembly/ (its sheet, show.js, is what this page shows of it), and Moments at
-// moments/ (its card, moments/card.js, is a single-row rotating preview of all twenty controls on this page). Monoline
-// has no page of its own here: its card (monoline/show.js and card.css) lives in the row of works. The studies,
-// small pieces the page does not show and the footer lists, each go at their own path with their own page: Rain at
-// rain/ and Glass at glass/. Flotsam is the page for every address that leads nowhere: 404.html, which GitHub Pages serves for those,
-// with its scripts under flotsam/.
+// tab's mark (icons.ts), and the page's own footer — the real Footers component built for delineate, opening on the
+// Crayon world as its first pill and carrying the other six worlds in assets/footers/. Beside it go what it borrows:
+// Garden's stylesheets and the plants its bed grows, and Paprika Girl split into planes (portrait.ts). Beside that
+// goes the work each section opens: Cut at cut/, the Garden at garden/, the Footers' demo at footers/, Characters at
+// characters/, Collage at collage/ (its card, which this page also shows, and the drawings npm run collage:draw makes),
+// Paprika Girl's separation page at portraits/paprika-girl/, Assembly at assembly/ (its sheet, show.js, is what this
+// page shows of it), and Moments at moments/ (its card, moments/card.js, is a single-row rotating preview of all twenty
+// controls on this page). Monoline has no page of its own here: its card (monoline/show.js and card.css) lives in the
+// row of works. The studies, small pieces the page does not show and the footer lists, each go at their own path with
+// their own page: Rain at rain/ and Glass at glass/. Flotsam is the page for every address that leads nowhere:
+// 404.html, which GitHub Pages serves for those, with its scripts under flotsam/.
 
 import { execFileSync } from "node:child_process";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -22,11 +22,12 @@ import { build as buildAssembly } from "../assembly/build.ts";
 import { build as buildCut } from "../cut/build.ts";
 import { build as buildFlotsam } from "../flotsam/build.ts";
 import { build as buildGlass } from "../glass/build.ts";
+import { build as buildMesh } from "../mesh/build.ts";
 import { build as buildMoments } from "../moments/build.ts";
 import { build as buildMonoline } from "../monoline/build.ts";
 import { build as buildRain } from "../rain/build.ts";
 import { DIST as GARDEN, build as buildGarden } from "../garden/build.ts";
-import { WORLDS, componentApart, kit } from "../footers/component.ts";
+import { componentApart } from "../footers/component.ts";
 import { TOOTH } from "../footers/crayon/hand.ts";
 import { fixed } from "../footers/lib/number.ts";
 import { fill } from "../footers/lib/template.ts";
@@ -66,12 +67,7 @@ const drawingTime = (...parts: string[]) =>
 const template = read("site/page.html");
 rmSync(DIST, { recursive: true, force: true });
 
-// The foot of the page is drawn by the crayon world's generator, under ids of its own: the Footers section may be
-// showing the same world, and ids are shared by the whole page.
-const foot = Object.fromEntries(
-  Object.entries(WORLDS.crayon.gen.placeholders()).map(([k, v]) => [k, v.replaceAll('id="cr-', 'id="lf-').replaceAll("url(#cr-", "url(#lf-")]),
-);
-// The Footers piece carries the world it opens on; the others wait in assets/footers/ until they are chosen.
+// delineate's own footer carries Crayon inline as its opening world; the other six wait in assets/footers/ until chosen.
 const footer = componentApart("delineate", "assets/footers/");
 const bouquet = markup();
 const heroTime = fixed(drawingTime(bouquet), 2);
@@ -80,8 +76,10 @@ const page = fill(
   {
     HERO: bouquet,
     HERO_TIME: heroTime,
-    FOOTER_KIT: kit(footer.parts),
-    FOOT_TIME: fixed(drawingTime(...Object.values(foot)), 2),
+    FOOTER_EARLY: footer.parts.EARLY,
+    FOOTER_CSS: footer.parts.FOOTER_CSS,
+    WORLD_CSS: footer.parts.WORLD_CSS,
+    FOOTER_BODY: `${footer.parts.FOOTER}\n${footer.parts.WORLD_TEMPLATES}\n<script>\n${footer.parts.FOOTER_JS}</script>`,
     TOOTH,
     ...Object.fromEntries(Object.entries(icons()).map(([k, v]) => [`ICON_${k.toUpperCase()}`, v])),
     ...marks(),
@@ -91,7 +89,6 @@ const page = fill(
 );
 write("index.html", page);
 for (const [name, html] of Object.entries(footer.files)) write(`assets/footers/${name}`, html);
-write("assets/foot.html", fill(read("site/foot.html"), Object.fromEntries(Object.entries(foot).map(([k, v]) => [`FOOT_${k}`, v])), "site/foot.html"));
 write("favicon.svg", favicon());
 
 // From Garden: its tokens, their dark light keyed to this page's night so the plants change with the page; its
@@ -125,7 +122,8 @@ buildRain(fileURLToPath(new URL("rain/", DIST)));
 buildGlass(fileURLToPath(new URL("glass/", DIST)));
 buildMoments(fileURLToPath(new URL("moments/", DIST)));
 buildCut(fileURLToPath(new URL("cut/", DIST)));
-for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html", "rain/index.html", "glass/index.html", "moments/index.html"]) {
+buildMesh(fileURLToPath(new URL("mesh/", DIST)));
+for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html", "rain/index.html", "glass/index.html", "moments/index.html", "mesh/index.html"]) {
   const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);
   write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));
 }
