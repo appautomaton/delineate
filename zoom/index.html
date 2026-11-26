@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-theme="day">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Zoom · delineate</title>
+    <meta
+      name="description"
+      content="Eighteen off-center worlds nested sixfold inside one another—from a Chicago river canyon and a 2 AM Tokyo desk to karst peaks, basalt caverns, and a printshop—drawn in animated archival SVG."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23131829'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23f2c97d' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='none' stroke='%237ec4b6' stroke-width='1.8'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="zoom/style.css" />
+  </head>
+  <body>
+    <main class="stage-wrap" id="stageWrap">
+      <svg
+        id="stage"
+        class="stage"
+        viewBox="0 0 2400 1600"
+        preserveAspectRatio="xMidYMid slice"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="Continuous animated archival SVG infinite zoom across eighteen architectural, botanical, geological, marine, and astronomical worlds"
+      >
+        <defs id="stageDefs"></defs>
+        <rect id="coreBackdrop" x="-380" y="-280" width="3160" height="2160" fill="#f3efe6" />
+        <g id="octaveStack"></g>
+      </svg>
+
+      <aside class="hud" id="hud" aria-label="Playback and light controls">
+        <div class="hud-readout">
+          <span class="hud-index" id="hudIndex">01 / 18</span>
+          <span class="hud-title" id="hudTitle">Chicago River Canyon &amp; Loop</span>
+          <span class="hud-metric" id="hudMetric">2⁰⁰·⁰⁰</span>
+        </div>
+        <span class="hud-sep" aria-hidden="true"></span>
+        <div class="hud-controls">
+          <button type="button" class="hud-btn" id="btnToggle" aria-label="Pause or play">Pause</button>
+          <button type="button" class="hud-btn" id="btnReverse" aria-label="Reverse zoom direction">Rev</button>
+          <label class="hud-speed">
+            <span>Speed</span>
+            <input type="range" id="speedSlider" min="-0.85" max="0.85" step="0.005" value="0.095" />
+          </label>
+          <button type="button" class="hud-btn hud-btn--icon" id="btnTheme" aria-label="Switch day or night light" title="Day / Night (D)">
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z" /></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2.5v2.2M12 19.3v2.2M4.7 4.7l1.6 1.6M17.7 17.7l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.7 19.3l1.6-1.6M17.7 6.3l1.6-1.6" /></svg>
+          </button>
+          <button type="button" class="hud-btn" id="btnFull" aria-label="Toggle fullscreen">Full</button>
+        </div>
+      </aside>
+    </main>
+    <script type="module" src="zoom/main.ts"></script>
+  </body>
+</html>

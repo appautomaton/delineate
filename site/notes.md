@@ -11,7 +11,7 @@ region maps, which are media and stay local.
 - **`page.html`**: the page, with `{{NAME}}` holes for what is drawn. In order: the opening, a headline beside a
   crayon bouquet that parts as the page scrolls; Cut, an eighteen-second 24 fps WebGL2 film resting as a keyframe
   poster until played; Moments, Mesh Gradient, and Assembly, alternating left and right across the sheet; the
-  horizontal row of works (Patch, Characters, Collage, Portraits, Monoline); Garden, plants from six gardens round its
+  horizontal row of works (Patch, Zoom, Characters, Collage, Portraits, Monoline); Garden, plants from six gardens round its
   words, growing as the bed crosses the screen directly above the horizon; and at the foot of the page, the real
   Footers component itself as `delineate`'s own footer — opening on
   the Crayon world as its first pill (on the page's own paper) and switching across all seven worlds. Both the
@@ -24,7 +24,7 @@ region maps, which are media and stay local.
   stylesheets, and fonts as each section approaches the viewport). From Portraits, Paprika Girl. Beside the page it
   writes the work each section opens, each as it stands on
   its own: Cut at `cut/`, the Garden at `garden/` (built by `garden/build.ts`, its paths relative to the page),
-  the Footers demo at `footers/`, Patch at `patch/`, Characters at `characters/`, Collage at `collage/`, Paprika Girl's separation
+  the Footers demo at `footers/`, Patch at `patch/`, Zoom at `zoom/`, Characters at `characters/`, Collage at `collage/`, Paprika Girl's separation
   page at `portraits/paprika-girl/`, Assembly at `assembly/`, Moments at `moments/`, Mesh Gradient at `mesh/`, and
   the studies the footer lists under Studies: Rain at `rain/` and Glass at `glass/`. Each wears the site's tab mark,
   since a page with no icon of its own has the browser ask for a `/favicon.ico` the site does not have.

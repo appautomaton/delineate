@@ -10,8 +10,9 @@
 // characters/, Collage at collage/ (its card, which this page also shows, and the drawings npm run collage:draw makes),
 // Paprika Girl's separation page at portraits/paprika-girl/, Assembly at assembly/ (its sheet, show.js, is what this
 // page shows of it), Moments at moments/ (its card, moments/card.js, is a single-row rotating preview of all twenty
-// controls on this page), Mesh Gradient at mesh/, and Patch at patch/ (its card, patch/card.js, leads the horizontal row
-// of works). Monoline has no page of its own here: its card (monoline/show.js and card.css) lives in the row of works. The studies, small pieces the page does not show and the footer lists, each go at their own path with
+// controls on this page), Mesh Gradient at mesh/, Patch at patch/, and Zoom at zoom/ (their cards, patch/card.js and
+// zoom/card.js, lead the horizontal row of works). Monoline has no page of its own here: its card (monoline/show.js and
+// card.css) lives in the row of works. The studies, small pieces the page does not show and the footer lists, each go at their own path with
 // their own page: Rain at rain/ and Glass at glass/. Flotsam is the page for every address that leads nowhere:
 // 404.html, which GitHub Pages serves for those, with its scripts under flotsam/.
 
@@ -27,6 +28,7 @@ import { build as buildMoments } from "../moments/build.ts";
 import { build as buildMonoline } from "../monoline/build.ts";
 import { build as buildPatch } from "../patch/build.ts";
 import { build as buildRain } from "../rain/build.ts";
+import { build as buildZoom } from "../zoom/build.ts";
 import { DIST as GARDEN, build as buildGarden } from "../garden/build.ts";
 import { componentApart } from "../footers/component.ts";
 import { TOOTH } from "../footers/crayon/hand.ts";
@@ -126,17 +128,20 @@ buildMoments(fileURLToPath(new URL("moments/", DIST)));
 buildCut(fileURLToPath(new URL("cut/", DIST)));
 buildMesh(fileURLToPath(new URL("mesh/", DIST)));
 buildPatch(fileURLToPath(new URL("patch/", DIST)));
+buildZoom(fileURLToPath(new URL("zoom/", DIST)));
 for (const path of ["garden/index.html", "garden/gallery/index.html", "footers/index.html", "portraits/paprika-girl/index.html", "rain/index.html", "glass/index.html", "moments/index.html", "mesh/index.html"]) {
   const html = readFileSync(new URL(path, DIST), "utf8"), up = "../".repeat(path.split("/").length - 1);
   write(path, html.replace("</head>", `<link rel="icon" href="${up}favicon.svg" type="image/svg+xml">\n</head>`));
 }
-write(
-  "patch/index.html",
-  readFileSync(new URL("patch/index.html", DIST), "utf8").replace(
-    /<link\s+rel="icon"[\s\S]*?\/>/,
-    '<link rel="icon" href="../favicon.svg" type="image/svg+xml">',
-  ),
-);
+for (const path of ["patch/index.html", "zoom/index.html"]) {
+  write(
+    path,
+    readFileSync(new URL(path, DIST), "utf8").replace(
+      /<link\s+rel="icon"[\s\S]*?\/>/,
+      '<link rel="icon" href="../favicon.svg" type="image/svg+xml">',
+    ),
+  );
+}
 
 // Each page names the card a shared link to it shows, with its title, description and address in full; the
 // cards are drawn from the pages as built.

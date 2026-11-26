@@ -5,7 +5,7 @@
 [![Node.js 24+](https://img.shields.io/badge/node-24%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![TypeScript 7](https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Runtime dependencies: none](https://img.shields.io/badge/runtime%20dependencies-none-2ea44f)](package.json)
-[![Agent skills: 10](https://img.shields.io/badge/agent%20skills-10-8957e5)](.agents/skills)
+[![Agent skills: 11](https://img.shields.io/badge/agent%20skills-11-8957e5)](.agents/skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/appautomaton/delineate)](https://github.com/appautomaton/delineate/commits/main)
 
@@ -34,6 +34,7 @@ a 3. On the project's page the 3s turn over as you scroll and show the e on thei
 | **Moments** | Twenty monochrome UI micro-interactions driven by nonlinear spring, viscous, mechanical, taut, and fluid physics. Touch, drag, pluck, or spin any tile directly, watch them rotate in a compact strip on the landing page, or open the full specimen sheet by night or by day. | [`moments/`](moments) | [ui-moments](.agents/skills/ui-moments) |
 | **Mesh Gradient** | Four optical mesh-gradient studies rendered in WebGL2 with OKLab colour science: an anisotropic frosted halo, a Swiss triptych of rising laminar plumes, thin-film dispersive crystal sculptures, and backlit superellipse glass vessels with anamorphic motion blur. | [`mesh/`](mesh) | [optical-mesh](.agents/skills/optical-mesh) |
 | **Patch** | Six annual embroidered patches (`2026`–`2031`) stitched in WebGL2 directly from homologous standalone `<svg>` blueprints across six Merrow silhouettes and four woven textiles (twill, wool felt, cotton duck, and ripstop). Sweep across any badge to peel the stitches back to the vector drawing, or click to inspect and export `.svg`. | [`patch/`](patch) | [embroidered-micrographic](.agents/skills/embroidered-micrographic) |
+| **Zoom** | Eighteen off-center worlds nested sixfold inside one another ($6^{18} \approx 10^{14}\times$)—from a Chicago river canyon and a 2 AM Tokyo desk to Chichen Itza, Li River karst, basalt caverns, and a printshop—drawn in copperplate burin and mineral wash as animated SVG with no raster frame. | [`zoom/`](zoom) | [infinite-zoom](.agents/skills/infinite-zoom) |
 
 And the studies, smaller pieces that delineate's page lists in its footer rather than shows:
 
@@ -46,7 +47,7 @@ And the studies, smaller pieces that delineate's page lists in its footer rather
 
 ## Agent skills
 
-A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The ten
+A skill is a folder of instructions that an AI coding agent loads when a task calls for it. The eleven
 here live in [`.agents/skills/`](.agents/skills), and `.claude/skills/` links to them for Claude Code.
 
 - **climate-garden** researches how a set of real plants looks, draws each one, colours the garden
@@ -73,6 +74,9 @@ here live in [`.agents/skills/`](.agents/skills), and `.claude/skills/` links to
 - **embroidered-micrographic** makes Patch: six homologous `<svg>` ↔ WebGL2 embroidered patches across
   closed-form Merrow silhouettes, four physical weaves, and rayon, matte cotton, and metallic bullion
   threads inside a single compact atlas.
+- **infinite-zoom** makes Zoom: an eighteen-stage off-center animated SVG infinite world with `6×`
+  inter-scene depth, compound-batched architectural and botanical micro-craft, non-scaling copperplate
+  burin lines, and zero-rebuild Day/Night lighting.
 
 Open the repository in your agent and ask for what you want, such as "a garden for the Patagonian
 steppe" or "this portrait as a line engraving". The matching skill takes it from there.
@@ -105,8 +109,9 @@ npm run dev    # the Garden at http://localhost:5173, rebuilt whenever you save
 | `npm run cut` | Serves Cut at http://localhost:5390/, with `?frame=`, `?paused=1`, and `?hud=0`, rebuilding on save. |
 | `npm run mesh` | Serves Mesh Gradient at http://localhost:5400/, with `?plate=veil\|plume\|prism\|lantern`, `?light=day\|night`, `?palette=0\|1\|2`, `?shape=0..5`, and `?still`, rebuilding on save. |
 | `npm run patch` | Serves Patch at http://localhost:5411/, with `?light=day\|night`, `?view=stitch\|split\|svg`, `?badge=2026..2031`, `?seed=`, and `?still=1`, rebuilding on save. |
+| `npm run zoom` | Serves Zoom at http://localhost:5420/, with `?t=0..18`, `?theme=day\|night`, `?speed=`, `?hud=0`, and `?still=1`, rebuilding on save. |
 | `npm run flotsam:measure` | Measures Flotsam in a Chrome of its own: the page's frames, the water's thread, and whether the water sleeps when still. |
-| `npm run site` | Builds delineate's site into `site/dist/`: its page (ending in the seven-world Footers component), and Cut, the Garden, the Footers demo, Patch, Characters, Collage, Paprika Girl's separation page, Assembly, Moments and Mesh Gradient that its sections open, Rain and Glass which its footer lists, and Flotsam as its `404.html`. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
+| `npm run site` | Builds delineate's site into `site/dist/`: its page (ending in the seven-world Footers component), and Cut, the Garden, the Footers demo, Patch, Zoom, Characters, Collage, Paprika Girl's separation page, Assembly, Moments and Mesh Gradient that its sections open, Rain and Glass which its footer lists, and Flotsam as its `404.html`. Collage needs `npm run collage:draw` first. It also renders, in Chrome, the card a shared link shows. |
 | `npm run deploy` | Builds the site and publishes it to GitHub Pages, at https://delineate.appautomaton.com/. Pushing `main` runs it first, and holds the push back if the site fails to build; `git push --no-verify` skips it. |
 | `npm run check` | Type-checks every part of the repository. |
 
@@ -135,6 +140,7 @@ moments/     twenty monochrome UI micro-interactions: physics kernel, five mater
 cut/         the eighteen-second 24 fps WebGL2 cinema film, shaders, LUT plates, and 134 BPM score
 mesh/        Mesh Gradient: four WebGL2 optical mesh studies, OKLab palettes, bento grid, and landing card
 patch/       Patch: six homologous SVG-to-WebGL2 embroidered patches, specimen sheet, modal, and landing card
+zoom/        Zoom: eighteen off-center 6x-depth animated archival SVG worlds, C2 compositor, and landing card
 site/        delineate's own page
 tools/       the small static server the dev tools share
 .agents/     the agent skills
@@ -142,7 +148,7 @@ tools/       the small static server the dev tools share
 AGENTS.md    how to work here: a worktree per piece of work, and what a push to main does
 ```
 
-Assembly, Characters, Cut, Flotsam, Footers, Glass, Mesh Gradient, Moments, Monoline, Patch, Rain and the site keep a `notes.md` beside their code with
+Assembly, Characters, Cut, Flotsam, Footers, Glass, Mesh Gradient, Moments, Monoline, Patch, Rain, Zoom and the site keep a `notes.md` beside their code with
 the rules a change must keep; [`garden/climates.md`](garden/climates.md) holds the gardens' botany.
 
 ## License

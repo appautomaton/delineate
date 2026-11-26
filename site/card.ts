@@ -42,7 +42,7 @@ export const CARDS: Card[] = [
           .headline { font-size: 80px; }
           .opening .works { max-width: none; margin: 2rem 0 0; font: 500 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--soft); }`,
       });
-      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Cut · Moments · Mesh · Assembly · Patch · Characters · Collage · Portraits · Garden · Footers</p>')`);
+      await page.evaluate(`document.querySelector(".headline").insertAdjacentHTML("afterend", '<p class="works">Cut · Moments · Mesh · Assembly · Patch · Zoom · Characters · Collage · Portraits · Garden · Footers</p>')`);
       await page.waitForFunction("document.querySelector('.headline.is-drawn') && document.querySelector('.bouquet.is-drawn')");
       await settle(page, 1600); // the headline's wash settles under its strokes
     },
@@ -195,6 +195,15 @@ export const CARDS: Card[] = [
       });
       await page.waitForFunction("Boolean(window.__PATCH_READY__)");
       await page.evaluate("window.dispatchEvent(new Event('resize'))");
+      await settle(page, 500);
+    },
+  },
+  {
+    page: "zoom/",
+    render: "zoom/?t=1.0&theme=night&still=1&hud=0",
+    alt: "Zoom: a 2 AM Tokyo creator's studio with dual timeline monitors, bookshelves, vinyl turntable, and glowing skyscrapers framed by an open casement leading into the next world.",
+    async prepare(page) {
+      await page.waitForFunction("Boolean(window.__zoom)");
       await settle(page, 500);
     },
   },
