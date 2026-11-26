@@ -1,0 +1,251 @@
+/* Flotsam: a page that has sunk. delineate's paper and ink, by day and by night, with water over everything:
+   the words lie on the page, the numerals float in the water, and the water lies over both, so whatever it
+   reaches is seen through it. */
+
+:root {
+  --paper: #f8f7f2;
+  --ink: #1b1b19;
+  --soft: #62625c;
+  --serif: "Hedvig Letters Serif", Georgia, serif;
+  --sans: "Hedvig Letters Sans", system-ui, sans-serif;
+  --mono: "Fragment Mono", ui-monospace, monospace;
+  --margin: clamp(1.25rem, 5vw, 5rem);
+  --water-deep: #0f6676;
+  --water-shallow: #3fb1a8;
+  --water-thin: #9fe0d5;
+  --water-foam: #f1fbf7;
+  --water-line: #ffffff;
+  --water-edge: #2d6f78;
+  --water-opacity: 0.46;
+  --water-rays: 0.55;
+  --c-blue: #2f4fb8; --c-deep: #1e2f7e; --c-ochre: #d9a532; --c-red: #cf3f2c; --c-maroon: #8e2a24;
+  --c-green: #4c7e37; --c-olive: #8c9b3c; --c-pink: #de7c93; --c-violet: #6b55b3; --c-graphite: #3a3a38;
+  --c-pine: #2f5a2e; --c-rust: #b5652a; --c-cloud: #c8d3e6; --c-mist: #8e9dba; --c-lilac: #a99bd8;
+  --c-sage: #9db08a; --c-wheat: #e3c26a;
+  color-scheme: light;
+}
+
+:root[data-theme="night"] {
+  --paper: #1b2036;
+  --ink: #f1ede2;
+  --soft: #aeb0be;
+  --water-deep: #0b2735;
+  --water-shallow: #1c5664;
+  --water-thin: #4e979c;
+  --water-foam: #cfeee8;
+  --water-line: #e9fbf7;
+  --water-edge: #0b2735;
+  --water-opacity: 0.6;
+  --water-rays: 0.3;
+  --c-blue: #8098f2; --c-deep: #bfc9ff; --c-ochre: #f3d27a; --c-red: #f27e66; --c-maroon: #efa996;
+  --c-green: #8fcb7a; --c-olive: #c9d27a; --c-pink: #f5acbe; --c-violet: #b9a8f4; --c-graphite: #ece7da;
+  --c-pine: #a8da94; --c-rust: #f2a66b; --c-cloud: #464f78; --c-mist: #7f8bb3; --c-lilac: #8e82c4;
+  --c-sage: #7e9874; --c-wheat: #cdb463;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1rem/1.55 var(--sans);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+a {
+  color: inherit;
+}
+
+.bar {
+  position: fixed;
+  inset: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem var(--margin);
+}
+
+.brand {
+  font: 400 1.25rem/1 var(--serif);
+  text-decoration: none;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.light,
+.sound {
+  padding: 0.45rem 0.9rem;
+  border: 0;
+  border-radius: 99px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent);
+  background: none;
+  color: inherit;
+  font: 400 0.6875rem/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.sunk {
+  position: absolute;
+  inset: 13vh var(--margin) auto;
+  max-width: 34rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.kicker {
+  margin: 0 0 1rem;
+  font: 400 0.6875rem/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+h1 {
+  margin: 0;
+  font: 400 clamp(2.5rem, 6vw, 4.25rem)/1.02 var(--serif);
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 1rem auto 0;
+  max-width: 28rem;
+  color: var(--soft);
+  text-wrap: balance;
+}
+
+/* A phone is tipped, not its window moved. */
+.by-hand {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .by-window {
+    display: none;
+  }
+
+  .by-hand {
+    display: inline;
+  }
+}
+
+.surface {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 40%, transparent);
+  font: 400 0.6875rem/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/* The sea floor and its life, then the numerals, then the water's surface drawing over all of them, so the
+   water lies over whatever is under it. */
+.sea,
+.afloat,
+.water {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.water {
+  width: 100vw;
+  height: 100vh;
+}
+
+.numeral > canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.is-over,
+.is-over a {
+  cursor: grab;
+}
+
+.is-holding,
+.is-holding * {
+  cursor: grabbing;
+}
+
+/* The sea: the floor along the foot of the window, fronds standing in it, fish and a crab, each set in place by
+   sea.ts. Each drawing is laid out from its own origin: a frond from its foot, a fish and a crab from their middle. */
+.floor {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+}
+
+.floor .wax {
+  width: 100%;
+  height: 100%;
+}
+
+.frond,
+.fish,
+.crab {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.crab {
+  z-index: 3;
+}
+
+.sea .wax {
+  display: block;
+}
+
+/* Crayon, laid whole. */
+.wax path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* By night the wood is lit by the moon, not the sun. */
+:root[data-theme="night"] .afloat {
+  filter: brightness(0.8) saturate(0.85);
+}
+
+.k-blue { stroke: var(--c-blue); }
+.k-deep { stroke: var(--c-deep); }
+.k-ochre { stroke: var(--c-ochre); }
+.k-red { stroke: var(--c-red); }
+.k-maroon { stroke: var(--c-maroon); }
+.k-green { stroke: var(--c-green); }
+.k-olive { stroke: var(--c-olive); }
+.k-pink { stroke: var(--c-pink); }
+.k-violet { stroke: var(--c-violet); }
+.k-graphite { stroke: var(--c-graphite); }
+.k-pine { stroke: var(--c-pine); }
+.k-rust { stroke: var(--c-rust); }
+.k-lilac { stroke: var(--c-lilac); }
+.k-wheat { stroke: var(--c-wheat); }
+.k-cloud { stroke: var(--c-cloud); }
+.k-mist { stroke: var(--c-mist); }
+.k-sage { stroke: var(--c-sage); }

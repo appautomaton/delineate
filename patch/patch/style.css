@@ -1,0 +1,728 @@
+/* Patch Stage-2 Editorial Specimen Sheet:
+   Pentagram-caliber 3x2 exhibition grid on delineate's --paper / --ink tokens (#F8F7F2 Day,
+   #0B0D14 Night), unified in Cabinet Grotesk + IBM Plex Mono, zero SaaS chrome, fitting cleanly
+   inside a single 1440x900 desktop viewport with frameless colophon below. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+}
+
+body {
+  --p-sans: "Cabinet Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --p-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --paper: #F8F7F2;
+  --ink: #1B1B19;
+  --ink-soft: rgba(27, 27, 25, 0.52);
+  --ink-faint: rgba(27, 27, 25, 0.22);
+  --tile-border: rgba(27, 27, 25, 0.085);
+  --tile-border-hover: rgba(27, 27, 25, 0.20);
+  --bp-ink: #1B1B19;
+  --bp-wash: rgba(27, 27, 25, 0.055);
+  --bp-wash-strong: rgba(27, 27, 25, 0.11);
+  --bp-fill: rgba(27, 27, 25, 0.018);
+  --bp-guide: rgba(27, 27, 25, 0.28);
+  --bp-tick: rgba(27, 27, 25, 0.36);
+  --hairline: #D9412B;
+  --modal-scrim: rgba(244, 242, 236, 0.88);
+  --modal-sheet: #F8F7F2;
+  --modal-plate: #F1EFE8;
+
+  margin: 0;
+  min-height: 100svh;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 14px/1.45 var(--p-sans);
+  font-variation-settings: "wght" 450;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  transition: background-color 240ms ease, color 240ms ease;
+}
+
+body[data-light="night"] {
+  --paper: #0B0D14;
+  --ink: #F0EFEA;
+  --ink-soft: rgba(240, 239, 234, 0.50);
+  --ink-faint: rgba(240, 239, 234, 0.20);
+  --tile-border: rgba(240, 239, 234, 0.085);
+  --tile-border-hover: rgba(240, 239, 234, 0.22);
+  --bp-ink: #ECEAE2;
+  --bp-wash: rgba(236, 234, 226, 0.065);
+  --bp-wash-strong: rgba(236, 234, 226, 0.125);
+  --bp-fill: rgba(236, 234, 226, 0.024);
+  --bp-guide: rgba(236, 234, 226, 0.26);
+  --bp-tick: rgba(236, 234, 226, 0.36);
+  --hairline: #EE5A42;
+  --modal-scrim: rgba(7, 9, 14, 0.88);
+  --modal-sheet: #0E111B;
+  --modal-plate: #12151F;
+}
+
+body.has-modal {
+  overflow: hidden;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 1.5px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* === Single Shared WebGL2 Overlay Canvas ===
+   Grid mode: position: absolute inside .patch-shell so the browser GPU compositor
+   scrolls & rubber-bands all 6 badges in 0.00 px lockstep with .patch-card at 0.0 fps!
+   Modal mode (.is-modal): position: fixed over the locked viewport. */
+.patch-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.patch-gl.is-modal {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 25;
+}
+
+/* === Outer Specimen Sheet Shell === */
+.patch-shell {
+  position: relative;
+  max-width: 1460px;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: clamp(12px, 1.35vw, 18px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* === Frameless Stochastic Specimen Tabletop === */
+.patch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, clamp(336px, 42.5svh, 404px));
+  gap: clamp(8px, 1.0vw, 14px);
+}
+
+.patch-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: none;
+  overflow: visible;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Center Stage hosting monochrome DOM <svg> blueprint underneath the shared WebGL2 canvas */
+.card-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+}
+
+.card-svg-clip,
+.card-svg-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  pointer-events: none;
+}
+
+.card-svg-pose {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* Crisp 1 px Cinnabar Pointer-X Split Hairline */
+.card-hairline {
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  left: 0;
+  width: 1px;
+  background: var(--hairline);
+  z-index: 8;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-0.5px);
+  transition: opacity 120ms ease;
+}
+
+.card-hairline::before,
+.card-hairline::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  width: 7px;
+  height: 1px;
+  background: var(--hairline);
+}
+
+.card-hairline::before { top: 0; }
+.card-hairline::after { bottom: 0; }
+
+.hairline-tag {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-family: var(--p-mono);
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--hairline);
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+.badge-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Pure Monochrome Swiss Technical Vector Blueprint ("Before" State) */
+.badge-svg .bp-substrate {
+  fill: var(--bp-fill);
+  stroke: none;
+}
+
+.badge-svg .bp-outer {
+  fill: none;
+  stroke: var(--bp-guide);
+  stroke-width: 1.35;
+}
+
+.badge-svg .bp-merrow {
+  fill: none;
+  stroke: var(--bp-guide);
+  stroke-width: 1.15;
+  stroke-dasharray: 5 4;
+}
+
+.badge-svg .bp-inner {
+  fill: none;
+  stroke: var(--bp-guide);
+  stroke-width: 0.85;
+  opacity: 0.58;
+}
+
+.badge-svg .bp-ticks {
+  fill: none;
+  stroke: var(--bp-tick);
+  stroke-width: 1.15;
+}
+
+.badge-svg g[data-layer="recessed"] {
+  opacity: 0.42;
+}
+
+.badge-svg g[data-layer="main"] {
+  opacity: 0.86;
+}
+
+.badge-svg g[data-layer="proud"] {
+  opacity: 0.96;
+}
+
+/* Quiet Level Museum Index Label Beneath Each Angled Patch */
+.card-caption {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 8px 6px;
+  pointer-events: none;
+  opacity: 0.62;
+  transition: opacity 180ms ease;
+}
+
+.patch-card:hover .card-caption,
+.patch-card.is-hovered .card-caption {
+  opacity: 0.96;
+}
+
+.card-year {
+  font-family: var(--p-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.card-title {
+  font-family: var(--p-sans);
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 600;
+  font-variation-settings: "wght" 580;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.card-sep {
+  font-family: var(--p-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+.card-sub {
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+
+/* === Frameless Bare-Ground Colophon === */
+.patch-foot {
+  position: relative;
+  z-index: 6;
+  padding: 13px 4px 2px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  font-family: var(--p-mono);
+  font-size: 10.5px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.foot-id {
+  color: var(--ink-soft);
+}
+
+.foot-id b {
+  font-family: var(--p-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.foot-id a {
+  text-decoration: none;
+}
+
+.foot-id a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.foot-hint {
+  opacity: 0.78;
+}
+
+.foot-right {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.foot-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.foot-label {
+  color: var(--ink-soft);
+  opacity: 0.65;
+  margin-right: 2px;
+}
+
+.foot-btn {
+  all: unset;
+  cursor: pointer;
+  padding: 2px 0;
+  font: 500 10.5px/1 var(--p-mono);
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  opacity: 0.45;
+  transition: opacity 140ms ease;
+}
+
+.foot-btn:hover {
+  opacity: 0.92;
+}
+
+.foot-btn[aria-pressed="true"] {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+.foot-btn[data-toggle="light"] {
+  opacity: 0.72;
+}
+
+.foot-btn[data-toggle="light"]:hover {
+  opacity: 1;
+}
+
+.foot-dot {
+  color: var(--ink-faint);
+  user-select: none;
+}
+
+.foot-sep {
+  width: 1px;
+  height: 10px;
+  background: var(--ink-faint);
+}
+
+.foot-nav {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.foot-nav a {
+  text-decoration: none;
+  opacity: 0.56;
+  transition: opacity 140ms ease;
+}
+
+.foot-nav a:hover {
+  opacity: 1;
+}
+
+/* === Click-to-Inspect Dual-Plate Museum Modal === */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: var(--modal-scrim);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 2.2vw, 28px);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal-sheet {
+  width: min(1360px, 100%);
+  height: min(760px, 90svh);
+  display: flex;
+  flex-direction: column;
+  background: var(--modal-sheet);
+  border: 1px solid var(--tile-border-hover);
+  border-radius: 22px;
+  box-shadow: 0 30px 80px -28px rgba(0, 0, 0, 0.32);
+  overflow: hidden;
+}
+
+.modal-head {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 22px;
+  border-bottom: 1px solid var(--tile-border);
+}
+
+.modal-title-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+}
+
+.modal-year {
+  font-family: var(--p-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--hairline);
+}
+
+.modal-title {
+  margin: 0;
+  font-family: var(--p-sans);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.modal-meta {
+  font-family: var(--p-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.modal-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-icon-btn {
+  all: unset;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--tile-border);
+  font-family: var(--p-mono);
+  font-size: 14px;
+  color: var(--ink);
+  opacity: 0.72;
+  transition: opacity 140ms ease, border-color 140ms ease;
+}
+
+.modal-icon-btn:hover {
+  opacity: 1;
+  border-color: var(--tile-border-hover);
+}
+
+.modal-plates {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px;
+}
+
+.modal-plate {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-radius: 15px;
+  background: var(--modal-plate);
+  border: 1px solid var(--tile-border);
+  overflow: hidden;
+}
+
+.plate-head {
+  position: relative;
+  z-index: 30;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--tile-border);
+  font-family: var(--p-mono);
+  font-size: 10.5px;
+}
+
+.plate-tag {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.plate-dim {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.plate-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 6px 12px;
+}
+
+.plate-stage--macro {
+  cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.modal-hairline {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 1.5px;
+  background: var(--hairline);
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-0.75px);
+}
+
+.modal-handle {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 31;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--modal-sheet);
+  border: 1.5px solid var(--hairline);
+  color: var(--hairline);
+  display: grid;
+  place-items: center;
+  font-family: var(--p-mono);
+  font-size: 10px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.plate-stage--macro:hover .modal-handle {
+  opacity: 0.92;
+}
+
+.plate-foot {
+  position: relative;
+  z-index: 30;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 0 16px;
+  border-top: 1px solid var(--tile-border);
+  font-family: var(--p-mono);
+  font-size: 10px;
+}
+
+.plate-note {
+  color: var(--ink-soft);
+}
+
+.modal-swatches {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.modal-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.modal-swatch i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 25%, transparent);
+}
+
+.modal-swatch em {
+  font-style: normal;
+  opacity: 0.65;
+}
+
+.plate-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plate-btn {
+  all: unset;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--tile-border-hover);
+  font: 500 10.5px/1 var(--p-mono);
+  color: var(--ink);
+  opacity: 0.72;
+  transition: opacity 140ms ease, background-color 140ms ease;
+}
+
+.plate-btn:hover,
+.plate-btn[aria-pressed="true"] {
+  opacity: 1;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+}
+
+.plate-btn--primary {
+  opacity: 1;
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.plate-btn--primary:hover {
+  opacity: 0.88;
+  background: var(--ink);
+}
+
+/* === Responsive Tablet (2x3) & Mobile (1x6) === */
+@media (max-width: 1039px) {
+  .patch-shell {
+    justify-content: flex-start;
+  }
+  .patch-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    grid-auto-rows: 335px;
+  }
+  .modal-sheet {
+    height: min(860px, 92svh);
+  }
+  .modal-plates {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 679px) {
+  .patch-shell {
+    padding: 10px;
+  }
+  .patch-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: 300px;
+    gap: 11px;
+  }
+  .foot-hint,
+  .foot-sep {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .patch-card,
+  .card-hairline {
+    transition: none;
+  }
+}

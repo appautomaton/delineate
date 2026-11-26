@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collage · delineate</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta name="description" content="One picture, drawn by many hands, laid down again and again among scraps of paper: five sculptures, each from its museum's scan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap">
+<link rel="stylesheet" href="card.css">
+<script>
+  // The light the visitor chose on delineate's page, set before the first paint so nothing flashes; day if none.
+  try { document.documentElement.dataset.theme = localStorage.getItem("delineate-theme") || "day"; } catch {}
+</script>
+<style>
+  :root {
+    --paper: #F8F7F2; --ink: #1B1B19; --soft: #62625C;
+    --serif: "Hedvig Letters Serif", Georgia, serif; --sans: "General Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --edge: clamp(1.25rem, 4vw, 3rem); --gap: clamp(.75rem, 1.6vw, 1.25rem);
+    --shade: rgb(30 26 18 / .22);
+    color-scheme: light;
+  }
+  /* Night: the site's dark paper. The cards stay paper, as prints laid on a dark table. */
+  :root[data-theme="night"] { --paper: #1B2036; --ink: #F1EDE2; --soft: #AEB0BE; --shade: rgb(0 0 0 / .55); color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.6 var(--sans); transition: background .5s, color .5s; }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem var(--edge); }
+  .bar a { color: inherit; text-decoration: none; font: 400 1.375rem/1 var(--serif); }
+  .theme {
+    font: 500 .875rem/1 var(--sans); color: var(--ink); background: none; border: 0; border-radius: 999px; padding: .6rem 1rem; cursor: pointer;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent);
+  }
+  .card { box-shadow: 0 .1cqi .3cqi rgb(30 26 18 / .08), 0 3cqi 6cqi -3cqi var(--shade); }
+  main { max-width: 92rem; margin: 0 auto; padding: clamp(.5rem, 3vw, 2rem) var(--edge) clamp(3rem, 8vw, 6rem); }
+
+  .intro { display: grid; gap: 1.25rem 3rem; align-items: end; margin-bottom: clamp(1.75rem, 4vw, 3rem); }
+  @media (min-width: 60rem) { .intro { grid-template-columns: auto minmax(0, 34rem) auto; justify-content: space-between; } }
+  h1 { margin: 0; font: 400 clamp(2.75rem, 7vw, 5rem)/.9 var(--serif); letter-spacing: -.01em; }
+  .intro p { margin: 0; color: var(--soft); text-wrap: pretty; }
+
+  /* Strips of embossed tape, as on the cards. */
+  .tape {
+    border: 0; padding: .7rem .95rem .62rem; cursor: pointer; justify-self: start;
+    font: 500 .8125rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+    background: #E2E0DA; color: #2B2A27; text-shadow: 0 1px 0 rgb(255 255 255 / .7); box-shadow: 0 1px 2px rgb(0 0 0 / .12);
+    transition: background .2s, color .2s, text-shadow .2s;
+  }
+  .tape:hover { background: var(--ink); color: var(--paper); text-shadow: none; }
+  .tape:focus-visible, .slot:focus-visible, .theme:focus-visible, .bar a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  /* The block: one large card and four small, a square of four by two; two across on a tablet, one on a phone. */
+  .block { display: grid; gap: var(--gap); grid-template-columns: repeat(4, 1fr); }
+  .slot { display: block; border: 0; padding: 0; background: none; cursor: zoom-in; }
+  .slot.large { grid-column: span 2; grid-row: span 2; }
+  @media (max-width: 64rem) { .block { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 36rem) { .block { grid-template-columns: 1fr; } .slot.large { grid-column: auto; grid-row: auto; } }
+
+  /* The sources, as a colophon: small, quiet, out of the cards' way. */
+  .about { margin-top: clamp(2.5rem, 6vw, 4rem); padding-top: 1.25rem; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); display: grid; gap: .75rem 3rem; }
+  @media (min-width: 60rem) { .about { grid-template-columns: 12rem minmax(0, 44rem); } }
+  .about h2 { margin: 0; font: 400 1.0625rem/1.4 var(--serif); }
+  .sources { margin: 0; padding: 0; list-style: none; display: grid; gap: .45rem; color: var(--soft); font-size: .8125rem; line-height: 1.55; text-wrap: pretty; }
+
+  /* One card, large, on the paper. */
+  .viewer { width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: var(--edge); border: 0; background: transparent; }
+  .viewer[open] { display: grid; place-content: center; justify-items: center; gap: 1rem; }
+  .viewer::backdrop { background: color-mix(in srgb, var(--paper) 94%, transparent); }
+  .viewer .card-host { width: min(100%, 52rem, calc(100svh - 2 * var(--edge) - 5.5rem)); }
+  .viewer .credit { margin: 0; max-width: 40rem; text-align: center; color: var(--soft); font-size: .875rem; text-wrap: balance; }
+  .viewer .close { position: fixed; top: 1.25rem; right: var(--edge); }
+  @media (prefers-reduced-motion: no-preference) {
+    .viewer[open] .card-host { animation: rise .35s cubic-bezier(.2, .8, .3, 1); }
+    @keyframes rise { from { opacity: 0; transform: translateY(1.5rem) scale(.97); } }
+  }
+</style>
+<link rel="canonical" href="https://delineate.appautomaton.com/collage/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="delineate">
+<meta property="og:title" content="Collage · delineate">
+<meta property="og:description" content="One picture, drawn by many hands, laid down again and again among scraps of paper: five sculptures, each from its museum's scan.">
+<meta property="og:url" content="https://delineate.appautomaton.com/collage/">
+<meta property="og:image" content="https://delineate.appautomaton.com/collage/card.jpg">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="A collage card of The Panther Hunter, drawn half as an engraving and half as a navy line screen, taped with the words One picture, many hands.">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+  <header class="bar">
+    <a href="../" aria-label="delineate, home">delineate</a>
+    <button class="theme" type="button" aria-pressed="false">Night</button>
+  </header>
+  <main>
+    <section class="intro">
+      <h1>Collage</h1>
+      <p>One picture, drawn by many hands, laid down again and again among scraps of paper. Five sculptures, each from its museum’s scan: drawn as an engraving, a line screen, flat marble and a single line, and shown once as itself. Every card cuts from hand to hand on its own beat. Hold the pointer on one to stop it and part its layers; click it to look closer.</p>
+      <button class="shuffle tape" type="button">Shuffle</button>
+    </section>
+    <section class="block" aria-label="Five collage cards"></section>
+    <section class="about">
+      <h2>The sculptures</h2>
+      <ul class="sources"></ul>
+    </section>
+  </main>
+  <dialog class="viewer" aria-label="One card, large">
+    <div class="card-host"></div>
+    <p class="credit"></p>
+    <button class="close tape" type="button">Close</button>
+  </dialog>
+  <script type="module" src="page.js"></script>
+</body>
+</html>

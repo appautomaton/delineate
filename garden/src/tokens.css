@@ -1,0 +1,954 @@
+/* Design tokens: every color the page and the garden use, in a day set and a night set.
+   Three layers, from the page inward:
+   1. Paper and ink: the page, the controls and gallery, and the pen the garden is drawn with.
+   2. Materials: bark, stems, flowers, and fruit, shared by any plant that uses them.
+   3. Species: one base tone per plant, named after its key in src/garden/plants.json. Every
+      leaf shifts lightness, hue, and chroma around it (--dl, --dh, --dc on each shape).
+   The theme picks the light, and every garden is authored for both: its materials and species
+   take their day values here and their night values in the night set. A material both gardens
+   draw with keeps one value in either light. Night is the day under the moon: a little darker,
+   less chroma, a touch cooler; the night paper shows through every glaze, so the colors need
+   not be much darker. src/garden/paint.css turns these into fills and strokes. The night set
+   also applies to any element with the class "night". */
+
+:root {
+  /* Paper and ink */
+  --bg: #f2f2ed;
+  --surface: #fafaf7;
+  --border: #dcdfd4;
+  --text: #262b24;
+  --muted: #5d6457;
+  --faint: #8b9184;
+  --accent: #a8862f;
+  --accent-ink: #77601d;
+  --grain-alpha: 0.04;
+  --garden-ink: oklch(0.27 0.03 140);
+
+  /* Materials: bark and stems */
+  --bark: oklch(0.5 0.03 65);
+  --bark-pale: oklch(0.66 0.03 105);
+  --cork: oklch(0.62 0.06 70);
+  --stem-green: oklch(0.6 0.1 128);
+  --stem-dark: oklch(0.4 0.05 160);
+  --shield: oklch(0.64 0.09 120);
+  --lime: oklch(0.86 0.15 115);
+
+  /* Materials: flowers */
+  --petal: oklch(0.97 0.02 95);
+  --petal-lilac: oklch(0.8 0.08 318);
+  --petal-vein: oklch(0.55 0.08 318);
+  --petal-vein-deep: oklch(0.42 0.12 318);
+  --flower-heart: oklch(0.84 0.15 88);
+  --filament: oklch(0.93 0.03 330);
+  --anther: oklch(0.74 0.11 78);
+  --pistil: oklch(0.86 0.06 135);
+  --spathe: oklch(0.58 0.07 200);
+  --sepal: oklch(0.74 0.16 58);
+  --tongue: oklch(0.5 0.14 262);
+
+  /* Materials: fruit */
+  --fruit-mango: oklch(0.82 0.14 88);
+  --fruit-unripe: oklch(0.72 0.13 128);
+  --blush: oklch(0.72 0.14 50);
+  --fruit-lychee: oklch(0.6 0.15 22);
+  --fruit-blushing: oklch(0.76 0.11 60);
+
+  /* Species: the tropical garden */
+  --pl-frangipani: oklch(0.55 0.11 146);
+  --pl-bauhinia: oklch(0.62 0.1 134);
+  --pl-mango: oklch(0.44 0.07 156);
+  --pl-lychee: oklch(0.5 0.09 150);
+  --pl-palm: oklch(0.62 0.12 132);
+  --pl-monstera: oklch(0.5 0.11 152);
+  --pl-adansonii: oklch(0.6 0.13 142);
+  --pl-strelitzia: oklch(0.56 0.08 165);
+  --pl-alocasia: oklch(0.34 0.05 172);
+  --pl-calathea: oklch(0.55 0.07 150);
+  --pl-staghorn: oklch(0.7 0.06 140);
+  --pl-philodendron: oklch(0.6 0.14 138);
+
+  /* Materials: the Mediterranean garden */
+  --bark-olive: oklch(0.62 0.018 95);
+  --bark-pine: oklch(0.52 0.06 45);
+  --olive-silver: oklch(0.76 0.03 160);
+  --fruit-olive: oklch(0.4 0.072 310);
+  --fruit-olive-green: oklch(0.66 0.11 120);
+  --fruit-fig: oklch(0.46 0.096 330);
+  --fruit-lemon: oklch(0.9 0.18 100);
+  --fruit-grape: oklch(0.46 0.11 295);
+  --pine-cone: oklch(0.56 0.084 60);
+  --bract: oklch(0.64 0.23 345);
+  --flower-lavender: oklch(0.64 0.16 295);
+  --flower-rosemary: oklch(0.78 0.084 265);
+  --flower-acanthus: oklch(0.9 0.036 330);
+  --hood-acanthus: oklch(0.49 0.11 315);
+
+  /* Species: the Mediterranean garden */
+  --pl-olive: oklch(0.57 0.058 144);
+  --pl-fig: oklch(0.55 0.12 134);
+  --pl-lemon: oklch(0.51 0.1 149);
+  --pl-pine: oklch(0.51 0.091 154);
+  --pl-grapevine: oklch(0.59 0.12 126);
+  --pl-jasmine: oklch(0.49 0.091 154);
+  --pl-bougainvillea: oklch(0.55 0.12 139);
+  --pl-cypress: oklch(0.41 0.065 159);
+  --pl-lavender: oklch(0.65 0.046 144);
+  --pl-rosemary: oklch(0.55 0.065 159);
+  --pl-agave: oklch(0.67 0.058 209);
+  --pl-acanthus: oklch(0.51 0.12 144);
+
+  /* Materials: the desert */
+  --spine: oklch(0.84 0.035 85);
+  --spine-hook: oklch(0.52 0.13 32);
+  --flower-opuntia: oklch(0.87 0.15 98);
+  --flower-ferocactus: oklch(0.7 0.16 45);
+  --fruit-opuntia: oklch(0.5 0.17 355);
+  --flower-organpipe: oklch(0.86 0.06 350);
+  --flower-ocotillo: oklch(0.6 0.2 30);
+  --flower-gold: oklch(0.86 0.16 95);
+  --bark-verde: oklch(0.68 0.11 122);
+  --mistletoe: oklch(0.55 0.08 118);
+  --berry-mistletoe: oklch(0.74 0.11 20);
+  --bark-mesquite: oklch(0.38 0.03 50);
+  --pod: oklch(0.8 0.07 85);
+  --fruit-ibervillea: oklch(0.6 0.19 30);
+
+  /* Species: the desert */
+  --pl-saguaro: oklch(0.6 0.07 140);
+  --pl-opuntia: oklch(0.66 0.09 125);
+  --pl-ferocactus: oklch(0.56 0.08 152);
+  --pl-paloverde: oklch(0.62 0.1 128);
+  --pl-ocotillo: oklch(0.6 0.12 132);
+  --pl-organpipe: oklch(0.57 0.08 148);
+  --pl-brittlebush: oklch(0.74 0.035 140);
+  --pl-mesquite: oklch(0.56 0.09 138);
+  --pl-cholla: oklch(0.68 0.08 128);
+  --pl-creosote: oklch(0.5 0.09 130);
+  --pl-ibervillea: oklch(0.58 0.11 135);
+
+  /* Materials: the Afroalpine garden */
+  --skirt: oklch(0.7 0.03 75);
+  --bark-cork: oklch(0.56 0.028 60);
+  --lichen-orange: oklch(0.72 0.15 58);
+  --wool: oklch(0.96 0.01 120);
+  --felt: oklch(0.93 0.02 95);
+  --flower-lobelia: oklch(0.55 0.14 285);
+  --flower-thistle: oklch(0.64 0.13 335);
+  --bark-heath: oklch(0.46 0.07 38);
+  --usnea: oklch(0.84 0.045 135);
+  --bract-paper: oklch(0.96 0.02 92);
+  --bract-pink: oklch(0.82 0.07 12);
+  --straw: oklch(0.8 0.05 88);
+
+  /* Species: the Afroalpine garden */
+  --pl-groundsel: oklch(0.58 0.085 132);
+  --pl-telekii: oklch(0.64 0.06 175);
+  --pl-cabbage: oklch(0.6 0.1 130);
+  --pl-heath: oklch(0.48 0.08 145);
+  --pl-thistle: oklch(0.62 0.05 150);
+  --pl-alchemilla: oklch(0.78 0.03 140);
+  --pl-gregoriana: oklch(0.52 0.1 148);
+  --pl-helichrysum: oklch(0.7 0.03 145);
+  --pl-tussock: oklch(0.64 0.07 118);
+  --pl-haplocarpha: oklch(0.55 0.1 142);
+  --pl-sapling: oklch(0.6 0.09 130);
+  --pl-trimera: oklch(0.66 0.1 122);
+
+  /* Materials: the savanna */
+  --bark-baobab: oklch(0.7 0.026 55);
+  --bark-thorn: oklch(0.4 0.035 45);
+  --bark-kigelia: oklch(0.56 0.022 70);
+  --bark-marula: oklch(0.63 0.018 80);
+  --fruit-kigelia: oklch(0.6 0.035 75);
+  --grass-rust: oklch(0.56 0.11 42);
+  --flower-gloriosa: oklch(0.5 0.17 12);
+  --stripe-crinum: oklch(0.72 0.1 0);
+
+  /* Species: the savanna */
+  --pl-baobab: oklch(0.64 0.11 126);
+  --pl-thorn: oklch(0.6 0.08 122);
+  --pl-kigelia: oklch(0.5 0.08 140);
+  --pl-marula: oklch(0.56 0.09 132);
+  --pl-gloriosa: oklch(0.58 0.12 130);
+  --pl-redgrass: oklch(0.66 0.07 105);
+  --pl-thatchgrass: oklch(0.7 0.07 95);
+  --pl-crinum: oklch(0.62 0.06 175);
+  --pl-hypoxis: oklch(0.58 0.09 128);
+
+  /* Materials: the fynbos */
+  --stem-protea: oklch(0.5 0.14 22);
+  --bract-protea: oklch(0.76 0.11 10);
+  --bract-protea-deep: oklch(0.56 0.16 14);
+  --cone-protea: oklch(0.95 0.015 95);
+  --bark-silver: oklch(0.58 0.018 110);
+  --cone-silver: oklch(0.62 0.05 70);
+  --bract-repens: oklch(0.64 0.16 16);
+  --cassytha: oklch(0.72 0.14 78);
+  --flower-pincushion: oklch(0.82 0.16 88);
+  --hood-mimetes: oklch(0.56 0.2 26);
+  --sheath-restio: oklch(0.58 0.1 62);
+  --plume-restio: oklch(0.38 0.06 52);
+  --flower-fireheath: oklch(0.58 0.2 24);
+  --flower-watsonia: oklch(0.64 0.17 348);
+  --flower-pelargonium: oklch(0.74 0.14 338);
+  --bract-phaenocoma: oklch(0.62 0.19 350);
+  --flower-aristea: oklch(0.52 0.18 264);
+
+  /* Species: the fynbos */
+  --pl-kingprotea: oklch(0.52 0.09 138);
+  --pl-silvertree: oklch(0.78 0.032 148);
+  --pl-sugarbush: oklch(0.58 0.065 158);
+  --pl-pincushion: oklch(0.6 0.11 132);
+  --pl-pagoda: oklch(0.58 0.1 130);
+  --pl-restio: oklch(0.48 0.08 142);
+  --pl-fireheath: oklch(0.46 0.08 148);
+  --pl-watsonia: oklch(0.56 0.1 136);
+  --pl-pelargonium: oklch(0.62 0.065 144);
+  --pl-berzelia: oklch(0.64 0.11 126);
+  --pl-phaenocoma: oklch(0.68 0.04 142);
+  --pl-aristea: oklch(0.5 0.075 154);
+
+  /* Materials: the Namib */
+  --bark-quiver: oklch(0.68 0.085 68);
+  --bark-halfmens: oklch(0.74 0.015 85);
+  --bark-butter: oklch(0.78 0.115 82);
+  --strap-welwitschia: oklch(0.54 0.075 86);
+  --cone-welwitschia: oklch(0.62 0.175 34);
+  --flower-quiver: oklch(0.84 0.175 92);
+  --flower-mistletoe: oklch(0.56 0.21 26);
+  --flower-hoodia: oklch(0.66 0.105 22);
+  --flower-candle: oklch(0.88 0.145 98);
+  --fruit-nara: oklch(0.74 0.145 72);
+  --bark-green: oklch(0.48 0.085 138);
+  --flower-green: oklch(0.62 0.075 136);
+  --leaf-glaucous: oklch(0.58 0.07 168);
+
+  /* Species: the Namib */
+  --pl-quivertree: oklch(0.68 0.055 192);
+  --pl-halfmens: oklch(0.48 0.065 142);
+  --pl-buttertree: oklch(0.58 0.115 128);
+  --pl-damara: oklch(0.62 0.075 136);
+  --pl-gifboom: oklch(0.48 0.085 138);
+  --pl-nara: oklch(0.54 0.08 132);
+  --pl-welwitschia: oklch(0.49 0.075 124);
+  --pl-dunegrass: oklch(0.6 0.075 118);
+  --pl-bushmanscandle: oklch(0.56 0.065 152);
+  --pl-hoodia: oklch(0.54 0.045 96);
+  --pl-lithops: oklch(0.76 0.035 72);
+
+  /* Materials: the mangrove */
+  --water-tint: oklch(0.66 0.055 182);
+  --water-line: oklch(0.46 0.065 184);
+  --bark-mangrove: oklch(0.48 0.032 55);
+  --bark-red: oklch(0.51 0.115 36);
+  --bark-black: oklch(0.35 0.025 50);
+  --leaf-under-mangrove: oklch(0.7 0.105 124);
+  --leaf-senescent: oklch(0.79 0.145 88);
+  --flower-mangrove: oklch(0.88 0.115 98);
+  --propagule: oklch(0.54 0.095 132);
+  --propagule-tip: oklch(0.47 0.095 46);
+  --petiole-red: oklch(0.54 0.165 18);
+  --cone-buttonwood: oklch(0.48 0.095 44);
+  --spore-rust: oklch(0.52 0.125 54);
+  --flower-ipomoea: oklch(0.64 0.185 336);
+  --stem-sesuvium: oklch(0.56 0.155 14);
+  --leaf-salt: oklch(0.76 0.025 142);
+
+  /* Species: the mangrove */
+  --pl-redmangrove: oklch(0.48 0.095 146);
+  --pl-blackmangrove: oklch(0.45 0.07 148);
+  --pl-whitemangrove: oklch(0.64 0.115 128);
+  --pl-buttonwood: oklch(0.54 0.095 136);
+  --pl-spanishmoss: oklch(0.76 0.025 142);
+  --pl-airplant: oklch(0.68 0.075 130);
+  --pl-leatherfern: oklch(0.5 0.1 140);
+  --pl-cordgrass: oklch(0.6 0.07 138);
+  --pl-swamplily: oklch(0.52 0.105 142);
+  --pl-morningglory: oklch(0.58 0.12 134);
+  --pl-saltwort: oklch(0.68 0.125 122);
+  --pl-seapurslane: oklch(0.56 0.11 144);
+
+  /* Materials: the East Asian garden */
+  --bark-ginkgo: oklch(0.6 0.03 70);
+  --bark-maple: oklch(0.52 0.03 40);
+  --stem-maple: oklch(0.52 0.12 25);
+  --keys-maple: oklch(0.66 0.12 40);
+  --bark-plum: oklch(0.42 0.035 30);
+  --flower-plum: oklch(0.95 0.025 350);
+  --calyx-plum: oklch(0.42 0.12 15);
+  --stamen-plum: oklch(0.78 0.12 85);
+  --fruit-plum: oklch(0.8 0.13 105);
+  --bark-paulownia: oklch(0.56 0.025 75);
+  --flower-paulownia: oklch(0.78 0.08 300);
+  --capsule-paulownia: oklch(0.5 0.06 60);
+  --bud-paulownia: oklch(0.66 0.05 70);
+  --bark-willow: oklch(0.5 0.04 80);
+  --catkin-willow: oklch(0.84 0.12 108);
+  --culm-moso: oklch(0.6 0.1 125);
+  --bloom-moso: oklch(0.9 0.02 120);
+  --sheath-moso: oklch(0.55 0.07 60);
+  --timber: oklch(0.5 0.03 55);
+  --bark-wisteria: oklch(0.52 0.025 60);
+  --flower-wisteria: oklch(0.7 0.12 295);
+  --pod-wisteria: oklch(0.6 0.04 75);
+  --pole-bamboo: oklch(0.74 0.06 85);
+  --bark-akebia: oklch(0.45 0.05 20);
+  --flower-akebia: oklch(0.45 0.09 340);
+  --pod-akebia: oklch(0.55 0.11 320);
+  --stem-peony: oklch(0.52 0.1 20);
+  --flower-peony: oklch(0.82 0.09 355);
+  --follicle-peony: oklch(0.6 0.08 120);
+  --bark-hydrangea: oklch(0.55 0.04 70);
+  --flower-hydrangea: oklch(0.7 0.11 280);
+  --flower-hydrangea-dry: oklch(0.72 0.05 40);
+  --stem-lycoris: oklch(0.6 0.09 135);
+  --flower-lycoris: oklch(0.56 0.21 28);
+  --flower-iris: oklch(0.5 0.15 295);
+  --signal-iris: oklch(0.95 0.03 95);
+  --capsule-iris: oklch(0.58 0.08 120);
+  --stem-lotus: oklch(0.6 0.08 128);
+  --flower-lotus: oklch(0.84 0.08 355);
+  --pod-lotus: oklch(0.72 0.09 115);
+  --pod-lotus-dry: oklch(0.42 0.04 60);
+
+  /* Species: the East Asian garden */
+  --pl-ginkgo: oklch(0.7 0.12 130);
+  --pl-ginkgo-autumn: oklch(0.84 0.15 88);
+  --pl-maple: oklch(0.68 0.14 132);
+  --pl-maple-autumn: oklch(0.58 0.2 28);
+  --pl-plum: oklch(0.6 0.11 135);
+  --pl-plum-autumn: oklch(0.76 0.13 92);
+  --pl-paulownia: oklch(0.6 0.1 128);
+  --pl-paulownia-autumn: oklch(0.6 0.08 75);
+  --pl-willow: oklch(0.72 0.12 122);
+  --pl-willow-autumn: oklch(0.8 0.13 95);
+  --pl-moso: oklch(0.6 0.12 130);
+  --pl-wisteria: oklch(0.66 0.12 128);
+  --pl-wisteria-autumn: oklch(0.8 0.13 92);
+  --pl-akebia: oklch(0.58 0.11 138);
+  --pl-lotus: oklch(0.66 0.08 150);
+  --pl-lotus-autumn: oklch(0.6 0.08 70);
+  --pl-iris: oklch(0.64 0.07 150);
+  --pl-iris-autumn: oklch(0.76 0.1 90);
+  --pl-peony: oklch(0.58 0.11 140);
+  --pl-peony-autumn: oklch(0.55 0.12 30);
+  --pl-hydrangea: oklch(0.6 0.12 140);
+  --pl-hydrangea-autumn: oklch(0.7 0.11 80);
+  --pl-lycoris: oklch(0.45 0.08 150);
+
+  /* Materials: the boreal taiga */
+  --bark-spruce: oklch(0.44 0.035 45);
+  --cone-spruce: oklch(0.5 0.075 55);
+  --cone-spruce-young: oklch(0.52 0.16 12);
+  --bark-larch: oklch(0.62 0.04 75);
+  --cone-larch: oklch(0.48 0.055 58);
+  --bark-birch: oklch(0.92 0.012 90);
+  --bark-birch-fissure: oklch(0.32 0.02 60);
+  --twig-birch: oklch(0.42 0.065 32);
+  --catkin-birch: oklch(0.74 0.11 92);
+  --bark-scotspine: oklch(0.66 0.13 48);
+  --candle-pine: oklch(0.74 0.095 75);
+  --lichen-horsehair: oklch(0.32 0.025 55);
+  --flower-fireweed: oklch(0.62 0.19 342);
+  --stem-fireweed: oklch(0.5 0.11 22);
+  --felt-rust: oklch(0.56 0.13 48);
+  --flower-labrador: oklch(0.95 0.018 95);
+  --berry-lingon: oklch(0.54 0.2 26);
+  --flower-lingon: oklch(0.91 0.045 355);
+  --berry-cloud: oklch(0.78 0.15 74);
+  --berry-cloud-unripe: oklch(0.56 0.17 24);
+  --sheath-horsetail: oklch(0.52 0.085 45);
+  --flower-twin: oklch(0.82 0.085 352);
+
+  /* Species: the boreal taiga */
+  --pl-spruce: oklch(0.44 0.075 158);
+  --pl-larch: oklch(0.66 0.13 134);
+  --pl-larch-autumn: oklch(0.8 0.155 84);
+  --pl-birch: oklch(0.62 0.12 132);
+  --pl-birch-autumn: oklch(0.82 0.15 92);
+  --pl-scotspine: oklch(0.52 0.075 162);
+  --pl-methuselah: oklch(0.82 0.055 128);
+  --pl-horsehair: oklch(0.34 0.028 60);
+  --pl-fireweed: oklch(0.56 0.11 138);
+  --pl-fireweed-autumn: oklch(0.54 0.19 26);
+  --pl-labradortea: oklch(0.48 0.075 144);
+  --pl-horsetail: oklch(0.66 0.125 130);
+  --pl-horsetail-autumn: oklch(0.78 0.08 88);
+  --pl-lingonberry: oklch(0.48 0.095 142);
+  --pl-cloudberry: oklch(0.58 0.11 134);
+  --pl-cloudberry-autumn: oklch(0.48 0.11 28);
+  --pl-twinflower: oklch(0.52 0.095 142);
+
+  /* Materials: the North American edge */
+  --bark-tulip: oklch(0.52 0.04 52);
+  --flower-tulip-cup: oklch(0.82 0.13 108);
+  --flower-tulip-band: oklch(0.68 0.18 52);
+  --cone-tulip: oklch(0.72 0.065 82);
+  --bark-sugarmaple: oklch(0.5 0.035 58);
+  --keys-sugarmaple: oklch(0.7 0.095 88);
+  --bark-redbud: oklch(0.35 0.025 32);
+  --flower-redbud: oklch(0.64 0.185 344);
+  --pod-redbud: oklch(0.42 0.065 24);
+  --bark-walnut: oklch(0.38 0.03 55);
+  --nut-walnut: oklch(0.72 0.135 124);
+  --pedicel-creeper: oklch(0.56 0.185 22);
+  --berry-creeper: oklch(0.36 0.045 268);
+  --flower-trumpet: oklch(0.62 0.2 36);
+  --flower-trumpet-throat: oklch(0.8 0.155 78);
+  --pod-trumpet: oklch(0.58 0.065 68);
+  --flower-pipe: oklch(0.74 0.11 108);
+  --flower-pipe-limb: oklch(0.38 0.085 22);
+  --capsule-pipe: oklch(0.36 0.025 65);
+  --flower-compass: oklch(0.84 0.165 92);
+  --disc-compass: oklch(0.46 0.075 68);
+  --flower-milkweed: oklch(0.72 0.095 352);
+  --pod-milkweed: oklch(0.64 0.035 110);
+  --plume-bluestem: oklch(0.56 0.075 38);
+  --flower-blazingstar: oklch(0.62 0.19 328);
+  --flower-coneflower: oklch(0.66 0.155 338);
+  --cone-coneflower: oklch(0.58 0.165 46);
+  --cone-coneflower-winter: oklch(0.28 0.02 55);
+
+  /* Species: the North American edge */
+  --pl-tuliptree: oklch(0.64 0.13 132);
+  --pl-tuliptree-autumn: oklch(0.84 0.155 90);
+  --pl-sugarmaple: oklch(0.6 0.125 136);
+  --pl-sugarmaple-autumn: oklch(0.64 0.195 38);
+  --pl-redbud: oklch(0.58 0.095 144);
+  --pl-redbud-autumn: oklch(0.82 0.145 92);
+  --pl-walnut: oklch(0.62 0.125 128);
+  --pl-walnut-autumn: oklch(0.8 0.14 90);
+  --pl-creeper: oklch(0.56 0.11 138);
+  --pl-creeper-autumn: oklch(0.54 0.2 26);
+  --pl-trumpetvine: oklch(0.58 0.12 134);
+  --pl-trumpetvine-autumn: oklch(0.78 0.13 90);
+  --pl-dutchmanspipe: oklch(0.52 0.1 142);
+  --pl-dutchmanspipe-autumn: oklch(0.68 0.095 82);
+  --pl-compassplant: oklch(0.58 0.105 134);
+  --pl-compassplant-autumn: oklch(0.54 0.065 68);
+  --pl-bluestem: oklch(0.58 0.075 162);
+  --pl-bluestem-autumn: oklch(0.56 0.125 38);
+  --pl-milkweed: oklch(0.6 0.085 142);
+  --pl-milkweed-autumn: oklch(0.78 0.12 90);
+  --pl-blazingstar: oklch(0.56 0.11 138);
+  --pl-blazingstar-autumn: oklch(0.66 0.075 78);
+  --pl-coneflower: oklch(0.52 0.1 140);
+  --pl-coneflower-autumn: oklch(0.48 0.055 65);
+
+  /* Materials: the European woodland */
+  --bark-oak: oklch(0.46 0.03 62);
+  --acorn-nut: oklch(0.58 0.095 68);
+  --acorn-cup: oklch(0.52 0.045 72);
+  --bark-hazel: oklch(0.5 0.065 48);
+  --catkin-hazel: oklch(0.84 0.14 98);
+  --nut-hazel: oklch(0.58 0.09 64);
+  --bark-hawthorn: oklch(0.44 0.035 50);
+  --flower-hawthorn: oklch(0.96 0.015 95);
+  --anther-hawthorn: oklch(0.62 0.14 348);
+  --berry-haw: oklch(0.52 0.195 24);
+  --bark-holly: oklch(0.62 0.02 95);
+  --berry-holly: oklch(0.56 0.21 26);
+  --vein-ivy: oklch(0.82 0.045 128);
+  --flower-ivy: oklch(0.78 0.12 112);
+  --berry-ivy: oklch(0.3 0.025 260);
+  --plume-clematis: oklch(0.92 0.015 92);
+  --flower-clematis: oklch(0.9 0.045 102);
+  --flower-honeysuckle: oklch(0.9 0.065 88);
+  --blush-honeysuckle: oklch(0.66 0.14 352);
+  --berry-honeysuckle: oklch(0.54 0.19 24);
+  --sori-rust: oklch(0.48 0.11 48);
+  --flower-foxglove: oklch(0.64 0.165 336);
+  --spot-foxglove: oklch(0.4 0.13 18);
+  --flower-gorse: oklch(0.84 0.175 90);
+  --calyx-gorse: oklch(0.54 0.065 68);
+  --pod-gorse: oklch(0.36 0.03 55);
+  --flower-bluebell: oklch(0.56 0.175 278);
+
+  /* Species: the European woodland */
+  --pl-oak: oklch(0.54 0.105 138);
+  --pl-oak-autumn: oklch(0.64 0.115 68);
+  --pl-hazel: oklch(0.6 0.12 132);
+  --pl-hazel-autumn: oklch(0.82 0.145 92);
+  --pl-hawthorn: oklch(0.52 0.11 140);
+  --pl-hawthorn-autumn: oklch(0.68 0.12 64);
+  --pl-holly: oklch(0.42 0.085 148);
+  --pl-ivy: oklch(0.46 0.09 146);
+  --pl-oldmansbeard: oklch(0.58 0.11 134);
+  --pl-oldmansbeard-autumn: oklch(0.76 0.11 90);
+  --pl-honeysuckle: oklch(0.56 0.095 144);
+  --pl-honeysuckle-autumn: oklch(0.76 0.115 90);
+  --pl-bracken: oklch(0.62 0.125 130);
+  --pl-bracken-autumn: oklch(0.58 0.135 52);
+  --pl-foxglove: oklch(0.56 0.09 140);
+  --pl-gorse: oklch(0.48 0.085 144);
+  --pl-hartstongue: oklch(0.62 0.135 134);
+  --pl-bluebell: oklch(0.56 0.115 138);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"],
+.night {
+  /* Paper and ink */
+  --bg: #131712;
+  --surface: #1c211b;
+  --border: #343c33;
+  --text: #e7eae1;
+  --muted: #a6ad9d;
+  --faint: #6f7668;
+  --accent: #c3a45c;
+  --accent-ink: #c3a45c;
+  --grain-alpha: 0.07;
+  --garden-ink: oklch(0.32 0.02 145);
+
+  /* Materials: the tropical garden, by moonlight */
+  --bark-pale: oklch(0.61 0.023 105);
+  --cork: oklch(0.57 0.047 70);
+  --stem-green: oklch(0.55 0.078 128);
+  --shield: oklch(0.59 0.07 120);
+  --lime: oklch(0.81 0.12 115);
+  --filament: oklch(0.88 0.023 330);
+  --pistil: oklch(0.81 0.047 135);
+  --spathe: oklch(0.53 0.055 200);
+  --sepal: oklch(0.69 0.12 58);
+  --tongue: oklch(0.45 0.11 262);
+  --fruit-mango: oklch(0.77 0.11 88);
+  --fruit-unripe: oklch(0.67 0.1 128);
+  --blush: oklch(0.67 0.11 50);
+  --fruit-lychee: oklch(0.55 0.12 22);
+  --fruit-blushing: oklch(0.71 0.086 60);
+
+  /* Species: the tropical garden, by moonlight */
+  --pl-frangipani: oklch(0.51 0.079 154);
+  --pl-bauhinia: oklch(0.58 0.072 142);
+  --pl-mango: oklch(0.4 0.05 164);
+  --pl-lychee: oklch(0.46 0.065 158);
+  --pl-palm: oklch(0.58 0.086 140);
+  --pl-monstera: oklch(0.46 0.079 160);
+  --pl-adansonii: oklch(0.56 0.094 150);
+  --pl-strelitzia: oklch(0.52 0.058 173);
+  --pl-alocasia: oklch(0.3 0.036 180);
+  --pl-calathea: oklch(0.51 0.05 158);
+  --pl-staghorn: oklch(0.66 0.043 148);
+  --pl-philodendron: oklch(0.56 0.1 146);
+
+  /* Materials: the Mediterranean garden, by moonlight */
+  --bark-olive: oklch(0.58 0.015 95);
+  --bark-pine: oklch(0.48 0.05 45);
+  --olive-silver: oklch(0.72 0.025 160);
+  --fruit-olive: oklch(0.36 0.06 310);
+  --fruit-olive-green: oklch(0.62 0.09 120);
+  --fruit-fig: oklch(0.42 0.08 330);
+  --fruit-lemon: oklch(0.86 0.15 100);
+  --fruit-grape: oklch(0.42 0.09 295);
+  --pine-cone: oklch(0.52 0.07 60);
+  --bract: oklch(0.6 0.19 345);
+  --flower-lavender: oklch(0.6 0.13 295);
+  --flower-rosemary: oklch(0.74 0.07 265);
+  --flower-acanthus: oklch(0.86 0.03 330);
+  --hood-acanthus: oklch(0.45 0.09 315);
+
+  /* Species: the Mediterranean garden, by moonlight */
+  --pl-olive: oklch(0.52 0.045 150);
+  --pl-fig: oklch(0.5 0.09 140);
+  --pl-lemon: oklch(0.46 0.08 155);
+  --pl-pine: oklch(0.46 0.07 160);
+  --pl-grapevine: oklch(0.54 0.09 132);
+  --pl-jasmine: oklch(0.44 0.07 160);
+  --pl-bougainvillea: oklch(0.5 0.09 145);
+  --pl-cypress: oklch(0.36 0.05 165);
+  --pl-lavender: oklch(0.6 0.035 150);
+  --pl-rosemary: oklch(0.5 0.05 165);
+  --pl-agave: oklch(0.62 0.045 215);
+  --pl-acanthus: oklch(0.46 0.09 150);
+
+
+  /* Materials: the desert, by moonlight */
+  --spine: oklch(0.79 0.027 85);
+  --spine-hook: oklch(0.47 0.1 32);
+  --flower-opuntia: oklch(0.82 0.117 98);
+  --flower-ferocactus: oklch(0.65 0.125 45);
+  --fruit-opuntia: oklch(0.45 0.133 355);
+  --flower-organpipe: oklch(0.81 0.047 350);
+  --flower-ocotillo: oklch(0.55 0.156 30);
+  --flower-gold: oklch(0.81 0.125 95);
+  --bark-verde: oklch(0.63 0.086 122);
+  --mistletoe: oklch(0.5 0.062 118);
+  --berry-mistletoe: oklch(0.69 0.086 20);
+  --bark-mesquite: oklch(0.33 0.023 50);
+  --pod: oklch(0.75 0.055 85);
+  --fruit-ibervillea: oklch(0.55 0.148 30);
+
+  /* Species: the desert, by moonlight */
+  --pl-saguaro: oklch(0.56 0.05 148);
+  --pl-opuntia: oklch(0.62 0.065 133);
+  --pl-ferocactus: oklch(0.52 0.058 160);
+  --pl-paloverde: oklch(0.58 0.072 136);
+  --pl-ocotillo: oklch(0.56 0.086 140);
+  --pl-organpipe: oklch(0.53 0.058 156);
+  --pl-brittlebush: oklch(0.7 0.025 148);
+  --pl-mesquite: oklch(0.52 0.065 146);
+  --pl-cholla: oklch(0.64 0.058 136);
+  --pl-creosote: oklch(0.46 0.065 138);
+  --pl-ibervillea: oklch(0.54 0.079 143);
+
+  /* Materials: the Afroalpine garden, by moonlight */
+  --skirt: oklch(0.61 0.022 75);
+  --bark-cork: oklch(0.51 0.022 60);
+  --lichen-orange: oklch(0.67 0.117 58);
+  --wool: oklch(0.8 0.008 120);
+  --felt: oklch(0.84 0.016 95);
+  --flower-lobelia: oklch(0.5 0.109 285);
+  --flower-thistle: oklch(0.59 0.101 335);
+  --bark-heath: oklch(0.41 0.055 38);
+  --usnea: oklch(0.76 0.035 135);
+  --bract-paper: oklch(0.88 0.016 92);
+  --bract-pink: oklch(0.77 0.055 12);
+  --straw: oklch(0.72 0.039 88);
+
+  /* Species: the Afroalpine garden, by moonlight */
+  --pl-groundsel: oklch(0.54 0.061 140);
+  --pl-telekii: oklch(0.6 0.043 183);
+  --pl-cabbage: oklch(0.56 0.072 138);
+  --pl-heath: oklch(0.44 0.058 153);
+  --pl-thistle: oklch(0.58 0.036 158);
+  --pl-alchemilla: oklch(0.72 0.022 148);
+  --pl-gregoriana: oklch(0.48 0.072 156);
+  --pl-helichrysum: oklch(0.65 0.022 153);
+  --pl-tussock: oklch(0.6 0.05 126);
+  --pl-haplocarpha: oklch(0.51 0.072 150);
+  --pl-sapling: oklch(0.56 0.065 138);
+  --pl-trimera: oklch(0.62 0.072 130);
+
+  /* Materials: the savanna, by moonlight */
+  --bark-baobab: oklch(0.65 0.02 55);
+  --bark-thorn: oklch(0.35 0.027 45);
+  --bark-kigelia: oklch(0.51 0.017 70);
+  --bark-marula: oklch(0.58 0.014 80);
+  --fruit-kigelia: oklch(0.55 0.027 75);
+  --grass-rust: oklch(0.51 0.086 42);
+  --flower-gloriosa: oklch(0.45 0.133 12);
+  --stripe-crinum: oklch(0.67 0.078 0);
+
+  /* Species: the savanna, by moonlight */
+  --pl-baobab: oklch(0.6 0.079 134);
+  --pl-thorn: oklch(0.56 0.058 130);
+  --pl-kigelia: oklch(0.46 0.058 148);
+  --pl-marula: oklch(0.52 0.065 140);
+  --pl-gloriosa: oklch(0.54 0.086 138);
+  --pl-redgrass: oklch(0.62 0.05 113);
+  --pl-thatchgrass: oklch(0.66 0.05 103);
+  --pl-crinum: oklch(0.58 0.043 183);
+  --pl-hypoxis: oklch(0.54 0.065 136);
+
+  /* Materials: the fynbos, by moonlight */
+  --stem-protea: oklch(0.45 0.109 22);
+  --bract-protea: oklch(0.71 0.086 10);
+  --bract-protea-deep: oklch(0.51 0.125 14);
+  --cone-protea: oklch(0.84 0.012 95);
+  --bark-silver: oklch(0.53 0.014 110);
+  --cone-silver: oklch(0.57 0.039 70);
+  --bract-repens: oklch(0.59 0.125 16);
+  --cassytha: oklch(0.67 0.109 78);
+  --flower-pincushion: oklch(0.77 0.125 88);
+  --hood-mimetes: oklch(0.51 0.156 26);
+  --sheath-restio: oklch(0.53 0.078 62);
+  --plume-restio: oklch(0.33 0.047 52);
+  --flower-fireheath: oklch(0.53 0.156 24);
+  --flower-watsonia: oklch(0.59 0.133 348);
+  --flower-pelargonium: oklch(0.69 0.109 338);
+  --bract-phaenocoma: oklch(0.57 0.148 350);
+  --flower-aristea: oklch(0.47 0.14 264);
+
+  /* Species: the fynbos, by moonlight */
+  --pl-kingprotea: oklch(0.48 0.065 146);
+  --pl-silvertree: oklch(0.71 0.023 156);
+  --pl-sugarbush: oklch(0.54 0.047 166);
+  --pl-pincushion: oklch(0.56 0.079 140);
+  --pl-pagoda: oklch(0.54 0.072 138);
+  --pl-restio: oklch(0.44 0.058 150);
+  --pl-fireheath: oklch(0.42 0.058 156);
+  --pl-watsonia: oklch(0.52 0.072 144);
+  --pl-pelargonium: oklch(0.58 0.047 152);
+  --pl-berzelia: oklch(0.6 0.079 134);
+  --pl-phaenocoma: oklch(0.63 0.029 150);
+  --pl-aristea: oklch(0.46 0.054 162);
+
+  /* Materials: the Namib, by moonlight */
+  --bark-quiver: oklch(0.62 0.065 68);
+  --bark-halfmens: oklch(0.68 0.012 85);
+  --bark-butter: oklch(0.71 0.09 82);
+  --strap-welwitschia: oklch(0.49 0.058 86);
+  --cone-welwitschia: oklch(0.57 0.14 34);
+  --flower-quiver: oklch(0.79 0.14 92);
+  --flower-mistletoe: oklch(0.52 0.165 26);
+  --flower-hoodia: oklch(0.61 0.082 22);
+  --flower-candle: oklch(0.82 0.115 98);
+  --fruit-nara: oklch(0.68 0.115 72);
+  --bark-green: oklch(0.44 0.062 146);
+  --flower-green: oklch(0.58 0.055 144);
+  --leaf-glaucous: oklch(0.54 0.052 174);
+
+  /* Species: the Namib, by moonlight */
+  --pl-quivertree: oklch(0.64 0.04 200);
+  --pl-halfmens: oklch(0.44 0.048 150);
+  --pl-buttertree: oklch(0.54 0.084 136);
+  --pl-damara: oklch(0.58 0.055 144);
+  --pl-gifboom: oklch(0.44 0.062 146);
+  --pl-nara: oklch(0.5 0.058 140);
+  --pl-welwitschia: oklch(0.45 0.055 132);
+  --pl-dunegrass: oklch(0.56 0.055 126);
+  --pl-bushmanscandle: oklch(0.52 0.048 160);
+  --pl-hoodia: oklch(0.5 0.034 104);
+  --pl-lithops: oklch(0.72 0.025 80);
+
+  /* Materials: the mangrove, by moonlight */
+  --water-tint: oklch(0.36 0.048 190);
+  --water-line: oklch(0.62 0.055 188);
+  --bark-mangrove: oklch(0.43 0.025 55);
+  --bark-red: oklch(0.46 0.09 36);
+  --bark-black: oklch(0.3 0.02 50);
+  --leaf-under-mangrove: oklch(0.64 0.082 124);
+  --leaf-senescent: oklch(0.73 0.115 88);
+  --flower-mangrove: oklch(0.81 0.09 98);
+  --propagule: oklch(0.5 0.074 140);
+  --propagule-tip: oklch(0.42 0.074 46);
+  --petiole-red: oklch(0.49 0.128 18);
+  --cone-buttonwood: oklch(0.43 0.074 44);
+  --spore-rust: oklch(0.47 0.098 54);
+  --flower-ipomoea: oklch(0.59 0.145 336);
+  --stem-sesuvium: oklch(0.51 0.12 14);
+  --leaf-salt: oklch(0.69 0.018 150);
+
+  /* Species: the mangrove, by moonlight */
+  --pl-redmangrove: oklch(0.44 0.068 154);
+  --pl-blackmangrove: oklch(0.41 0.05 156);
+  --pl-whitemangrove: oklch(0.6 0.082 136);
+  --pl-buttonwood: oklch(0.5 0.068 144);
+  --pl-spanishmoss: oklch(0.69 0.018 150);
+  --pl-airplant: oklch(0.63 0.054 138);
+  --pl-leatherfern: oklch(0.46 0.072 148);
+  --pl-cordgrass: oklch(0.56 0.05 146);
+  --pl-swamplily: oklch(0.48 0.075 150);
+  --pl-morningglory: oklch(0.54 0.086 142);
+  --pl-saltwort: oklch(0.63 0.09 130);
+  --pl-seapurslane: oklch(0.52 0.079 152);
+
+  /* Materials: the East Asian garden, by moonlight */
+  --bark-ginkgo: oklch(0.55 0.023 70);
+  --bark-maple: oklch(0.47 0.023 40);
+  --stem-maple: oklch(0.47 0.094 25);
+  --keys-maple: oklch(0.61 0.094 40);
+  --bark-plum: oklch(0.37 0.027 30);
+  --flower-plum: oklch(0.86 0.02 350);
+  --calyx-plum: oklch(0.37 0.094 15);
+  --stamen-plum: oklch(0.73 0.094 85);
+  --fruit-plum: oklch(0.75 0.101 105);
+  --bark-paulownia: oklch(0.51 0.02 75);
+  --flower-paulownia: oklch(0.73 0.062 300);
+  --capsule-paulownia: oklch(0.45 0.047 60);
+  --bud-paulownia: oklch(0.61 0.039 70);
+  --bark-willow: oklch(0.45 0.031 80);
+  --catkin-willow: oklch(0.79 0.094 108);
+  --culm-moso: oklch(0.55 0.078 125);
+  --bloom-moso: oklch(0.7 0.016 120);
+  --sheath-moso: oklch(0.5 0.055 60);
+  --timber: oklch(0.45 0.023 55);
+  --bark-wisteria: oklch(0.47 0.02 60);
+  --flower-wisteria: oklch(0.65 0.094 295);
+  --pod-wisteria: oklch(0.55 0.031 75);
+  --pole-bamboo: oklch(0.69 0.047 85);
+  --bark-akebia: oklch(0.4 0.039 20);
+  --flower-akebia: oklch(0.4 0.07 340);
+  --pod-akebia: oklch(0.5 0.086 320);
+  --stem-peony: oklch(0.47 0.078 20);
+  --flower-peony: oklch(0.77 0.07 355);
+  --follicle-peony: oklch(0.55 0.062 120);
+  --bark-hydrangea: oklch(0.5 0.031 70);
+  --flower-hydrangea: oklch(0.65 0.086 280);
+  --flower-hydrangea-dry: oklch(0.67 0.039 40);
+  --stem-lycoris: oklch(0.55 0.07 135);
+  --flower-lycoris: oklch(0.51 0.164 28);
+  --flower-iris: oklch(0.45 0.117 295);
+  --signal-iris: oklch(0.85 0.023 95);
+  --capsule-iris: oklch(0.53 0.062 120);
+  --stem-lotus: oklch(0.55 0.062 128);
+  --flower-lotus: oklch(0.79 0.062 355);
+  --pod-lotus: oklch(0.67 0.07 115);
+  --pod-lotus-dry: oklch(0.37 0.031 60);
+
+  /* Species: the East Asian garden, by moonlight */
+  --pl-ginkgo: oklch(0.66 0.086 138);
+  --pl-ginkgo-autumn: oklch(0.8 0.108 96);
+  --pl-maple: oklch(0.64 0.1 140);
+  --pl-maple-autumn: oklch(0.54 0.144 36);
+  --pl-plum: oklch(0.56 0.079 143);
+  --pl-plum-autumn: oklch(0.72 0.094 100);
+  --pl-paulownia: oklch(0.56 0.072 136);
+  --pl-paulownia-autumn: oklch(0.56 0.058 83);
+  --pl-willow: oklch(0.68 0.086 130);
+  --pl-willow-autumn: oklch(0.76 0.094 103);
+  --pl-moso: oklch(0.56 0.086 138);
+  --pl-wisteria: oklch(0.62 0.086 136);
+  --pl-wisteria-autumn: oklch(0.76 0.094 100);
+  --pl-akebia: oklch(0.54 0.079 146);
+  --pl-lotus: oklch(0.62 0.058 158);
+  --pl-lotus-autumn: oklch(0.56 0.058 78);
+  --pl-iris: oklch(0.6 0.05 158);
+  --pl-iris-autumn: oklch(0.72 0.072 98);
+  --pl-peony: oklch(0.54 0.079 148);
+  --pl-peony-autumn: oklch(0.51 0.086 38);
+  --pl-hydrangea: oklch(0.56 0.086 148);
+  --pl-hydrangea-autumn: oklch(0.66 0.079 88);
+  --pl-lycoris: oklch(0.41 0.058 158);
+
+  /* Materials: the boreal taiga, by moonlight */
+  --bark-spruce: oklch(0.39 0.027 45);
+  --cone-spruce: oklch(0.45 0.058 55);
+  --cone-spruce-young: oklch(0.47 0.125 12);
+  --bark-larch: oklch(0.57 0.031 75);
+  --cone-larch: oklch(0.43 0.043 58);
+  --bark-birch: oklch(0.8 0.009 90);
+  --bark-birch-fissure: oklch(0.27 0.016 60);
+  --twig-birch: oklch(0.37 0.051 32);
+  --catkin-birch: oklch(0.69 0.086 92);
+  --bark-scotspine: oklch(0.61 0.101 48);
+  --candle-pine: oklch(0.69 0.074 75);
+  --lichen-horsehair: oklch(0.28 0.02 55);
+  --flower-fireweed: oklch(0.57 0.148 342);
+  --stem-fireweed: oklch(0.45 0.086 22);
+  --felt-rust: oklch(0.51 0.101 48);
+  --flower-labrador: oklch(0.84 0.014 95);
+  --berry-lingon: oklch(0.49 0.156 26);
+  --flower-lingon: oklch(0.82 0.035 355);
+  --berry-cloud: oklch(0.73 0.117 74);
+  --berry-cloud-unripe: oklch(0.51 0.133 24);
+  --sheath-horsetail: oklch(0.47 0.066 45);
+  --flower-twin: oklch(0.76 0.066 352);
+
+  /* Species: the boreal taiga, by moonlight */
+  --pl-spruce: oklch(0.4 0.054 166);
+  --pl-larch: oklch(0.62 0.094 142);
+  --pl-larch-autumn: oklch(0.76 0.112 92);
+  --pl-birch: oklch(0.58 0.086 140);
+  --pl-birch-autumn: oklch(0.78 0.108 100);
+  --pl-scotspine: oklch(0.48 0.054 170);
+  --pl-methuselah: oklch(0.74 0.04 136);
+  --pl-horsehair: oklch(0.3 0.02 68);
+  --pl-fireweed: oklch(0.52 0.079 146);
+  --pl-fireweed-autumn: oklch(0.5 0.137 34);
+  --pl-labradortea: oklch(0.44 0.054 152);
+  --pl-horsetail: oklch(0.62 0.09 138);
+  --pl-horsetail-autumn: oklch(0.74 0.058 96);
+  --pl-lingonberry: oklch(0.44 0.068 150);
+  --pl-cloudberry: oklch(0.54 0.079 142);
+  --pl-cloudberry-autumn: oklch(0.44 0.079 36);
+  --pl-twinflower: oklch(0.48 0.068 150);
+
+  /* Materials: the North American edge, by moonlight */
+  --bark-tulip: oklch(0.47 0.031 52);
+  --flower-tulip-cup: oklch(0.77 0.101 108);
+  --flower-tulip-band: oklch(0.63 0.14 52);
+  --cone-tulip: oklch(0.67 0.051 82);
+  --bark-sugarmaple: oklch(0.45 0.027 58);
+  --keys-sugarmaple: oklch(0.65 0.074 88);
+  --bark-redbud: oklch(0.3 0.02 32);
+  --flower-redbud: oklch(0.59 0.144 344);
+  --pod-redbud: oklch(0.37 0.051 24);
+  --bark-walnut: oklch(0.33 0.023 55);
+  --nut-walnut: oklch(0.67 0.105 124);
+  --pedicel-creeper: oklch(0.51 0.144 22);
+  --berry-creeper: oklch(0.31 0.035 268);
+  --flower-trumpet: oklch(0.57 0.156 36);
+  --flower-trumpet-throat: oklch(0.75 0.121 78);
+  --pod-trumpet: oklch(0.53 0.051 68);
+  --flower-pipe: oklch(0.69 0.086 108);
+  --flower-pipe-limb: oklch(0.33 0.066 22);
+  --capsule-pipe: oklch(0.31 0.02 65);
+  --flower-compass: oklch(0.79 0.129 92);
+  --disc-compass: oklch(0.41 0.058 68);
+  --flower-milkweed: oklch(0.67 0.074 352);
+  --pod-milkweed: oklch(0.59 0.027 110);
+  --plume-bluestem: oklch(0.51 0.058 38);
+  --flower-blazingstar: oklch(0.57 0.148 328);
+  --flower-coneflower: oklch(0.61 0.121 338);
+  --cone-coneflower: oklch(0.53 0.129 46);
+  --cone-coneflower-winter: oklch(0.24 0.016 55);
+
+  /* Species: the North American edge, by moonlight */
+  --pl-tuliptree: oklch(0.6 0.094 140);
+  --pl-tuliptree-autumn: oklch(0.8 0.112 98);
+  --pl-sugarmaple: oklch(0.56 0.09 144);
+  --pl-sugarmaple-autumn: oklch(0.6 0.14 46);
+  --pl-redbud: oklch(0.54 0.068 152);
+  --pl-redbud-autumn: oklch(0.78 0.104 100);
+  --pl-walnut: oklch(0.58 0.09 136);
+  --pl-walnut-autumn: oklch(0.76 0.101 98);
+  --pl-creeper: oklch(0.52 0.079 146);
+  --pl-creeper-autumn: oklch(0.5 0.144 34);
+  --pl-trumpetvine: oklch(0.54 0.086 142);
+  --pl-trumpetvine-autumn: oklch(0.74 0.094 98);
+  --pl-dutchmanspipe: oklch(0.48 0.072 150);
+  --pl-dutchmanspipe-autumn: oklch(0.64 0.068 90);
+  --pl-compassplant: oklch(0.54 0.076 142);
+  --pl-compassplant-autumn: oklch(0.5 0.047 76);
+  --pl-bluestem: oklch(0.54 0.054 170);
+  --pl-bluestem-autumn: oklch(0.52 0.09 46);
+  --pl-milkweed: oklch(0.56 0.061 150);
+  --pl-milkweed-autumn: oklch(0.74 0.086 98);
+  --pl-blazingstar: oklch(0.52 0.079 146);
+  --pl-blazingstar-autumn: oklch(0.62 0.054 86);
+  --pl-coneflower: oklch(0.48 0.072 148);
+  --pl-coneflower-autumn: oklch(0.44 0.04 73);
+
+  /* Materials: the European woodland, by moonlight */
+  --bark-oak: oklch(0.41 0.023 62);
+  --acorn-nut: oklch(0.53 0.074 68);
+  --acorn-cup: oklch(0.47 0.035 72);
+  --bark-hazel: oklch(0.45 0.051 48);
+  --catkin-hazel: oklch(0.79 0.109 98);
+  --nut-hazel: oklch(0.53 0.07 64);
+  --bark-hawthorn: oklch(0.39 0.027 50);
+  --flower-hawthorn: oklch(0.84 0.012 95);
+  --anther-hawthorn: oklch(0.57 0.109 348);
+  --berry-haw: oklch(0.47 0.152 24);
+  --bark-holly: oklch(0.57 0.016 95);
+  --berry-holly: oklch(0.51 0.164 26);
+  --vein-ivy: oklch(0.75 0.035 128);
+  --flower-ivy: oklch(0.73 0.094 112);
+  --berry-ivy: oklch(0.25 0.02 260);
+  --plume-clematis: oklch(0.81 0.012 92);
+  --flower-clematis: oklch(0.82 0.035 102);
+  --flower-honeysuckle: oklch(0.82 0.051 88);
+  --blush-honeysuckle: oklch(0.61 0.109 352);
+  --berry-honeysuckle: oklch(0.49 0.148 24);
+  --sori-rust: oklch(0.43 0.086 48);
+  --flower-foxglove: oklch(0.59 0.129 336);
+  --spot-foxglove: oklch(0.35 0.101 18);
+  --flower-gorse: oklch(0.79 0.137 90);
+  --calyx-gorse: oklch(0.49 0.051 68);
+  --pod-gorse: oklch(0.31 0.023 55);
+  --flower-bluebell: oklch(0.51 0.137 278);
+
+  /* Species: the European woodland, by moonlight */
+  --pl-oak: oklch(0.5 0.076 146);
+  --pl-oak-autumn: oklch(0.6 0.083 76);
+  --pl-hazel: oklch(0.56 0.086 140);
+  --pl-hazel-autumn: oklch(0.78 0.104 100);
+  --pl-hawthorn: oklch(0.48 0.079 148);
+  --pl-hawthorn-autumn: oklch(0.64 0.086 72);
+  --pl-holly: oklch(0.38 0.061 156);
+  --pl-ivy: oklch(0.42 0.065 154);
+  --pl-oldmansbeard: oklch(0.54 0.079 142);
+  --pl-oldmansbeard-autumn: oklch(0.72 0.079 98);
+  --pl-honeysuckle: oklch(0.52 0.068 152);
+  --pl-honeysuckle-autumn: oklch(0.72 0.083 98);
+  --pl-bracken: oklch(0.58 0.09 138);
+  --pl-bracken-autumn: oklch(0.54 0.097 60);
+  --pl-foxglove: oklch(0.52 0.065 148);
+  --pl-gorse: oklch(0.44 0.061 152);
+  --pl-hartstongue: oklch(0.58 0.097 142);
+  --pl-bluebell: oklch(0.52 0.083 146);
+
+  color-scheme: dark;
+}

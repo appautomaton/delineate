@@ -1,0 +1,76 @@
+/* A collage card: a square sheet of paper engraved with fine rings, a ruled frame with its corners cut in, and the
+   shots laid inside it. Everything is sized in the card's own width (cqi), so the card scales as one sheet. */
+.card {
+  --card: #F1EFE8; --rule: #B9B2A2; --ink: #1D1C19;
+  --serif: "Hedvig Letters Serif", Georgia, serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+  position: relative; aspect-ratio: 1; container-type: inline-size; overflow: hidden; isolation: isolate;
+  background: var(--card); color: var(--ink); border-radius: .5cqi;
+  box-shadow: 0 .1cqi .3cqi rgb(30 26 18 / .08), 0 3cqi 6cqi -3cqi rgb(30 26 18 / .22);
+  user-select: none; -webkit-user-select: none;
+}
+/* The plate's rings, as on a banknote's ground: faint enough to be paper, not picture. */
+.card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: repeating-radial-gradient(circle at 50% 52%, rgb(60 52 36 / .05) 0 .1cqi, transparent .12cqi .85cqi);
+}
+.card .frame { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--rule); pointer-events: none; z-index: 10; }
+.card .title, .card .motto {
+  position: absolute; left: 50%; transform: translate(-50%, -50%); z-index: 11;
+  padding: 0 2cqi; background: var(--card); white-space: nowrap;
+}
+.card .title { top: 3.6%; font: 400 3.4cqi/1 var(--serif); letter-spacing: -.01em; }
+.card .motto { top: 96.4%; font: 400 1.9cqi/1 var(--serif); color: #5E5A50; }
+
+.card .shot { position: absolute; inset: 0; }
+.card .shot[hidden] { display: none; }
+.card .shot > * { position: absolute; transform-origin: 50% 50%; transition: translate .5s cubic-bezier(.2, .8, .3, 1); }
+
+/* Held, the pieces part: each moves off along its own way out, the stack's sheets lift apart. */
+.card.parted .shot > * { translate: var(--part, 0 0); }
+.card .slab { transition: translate .5s cubic-bezier(.2, .8, .3, 1); }
+.card.parted .slab { translate: 0 0 calc(var(--n) * 2.6cqi); }
+@media (prefers-reduced-motion: reduce) {
+  .card .shot > *, .card .slab { transition: none; }
+  .card.parted .shot > *, .card.parted .slab { translate: none; }
+}
+
+.card .art { overflow: hidden; }
+.card .art img { position: absolute; display: block; max-width: none; }
+/* The line screen draws only its cream; its sheet is the card's ground. */
+.card .art.screen { background: var(--ground); }
+.card .paper { box-shadow: 0 .12cqi .25cqi rgb(30 26 18 / .1), 0 1cqi 2cqi -1cqi rgb(30 26 18 / .2); }
+
+/* The holder's record, typed. */
+.card .record { background: #FBFAF6; padding: 2.4cqi 2.6cqi; font: 400 1.3cqi/1.75 var(--mono); text-transform: uppercase; letter-spacing: .02em; }
+.card .record .row { display: grid; grid-template-columns: 9cqi 1fr; }
+.card .record .row span:first-child { color: #8C8678; }
+
+/* Embossed tape: the letters stand out of it. */
+.card .label {
+  padding: 1.15cqi 1.5cqi 1cqi; font: 500 2.9cqi/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; white-space: nowrap;
+}
+.card .label.light { background: #E2E0DA; color: #2B2A27; text-shadow: 0 .08cqi 0 rgb(255 255 255 / .7); box-shadow: 0 .1cqi .2cqi rgb(0 0 0 / .12); }
+.card .label.dark { background: var(--ground); color: #F3F0E6; text-shadow: 0 -.08cqi 0 rgb(0 0 0 / .35); box-shadow: 0 .1cqi .3cqi rgb(0 0 0 / .2); }
+
+.card .tab { box-shadow: 0 .08cqi .2cqi rgb(0 0 0 / .12); }
+.card .sheet > .art { position: absolute; }
+
+/* A stamp: the face inset on white, its edge bitten by perforations. */
+.card .stamp-shadow { filter: drop-shadow(0 .3cqi .5cqi rgb(30 26 18 / .22)); }
+.card .stamp {
+  --r: .95cqi; position: relative; padding: calc(var(--r) * 1.4); background: #FBFAF6;
+  mask: radial-gradient(circle, #0000 calc(var(--r) * .55), #000 calc(var(--r) * .55 + .5px)) round calc(var(--r) * -1) calc(var(--r) * -1) / calc(var(--r) * 2) calc(var(--r) * 2),
+    linear-gradient(#000 0 0) content-box;
+}
+.card .stamp > .art { margin: 1.2cqi; width: calc(100% - 2.4cqi) !important; }
+.card .stamp .caption {
+  position: absolute; inset: 3.4cqi 3.6cqi; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none;
+  color: #F3E7C9;
+}
+.card .stamp .caption span:first-child { font: 400 3cqi/1 var(--serif); letter-spacing: -.01em; }
+.card .stamp .caption span:last-child { font: 400 1.2cqi/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; align-self: flex-end; }
+
+/* The hands' sheets, stacked and seen from above. */
+.card .stack { transform-style: preserve-3d; }
+.card .slab { position: absolute; inset: 0; background: #FBFAF6; box-shadow: 0 0 0 .1cqi rgb(30 26 18 / .12); }
+.card .slab .art { position: absolute; }

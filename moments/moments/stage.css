@@ -1,0 +1,187 @@
+/* Moments specimen stage: monochrome value architecture for Night (obsidian) and Day (warm bone paper). */
+
+.moments {
+  --m-bg: #0A0A0C;
+  --m-card: #121215;
+  --m-card-hover: #16161A;
+  --m-border: rgba(255, 255, 255, 0.085);
+  --m-border-strong: rgba(255, 255, 255, 0.18);
+  --m-well: #202025;
+  --m-well-deep: #17171B;
+  --m-mid: #4E4E57;
+  --m-soft: #878791;
+  --m-ink: #F2F2F0;
+  --m-ink-dim: rgba(242, 242, 240, 0.34);
+  --m-paper: #111114;
+  --m-lip: #55555F;
+  --m-dial-hi: #2B2B32;
+  --m-dial-lo: #19191E;
+  --m-rocker-lit: #E6E6E2;
+  --m-rocker-dim: #24242A;
+  --m-rocker-ink-lit: #121215;
+  --m-rocker-ink-dim: #7E7E88;
+  --m-shadow: rgba(0, 0, 0, 0.65);
+  --m-sheen: rgba(255, 255, 255, 0.08);
+
+  --m-sans: "General Sans", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --m-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color: var(--m-ink);
+  font-family: var(--m-sans);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.moments[data-light="day"] {
+  --m-bg: #F6F5F0;
+  --m-card: #FCFBF7;
+  --m-card-hover: #FFFFFF;
+  --m-border: rgba(27, 27, 25, 0.095);
+  --m-border-strong: rgba(27, 27, 25, 0.22);
+  --m-well: #E5E3DB;
+  --m-well-deep: #D9D6CC;
+  --m-mid: #ACA99E;
+  --m-soft: #6C6A61;
+  --m-ink: #1B1B19;
+  --m-ink-dim: rgba(27, 27, 25, 0.28);
+  --m-paper: #FAF9F4;
+  --m-lip: #9A978C;
+  --m-dial-hi: #F0EFE9;
+  --m-dial-lo: #DDDAD0;
+  --m-rocker-lit: #FFFFFF;
+  --m-rocker-dim: #D3D0C6;
+  --m-rocker-ink-lit: #1B1B19;
+  --m-rocker-ink-dim: #6C6A61;
+  --m-shadow: rgba(27, 27, 25, 0.2);
+  --m-sheen: rgba(255, 255, 255, 0.72);
+}
+
+.moments-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.moments.is-single .moments-grid {
+  grid-template-columns: minmax(0, 420px);
+  justify-content: center;
+}
+
+@media (max-width: 1080px) {
+  .moments-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 780px) {
+  .moments-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+}
+
+.moment-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 1 / 1.06;
+  padding: 11px 12px 13px;
+  border-radius: 14px;
+  background: var(--m-card);
+  border: 1px solid var(--m-border);
+  box-shadow: inset 0 1px 0 var(--m-sheen);
+  contain: layout style paint;
+  transition: background-color 180ms ease, border-color 180ms ease;
+  outline: none;
+  overflow: hidden;
+}
+
+.moments.is-single .moment-card {
+  aspect-ratio: 1 / 0.94;
+  padding: 18px 20px 22px;
+  border-radius: 20px;
+}
+
+.moment-card:hover {
+  background: var(--m-card-hover);
+  border-color: var(--m-border-strong);
+}
+
+.moment-card:focus-visible {
+  border-color: var(--m-ink);
+  box-shadow: 0 0 0 1px var(--m-ink);
+}
+
+.moment-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: 500 10px/1 var(--m-mono);
+  letter-spacing: 0.04em;
+  color: var(--m-soft);
+  pointer-events: none;
+}
+
+.moment-idx {
+  opacity: 0.68;
+  font-variant-numeric: tabular-nums;
+}
+
+.moment-mat {
+  opacity: 0;
+  text-transform: lowercase;
+  transition: opacity 180ms ease;
+}
+
+.moment-card:hover .moment-mat,
+.moment-card:focus-visible .moment-mat,
+.moments.is-single .moment-mat {
+  opacity: 0.62;
+}
+
+.moment-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.moment-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.moment-title {
+  margin: 0;
+  text-align: center;
+  font: 450 12px/1.2 var(--m-sans);
+  letter-spacing: -0.005em;
+  color: var(--m-soft);
+  transition: color 180ms ease;
+  pointer-events: none;
+}
+
+.moments.is-single .moment-title {
+  font-size: 14px;
+}
+
+.moment-card:hover .moment-title,
+.moment-card:focus-visible .moment-title,
+.moments.is-single .moment-title {
+  color: var(--m-ink);
+}
+
+.moment-hint {
+  display: none;
+  margin: 4px 0 0;
+  text-align: center;
+  font: 400 11px/1.3 var(--m-mono);
+  color: var(--m-soft);
+  opacity: 0.72;
+}
+
+.moments.is-single .moment-hint {
+  display: block;
+}

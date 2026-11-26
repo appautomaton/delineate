@@ -1,0 +1,153 @@
+/* Patch landing-page specimen card inside delineate's .lineup:
+   One dealt embroidered badge resting at a slight angle directly on the page's own --paper,
+   peeling cleanly across a vertical Cinnabar Pointer-X hairline to its monochrome <svg> blueprint. */
+
+[data-patch-card] {
+  --bp-ink: #1B1B19;
+  --bp-wash: rgba(27, 27, 25, 0.055);
+  --bp-wash-strong: rgba(27, 27, 25, 0.11);
+  --bp-fill: rgba(27, 27, 25, 0.02);
+  --bp-guide: rgba(27, 27, 25, 0.28);
+  --bp-tick: rgba(27, 27, 25, 0.36);
+  --hairline: #D9412B;
+
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:root[data-theme="night"] [data-patch-card],
+body[data-light="night"] [data-patch-card] {
+  --bp-ink: #F1EDE2;
+  --bp-wash: rgba(241, 237, 226, 0.075);
+  --bp-wash-strong: rgba(241, 237, 226, 0.14);
+  --bp-fill: rgba(241, 237, 226, 0.028);
+  --bp-guide: rgba(241, 237, 226, 0.28);
+  --bp-tick: rgba(241, 237, 226, 0.38);
+  --hairline: #EE5A42;
+}
+
+.patch-card-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.patch-card-svg-clip {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  pointer-events: none;
+  visibility: hidden;
+  clip-path: inset(0 100% 0 0);
+}
+
+.patch-card-svg-pose {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.patch-card-svg-pose .badge-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.patch-card-svg-pose .badge-svg .bp-substrate {
+  fill: var(--bp-fill);
+  stroke: none;
+}
+
+.patch-card-svg-pose .badge-svg .bp-outer {
+  fill: none;
+  stroke: var(--bp-guide);
+  stroke-width: 1.35;
+}
+
+.patch-card-svg-pose .badge-svg .bp-merrow {
+  fill: none;
+  stroke: var(--bp-guide);
+  stroke-width: 1.15;
+  stroke-dasharray: 5 4;
+}
+
+.patch-card-svg-pose .badge-svg .bp-inner {
+  fill: none;
+  stroke: var(--bp-guide);
+  stroke-width: 0.85;
+  opacity: 0.58;
+}
+
+.patch-card-svg-pose .badge-svg .bp-ticks {
+  fill: none;
+  stroke: var(--bp-tick);
+  stroke-width: 1.15;
+}
+
+.patch-card-svg-pose .badge-svg g[data-layer="recessed"] {
+  opacity: 0.42;
+}
+
+.patch-card-svg-pose .badge-svg g[data-layer="main"] {
+  opacity: 0.86;
+}
+
+.patch-card-svg-pose .badge-svg g[data-layer="proud"] {
+  opacity: 0.96;
+}
+
+.patch-card-hairline {
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  left: 0;
+  width: 1px;
+  background: var(--hairline);
+  z-index: 8;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-0.5px);
+  transition: opacity 120ms ease;
+}
+
+.patch-card-hairline::before,
+.patch-card-hairline::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  width: 7px;
+  height: 1px;
+  background: var(--hairline);
+}
+
+.patch-card-hairline::before {
+  top: 0;
+}
+
+.patch-card-hairline::after {
+  bottom: 0;
+}
+
+.patch-card-tag {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--hairline);
+  white-space: nowrap;
+  opacity: 0.92;
+}

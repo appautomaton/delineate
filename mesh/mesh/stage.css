@@ -1,0 +1,246 @@
+/* Mesh Gradient optical canvas containers & sub-pixel-locked editorial overlays inside each tile.
+   Unified in Cabinet Grotesk (variable 100..900) + IBM Plex Mono, with real 1px .plume-rule hairlines,
+   uncollapsed 2-column Swiss poster layout (collapse <= 145px), and vertical/horizontal Lantern DOF labels. */
+
+.tile-canvas {
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.tile-canvas[data-plate="veil"],
+.tile-canvas[data-plate="prism"] {
+  cursor: pointer;
+}
+
+.tile-canvas[data-plate="plume"] {
+  cursor: crosshair;
+}
+
+.tile-canvas[data-plate="lantern"] {
+  cursor: grab;
+}
+
+.tile-canvas[data-plate="lantern"].is-dragging {
+  cursor: grabbing;
+}
+
+.mesh-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.mesh-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* === Plate III (03) — Plume: Swiss triptych in Cabinet Grotesk + IBM Plex Mono + 1px hairline rules === */
+.overlay-plume {
+  position: absolute;
+  inset: 0;
+}
+
+.plume-sheet {
+  position: absolute;
+  container-type: size;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(7px, 6.4cqw, 22px) clamp(7px, 6.2cqw, 20px);
+  color: #161618;
+  --plume-wght: 560;
+  --plume-note-wght: 460;
+  transition: color 240ms ease;
+}
+
+/* Optical halation compensation: lighter Cabinet Grotesk weight on dark obsidian & night sheets */
+body[data-light="night"] .plume-sheet[data-sheet="0"],
+body[data-light="night"] .plume-sheet[data-sheet="1"] {
+  color: rgba(246, 245, 240, 0.94);
+  --plume-wght: 450;
+  --plume-note-wght: 410;
+}
+
+.plume-sheet[data-sheet="2"] {
+  color: rgba(246, 245, 240, 0.94);
+  --plume-wght: 450;
+  --plume-note-wght: 410;
+}
+
+.plume-head {
+  margin: 0;
+  font-family: var(--m-sans, "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif);
+  font-size: clamp(9.5px, 5.5cqw, 16.5px);
+  line-height: 1.16;
+  font-weight: 560;
+  font-variation-settings: "wght" var(--plume-wght, 560);
+  letter-spacing: -0.02em;
+  white-space: pre-line;
+}
+
+/* Real 1px Swiss hairline rule replacing raw ASCII underscores */
+.plume-rule {
+  display: inline-block;
+  width: 2.2em;
+  height: 1px;
+  background: currentColor;
+  vertical-align: 0.28em;
+  margin: 0 0.15em;
+}
+
+.plume-top-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.12fr);
+  gap: clamp(4px, 3.8cqw, 14px);
+  align-items: start;
+}
+
+.plume-spec {
+  margin: 0;
+  font-family: var(--m-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: clamp(5.2px, 2.15cqw, 7.5px);
+  line-height: 1.44;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  opacity: 0.78;
+  white-space: pre-line;
+}
+
+.plume-note {
+  margin: 0;
+  font-family: var(--m-sans, "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif);
+  font-size: clamp(6px, 2.55cqw, 8.6px);
+  line-height: 1.4;
+  font-weight: 460;
+  font-variation-settings: "wght" var(--plume-note-wght, 460);
+  letter-spacing: -0.005em;
+  opacity: 0.74;
+  white-space: pre-line;
+}
+
+.plume-sheet[data-sheet="1"] .plume-note {
+  margin-top: clamp(8px, 12cqh, 46px);
+  margin-left: auto;
+  max-width: 60%;
+  text-align: right;
+}
+
+.plume-dual {
+  margin-top: clamp(8px, 11cqh, 42px);
+  margin-left: auto;
+  width: 78%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(4px, 3.6cqw, 12px);
+  align-items: start;
+}
+
+.plume-dual .plume-note {
+  text-align: right;
+}
+
+/* Hold crisp 2-column Swiss poster grid across all desktop & tablet widths; only collapse <= 145px (mobile) */
+@container (max-width: 145px) {
+  .plume-sheet {
+    padding: 7px 6px;
+  }
+  .plume-top-split {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .plume-head {
+    font-size: clamp(7px, 6.4cqw, 8px);
+    letter-spacing: -0.02em;
+    line-height: 1.22;
+  }
+  .plume-spec {
+    font-size: 5px;
+    letter-spacing: 0.015em;
+    line-height: 1.36;
+  }
+  .plume-dual {
+    width: 100%;
+    grid-template-columns: 1fr;
+    margin-top: 8px;
+  }
+  .plume-note {
+    display: none;
+  }
+}
+
+/* === Plate IV (04) — Lantern: Cabinet Grotesk focus-weighted optical DOF vessel labels === */
+.overlay-lantern {
+  position: absolute;
+  inset: 0;
+}
+
+.lantern-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0 12px;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+.lantern-name {
+  display: inline-block;
+  contain: layout style;
+  font-family: var(--m-sans, "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif);
+  font-size: clamp(14.5px, 1.55vw, 19.5px);
+  line-height: 1;
+  font-weight: 560;
+  font-variation-settings: "wght" 560;
+  letter-spacing: -0.015em;
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 1px 16px rgba(6, 9, 20, 0.45), 0 0 2px rgba(6, 9, 20, 0.30);
+}
+
+/* Bright ivory/amber Foci vessel always keeps dark espresso-bronze ink for crisp legibility */
+.lantern-label[data-slug="foci"] .lantern-name {
+  color: rgba(46, 30, 12, 0.92);
+  text-shadow: 0 1px 14px rgba(255, 250, 232, 0.86), 0 0 3px rgba(255, 248, 224, 0.65);
+}
+
+/* === Graceful Static Optical Fallback if WebGL2 is Unavailable === */
+.mesh-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 34% 42%, rgba(84, 114, 255, 0.34), transparent 54%),
+    radial-gradient(circle at 68% 58%, rgba(242, 144, 178, 0.28), transparent 52%),
+    var(--page-bg, #FCFCFB);
+}
+
+.mesh-fallback[hidden] {
+  display: none;
+}
+
+.mesh-fallback p {
+  margin: 0;
+  font-family: var(--m-mono, "IBM Plex Mono", ui-monospace, monospace);
+  font-size: 11px;
+  line-height: 1.6;
+  opacity: 0.66;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plume-sheet {
+    transition: none;
+  }
+}

@@ -1,0 +1,54 @@
+/* The savanna's layouts. Each layout lists the plants it shows, and plants it leaves out are never
+   fetched. The baobab carries the height from the bed; the sausage tree reaches in high on the
+   left with its fruit hanging, and the umbrella thorn's flat crown reaches in high on the right;
+   grasses, the crinum, the flame lily, and the star flower stand in the open ground. The sky stays
+   open: what hangs, hangs from its own plant. Plants enter from beyond their places (--enter, as
+   shares of their own size) and ease in as they grow, so the garden opens wide and fills as the
+   visitor scrolls. */
+
+/* Portrait screens. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-thorn { display: block; --x: 100%; --y: 32%; --h: 28; --flip: -1; --enter: 0.4 0; }
+  .plant.g-baobab { display: block; --x: 32%; --y: calc(100svh + var(--u) * 3); --h: 62; --enter: -0.3 0.12; }
+  .plant.g-crinum { display: block; --x: 68%; --y: calc(100svh + var(--u) * 2); --h: 19; --enter: 0.1 0.3; }
+  .plant.g-redgrass { display: block; --x: 88%; --y: calc(100svh + var(--u) * 2); --h: 22; --enter: 0.2 0.3; }
+}
+
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-kigelia { display: block; --x: 0%; --y: 12%; --h: 24; --enter: -0.4 0; }
+  .plant.g-redgrass { --x: 10%; --enter: -0.15 0.3; }
+  .plant.g-baobab { --x: 34%; --h: 64; }
+  .plant.g-crinum { --x: 58%; --h: 19; }
+  .plant.g-gloriosa { display: block; --x: 76%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: 0.1 0.35; }
+  .plant.g-hypoxis { display: block; --x: 90%; --y: calc(100svh + var(--u) * 2); --h: 13; --enter: 0.15 0.4; }
+}
+
+/* Landscape screens. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-kigelia { display: block; --x: 0%; --y: 10%; --h: 28; --enter: -0.4 0; }
+  .plant.g-redgrass { display: block; --x: 9%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: -0.15 0.3; }
+  .plant.g-baobab { display: block; --x: 26%; --y: calc(100svh + var(--u) * 3); --h: 76; --enter: -0.28 0.14; }
+  .plant.g-crinum { display: block; --x: 45%; --y: calc(100svh + var(--u) * 2); --h: 21; --enter: 0 0.3; }
+  .plant.g-gloriosa { display: block; --x: 63%; --y: calc(100svh + var(--u) * 2); --h: 28; --enter: 0 0.35; }
+  .plant.g-thatchgrass { display: block; --x: 74%; --y: calc(100svh + var(--u) * 2); --h: 32; --enter: 0.08 0.3; }
+  .plant.g-hypoxis { display: block; --x: 86%; --y: calc(100svh + var(--u) * 2); --h: 14; --enter: 0.12 0.4; }
+  .plant.g-thorn { display: block; --x: 100%; --y: 52%; --h: 44; --flip: -1; --enter: 0.4 -0.04; }
+}
+
+/* Large screens: the marula leans in from the bottom right corner. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1500px) {
+  .plant.g-thorn { --y: 36%; }
+  .plant.g-thatchgrass { --x: 71%; }
+  .plant.g-hypoxis { --x: 81%; }
+  .plant.g-marula { display: block; --x: 100%; --y: calc(100svh + var(--u) * 3); --h: 44; --flip: -1; --enter: 0.35 0.1; }
+}
+
+/* Short landscape phones: the baobab, the umbrella thorn, and the crinum. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-thorn { display: block; --x: 100%; --y: 52%; --h: 40; --flip: -1; --enter: 0.4 0; }
+  .plant.g-baobab { display: block; --x: 18%; --y: calc(100svh + var(--u) * 3); --h: 80; --enter: -0.3 0.12; }
+  .plant.g-crinum { display: block; --x: 64%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: 0 0.3; }
+}

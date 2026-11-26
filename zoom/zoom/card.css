@@ -1,0 +1,236 @@
+/* Zoom compact specimen card inside delineate's .lineup row:
+   Scopes all --z-* Day/Night archival copperplate & mineral watercolor tokens strictly
+   to [data-zoom-card] so loading the card never touches host page globals. */
+
+[data-zoom-card] {
+  --z-paper: #f8f7f2;
+  --z-paper-warm: #efece4;
+  --z-paper-deep: #e5dfd2;
+  --z-paper-stone: #dad2c2;
+  --z-paper-shadow: #c7bca5;
+  --z-paper-mist: #f3efe6;
+
+  --z-cut: #1a1816;
+  --z-ink: #1e1c1a;
+  --z-ink-sepia: #2d2925;
+  --z-ink-mid: #47433c;
+  --z-ink-hair: #6c665c;
+  --z-ink-draft: #3c4856;
+  --z-lit-edge: #38342e;
+  --z-ink-rim: #faf8f2;
+
+  --z-sage: #5e7a68;
+  --z-sage-lt: #8eab98;
+  --z-sage-dk: #385042;
+  --z-celadon: #7fa39b;
+  --z-celadon-lt: #b5cfc8;
+  --z-celadon-dk: #496e67;
+  --z-malachite: #4e8572;
+  --z-azurite: #3b6285;
+  --z-copper: #b86e4b;
+  --z-prussian: #2e4358;
+  --z-prussian-lt: #59748d;
+  --z-prussian-dk: #1d2d3d;
+  --z-ochre: #c99a5b;
+  --z-ochre-lt: #e3c694;
+  --z-ochre-dk: #8b6332;
+  --z-cinnabar: #b94b34;
+  --z-cinnabar-lt: #d9836c;
+  --z-cinnabar-dk: #822d1d;
+  --z-umber: #6e5643;
+  --z-umber-lt: #9d826c;
+  --z-umber-dk: #433225;
+  --z-bark: #684f3d;
+  --z-bark-dk: #3d2c20;
+  --z-slate: #5c6670;
+  --z-slate-lt: #909ba5;
+  --z-slate-dk: #363e46;
+  --z-wisteria: #8b7a96;
+  --z-wisteria-lt: #beb2c8;
+  --z-wisteria-dk: #5d4d68;
+
+  --z-petal: #faf4e8;
+  --z-petal-blush: #d98674;
+  --z-water-spray: #f4f1e8;
+
+  --z-brass: #b88a48;
+  --z-brass-lt: #e4c587;
+  --z-brass-dk: #6d4d23;
+  --z-glass: #d7e3df;
+  --z-glass-tint: #b8cec8;
+  --z-water: #85a4a5;
+  --z-water-deep: #486873;
+  --z-water-shimmer: #f6f3e8;
+
+  --z-lantern: #e6b763;
+  --z-lantern-core: #fbf3d6;
+  --z-lantern-halo: #e0a74b;
+  --z-window-lit: #ead6a9;
+  --z-window-dim: #667580;
+  --z-vein: #385446;
+
+  --z-halo-op: 0.2;
+  --z-star-op: 0;
+  --z-lume-op: 0;
+  --z-moon-op: 0.16;
+  --z-shadow-op: 0.24;
+
+  --zc-badge-bg: rgba(248, 247, 242, 0.82);
+  --zc-badge-ink: #1e1c1a;
+  --zc-badge-accent: #9e5038;
+  --zc-badge-border: rgba(30, 28, 26, 0.14);
+
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--z-paper);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--ink, #1b1b19) 14%, transparent),
+    0 18px 40px -26px color-mix(in srgb, var(--ink, #1b1b19) 38%, transparent);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:root[data-theme="night"] [data-zoom-card] {
+  --z-paper: #121828;
+  --z-paper-warm: #1a2237;
+  --z-paper-deep: #222e48;
+  --z-paper-stone: #1c263f;
+  --z-paper-shadow: #101627;
+  --z-paper-mist: #1d2945;
+
+  --z-cut: #060911;
+  --z-ink: #0b101d;
+  --z-ink-sepia: #151e32;
+  --z-ink-mid: #283755;
+  --z-ink-hair: #3b4f74;
+  --z-ink-draft: #9fb6d4;
+  --z-lit-edge: #758eb0;
+  --z-ink-rim: #ece6d8;
+
+  --z-sage: #213d3b;
+  --z-sage-lt: #3a645f;
+  --z-sage-dk: #122426;
+  --z-celadon: #315659;
+  --z-celadon-lt: #7ec4b6;
+  --z-celadon-dk: #1a343a;
+  --z-malachite: #244d48;
+  --z-azurite: #1d3657;
+  --z-copper: #7c4936;
+  --z-prussian: #192a46;
+  --z-prussian-lt: #324e74;
+  --z-prussian-dk: #0c1527;
+  --z-ochre: #795f40;
+  --z-ochre-lt: #cfa668;
+  --z-ochre-dk: #3c2e20;
+  --z-cinnabar: #84372d;
+  --z-cinnabar-lt: #de7846;
+  --z-cinnabar-dk: #411a1b;
+  --z-umber: #241f2d;
+  --z-umber-lt: #41394e;
+  --z-umber-dk: #11101a;
+  --z-bark: #181622;
+  --z-bark-dk: #0d0c14;
+  --z-slate: #222f47;
+  --z-slate-lt: #495e82;
+  --z-slate-dk: #101727;
+  --z-wisteria: #4b436a;
+  --z-wisteria-lt: #8c82b8;
+  --z-wisteria-dk: #242039;
+
+  --z-petal: #dfd9e3;
+  --z-petal-blush: #ac6f6c;
+  --z-water-spray: #9ed2ca;
+
+  --z-brass: #d4a85e;
+  --z-brass-lt: #f7dc9f;
+  --z-brass-dk: #73542a;
+  --z-glass: #243753;
+  --z-glass-tint: #344f72;
+  --z-water: #1c2f4b;
+  --z-water-deep: #0e192d;
+  --z-water-shimmer: #f2c97d;
+
+  --z-lantern: #f2c97d;
+  --z-lantern-core: #fff7dd;
+  --z-lantern-halo: #e07a48;
+  --z-window-lit: #f2c97d;
+  --z-window-dim: #141d32;
+  --z-vein: #7ec4b6;
+
+  --z-halo-op: 0.56;
+  --z-star-op: 0.92;
+  --z-lume-op: 0.74;
+  --z-moon-op: 0.38;
+  --z-shadow-op: 0.48;
+
+  --zc-badge-bg: rgba(14, 19, 33, 0.78);
+  --zc-badge-ink: #eae5d9;
+  --zc-badge-accent: #f2c97d;
+  --zc-badge-border: rgba(234, 229, 217, 0.16);
+}
+
+[data-zoom-card] .zoom-card-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  shape-rendering: geometricPrecision;
+}
+
+[data-zoom-card] .burin {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: calc(var(--bo, 1) * var(--z-burin-op, 1));
+}
+
+[data-zoom-card] .burin-c {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: calc(var(--bo, 1) * var(--z-contour-op, 1));
+}
+
+[data-zoom-card] .octave.burin-off .burin,
+[data-zoom-card] .octave.contour-off .burin-c {
+  visibility: hidden;
+}
+
+.zoom-card-pill {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: calc(100% - 20px);
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--zc-badge-bg);
+  border: 1px solid var(--zc-badge-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font: 500 10px/1.2 "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing: 0.03em;
+  color: var(--zc-badge-ink);
+  pointer-events: none;
+}
+
+.zoom-card-idx {
+  color: var(--zc-badge-accent);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.zoom-card-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.84;
+}

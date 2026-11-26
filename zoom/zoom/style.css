@@ -1,0 +1,426 @@
+/* Zoom — Archival Copperplate, Mineral Watercolor & Nocturnal Lantern-Lit Palette.
+   Every scene references these semantic tokens so Day <-> Night swaps instantaneously
+   with zero scene rebuild. Night is lighting, not a filter: dark nocturnal ink silhouettes,
+   subtle moonlit upper-left rims, glowing champagne/amber lanterns & windows, luminous
+   porcelain petals, celadon botanical veins, and crisp cyanotype star-chart drafting. */
+
+:root {
+  /* Day: Archival cotton-rag paper, sepia-charcoal ink, mineral watercolors */
+  --z-paper: #f8f7f2;
+  --z-paper-warm: #efece4;
+  --z-paper-deep: #e5dfd2;
+  --z-paper-stone: #dad2c2;
+  --z-paper-shadow: #c7bca5;
+  --z-paper-mist: #f3efe6;
+
+  /* Calligraphic & copperplate engraving inks */
+  --z-cut: #1a1816;
+  --z-ink: #1e1c1a;
+  --z-ink-sepia: #2d2925;
+  --z-ink-mid: #47433c;
+  --z-ink-hair: #6c665c;
+  --z-ink-draft: #3c4856;
+  --z-lit-edge: #38342e;
+  --z-ink-rim: #faf8f2;
+
+  /* Mineral watercolor washes (garden + lijiang + glasshouse pigments) */
+  --z-sage: #5e7a68;
+  --z-sage-lt: #8eab98;
+  --z-sage-dk: #385042;
+  --z-celadon: #7fa39b;
+  --z-celadon-lt: #b5cfc8;
+  --z-celadon-dk: #496e67;
+  --z-malachite: #4e8572;
+  --z-azurite: #3b6285;
+  --z-copper: #b86e4b;
+  --z-prussian: #2e4358;
+  --z-prussian-lt: #59748d;
+  --z-prussian-dk: #1d2d3d;
+  --z-ochre: #c99a5b;
+  --z-ochre-lt: #e3c694;
+  --z-ochre-dk: #8b6332;
+  --z-cinnabar: #b94b34;
+  --z-cinnabar-lt: #d9836c;
+  --z-cinnabar-dk: #822d1d;
+  --z-umber: #6e5643;
+  --z-umber-lt: #9d826c;
+  --z-umber-dk: #433225;
+  --z-bark: #684f3d;
+  --z-bark-dk: #3d2c20;
+  --z-slate: #5c6670;
+  --z-slate-lt: #909ba5;
+  --z-slate-dk: #363e46;
+  --z-wisteria: #8b7a96;
+  --z-wisteria-lt: #beb2c8;
+  --z-wisteria-dk: #5d4d68;
+
+  /* Dedicated botanical petal & water-spray tokens (never muddy slate at night!) */
+  --z-petal: #faf4e8;
+  --z-petal-blush: #d98674;
+  --z-water-spray: #f4f1e8;
+
+  /* Architectural materials & lighting */
+  --z-brass: #b88a48;
+  --z-brass-lt: #e4c587;
+  --z-brass-dk: #6d4d23;
+  --z-glass: #d7e3df;
+  --z-glass-tint: #b8cec8;
+  --z-water: #85a4a5;
+  --z-water-deep: #486873;
+  --z-water-shimmer: #f6f3e8;
+
+  /* Lanterns, windows & botanical veins */
+  --z-lantern: #e6b763;
+  --z-lantern-core: #fbf3d6;
+  --z-lantern-halo: #e0a74b;
+  --z-window-lit: #ead6a9;
+  --z-window-dim: #667580;
+  --z-vein: #385446;
+
+  /* Day vs Night lighting switches (pure opacity, zero filters) */
+  --z-halo-op: 0.2;
+  --z-star-op: 0;
+  --z-lume-op: 0;
+  --z-moon-op: 0.16;
+  --z-shadow-op: 0.24;
+
+  /* Minimalist archival HUD */
+  --hud-bg: rgba(248, 247, 242, 0.8);
+  --hud-border: rgba(30, 28, 26, 0.14);
+  --hud-ink: #1e1c1a;
+  --hud-muted: rgba(30, 28, 26, 0.62);
+  --hud-chip-bg: rgba(30, 28, 26, 0.06);
+  --hud-chip-hover: rgba(30, 28, 26, 0.12);
+  --hud-accent: #9e5038;
+}
+
+:root[data-theme="night"] {
+  /* Night: Prussian midnight, dark silhouettes, moonlit upper rims, warm amber lanterns */
+  --z-paper: #121828;
+  --z-paper-warm: #1a2237;
+  --z-paper-deep: #222e48;
+  --z-paper-stone: #1c263f;
+  --z-paper-shadow: #101627;
+  --z-paper-mist: #1d2945;
+
+  /* Structural shadow ink stays DARK (glasshouse/lijiang rule: zero wireframe CAD outlines!);
+     upper-left lit edges catch subtle moonlit slate (--z-lit-edge), and star-charts use --z-ink-draft! */
+  --z-cut: #060911;
+  --z-ink: #0b101d;
+  --z-ink-sepia: #151e32;
+  --z-ink-mid: #283755;
+  --z-ink-hair: #3b4f74;
+  --z-ink-draft: #9fb6d4;
+  --z-lit-edge: #758eb0;
+  --z-ink-rim: #ece6d8;
+
+  /* Nocturnal moonlit mineral palette */
+  --z-sage: #213d3b;
+  --z-sage-lt: #3a645f;
+  --z-sage-dk: #122426;
+  --z-celadon: #315659;
+  --z-celadon-lt: #7ec4b6;
+  --z-celadon-dk: #1a343a;
+  --z-malachite: #244d48;
+  --z-azurite: #1d3657;
+  --z-copper: #7c4936;
+  --z-prussian: #192a46;
+  --z-prussian-lt: #324e74;
+  --z-prussian-dk: #0c1527;
+  --z-ochre: #795f40;
+  --z-ochre-lt: #cfa668;
+  --z-ochre-dk: #3c2e20;
+  --z-cinnabar: #84372d;
+  --z-cinnabar-lt: #de7846;
+  --z-cinnabar-dk: #411a1b;
+  --z-umber: #241f2d;
+  --z-umber-lt: #41394e;
+  --z-umber-dk: #11101a;
+  --z-bark: #181622;
+  --z-bark-dk: #0d0c14;
+  --z-slate: #222f47;
+  --z-slate-lt: #495e82;
+  --z-slate-dk: #101727;
+  --z-wisteria: #4b436a;
+  --z-wisteria-lt: #8c82b8;
+  --z-wisteria-dk: #242039;
+
+  /* Luminous moonlit porcelain petals & translucent celadon-mist fountain spray! */
+  --z-petal: #dfd9e3;
+  --z-petal-blush: #ac6f6c;
+  --z-water-spray: #9ed2ca;
+
+  /* Illuminated glass, brass & nocturnal water */
+  --z-brass: #d4a85e;
+  --z-brass-lt: #f7dc9f;
+  --z-brass-dk: #73542a;
+  --z-glass: #243753;
+  --z-glass-tint: #344f72;
+  --z-water: #1c2f4b;
+  --z-water-deep: #0e192d;
+  --z-water-shimmer: #f2c97d;
+
+  /* Ignited warm champagne lanterns & bioluminescent celadon veins */
+  --z-lantern: #f2c97d;
+  --z-lantern-core: #fff7dd;
+  --z-lantern-halo: #e07a48;
+  --z-window-lit: #f2c97d;
+  --z-window-dim: #141d32;
+  --z-vein: #7ec4b6;
+
+  /* Night lighting activation */
+  --z-halo-op: 0.56;
+  --z-star-op: 0.92;
+  --z-lume-op: 0.74;
+  --z-moon-op: 0.38;
+  --z-shadow-op: 0.48;
+
+  /* Nocturnal HUD */
+  --hud-bg: rgba(14, 19, 33, 0.78);
+  --hud-border: rgba(234, 229, 217, 0.16);
+  --hud-ink: #eae5d9;
+  --hud-muted: rgba(234, 229, 217, 0.64);
+  --hud-chip-bg: rgba(234, 229, 217, 0.07);
+  --hud-chip-hover: rgba(234, 229, 217, 0.15);
+  --hud-accent: #f2c97d;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--z-paper);
+  color: var(--hud-ink);
+  font-family: ui-monospace, "SF Mono", "IBM Plex Mono", Menlo, monospace;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  touch-action: none;
+}
+
+.stage-wrap {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--z-paper);
+}
+
+.stage-wrap.cursor-hidden {
+  cursor: none;
+}
+
+.stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  shape-rendering: geometricPrecision;
+}
+
+/* Non-scaling copperplate burin hatching & hair-fine engraving contours:
+   Locks screen width at 0.35-1.35px even at S=2..12, while attenuating smoothly in
+   deep nested portals (S < 0.55 / 0.25) via stroke-opacity (ZERO SaveLayer compositing
+   nodes, eliminating Chromium GPU/CPU rasterizer threshold flips across all 54 boundaries!). */
+.burin {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: calc(var(--bo, 1) * var(--z-burin-op, 1));
+}
+
+.burin-c {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: calc(var(--bo, 1) * var(--z-contour-op, 1));
+}
+
+.octave.burin-off .burin {
+  visibility: hidden;
+}
+
+.octave.contour-off .burin-c {
+  visibility: hidden;
+}
+
+/* Minimalist delineate colophon bar — restrained, translucent, auto-hiding */
+.hud {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  max-width: calc(100vw - 32px);
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--hud-ink);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  transition: opacity 320ms ease;
+  pointer-events: auto;
+}
+
+.hud.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hud.is-off {
+  display: none;
+}
+
+.hud-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hud-index {
+  font-weight: 600;
+  color: var(--hud-accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 7ch;
+}
+
+.hud-title {
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--hud-ink);
+}
+
+.hud-metric {
+  color: var(--hud-muted);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 6ch;
+  text-align: right;
+}
+
+.hud-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--hud-border);
+  flex-shrink: 0;
+}
+
+.hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.hud-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid var(--hud-border);
+  background: var(--hud-chip-bg);
+  color: var(--hud-ink);
+  font: inherit;
+  font-size: 10.5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.hud-btn:hover {
+  background: var(--hud-chip-hover);
+}
+
+.hud-btn--icon {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+}
+
+.hud-btn svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:root[data-theme="night"] .icon-moon,
+:root:not([data-theme="night"]) .icon-sun {
+  display: none;
+}
+
+.hud-speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--hud-muted);
+  font-size: 10px;
+}
+
+.hud-speed input[type="range"] {
+  width: 78px;
+  accent-color: var(--hud-accent);
+  cursor: pointer;
+}
+
+@media (min-width: 761px) {
+  .hud-index {
+    width: 52px;
+    min-width: 52px;
+    text-align: left;
+  }
+  .hud-title {
+    width: 292px;
+    text-align: center;
+  }
+  .hud-metric {
+    width: 48px;
+    min-width: 48px;
+    text-align: right;
+  }
+  #btnToggle {
+    min-width: 48px;
+  }
+}
+
+@media (max-width: 760px) {
+  .hud {
+    flex-direction: column;
+    border-radius: 16px;
+    bottom: 12px;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .hud-sep {
+    display: none;
+  }
+}

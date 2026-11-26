@@ -1,0 +1,157 @@
+/* The garden page: paper, the scroll track that drives growth, the controls in the top right
+   corner (the garden switcher, the way to the token gallery, the theme toggle), and paper grain.
+   The garden itself is styled in src/garden. */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(70rem 40rem at 50% 6%, color-mix(in srgb, var(--accent) 5%, var(--bg)), var(--bg) 70%)
+    var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: color 0.25s ease;
+}
+
+.scroll-track {
+  height: 250vh;
+}
+
+/* The controls share the top right corner, in a row. */
+.controls {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* The theme toggle and the gallery link are quiet round buttons. */
+.theme-toggle,
+.gallery-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.theme-toggle:hover,
+.gallery-link:hover {
+  color: var(--text);
+}
+
+/* Plants hang into the corner, so each control sits on a little paper of its own. */
+.theme-toggle,
+.gallery-link {
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.theme-icon {
+  height: 1.4rem;
+  width: 1.4rem;
+}
+
+:root[data-theme="dark"] .sun-icon,
+:root:not([data-theme="dark"]) .moon-icon {
+  display: none;
+}
+
+.theme-toggle:focus-visible,
+.gallery-link:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+}
+
+/* The way to the token gallery: a fan of swatch cards in the tones of the garden on show (--tone,
+   set by main.ts). The cards draw themselves in like the emblems, and spread under the pointer. */
+.fan {
+  width: 1.4rem;
+  height: 1.4rem;
+  overflow: visible;
+}
+
+.fan .card {
+  transform-box: view-box;
+  transform-origin: 12px 16px;
+  rotate: calc(var(--turn) * 24deg);
+  transition: rotate 0.5s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.gallery-link:hover .fan .card {
+  rotate: calc(var(--turn) * 38deg);
+}
+
+.fan rect {
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: draw 0.8s cubic-bezier(0.3, 0.6, 0.2, 1) calc(var(--i) * 80ms) both;
+}
+
+.fan .card:nth-child(1) rect {
+  fill: oklch(from var(--tone) calc(l + 0.2) calc(c * 0.8) h);
+}
+
+.fan .card:nth-child(2) rect {
+  fill: oklch(from var(--tone) calc(l + 0.1) c calc(h - 20));
+}
+
+.fan .card:nth-child(3) rect {
+  fill: var(--tone);
+}
+
+.fan .rivet {
+  fill: currentColor;
+}
+
+/* Paper grain, under the plants and unblended so nothing repaints it. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: var(--grain-alpha);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-track {
+    height: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

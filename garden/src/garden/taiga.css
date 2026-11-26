@@ -1,0 +1,64 @@
+/* The Boreal Taiga garden's layouts. Conifer and birch boughs frame the clearing in an asymmetric
+   boreal cathedral scale (--h: 36..56) from the left and right forest margins (--x: 0% and --x: 100%):
+   on the left, the Siberian spruce's concave-tiered boughs arch above the crooked salmon-orange limbs
+   of the Scots pine; on the right, the deciduous Siberian larch and the tall leaning silver birch reach
+   inward below the top-right controls. Overhead, Methuselah's beard drapes from a plunging diagonal
+   spruce bough and dark horsehair lichen cascades from a dipping Scots pine limb. Across the mossy floor
+   (--y: 100svh + 1.2u..2u), fireweed, lingonberry, Labrador tea, creeping twinflower, wood horsetail,
+   and cloudberry rise in a single unoverlapping band. */
+
+/* Portrait phones: kept clear of the top-right controls. */
+@media (max-aspect-ratio: 1/1) {
+  .garden { --u: min(0.8svh, 1.15vw); }
+  .plant.g-spruce { display: block; --x: 0%; --y: 26%; --h: 46; --enter: -0.45 0; }
+  .plant.g-scotspine { display: block; --x: 0%; --y: 58%; --h: 38; --enter: -0.42 0; }
+  .plant.g-birch { display: block; --x: 100%; --y: 62%; --h: 50; --flip: -1; --enter: 0.42 0.08; }
+  .plant.g-fireweed { display: block; --x: 24%; --y: calc(100svh + var(--u) * 2); --h: 52; --enter: -0.1 0.36; }
+  .plant.g-labradortea { display: block; --x: 70%; --y: calc(100svh + var(--u) * 2); --h: 34; --enter: 0.1 0.35; }
+}
+
+/* Portrait tablets and tall windows: Methuselah's beard, the larch, the wood horsetail, and the cloudberry join. */
+@media (max-aspect-ratio: 1/1) and (min-width: 600px) {
+  .plant.g-methuselah { display: block; --x: 28%; --y: calc(var(--u) * -1); --h: 40; --enter: -0.1 -0.42; }
+  .plant.g-spruce { --y: 25%; --h: 44; }
+  .plant.g-scotspine { --y: 58%; --h: 38; }
+  .plant.g-larch { display: block; --x: 100%; --y: 34%; --h: 38; --flip: -1; --enter: 0.45 0; }
+  .plant.g-birch { --y: 68%; --h: 48; }
+  .plant.g-fireweed { --x: 18%; --h: 50; }
+  .plant.g-labradortea { --x: 44%; --h: 32; }
+  .plant.g-horsetail { display: block; --x: 68%; --y: calc(100svh + var(--u) * 2); --h: 42; --enter: 0.08 0.36; }
+  .plant.g-cloudberry { display: block; --x: 88%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: 0.15 0.35; }
+}
+
+/* Landscape screens. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) {
+  .garden { --u: min(1svh, 0.6vw); }
+  .plant.g-spruce { display: block; --x: 0%; --y: 24%; --h: 48; --enter: -0.46 0; }
+  .plant.g-scotspine { display: block; --x: 0%; --y: 62%; --h: 42; --enter: -0.44 0; }
+  .plant.g-methuselah { display: block; --x: 26%; --y: calc(var(--u) * -1); --h: 44; --enter: -0.12 -0.42; }
+  .plant.g-larch { display: block; --x: 100%; --y: 35%; --h: 40; --flip: -1; --enter: 0.45 0; }
+  .plant.g-birch { display: block; --x: 100%; --y: 72%; --h: 54; --flip: -1; --enter: 0.44 0.08; }
+  .plant.g-fireweed { display: block; --x: 14%; --y: calc(100svh + var(--u) * 2); --h: 56; --enter: -0.12 0.36; }
+  .plant.g-lingonberry { display: block; --x: 30%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: -0.06 0.34; }
+  .plant.g-labradortea { display: block; --x: 46%; --y: calc(100svh + var(--u) * 2); --h: 34; --enter: 0 0.35; }
+  .plant.g-horsetail { display: block; --x: 73%; --y: calc(100svh + var(--u) * 2); --h: 44; --enter: 0.1 0.36; }
+  .plant.g-cloudberry { display: block; --x: 88%; --y: calc(100svh + var(--u) * 2); --h: 24; --enter: 0.15 0.34; }
+}
+
+/* Laptop and wider screens: the horsehair lichen hangs from its Scots pine bough overhead and
+   creeping twinflower trails across the foreground floor. */
+@media (min-aspect-ratio: 1001/1000) and (min-height: 521px) and (min-width: 1200px) {
+  .plant.g-horsehair { display: block; --x: 52%; --y: calc(var(--u) * -1); --h: 40; --enter: 0.08 -0.42; }
+  .plant.g-labradortea { --x: 44%; }
+  .plant.g-twinflower { display: block; --x: 60%; --y: calc(100svh + var(--u) * 1.2); --h: 20; --enter: 0.04 0.32; }
+  .plant.g-horsetail { --x: 75%; }
+}
+
+/* Short landscape phones: the Siberian spruce, the silver birch, the fireweed, and the Labrador tea. */
+@media (min-aspect-ratio: 1001/1000) and (max-height: 520px) {
+  .garden { --u: min(1svh, 0.5vw); }
+  .plant.g-spruce { display: block; --x: 0%; --y: 44%; --h: 48; --enter: -0.45 0; }
+  .plant.g-birch { display: block; --x: 100%; --y: 68%; --h: 50; --flip: -1; --enter: 0.45 0.08; }
+  .plant.g-fireweed { display: block; --x: 34%; --y: calc(100svh + var(--u) * 2); --h: 52; --enter: -0.08 0.35; }
+  .plant.g-labradortea { display: block; --x: 66%; --y: calc(100svh + var(--u) * 2); --h: 34; --enter: 0.08 0.35; }
+}

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Garden</title>
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f2ed" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131712" media="(prefers-color-scheme: dark)" />
+    <link rel="stylesheet" href="src/tokens.css" />
+    <link rel="stylesheet" href="src/style.css" />
+    <link rel="stylesheet" href="src/garden/switcher.css" />
+    <link rel="stylesheet" href="src/garden/paint.css" />
+    <link rel="stylesheet" href="src/garden/tropical.css" />
+    <link rel="stylesheet" href="src/garden/mediterranean.css" />
+    <link rel="stylesheet" href="src/garden/desert.css" />
+    <link rel="stylesheet" href="src/garden/afroalpine.css" />
+    <link rel="stylesheet" href="src/garden/savanna.css" />
+    <link rel="stylesheet" href="src/garden/fynbos.css" />
+    <link rel="stylesheet" href="src/garden/namib.css" />
+    <link rel="stylesheet" href="src/garden/mangrove.css" />
+    <link rel="stylesheet" href="src/garden/eastasian.css" />
+    <link rel="stylesheet" href="src/garden/taiga.css" />
+    <link rel="stylesheet" href="src/garden/american.css" />
+    <link rel="stylesheet" href="src/garden/woodland.css" />
+    <link rel="stylesheet" href="src/garden/anchors.css" />
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const system = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.dataset.theme = saved || system;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://delineate.appautomaton.com/garden/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="delineate">
+<meta property="og:title" content="Garden · delineate">
+<meta property="og:description" content="Twelve gardens from around the world, drawn plant by plant in watercolour and ink, that grow in round whatever they frame.">
+<meta property="og:url" content="https://delineate.appautomaton.com/garden/">
+<meta property="og:image" content="https://delineate.appautomaton.com/garden/card.jpg">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta property="og:image:alt" content="The word Garden in the clearing of a tropical garden drawn in watercolour and ink: frangipani, mango, monstera and bird of paradise.">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+  <body>
+    <nav class="controls" aria-label="Garden">
+      <button class="garden-switch" type="button" popovertarget="garden-list" aria-haspopup="menu" data-garden-switch></button>
+      <a class="gallery-link" href="gallery/" aria-label="Garden tokens" title="Garden tokens" data-gallery-link>
+        <svg class="fan" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+          <g class="card" style="--turn: -1; --i: 0"><rect x="9.3" y="3" width="5.4" height="15.5" rx="1.5" pathLength="1" /></g>
+          <g class="card" style="--turn: 1; --i: 1"><rect x="9.3" y="3" width="5.4" height="15.5" rx="1.5" pathLength="1" /></g>
+          <g class="card" style="--turn: 0; --i: 2"><rect x="9.3" y="3" width="5.4" height="15.5" rx="1.5" pathLength="1" /></g>
+          <circle class="rivet" cx="12" cy="16" r="0.9" />
+        </svg>
+      </a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme" data-theme-toggle>
+        <svg class="theme-icon sun-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4.4" />
+          <path d="M12 3.2v1.2M12 19.6v1.2M3.2 12h1.2M19.6 12h1.2" />
+          <path d="M5.9 5.9c.5.4.8.7 1.1 1.1M17 17c.5.4.8.7 1.1 1.1M18.1 5.9c-.5.4-.8.7-1.1 1.1M7 17c-.5.4-.8.7-1.1 1.1" />
+        </svg>
+        <svg class="theme-icon moon-icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.3 14.6a8.9 8.9 0 0 1-8.5 5.9A8.7 8.7 0 0 1 3.4 12 8.8 8.8 0 0 1 9.8 3.6c.5-.14.9.33.7.8a7.3 7.3 0 0 0 9 9.5c.47-.16.94.24.8.7Z" />
+          <path d="M16.5 4.5c.1 1.1.9 1.9 2 2-1.1.1-1.9.9-2 2-.1-1.1-.9-1.9-2-2 1.1-.1 1.9-.9 2-2Z" />
+        </svg>
+      </button>
+    </nav>
+    <div class="garden-list" id="garden-list" popover role="menu" aria-label="Gardens" data-garden-list></div>
+
+    <div class="garden" aria-hidden="true">
+      <div class="plant g-calathea" data-plant="calathea" data-garden="tropical"></div>
+      <div class="plant g-monstera" data-plant="monstera" data-garden="tropical"></div>
+      <div class="plant g-strelitzia" data-plant="strelitzia" data-garden="tropical"></div>
+      <div class="plant g-palm" data-plant="palm" data-garden="tropical"></div>
+      <div class="plant g-alocasia" data-plant="alocasia" data-garden="tropical"></div>
+      <div class="plant g-staghorn" data-plant="staghorn" data-garden="tropical"></div>
+      <div class="plant g-philodendron" data-plant="philodendron" data-garden="tropical"></div>
+      <div class="plant g-adansonii" data-plant="adansonii" data-garden="tropical"></div>
+      <div class="plant g-bauhinia" data-plant="bauhinia" data-garden="tropical"></div>
+      <div class="plant g-lychee" data-plant="lychee" data-garden="tropical"></div>
+      <div class="plant g-mango" data-plant="mango" data-garden="tropical"></div>
+      <div class="plant g-frangipani" data-plant="frangipani" data-garden="tropical"></div>
+      <div class="plant g-cypress" data-plant="cypress" data-garden="mediterranean"></div>
+      <div class="plant g-acanthus" data-plant="acanthus" data-garden="mediterranean"></div>
+      <div class="plant g-agave" data-plant="agave" data-garden="mediterranean"></div>
+      <div class="plant g-lavender" data-plant="lavender" data-garden="mediterranean"></div>
+      <div class="plant g-rosemary" data-plant="rosemary" data-garden="mediterranean"></div>
+      <div class="plant g-grapevine" data-plant="grapevine" data-garden="mediterranean"></div>
+      <div class="plant g-jasmine" data-plant="jasmine" data-garden="mediterranean"></div>
+      <div class="plant g-bougainvillea" data-plant="bougainvillea" data-garden="mediterranean"></div>
+      <div class="plant g-pine" data-plant="pine" data-garden="mediterranean"></div>
+      <div class="plant g-fig" data-plant="fig" data-garden="mediterranean"></div>
+      <div class="plant g-lemon" data-plant="lemon" data-garden="mediterranean"></div>
+      <div class="plant g-olive" data-plant="olive" data-garden="mediterranean"></div>
+      <div class="plant g-saguaro" data-plant="saguaro" data-garden="desert"></div>
+      <div class="plant g-opuntia" data-plant="opuntia" data-garden="desert"></div>
+      <div class="plant g-ferocactus" data-plant="ferocactus" data-garden="desert"></div>
+      <div class="plant g-paloverde" data-plant="paloverde" data-garden="desert"></div>
+      <div class="plant g-ocotillo" data-plant="ocotillo" data-garden="desert"></div>
+      <div class="plant g-organpipe" data-plant="organpipe" data-garden="desert"></div>
+      <div class="plant g-brittlebush" data-plant="brittlebush" data-garden="desert"></div>
+      <div class="plant g-mesquite" data-plant="mesquite" data-garden="desert"></div>
+      <div class="plant g-cholla" data-plant="cholla" data-garden="desert"></div>
+      <div class="plant g-creosote" data-plant="creosote" data-garden="desert"></div>
+      <div class="plant g-ibervillea" data-plant="ibervillea" data-garden="desert"></div>
+      <div class="plant g-trimera" data-plant="trimera" data-garden="afroalpine"></div>
+      <div class="plant g-groundsel" data-plant="groundsel" data-garden="afroalpine"></div>
+      <div class="plant g-sapling" data-plant="sapling" data-garden="afroalpine"></div>
+      <div class="plant g-telekii" data-plant="telekii" data-garden="afroalpine"></div>
+      <div class="plant g-cabbage" data-plant="cabbage" data-garden="afroalpine"></div>
+      <div class="plant g-heath" data-plant="heath" data-garden="afroalpine"></div>
+      <div class="plant g-thistle" data-plant="thistle" data-garden="afroalpine"></div>
+      <div class="plant g-alchemilla" data-plant="alchemilla" data-garden="afroalpine"></div>
+      <div class="plant g-gregoriana" data-plant="gregoriana" data-garden="afroalpine"></div>
+      <div class="plant g-helichrysum" data-plant="helichrysum" data-garden="afroalpine"></div>
+      <div class="plant g-tussock" data-plant="tussock" data-garden="afroalpine"></div>
+      <div class="plant g-haplocarpha" data-plant="haplocarpha" data-garden="afroalpine"></div>
+      <div class="plant g-marula" data-plant="marula" data-garden="savanna"></div>
+      <div class="plant g-baobab" data-plant="baobab" data-garden="savanna"></div>
+      <div class="plant g-kigelia" data-plant="kigelia" data-garden="savanna"></div>
+      <div class="plant g-thorn" data-plant="thorn" data-garden="savanna"></div>
+      <div class="plant g-thatchgrass" data-plant="thatchgrass" data-garden="savanna"></div>
+      <div class="plant g-redgrass" data-plant="redgrass" data-garden="savanna"></div>
+      <div class="plant g-crinum" data-plant="crinum" data-garden="savanna"></div>
+      <div class="plant g-gloriosa" data-plant="gloriosa" data-garden="savanna"></div>
+      <div class="plant g-hypoxis" data-plant="hypoxis" data-garden="savanna"></div>
+      <div class="plant g-pincushion" data-plant="pincushion" data-garden="fynbos"></div>
+      <div class="plant g-silvertree" data-plant="silvertree" data-garden="fynbos"></div>
+      <div class="plant g-sugarbush" data-plant="sugarbush" data-garden="fynbos"></div>
+      <div class="plant g-restio" data-plant="restio" data-garden="fynbos"></div>
+      <div class="plant g-watsonia" data-plant="watsonia" data-garden="fynbos"></div>
+      <div class="plant g-aristea" data-plant="aristea" data-garden="fynbos"></div>
+      <div class="plant g-kingprotea" data-plant="kingprotea" data-garden="fynbos"></div>
+      <div class="plant g-pagoda" data-plant="pagoda" data-garden="fynbos"></div>
+      <div class="plant g-berzelia" data-plant="berzelia" data-garden="fynbos"></div>
+      <div class="plant g-phaenocoma" data-plant="phaenocoma" data-garden="fynbos"></div>
+      <div class="plant g-fireheath" data-plant="fireheath" data-garden="fynbos"></div>
+      <div class="plant g-pelargonium" data-plant="pelargonium" data-garden="fynbos"></div>
+      <div class="plant g-damara" data-plant="damara" data-garden="namib"></div>
+      <div class="plant g-buttertree" data-plant="buttertree" data-garden="namib"></div>
+      <div class="plant g-halfmens" data-plant="halfmens" data-garden="namib"></div>
+      <div class="plant g-quivertree" data-plant="quivertree" data-garden="namib"></div>
+      <div class="plant g-dunegrass" data-plant="dunegrass" data-garden="namib"></div>
+      <div class="plant g-gifboom" data-plant="gifboom" data-garden="namib"></div>
+      <div class="plant g-nara" data-plant="nara" data-garden="namib"></div>
+      <div class="plant g-welwitschia" data-plant="welwitschia" data-garden="namib"></div>
+      <div class="plant g-hoodia" data-plant="hoodia" data-garden="namib"></div>
+      <div class="plant g-bushmanscandle" data-plant="bushmanscandle" data-garden="namib"></div>
+      <div class="plant g-lithops" data-plant="lithops" data-garden="namib"></div>
+      <div class="plant g-whitemangrove" data-plant="whitemangrove" data-garden="mangrove"></div>
+      <div class="plant g-buttonwood" data-plant="buttonwood" data-garden="mangrove"></div>
+      <div class="plant g-spanishmoss" data-plant="spanishmoss" data-garden="mangrove"></div>
+      <div class="plant g-airplant" data-plant="airplant" data-garden="mangrove"></div>
+      <div class="plant g-blackmangrove" data-plant="blackmangrove" data-garden="mangrove"></div>
+      <div class="plant g-redmangrove" data-plant="redmangrove" data-garden="mangrove"></div>
+      <div class="plant g-cordgrass" data-plant="cordgrass" data-garden="mangrove"></div>
+      <div class="plant g-leatherfern" data-plant="leatherfern" data-garden="mangrove"></div>
+      <div class="plant g-swamplily" data-plant="swamplily" data-garden="mangrove"></div>
+      <div class="plant g-morningglory" data-plant="morningglory" data-garden="mangrove"></div>
+      <div class="plant g-saltwort" data-plant="saltwort" data-garden="mangrove"></div>
+      <div class="plant g-seapurslane" data-plant="seapurslane" data-garden="mangrove"></div>
+      <div class="plant g-moso" data-plant="moso" data-garden="eastasian"></div>
+      <div class="plant g-ginkgo" data-plant="ginkgo" data-garden="eastasian"></div>
+      <div class="plant g-maple" data-plant="maple" data-garden="eastasian"></div>
+      <div class="plant g-plum" data-plant="plum" data-garden="eastasian"></div>
+      <div class="plant g-paulownia" data-plant="paulownia" data-garden="eastasian"></div>
+      <div class="plant g-willow" data-plant="willow" data-garden="eastasian"></div>
+      <div class="plant g-wisteria" data-plant="wisteria" data-garden="eastasian"></div>
+      <div class="plant g-akebia" data-plant="akebia" data-garden="eastasian"></div>
+      <div class="plant g-lotus" data-plant="lotus" data-garden="eastasian"></div>
+      <div class="plant g-iris" data-plant="iris" data-garden="eastasian"></div>
+      <div class="plant g-peony" data-plant="peony" data-garden="eastasian"></div>
+      <div class="plant g-hydrangea" data-plant="hydrangea" data-garden="eastasian"></div>
+      <div class="plant g-lycoris" data-plant="lycoris" data-garden="eastasian"></div>
+      <div class="plant g-spruce" data-plant="spruce" data-garden="taiga"></div>
+      <div class="plant g-larch" data-plant="larch" data-garden="taiga"></div>
+      <div class="plant g-birch" data-plant="birch" data-garden="taiga"></div>
+      <div class="plant g-scotspine" data-plant="scotspine" data-garden="taiga"></div>
+      <div class="plant g-methuselah" data-plant="methuselah" data-garden="taiga"></div>
+      <div class="plant g-horsehair" data-plant="horsehair" data-garden="taiga"></div>
+      <div class="plant g-fireweed" data-plant="fireweed" data-garden="taiga"></div>
+      <div class="plant g-labradortea" data-plant="labradortea" data-garden="taiga"></div>
+      <div class="plant g-horsetail" data-plant="horsetail" data-garden="taiga"></div>
+      <div class="plant g-lingonberry" data-plant="lingonberry" data-garden="taiga"></div>
+      <div class="plant g-cloudberry" data-plant="cloudberry" data-garden="taiga"></div>
+      <div class="plant g-twinflower" data-plant="twinflower" data-garden="taiga"></div>
+      <div class="plant g-tuliptree" data-plant="tuliptree" data-garden="american"></div>
+      <div class="plant g-sugarmaple" data-plant="sugarmaple" data-garden="american"></div>
+      <div class="plant g-redbud" data-plant="redbud" data-garden="american"></div>
+      <div class="plant g-walnut" data-plant="walnut" data-garden="american"></div>
+      <div class="plant g-creeper" data-plant="creeper" data-garden="american"></div>
+      <div class="plant g-trumpetvine" data-plant="trumpetvine" data-garden="american"></div>
+      <div class="plant g-dutchmanspipe" data-plant="dutchmanspipe" data-garden="american"></div>
+      <div class="plant g-compassplant" data-plant="compassplant" data-garden="american"></div>
+      <div class="plant g-bluestem" data-plant="bluestem" data-garden="american"></div>
+      <div class="plant g-milkweed" data-plant="milkweed" data-garden="american"></div>
+      <div class="plant g-blazingstar" data-plant="blazingstar" data-garden="american"></div>
+      <div class="plant g-coneflower" data-plant="coneflower" data-garden="american"></div>
+      <div class="plant g-oak" data-plant="oak" data-garden="woodland"></div>
+      <div class="plant g-hazel" data-plant="hazel" data-garden="woodland"></div>
+      <div class="plant g-hawthorn" data-plant="hawthorn" data-garden="woodland"></div>
+      <div class="plant g-holly" data-plant="holly" data-garden="woodland"></div>
+      <div class="plant g-ivy" data-plant="ivy" data-garden="woodland"></div>
+      <div class="plant g-oldmansbeard" data-plant="oldmansbeard" data-garden="woodland"></div>
+      <div class="plant g-honeysuckle" data-plant="honeysuckle" data-garden="woodland"></div>
+      <div class="plant g-bracken" data-plant="bracken" data-garden="woodland"></div>
+      <div class="plant g-foxglove" data-plant="foxglove" data-garden="woodland"></div>
+      <div class="plant g-gorse" data-plant="gorse" data-garden="woodland"></div>
+      <div class="plant g-hartstongue" data-plant="hartstongue" data-garden="woodland"></div>
+      <div class="plant g-bluebell" data-plant="bluebell" data-garden="woodland"></div>
+      <div class="water"></div>
+      <div class="grain"></div>
+    </div>
+
+    <div class="scroll-track"></div>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
